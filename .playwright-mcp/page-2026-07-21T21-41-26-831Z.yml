@@ -1,0 +1,49 @@
+- generic [ref=f2e3]:
+  - banner [ref=f2e4]:
+    - button "Back" [ref=f2e5] [cursor=pointer]
+    - generic [ref=f2e9]: xm broker
+  - main [ref=f2e10]:
+    - generic [ref=f2e11]:
+      - generic [ref=f2e12]:
+        - img "XM" [ref=f2e13]
+        - generic [ref=f2e14]: XM
+      - generic [ref=f2e15]: Popular
+    - generic [ref=f2e16]:
+      - generic [ref=f2e26]:
+        - heading "Create your broker account" [level=2] [ref=f2e27]
+        - paragraph [ref=f2e28]: Register through the link below, then return to submit your account details.
+      - generic [ref=f2e29]:
+        - button "Create account" [ref=f2e30] [cursor=pointer]
+        - generic [ref=f2e36]:
+          - generic [ref=f2e37]: referral code
+          - generic [ref=f2e38]:
+            - generic [ref=f2e39]: "45789632"
+            - button "Copy referral code" [ref=f2e40] [cursor=pointer]
+    - generic [ref=f2e44]:
+      - heading "broker details" [level=3] [ref=f2e45]
+      - generic [ref=f2e46]:
+        - generic [ref=f2e47]: Regulation
+        - generic [ref=f2e51]: FCA, CySEC
+      - generic [ref=f2e52]:
+        - generic [ref=f2e53]: Trading Platform
+        - generic [ref=f2e57]: MT4 / MT5
+      - generic [ref=f2e58]:
+        - generic [ref=f2e59]: Deposit Bonus
+        - generic [ref=f2e65]: Up to 50%
+      - generic [ref=f2e66]:
+        - generic [ref=f2e67]: Spread Level
+        - generic [ref=f2e71]: Low
+      - generic [ref=f2e72]:
+        - generic [ref=f2e73]: Leverage
+        - generic [ref=f2e78]: Up to 1:500
+      - generic [ref=f2e79]:
+        - generic [ref=f2e80]: Account Types
+        - generic [ref=f2e85]: Standard / ECN
+      - generic [ref=f2e86]:
+        - generic [ref=f2e87]: Execution Speed
+        - generic [ref=f2e91]: Fast
+      - generic [ref=f2e92]:
+        - generic [ref=f2e93]: Withdrawal Speed
+        - generic [ref=f2e97]: Fast
+  - contentinfo [ref=f2e98]:
+    - button "submit account" [ref=f2e99] [cursor=pointer]

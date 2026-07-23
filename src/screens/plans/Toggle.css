@@ -1,0 +1,30 @@
+.scr-plans-toggle {
+  flex: none;
+  position: relative;
+  width: 40px;
+  height: 20px;
+  padding: 0;
+  border-radius: var(--radius-infinity);
+  background: var(--bg-colors-container-s); /* #F1F1F1, off */
+  transition: background-color 0.15s ease;
+}
+
+.scr-plans-toggle--on {
+  background: var(--primary-colors-900); /* #144CCD, on */
+}
+
+.scr-plans-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-infinity);
+  background: var(--base-color-white);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  transition: left 0.15s ease;
+}
+
+.scr-plans-toggle--on .scr-plans-toggle-thumb {
+  left: 22px;
+}

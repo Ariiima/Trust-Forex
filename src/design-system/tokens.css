@@ -1,0 +1,258 @@
+/* =====================================================================
+   Trust Forex — Telegram Mini App — Design Tokens
+   Generated from Figma design system (file wRpTrsYbng1DgKVYjDTgkp).
+   Colors are named after their Figma variable (kebab-case, "/" -> "-").
+   Radius & spacing follow the style-guide scales (not Figma variables).
+   Consume with var(--token). See ./README.md for the cheat-sheet.
+   ===================================================================== */
+
+/* ---- Fonts -------------------------------------------------------- */
+/* Sora is a variable font; a single file per subset covers 100-800.   */
+@font-face {
+  font-family: 'Sora';
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url('../assets/fonts/Sora-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Sora';
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url('../assets/fonts/Sora-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  /* ---- Colors: Primary ------------------------------------------- */
+  /* 950 is not a named Figma variable; it is the deeper blue used for the
+     inner "current state" panel of the Cashback Overview card (#033AB8). */
+  --primary-colors-950: #033AB8;
+  --primary-colors-900: #144CCD;
+  --primary-colors-800: #2C5ED2;
+  --primary-colors-700: #4370D7;
+  --primary-colors-600: #5B82DC;
+  --primary-colors-500: #7294E1;
+  --primary-colors-400: #89A5E6;
+  --primary-colors-300: #A1B7EB;
+  --primary-colors-200: #B8C9F0;
+  --primary-colors-100: #D0DBF5;
+  --primary-colors-50:  #E7EDFA;
+
+  /* ---- Colors: Typography ---------------------------------------- */
+  --typography-colors-main-text: #212121;
+  --typography-colors-sub-text:  #7C7C7C;
+
+  /* ---- Colors: Stroke -------------------------------------------- */
+  --stroke-colors-default: #E4E4E4;
+  --stroke-colors-primary: #144CCD;
+
+  /* ---- Colors: Background ----------------------------------------- */
+  --bg-colors-container-p: #FFFFFF;
+  --bg-colors-container-s: #F1F1F1; /* Figma variable value; style-guide swatch is labeled #F5F5F5 */
+
+  /* ---- Colors: Base ---------------------------------------------- */
+  --base-color-black: #040404;
+  --base-color-white: #FFFFFF;
+
+  /* ---- Colors: State (Figma keeps the "Eror" spelling) ----------- */
+  --state-colors-success:    #48D48A;
+  --state-colors-success-bg: #E9F9F1;
+  --state-colors-eror:       #FF334C;
+  --state-colors-eror-bg:    #FFEFF1;
+  --state-colors-danger:     #FFC300;
+  --state-colors-danger-bg:  #FFFBEF;
+  --state-colors-info:       #0099FF;
+  --state-colors-info-bg:    #EBF7FF;
+
+  /* ---- Radius (style-guide scale) -------------------------------- */
+  --radius-small:     8px;
+  --radius-medium:    12px;
+  --radius-large:     20px;
+  --radius-xlarge:    32px;
+  --radius-xxlarge:   48px;
+  --radius-xxxlarge:  56px;
+  --radius-infinity:  999px;
+
+  /* ---- Spacing (style-guide scale) ------------------------------- */
+  --spacing-4:   4px;
+  --spacing-8:   8px;
+  --spacing-12:  12px;
+  --spacing-16:  16px;
+  --spacing-20:  20px;
+  --spacing-24:  24px;
+  --spacing-32:  32px;
+  --spacing-40:  40px;
+  --spacing-48:  48px;
+  --spacing-56:  56px;
+  --spacing-64:  64px;
+  --spacing-72:  72px;
+  --spacing-80:  80px;
+  --spacing-88:  88px;
+  --spacing-96:  96px;
+  --spacing-104: 104px;
+
+  /* ---- Typography primitives ------------------------------------- */
+  --font-family-base:      'Sora', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-weight-regular:   400;
+  --font-weight-semibold:  600;
+  --font-weight-bold:      700;
+  --font-weight-extrabold: 800;
+}
+
+/* =====================================================================
+   Typography utility classes — Sora type scale from the style guide
+   specimen (frame 19:1028). Each class sets font-family, size,
+   line-height, weight and letter-spacing. Base class per size = the
+   lightest weight the specimen defines; -semibold/-bold/-extrabold add
+   the heavier cuts. Apply directly, e.g. <span class="type-text-base">.
+   ===================================================================== */
+
+/* text-xs-10  —  10px / 20px */
+.type-text-xs-10 {
+  font-family: var(--font-family-base);
+  font-size: 10px;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+.type-text-xs-10 { font-weight: var(--font-weight-regular); }
+
+/* text-xs  —  12px / 24px */
+.type-text-xs,
+.type-text-xs-semibold,
+.type-text-xs-bold,
+.type-text-xs-extrabold {
+  font-family: var(--font-family-base);
+  font-size: 12px;
+  line-height: 24px;
+  letter-spacing: 0;
+}
+.type-text-xs { font-weight: var(--font-weight-regular); }
+.type-text-xs-semibold { font-weight: var(--font-weight-semibold); }
+.type-text-xs-bold { font-weight: var(--font-weight-bold); }
+.type-text-xs-extrabold { font-weight: var(--font-weight-extrabold); }
+
+/* text-sm  —  14px / 28px */
+.type-text-sm,
+.type-text-sm-semibold,
+.type-text-sm-bold,
+.type-text-sm-extrabold {
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  line-height: 28px;
+  letter-spacing: 0;
+}
+.type-text-sm { font-weight: var(--font-weight-regular); }
+.type-text-sm-semibold { font-weight: var(--font-weight-semibold); }
+.type-text-sm-bold { font-weight: var(--font-weight-bold); }
+.type-text-sm-extrabold { font-weight: var(--font-weight-extrabold); }
+
+/* text-base  —  16px / 32px */
+.type-text-base,
+.type-text-base-semibold,
+.type-text-base-bold,
+.type-text-base-extrabold {
+  font-family: var(--font-family-base);
+  font-size: 16px;
+  line-height: 32px;
+  letter-spacing: 0;
+}
+.type-text-base { font-weight: var(--font-weight-regular); }
+.type-text-base-semibold { font-weight: var(--font-weight-semibold); }
+.type-text-base-bold { font-weight: var(--font-weight-bold); }
+.type-text-base-extrabold { font-weight: var(--font-weight-extrabold); }
+
+/* text-lg  —  18px / 36px */
+.type-text-lg,
+.type-text-lg-semibold,
+.type-text-lg-bold,
+.type-text-lg-extrabold {
+  font-family: var(--font-family-base);
+  font-size: 18px;
+  line-height: 36px;
+  letter-spacing: 0;
+}
+.type-text-lg { font-weight: var(--font-weight-regular); }
+.type-text-lg-semibold { font-weight: var(--font-weight-semibold); }
+.type-text-lg-bold { font-weight: var(--font-weight-bold); }
+.type-text-lg-extrabold { font-weight: var(--font-weight-extrabold); }
+
+/* text-xl  —  20px / 40px */
+.type-text-xl,
+.type-text-xl-semibold,
+.type-text-xl-bold,
+.type-text-xl-extrabold {
+  font-family: var(--font-family-base);
+  font-size: 20px;
+  line-height: 40px;
+  letter-spacing: 0;
+}
+.type-text-xl { font-weight: var(--font-weight-regular); }
+.type-text-xl-semibold { font-weight: var(--font-weight-semibold); }
+.type-text-xl-bold { font-weight: var(--font-weight-bold); }
+.type-text-xl-extrabold { font-weight: var(--font-weight-extrabold); }
+
+/* text-2xl  —  24px / 44px */
+.type-text-2xl,
+.type-text-2xl-semibold,
+.type-text-2xl-bold,
+.type-text-2xl-extrabold {
+  font-family: var(--font-family-base);
+  font-size: 24px;
+  line-height: 44px;
+  letter-spacing: 0;
+}
+.type-text-2xl { font-weight: var(--font-weight-regular); }
+.type-text-2xl-semibold { font-weight: var(--font-weight-semibold); }
+.type-text-2xl-bold { font-weight: var(--font-weight-bold); }
+.type-text-2xl-extrabold { font-weight: var(--font-weight-extrabold); }
+
+/* text-3xl  —  30px / 56px */
+.type-text-3xl,
+.type-text-3xl-semibold,
+.type-text-3xl-bold,
+.type-text-3xl-extrabold {
+  font-family: var(--font-family-base);
+  font-size: 30px;
+  line-height: 56px;
+  letter-spacing: 0;
+}
+.type-text-3xl { font-weight: var(--font-weight-regular); }
+.type-text-3xl-semibold { font-weight: var(--font-weight-semibold); }
+.type-text-3xl-bold { font-weight: var(--font-weight-bold); }
+.type-text-3xl-extrabold { font-weight: var(--font-weight-extrabold); }
+
+/* text-4xl  —  36px / 64px */
+.type-text-4xl,
+.type-text-4xl-extrabold {
+  font-family: var(--font-family-base);
+  font-size: 36px;
+  line-height: 64px;
+  letter-spacing: 0;
+}
+.type-text-4xl { font-weight: var(--font-weight-semibold); }
+.type-text-4xl-extrabold { font-weight: var(--font-weight-extrabold); }
+
+/* text-5xl  —  44px / 72px */
+.type-text-5xl {
+  font-family: var(--font-family-base);
+  font-size: 44px;
+  line-height: 72px;
+  letter-spacing: 0;
+}
+.type-text-5xl { font-weight: var(--font-weight-extrabold); }
+
+/* text-6xl  —  56px / 88px */
+.type-text-6xl {
+  font-family: var(--font-family-base);
+  font-size: 56px;
+  line-height: 88px;
+  letter-spacing: 0;
+}
+.type-text-6xl { font-weight: var(--font-weight-extrabold); }

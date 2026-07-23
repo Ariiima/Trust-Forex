@@ -1,0 +1,686 @@
+/* =====================================================================
+   Home — route `/` (bottom-nav tab 1). Figma nodes:
+     552-3106 active-subscription (canonical layout)
+     552-3107 expired-subscription (hero + promo differ)
+     639-4482 no-subscription     (hero + promo + expanded Gold differ)
+   One component, `subscription: active | expired | none` state. Geometry,
+   colours and type sizes are taken from the node JSON; the Telegram/iOS
+   chrome (status bar + webview header) is excluded per the build brief.
+   ===================================================================== */
+
+.scr-home {
+  position: relative;
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+  padding: var(--spacing-16) var(--spacing-16) 104px;
+  background: var(--bg-colors-container-s); /* #F1F1F1 */
+  font-family: var(--font-family-base);
+  color: var(--typography-colors-main-text);
+}
+
+/* ---- dev-only subscription state switcher (not part of the design) ---- */
+.scr-home-switcher {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  z-index: 50;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--radius-infinity);
+  background: rgba(4, 4, 4, 0.72);
+  backdrop-filter: blur(4px);
+}
+.scr-home-switcher button {
+  border: none;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: var(--radius-infinity);
+  background: transparent;
+  color: #fff;
+  font-family: var(--font-family-base);
+  font-size: 11px;
+  line-height: 16px;
+}
+.scr-home-switcher button[data-on='true'] {
+  background: #fff;
+  color: var(--base-color-black);
+}
+
+/* =====================================================================
+   HERO — blue subscription card (328 wide, r16, 16px padding)
+   ===================================================================== */
+.scr-home-hero {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  background: var(--primary-colors-900); /* #144CCD */
+}
+
+/* active hero: gap 32 between the info block and the button row */
+.scr-home-hero--active {
+  gap: var(--spacing-32);
+  padding: var(--spacing-16);
+}
+
+/* message hero (expired / none): 32px top padding, content centred and
+   distributed between the top illustration/text and the bottom CTA. */
+.scr-home-hero--message {
+  min-height: 396px;
+  padding: var(--spacing-32) var(--spacing-16) var(--spacing-16);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-24);
+}
+
+.scr-home-hero-top {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+}
+
+/* ---- countdown ring box (bordered translucent panel) ------------------ */
+.scr-home-ringbox {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-24) var(--spacing-32);
+  border-radius: var(--radius-medium);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+.scr-home-ring {
+  position: relative;
+  width: 232px;
+  height: 116px;
+}
+.scr-home-ring svg {
+  display: block;
+  width: 232px;
+  height: 116px;
+}
+.scr-home-ring-center {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.scr-home-ring-num {
+  font-size: 36px;
+  line-height: 64px;
+  font-weight: var(--font-weight-semibold);
+  color: #fff;
+}
+.scr-home-ring-sub {
+  margin-top: -12px;
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* ---- status rows ------------------------------------------------------ */
+.scr-home-status {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+.scr-home-statusrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.scr-home-status-label {
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+  color: rgba(255, 255, 255, 0.72);
+}
+.scr-home-status-value {
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+  color: #fff;
+}
+.scr-home-status-plan {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-4);
+}
+.scr-home-status-plan b {
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: var(--font-weight-semibold);
+  color: #fff;
+}
+.scr-home-status-plan span {
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: rgba(255, 255, 255, 0.64);
+}
+.scr-home-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  height: 24px;
+  padding: 0 var(--spacing-12) 0 var(--spacing-8);
+  border-radius: var(--radius-infinity);
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--state-colors-success);
+  font-size: 12px;
+  line-height: 24px;
+}
+.scr-home-pill svg {
+  color: var(--state-colors-success);
+}
+
+/* ---- hero buttons ----------------------------------------------------- */
+.scr-home-hero-buttons {
+  display: flex;
+  gap: var(--spacing-12);
+}
+.scr-home-herobtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 var(--spacing-16);
+  border-radius: var(--radius-small);
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+}
+.scr-home-herobtn--solid {
+  flex: 1 1 auto;
+  background: #fff;
+  color: var(--primary-colors-900);
+}
+.scr-home-herobtn--ghost {
+  flex: 0 0 120px;
+  background: transparent;
+  border-color: rgba(228, 228, 228, 0.16);
+  color: #fff;
+}
+.scr-home-herobtn--full {
+  width: 100%;
+  background: #fff;
+  color: var(--primary-colors-900);
+}
+
+/* ---- message hero (expired / none) ------------------------------------ */
+.scr-home-hero-art {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+}
+.scr-home-hero-message-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-16);
+}
+.scr-home-hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4);
+  text-align: center;
+}
+.scr-home-hero-title {
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: var(--font-weight-semibold);
+  color: #fff;
+}
+.scr-home-hero-subtitle {
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+  color: rgba(255, 255, 255, 0.72);
+}
+.scr-home-hero-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-12);
+  width: 100%;
+}
+.scr-home-hero-note {
+  font-size: 14px;
+  line-height: 28px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* =====================================================================
+   PROMO CAROUSEL — horizontal scroll-snap, 3 banners, dot indicators
+   ===================================================================== */
+.scr-home-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  border-radius: var(--radius-medium);
+}
+.scr-home-carousel::-webkit-scrollbar {
+  display: none;
+}
+.scr-home-slide {
+  position: relative;
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  box-sizing: border-box;
+  height: 110px;
+  padding: var(--spacing-16);
+  border-radius: var(--radius-medium);
+  overflow: hidden;
+}
+.scr-home-slide-text {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  width: 216px;
+}
+.scr-home-slide-tag {
+  align-self: flex-start;
+  padding: 0 var(--spacing-8);
+  border-radius: var(--radius-infinity);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 10px;
+  line-height: 20px;
+}
+.scr-home-slide-title {
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: var(--font-weight-semibold);
+  color: #fff;
+}
+.scr-home-slide-sub {
+  margin-top: -4px;
+  font-size: 12px;
+  line-height: 24px;
+  color: rgba(255, 255, 255, 0.64);
+}
+.scr-home-slide-art {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 94px;
+  height: 110px;
+  object-fit: cover;
+}
+.scr-home-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-4);
+}
+.scr-home-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-infinity);
+  background: rgba(255, 255, 255, 0.4);
+}
+.scr-home-dot--on {
+  width: 20px;
+  background: #fff;
+}
+
+/* =====================================================================
+   Shared white card shell (Signal performance + Choose your plan)
+   ===================================================================== */
+.scr-home-card {
+  box-sizing: border-box;
+  border-radius: 16px;
+  background: var(--bg-colors-container-p);
+  padding: var(--spacing-16);
+}
+.scr-home-card-title {
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--typography-colors-main-text);
+}
+
+/* =====================================================================
+   SIGNAL PERFORMANCE
+   ===================================================================== */
+.scr-home-signal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+}
+.scr-home-signal-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+/* ---- TP tabs ---------------------------------------------------------- */
+.scr-home-tp {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  box-sizing: border-box;
+  height: 60px;
+  padding: var(--spacing-8) var(--spacing-8) var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-medium);
+  border: 1px solid var(--stroke-colors-default);
+}
+.scr-home-tp-btn {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+.scr-home-tp-btn--on {
+  gap: 0;
+  padding: 2px 8px;
+  border-radius: var(--radius-small);
+  background: var(--primary-colors-50);
+}
+.scr-home-tp-name {
+  font-size: 12px;
+  line-height: 24px;
+  color: var(--typography-colors-main-text);
+}
+.scr-home-tp-rr {
+  margin-top: -4px;
+  font-size: 10px;
+  line-height: 20px;
+  color: var(--typography-colors-sub-text);
+}
+.scr-home-tp-btn--on .scr-home-tp-name,
+.scr-home-tp-btn--on .scr-home-tp-rr {
+  color: var(--primary-colors-900);
+}
+.scr-home-tp-div {
+  flex: none;
+  width: 1px;
+  height: 16px;
+  background: var(--stroke-colors-default);
+}
+
+/* ---- overview box ----------------------------------------------------- */
+.scr-home-overview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  box-sizing: border-box;
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-medium);
+  border: 1px solid var(--stroke-colors-default);
+}
+.scr-home-overview-title {
+  font-size: 10px;
+  line-height: 20px;
+  color: var(--base-color-black);
+}
+.scr-home-overview-stats {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 var(--spacing-16);
+}
+.scr-home-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.scr-home-stat-label {
+  font-size: 10px;
+  line-height: 20px;
+  color: var(--typography-colors-sub-text);
+}
+.scr-home-stat-value {
+  font-size: 10px;
+  line-height: 20px;
+  color: var(--primary-colors-900);
+}
+.scr-home-stat-value--success {
+  color: var(--state-colors-success);
+}
+
+/* ---- chart ------------------------------------------------------------ */
+.scr-home-chart {
+  position: relative;
+  height: 220px;
+}
+.scr-home-chart svg.scr-home-chart-svg {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 296px;
+  height: 164px;
+}
+.scr-home-chart-crosshair {
+  position: absolute;
+  bottom: 0;
+  height: 158px;
+  border-left: 1px dashed var(--primary-colors-300);
+}
+.scr-home-chart-marker {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--primary-colors-900);
+  border: 2px solid #fff;
+  transform: translate(-50%, -50%);
+}
+.scr-home-tooltip {
+  position: absolute;
+  top: 0;
+  width: 124px;
+  box-sizing: border-box;
+  padding: var(--spacing-4) var(--spacing-8);
+  border-radius: var(--radius-small);
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(20, 34, 68, 0.16);
+  transform: translateX(-50%);
+}
+.scr-home-tooltip-date {
+  display: block;
+  text-align: center;
+  font-size: 10px;
+  line-height: 20px;
+  color: var(--typography-colors-main-text);
+}
+.scr-home-tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+}
+.scr-home-tooltip-row span:first-child {
+  font-size: 10px;
+  line-height: 20px;
+  color: var(--typography-colors-sub-text);
+}
+.scr-home-tooltip-row span:last-child {
+  font-size: 10px;
+  line-height: 20px;
+  color: var(--typography-colors-main-text);
+}
+.scr-home-tooltip-row--success span:last-child {
+  color: var(--state-colors-success);
+}
+
+/* ---- period toggle ---------------------------------------------------- */
+.scr-home-period {
+  display: flex;
+  box-sizing: border-box;
+  height: 40px;
+  padding: var(--spacing-4);
+  border-radius: var(--radius-small);
+  border: 1px solid var(--bg-colors-container-s);
+}
+.scr-home-period-btn {
+  flex: 1 1 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--radius-small);
+  font-family: var(--font-family-base);
+  font-size: 12px;
+  line-height: 24px;
+  color: var(--typography-colors-sub-text);
+}
+.scr-home-period-btn--on {
+  background: var(--bg-colors-container-s);
+  color: var(--typography-colors-main-text);
+}
+
+/* =====================================================================
+   CHOOSE YOUR PLAN
+   ===================================================================== */
+.scr-home-plans {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+.scr-home-plans-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.scr-home-info {
+  display: inline-flex;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--base-color-black);
+  opacity: 0.72;
+}
+.scr-home-infotip {
+  position: absolute;
+  z-index: 5;
+  bottom: calc(100% - 6px);
+  left: -4px;
+  right: -4px;
+  box-sizing: border-box;
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-small);
+  background: var(--base-color-black);
+  color: #fff;
+  font-size: 12px;
+  line-height: 24px;
+}
+.scr-home-infotip::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  right: 20px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid var(--base-color-black);
+}
+
+/* ---- compact plan row (Silver / Gold / Diamond) ----------------------- */
+.scr-home-planrow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-medium);
+  border: 1px solid var(--stroke-colors-default);
+  background: var(--bg-colors-container-p);
+  text-align: left;
+  cursor: pointer;
+}
+.scr-home-planrow-badge {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+.scr-home-planrow-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.scr-home-planrow-namerow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-8);
+}
+.scr-home-planrow-name {
+  font-size: 16px;
+  line-height: 32px;
+  color: var(--typography-colors-main-text);
+}
+.scr-home-planrow-pricerow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  margin-top: -4px;
+  color: var(--typography-colors-main-text);
+}
+.scr-home-planrow-price {
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: var(--font-weight-semibold);
+}
+.scr-home-planrow-duration {
+  margin-left: var(--spacing-4);
+  font-size: 12px;
+  line-height: 24px;
+  color: var(--typography-colors-sub-text);
+}
+.scr-home-tag {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 var(--spacing-8);
+  border-radius: var(--radius-infinity);
+  font-size: 10px;
+  line-height: 20px;
+  white-space: nowrap;
+}
+.scr-home-tag--popular {
+  background: var(--state-colors-danger-bg);
+  color: var(--state-colors-danger);
+}
+.scr-home-tag--value {
+  background: rgba(111, 88, 174, 0.08);
+  color: #6f58ae;
+}
+
+/* =====================================================================
+   Floating navigation bar
+   ===================================================================== */
+.scr-home-navbar {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  z-index: 20;
+  width: 360px;
+  max-width: 100%;
+  transform: translateX(-50%);
+}

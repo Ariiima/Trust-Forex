@@ -1,0 +1,83 @@
+.scr-select-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-12);
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--spacing-8) var(--spacing-12);
+  border: 1px solid var(--stroke-colors-default);
+  border-radius: var(--radius-medium);
+  background: var(--bg-colors-container-p);
+  text-align: left;
+}
+
+/* Single-line (network) rows are 52px tall with 10px vertical padding vs
+   the two-line (currency) rows' 56px/8px — 1108:11980 vs 779:2365. */
+.scr-select-row-single {
+  padding: 10px var(--spacing-12);
+}
+
+.scr-select-row-selected {
+  border-color: var(--primary-colors-900);
+}
+
+.scr-select-row-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  min-width: 0;
+}
+
+.scr-select-row-icon {
+  flex: none;
+}
+
+.scr-select-row-labels {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.scr-select-row-primary {
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-select-row-primary-single {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scr-select-row-secondary {
+  font-size: 10px;
+  line-height: 20px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-sub-text);
+}
+
+.scr-select-row-radio {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--stroke-colors-default);
+  border-radius: var(--radius-infinity);
+}
+
+.scr-select-row-radio-selected {
+  border-color: var(--primary-colors-900);
+}
+
+.scr-select-row-radio-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-infinity);
+  background: var(--primary-colors-900);
+}

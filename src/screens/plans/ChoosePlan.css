@@ -1,0 +1,24 @@
+/* Choose your plan — /plans (Figma 552:3126). */
+.scr-choose {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-colors-container-s); /* #F1F1F1 */
+  font-family: var(--font-family-base);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-choose-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  padding: var(--spacing-16);
+}
+
+.scr-choose-subtitle {
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-sub-text);
+}

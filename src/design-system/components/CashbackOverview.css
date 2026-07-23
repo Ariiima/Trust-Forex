@@ -1,0 +1,230 @@
+/* CashbackOverview — blue summary card (Figma "Cashback Overview", 982:1427).
+   A primary-blue card with: total cashback + delta, a darker inner panel with
+   the current plan + rate, a tier-progression stepper, and two action buttons.
+   The plan badges are raster artwork in Figma (unavailable to export here) and
+   are rendered as hexagon placeholders; pass `badge` to supply real artwork. */
+.ds-cashback {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+  box-sizing: border-box;
+  width: 328px;
+  max-width: 100%;
+  padding: var(--spacing-16);
+  border-radius: 16px; /* between radius-medium(12) and radius-large(20) */
+  background: var(--primary-colors-900);
+  color: var(--base-color-white);
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-regular);
+}
+
+.ds-cashback-top {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+}
+
+.ds-cashback-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ds-cashback-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.ds-cashback-label {
+  font-size: 14px; /* type-text-sm */
+  line-height: 28px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.ds-cashback-info {
+  display: inline-flex;
+  color: var(--base-color-white);
+}
+
+.ds-cashback-total-row {
+  align-items: flex-end;
+}
+
+.ds-cashback-amount-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-4);
+}
+
+.ds-cashback-amount {
+  font-size: 24px; /* type-text-2xl */
+  line-height: 44px;
+  font-weight: var(--font-weight-semibold);
+}
+
+.ds-cashback-muted {
+  font-size: 12px; /* type-text-xs */
+  line-height: 24px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.ds-cashback-delta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.ds-cashback-delta-icon {
+  display: inline-flex;
+  color: var(--state-colors-success);
+}
+
+.ds-cashback-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.24);
+}
+
+/* current-state inner panel */
+.ds-cashback-current {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  box-sizing: border-box;
+  padding: 10px var(--spacing-16) var(--spacing-16);
+  border-radius: var(--radius-small);
+  background: var(--primary-colors-950);
+}
+
+.ds-cashback-current-body {
+  align-items: center;
+}
+
+.ds-cashback-plan {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+}
+
+.ds-cashback-plan-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.ds-cashback-plan-name {
+  font-size: 16px; /* type-text-base */
+  line-height: 32px;
+}
+
+.ds-cashback-plan-text .ds-cashback-muted {
+  margin-top: -4px;
+  font-size: 14px; /* type-text-sm */
+  line-height: 28px;
+}
+
+.ds-cashback-rate {
+  font-size: 24px; /* type-text-2xl */
+  line-height: 44px;
+}
+
+/* hexagon plan badges (placeholders for raster artwork) */
+.ds-cashback-badge {
+  flex: none;
+  display: inline-block;
+  width: 56px;
+  height: 56px;
+  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+}
+.ds-cashback-badge-standard { background: linear-gradient(160deg, #b7bcc4, #7b828c); }
+.ds-cashback-badge-silver   { background: linear-gradient(160deg, #eceef1, #aab0b8); }
+.ds-cashback-badge-gold     { background: linear-gradient(160deg, #f7cd5a, #d89613); }
+.ds-cashback-badge-diamond  { background: linear-gradient(160deg, #ad92db, #6f58ae); }
+
+/* tier progression stepper */
+.ds-cashback-tiers {
+  display: flex;
+  align-items: flex-start;
+}
+
+.ds-cashback-tier-group {
+  display: flex;
+  align-items: center;
+}
+.ds-cashback-tier-group:not(:last-child) {
+  flex: 1 1 auto;
+}
+
+.ds-cashback-tier {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4);
+  width: 48px;
+  flex: none;
+}
+.ds-cashback-tier-dim {
+  opacity: 0.4;
+}
+
+.ds-cashback-tier-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: var(--base-color-white);
+}
+.ds-cashback-tier-badge svg {
+  width: 13px;
+  height: 13px;
+  display: block;
+}
+
+.ds-cashback-tier-label {
+  font-size: 8px;
+  line-height: 10px;
+}
+
+.ds-cashback-tier-line {
+  flex: 1 1 auto;
+  height: 1px;
+  margin: 0 var(--spacing-4);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* action buttons */
+.ds-cashback-actions {
+  display: flex;
+  gap: var(--spacing-12);
+}
+
+.ds-cashback-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 44px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-small);
+  font-family: var(--font-family-base);
+  font-size: 14px; /* type-text-sm */
+  line-height: 28px;
+  cursor: pointer;
+}
+
+.ds-cashback-btn-history {
+  flex: 1 1 auto;
+  background: var(--base-color-white);
+  color: var(--primary-colors-900);
+}
+
+.ds-cashback-btn-upgrade {
+  flex: none;
+  padding: 0 var(--spacing-16);
+  background: transparent;
+  border-color: var(--stroke-colors-default);
+  color: var(--base-color-white);
+}

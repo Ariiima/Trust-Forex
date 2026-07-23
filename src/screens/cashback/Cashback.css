@@ -1,0 +1,354 @@
+/* =====================================================================
+   Cashback hub — /cashback (dashboard: 850:2053, intro: 850:1913).
+   Consumes the DS CashbackOverview / BrokerState / NavigationBar / Icon /
+   Button components; local CSS only covers the promo carousel, the broker
+   card list and the intro splash, none of which have DS equivalents.
+   ===================================================================== */
+
+.scr-cashback {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-colors-container-s);
+  font-family: var(--font-family-base);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-cashback-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+  padding: var(--spacing-16) var(--spacing-16) 104px; /* clearance for the fixed floating nav, matches Home */
+}
+
+/* ---- Promo carousel (850:2053, 3 slides: Summer discount / Invite
+   friends / Complete tasks — only slide 1 is on-canvas in the reference
+   PNG, slides 2-3 are off-canvas siblings reconstructed from JSON) ------ */
+.scr-cashback-promo {
+  display: flex;
+  gap: 21px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.scr-cashback-promo::-webkit-scrollbar {
+  display: none;
+}
+
+.scr-cashback-promo-card {
+  position: relative;
+  flex: none;
+  box-sizing: border-box;
+  width: 328px;
+  height: 110px;
+  padding: var(--spacing-16) var(--spacing-16) 12px;
+  border-radius: var(--radius-medium);
+  overflow: hidden;
+  scroll-snap-align: start;
+  color: var(--base-color-white);
+}
+
+.scr-cashback-promo-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 190px;
+}
+
+.scr-cashback-promo-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-bottom: var(--spacing-4);
+  padding: 0 var(--spacing-8);
+  border-radius: var(--radius-infinity);
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 10px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+}
+
+.scr-cashback-promo-title {
+  margin: 0 0 -4px; /* tight leading, matches the source's -4 autolayout gap */
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: var(--font-weight-semibold);
+}
+
+.scr-cashback-promo-sub {
+  margin: 0;
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* Flush to the card's own top/right edge — the source crop's transparent
+   margin was excluded (see Cashback.tsx comment), so no inset is needed. */
+.scr-cashback-promo-art {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 115px;
+  height: 110px;
+}
+
+.scr-cashback-promo-dots {
+  position: absolute;
+  left: var(--spacing-16);
+  bottom: var(--spacing-12);
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.scr-cashback-promo-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-infinity);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.9), rgba(224, 224, 224, 0.55));
+}
+.scr-cashback-promo-dot--active {
+  position: relative;
+  width: 20px;
+}
+.scr-cashback-promo-dot-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 10px;
+  height: 6px;
+  border-radius: var(--radius-infinity);
+  background: var(--base-color-white);
+}
+
+/* ---- "our brokers" card ----------------------------------------------- */
+.scr-cashback-brokers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  padding: var(--spacing-16);
+  border-radius: 16px; /* between radius-medium(12) and radius-large(20), matches ds-cashback */
+  background: var(--bg-colors-container-p);
+}
+
+.scr-cashback-brokers-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scr-cashback-brokers-title {
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-cashback-brokers-info {
+  display: inline-flex;
+  color: var(--base-color-black);
+}
+
+.scr-cashback-brokers-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+
+/* ---- Broker card (one per broker; state box delegates to DS BrokerState) */
+.scr-cashback-broker {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--spacing-12);
+  border: 1px solid var(--stroke-colors-default);
+  border-radius: var(--radius-medium);
+  background: var(--bg-colors-container-p);
+  text-align: left;
+}
+
+.scr-cashback-broker-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scr-cashback-broker-id {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  min-width: 0;
+}
+
+.scr-cashback-broker-logo {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-infinity);
+  object-fit: cover;
+}
+
+.scr-cashback-broker-name {
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-cashback-broker-right {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  color: var(--base-color-black);
+}
+
+.scr-cashback-broker-popular {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 10px; /* no spacing token for 10px; exact value from 850:2053 */
+  border-radius: var(--radius-infinity);
+  background: var(--state-colors-success-bg);
+  color: var(--state-colors-success);
+  font-size: 10px;
+  line-height: 20px;
+  font-weight: var(--font-weight-regular);
+}
+
+/* "deposit confirmed" banner — only the cashback-active card (IC Markets in
+   the reference); no DS equivalent, composed locally above <BrokerState>. */
+.scr-cashback-broker-confirmed {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-small);
+  background: var(--state-colors-success-bg);
+  color: var(--typography-colors-main-text);
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+}
+.scr-cashback-broker-confirmed svg {
+  flex: none;
+  color: var(--state-colors-success);
+}
+.scr-cashback-broker-confirmed::after {
+  content: '';
+  position: absolute;
+  left: var(--spacing-12);
+  bottom: 0;
+  width: 148px;
+  max-width: calc(100% - 24px);
+  height: 2px;
+  border-radius: var(--radius-infinity);
+  background: var(--state-colors-success);
+}
+
+/* ---- Floating nav bar — fixed + centered with no backdrop, identical to
+   Home's .scr-home-navbar, so no opaque band cuts across content. -------- */
+.scr-cashback-navwrap {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  z-index: 20;
+  width: 360px;
+  max-width: 100%;
+  transform: translateX(-50%);
+}
+
+/* =====================================================================
+   Intro splash (850:1913) — first-run/empty state, no bottom nav.
+   ===================================================================== */
+.scr-cashback-intro {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: var(--spacing-16);
+  background: var(--bg-colors-container-s);
+  font-family: var(--font-family-base);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-cashback-intro-card {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 56px var(--spacing-24) var(--spacing-16);
+  border-radius: 16px;
+  background: var(--bg-colors-container-p);
+}
+
+.scr-cashback-intro-headline {
+  margin: 0 0 96px;
+  font-size: 24px;
+  line-height: 44px;
+  font-weight: var(--font-weight-bold);
+  text-align: center;
+}
+
+.scr-cashback-intro-accent {
+  color: var(--primary-colors-900);
+}
+
+.scr-cashback-intro-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+}
+
+.scr-cashback-intro-step {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-16);
+}
+
+.scr-cashback-intro-step-icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-infinity);
+  background: var(--primary-colors-50);
+  color: var(--primary-colors-900);
+}
+
+.scr-cashback-intro-step-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.scr-cashback-intro-step-title {
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-cashback-intro-step-sub {
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-sub-text);
+}
+
+/* The Figma CTA is a muted grey pill (bg #F1F1F1, text #7C7C7C) — none of
+   the DS Button variants (primary/secondary/outline) match that palette,
+   so the primary variant is reused structurally and reskinned here. */
+.scr-cashback-intro-cta.ds-button {
+  margin-top: auto;
+  background: var(--bg-colors-container-s);
+  color: var(--typography-colors-sub-text);
+}
+.scr-cashback-intro-cta.ds-button:active {
+  background: var(--stroke-colors-default);
+}

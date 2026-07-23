@@ -1,0 +1,29 @@
+/* Back-arrow header — 44px white bar, bottom hairline, 16px side padding.
+   Figma "Telegram header" instance overridden with back-arrow + title
+   (552:3126 / 552:3115, both x=0 y=32 w=360 h=44 relative to the frame). */
+.scr-plans-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-16);
+  height: 44px;
+  padding: 0 var(--spacing-16);
+  background: var(--bg-colors-container-p);
+  border-bottom: 1px solid var(--stroke-colors-default);
+}
+
+.scr-plans-back {
+  display: inline-flex;
+  flex: none;
+  color: var(--base-color-black);
+}
+
+.scr-plans-headtitle {
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}

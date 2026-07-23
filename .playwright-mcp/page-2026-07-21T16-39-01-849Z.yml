@@ -1,0 +1,28 @@
+- generic [ref=f43e3]:
+  - banner [ref=f43e4]:
+    - button "Back" [ref=f43e5] [cursor=pointer]
+    - generic [ref=f43e9]: Checkout
+  - main [ref=f43e10]:
+    - generic [ref=f43e21]:
+      - generic [ref=f43e22]:
+        - generic [ref=f43e23]:
+          - generic [ref=f43e24]: Selected plan
+          - generic [ref=f43e25]:
+            - text: Silver
+            - generic [ref=f43e26]: / 1 month
+        - button "Change plan" [ref=f43e27] [cursor=pointer]
+      - generic [ref=f43e29]:
+        - generic [ref=f43e30]:
+          - generic [ref=f43e31]: Use earning balance
+          - switch "Use earning balance" [ref=f43e32] [cursor=pointer]
+        - generic [ref=f43e34]:
+          - generic [ref=f43e35]: "Available :"
+          - generic [ref=f43e36]: $ 12.50
+      - generic [ref=f43e38]:
+        - generic [ref=f43e39]: Discount code
+        - textbox "Enter code ( optional )" [ref=f43e40]
+      - generic [ref=f43e41]:
+        - generic [ref=f43e42]: Total payable
+        - generic [ref=f43e43]: $ 49.00
+  - contentinfo [ref=f43e44]:
+    - button "Review order" [ref=f43e45] [cursor=pointer]

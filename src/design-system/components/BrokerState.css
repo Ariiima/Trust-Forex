@@ -1,0 +1,73 @@
+/* BrokerState — broker status card (Figma "broker state", 873:790, 272x60).
+   White bordered card: a coloured dot + coloured title on the first row, a grey
+   caption underneath. The 'cashback-active' variant adds a right-aligned value. */
+.ds-broker {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-small);
+  background: var(--bg-colors-container-p);
+  border: 1px solid var(--stroke-colors-default);
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-regular);
+}
+
+.ds-broker-head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.ds-broker-dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-infinity);
+}
+
+.ds-broker-title {
+  font-size: 12px; /* type-text-xs */
+  line-height: 24px;
+}
+
+.ds-broker-sub {
+  font-size: 10px; /* type-text-xs-10 */
+  line-height: 20px;
+  color: var(--typography-colors-sub-text);
+}
+
+.ds-broker-sub-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ds-broker-value {
+  font-size: 12px; /* type-text-xs */
+  line-height: 24px;
+  color: var(--typography-colors-main-text);
+}
+
+/* variant — dot + title colour */
+.ds-broker-no-account .ds-broker-dot {
+  background: #d9d9d9; /* neutral placeholder grey (no exact token) */
+}
+.ds-broker-no-account .ds-broker-title {
+  color: var(--typography-colors-main-text);
+}
+
+.ds-broker-waiting-for-deposit .ds-broker-dot {
+  background: var(--state-colors-danger);
+}
+.ds-broker-waiting-for-deposit .ds-broker-title {
+  color: var(--state-colors-danger);
+}
+
+.ds-broker-cashback-active .ds-broker-dot {
+  background: var(--state-colors-success);
+}
+.ds-broker-cashback-active .ds-broker-title {
+  color: var(--state-colors-success);
+}

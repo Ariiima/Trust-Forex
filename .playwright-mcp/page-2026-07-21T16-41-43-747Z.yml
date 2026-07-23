@@ -1,0 +1,27 @@
+- generic [ref=f45e3]:
+  - banner [ref=f45e4]:
+    - generic [ref=f45e5]:
+      - button "Back" [ref=f45e6] [cursor=pointer]
+      - generic [ref=f45e10]: Payment
+  - main [ref=f45e15]:
+    - generic [ref=f45e27]:
+      - generic [ref=f45e28]:
+        - paragraph [ref=f45e29]: Selected currency
+        - generic [ref=f45e30]:
+          - generic [ref=f45e32]:
+            - generic [ref=f45e33]: BTC
+            - generic [ref=f45e34]: Bitcoin
+          - button "Change currency" [ref=f45e35] [cursor=pointer]
+      - generic [ref=f45e36]:
+        - generic [ref=f45e37]:
+          - heading "Select network" [level=2] [ref=f45e38]
+          - button "Network info" [ref=f45e39] [cursor=pointer]
+        - generic [ref=f45e43]:
+          - button "BNB Smart Chain (BEP20)" [pressed] [ref=f45e44] [cursor=pointer]
+          - button "Tron (TRC20)" [ref=f45e49] [cursor=pointer]
+          - button "Ethereum (ERC20)" [ref=f45e53] [cursor=pointer]
+          - button "Polygon (POL)" [ref=f45e57] [cursor=pointer]
+          - button "Avalanche C-Chain" [ref=f45e61] [cursor=pointer]
+          - button "Solana (SOL)" [ref=f45e65] [cursor=pointer]
+  - contentinfo [ref=f45e69]:
+    - button "Continue" [ref=f45e70] [cursor=pointer]

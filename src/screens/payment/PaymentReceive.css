@@ -1,0 +1,324 @@
+/* =====================================================================
+   Payment — receive (QR + wallet address) — /payment/receive
+   Geometry & colours from Figma node 1102-10506 (canonical "Address QR"
+   state) plus the 1108-12144 / 1108-12253 modal node trees. Consumes the DS
+   ProgressBar, BottomSheet, Button, Icon; the sheets are reskinned via the
+   className extension point exactly like PaymentCurrency's "Change
+   currency" sheet (16/16/0/0 radius, no drag handle, 16/16/16/36 padding) —
+   the DS BottomSheet's default handle/20px-radius/8·16·24 padding doesn't
+   match this design.
+   ===================================================================== */
+
+.scr-receive {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-colors-container-s); /* #F1F1F1 */
+  font-family: var(--font-family-base);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-receive-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  padding: var(--spacing-16);
+}
+
+.scr-receive-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  padding: var(--spacing-16) var(--spacing-16) 24px; /* bottom pad is 24, not 16 — 1102:10519 */
+  border-radius: 16px; /* no named radius token matches (scale jumps 12 -> 20) */
+  background: var(--bg-colors-container-p);
+}
+
+/* ---- Warning banner (1206:4618) ---------------------------------------- */
+.scr-receive-warning {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* no spacing-10 token */
+  padding: 10px 16px 10px 12px; /* asymmetric L/R padding per node JSON */
+  border-radius: var(--radius-small);
+  background: var(--state-colors-danger-bg);
+  color: var(--state-colors-danger); /* colours the alert-triangle glyph */
+}
+
+.scr-receive-warning svg {
+  flex: none;
+}
+
+.scr-receive-warning-text {
+  flex: 1 1 auto;
+  margin: 0;
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}
+
+/* ---- Main content stack (1104:10985, gap 24) --------------------------- */
+.scr-receive-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+}
+
+/* ---- QR block: tabs + QR + rows (1104:10983, gap 24) ------------------- */
+.scr-receive-qrblock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+}
+
+.scr-receive-tabs {
+  display: flex;
+  gap: var(--spacing-12);
+}
+
+.scr-receive-tab {
+  flex: 1 1 0;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 1px solid var(--stroke-colors-default);
+  border-radius: var(--radius-small);
+  background: var(--bg-colors-container-p);
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-receive-tab-active {
+  border-color: var(--primary-colors-900);
+  background: var(--primary-colors-900);
+  color: var(--base-color-white);
+}
+
+.scr-receive-qr {
+  display: block;
+  margin: 0 auto;
+  width: 148px;
+  height: 148px;
+}
+
+.scr-receive-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+.scr-receive-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-12);
+  min-height: 24px;
+}
+
+.scr-receive-row-label {
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-sub-text);
+  white-space: nowrap;
+}
+
+.scr-receive-row-value {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+  text-align: right;
+}
+
+.scr-receive-copy {
+  display: inline-flex;
+  flex: none;
+  color: var(--state-colors-info);
+}
+
+/* ---- Memo-required box (1145:1345) ------------------------------------- */
+.scr-receive-memo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px; /* no spacing-10 token */
+  padding: 10px 16px 10px 12px; /* asymmetric L/R padding per node JSON */
+  border: 1px solid var(--stroke-colors-default);
+  border-radius: var(--radius-small);
+}
+
+.scr-receive-memo-label {
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-sub-text);
+}
+
+/* ---- "Or pay with connecting wallet" (1104:10984) ----------------------- */
+.scr-receive-connect {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+}
+
+.scr-receive-divider-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+}
+
+.scr-receive-divider-line {
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--stroke-colors-default);
+}
+
+.scr-receive-divider-text {
+  flex: none;
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-sub-text);
+  white-space: nowrap;
+}
+
+.scr-receive-wallets {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-16);
+}
+
+.scr-receive-wallet-btn {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 1px solid var(--stroke-colors-default);
+  border-radius: var(--radius-medium);
+  background: var(--bg-colors-container-p);
+}
+
+.scr-receive-wallet-btn img {
+  display: block;
+}
+
+/* ---- Status BottomSheets (1108-12144 incomplete / 1108-12253 confirmed)
+   Sheet: 16/16/0/0 corner radius, no drag handle, 16/16/16/36 padding,
+   32px gap between the content block and the CTA — reskinned via the
+   className extension point (BottomSheet.tsx merges it onto .ds-sheet). */
+.ds-sheet.scr-receive-sheet {
+  padding: var(--spacing-16) var(--spacing-16) 36px;
+  border-radius: 16px 16px 0 0;
+}
+.scr-receive-sheet .ds-sheet-handle {
+  display: none;
+}
+
+.scr-receive-sheet-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-32);
+}
+
+.scr-receive-sheet-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+}
+
+.scr-receive-sheet-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* no spacing-10 token */
+  padding: 12px 16px 12px 12px; /* asymmetric L/R padding per node JSON */
+  border-radius: var(--radius-small);
+}
+
+.scr-receive-sheet-banner-warn {
+  background: var(--state-colors-danger-bg);
+}
+.scr-receive-sheet-banner-warn .scr-receive-sheet-banner-icon {
+  color: var(--state-colors-danger);
+}
+
+.scr-receive-sheet-banner-success {
+  background: var(--state-colors-success-bg);
+}
+.scr-receive-sheet-banner-success .scr-receive-sheet-banner-icon {
+  color: var(--state-colors-success);
+}
+
+.scr-receive-sheet-banner-icon {
+  flex: none;
+}
+
+.scr-receive-sheet-banner-text {
+  flex: 1 1 auto;
+  margin: 0;
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-receive-sheet-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+
+.scr-receive-sheet-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 10px var(--spacing-16);
+  border: 1px solid var(--stroke-colors-default);
+  border-radius: var(--radius-small);
+  background: var(--bg-colors-container-p);
+}
+
+.scr-receive-sheet-row-label {
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-sub-text);
+}
+
+.scr-receive-sheet-row-value {
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-receive-sheet-row-highlight {
+  border-color: var(--state-colors-danger);
+}
+.scr-receive-sheet-row-value-highlight {
+  color: var(--state-colors-danger);
+}
+
+/* "Pay remaining amount" CTA — amber, not a DS Button variant; overridden
+   via the className extension point (same pattern as the sheet reskins). */
+.ds-button.scr-receive-pay-btn {
+  background: var(--state-colors-danger);
+  color: var(--base-color-white);
+}
+.ds-button.scr-receive-pay-btn:active {
+  opacity: 0.85;
+}

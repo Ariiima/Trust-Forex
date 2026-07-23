@@ -1,0 +1,66 @@
+- generic [ref=f31e3]:
+  - banner [ref=f31e4]:
+    - button "Back" [ref=f31e5] [cursor=pointer]
+    - generic [ref=f31e9]: xm broker
+  - main [ref=f31e10]:
+    - generic [ref=f31e11]:
+      - generic [ref=f31e12]:
+        - img "XM" [ref=f31e13]
+        - generic [ref=f31e14]: XM
+      - generic [ref=f31e15]: Popular
+    - generic [ref=f31e16]:
+      - generic [ref=f31e26]:
+        - heading "Activate your cashback" [level=2] [ref=f31e133]
+        - paragraph [ref=f31e28]: Fund your registered broker account, then return to submit it for review.
+      - generic [ref=f31e29]:
+        - button "Go to broker" [ref=f31e134] [cursor=pointer]
+        - generic [ref=f31e36]:
+          - generic [ref=f31e37]: referral code
+          - generic [ref=f31e38]:
+            - generic [ref=f31e39]: "45789632"
+            - button "Copy referral code" [ref=f31e40] [cursor=pointer]
+    - generic [ref=f31e44]:
+      - heading "broker details" [level=3] [ref=f31e45]
+      - generic [ref=f31e46]:
+        - generic [ref=f31e47]: Regulation
+        - generic [ref=f31e51]: FCA, CySEC
+      - generic [ref=f31e52]:
+        - generic [ref=f31e53]: Trading Platform
+        - generic [ref=f31e57]: MT4 / MT5
+      - generic [ref=f31e58]:
+        - generic [ref=f31e59]: Deposit Bonus
+        - generic [ref=f31e65]: Up to 50%
+      - generic [ref=f31e66]:
+        - generic [ref=f31e67]: Spread Level
+        - generic [ref=f31e71]: Low
+      - generic [ref=f31e72]:
+        - generic [ref=f31e73]: Leverage
+        - generic [ref=f31e78]: Up to 1:500
+      - generic [ref=f31e79]:
+        - generic [ref=f31e80]: Account Types
+        - generic [ref=f31e85]: Standard / ECN
+      - generic [ref=f31e86]:
+        - generic [ref=f31e87]: Execution Speed
+        - generic [ref=f31e91]: Fast
+      - generic [ref=f31e92]:
+        - generic [ref=f31e93]: Withdrawal Speed
+        - generic [ref=f31e97]: Fast
+  - contentinfo [ref=f31e98]:
+    - button "i made a deposit" [active] [ref=f31e135] [cursor=pointer]
+  - generic [ref=f31e138]:
+    - generic [ref=f31e139]:
+      - generic [ref=f31e140]:
+        - generic [ref=f31e141]:
+          - generic [ref=f31e142]:
+            - heading "i made a deposit" [level=2] [ref=f31e143]
+            - button "Close" [ref=f31e144] [cursor=pointer]
+          - paragraph [ref=f31e148]: great! please confirm your deposit so we can review your account
+        - separator [ref=f31e149]
+      - generic [ref=f31e150]:
+        - generic [ref=f31e155]:
+          - generic [ref=f31e156]: Email address
+          - generic [ref=f31e157]: trustforex.info@gmail.com
+        - generic [ref=f31e162]:
+          - generic [ref=f31e163]: user ID
+          - generic [ref=f31e164]: nimanm24
+    - button "i made a deposit" [ref=f31e165] [cursor=pointer]

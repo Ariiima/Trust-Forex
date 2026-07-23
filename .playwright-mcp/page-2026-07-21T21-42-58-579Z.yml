@@ -1,0 +1,112 @@
+- generic [ref=f3e3]:
+  - group "Subscription state" [ref=f3e4]:
+    - button "active" [ref=f3e5] [cursor=pointer]
+    - button "expired" [ref=f3e6] [cursor=pointer]
+    - button "none" [ref=f3e7] [cursor=pointer]
+  - generic [ref=f3e8]:
+    - generic [ref=f3e9]:
+      - generic [ref=f3e15]:
+        - generic [ref=f3e16]: "22"
+        - generic [ref=f3e17]: Days left
+      - generic [ref=f3e18]:
+        - generic [ref=f3e19]:
+          - generic [ref=f3e20]: Subscription status
+          - generic [ref=f3e21]: Active
+        - generic [ref=f3e24]:
+          - generic [ref=f3e25]: Current plan
+          - generic [ref=f3e26]:
+            - generic [ref=f3e27]: Silver
+            - generic [ref=f3e28]: / 1 Month
+        - generic [ref=f3e29]:
+          - generic [ref=f3e30]: Expires on
+          - generic [ref=f3e31]: Aug 24,2026
+    - generic [ref=f3e32]:
+      - button "Join VIP channel" [ref=f3e33] [cursor=pointer]
+      - button "Upgrade" [ref=f3e34] [cursor=pointer]
+  - generic [ref=f3e35]:
+    - generic [ref=f3e37]:
+      - generic [ref=f3e38]: Special offer
+      - generic [ref=f3e39]: Summer discount
+      - generic [ref=f3e40]: Get 20% OFF on 12 month plan
+    - generic [ref=f3e46]:
+      - generic [ref=f3e47]: Invite & earn
+      - generic [ref=f3e48]: Invite friends
+      - generic [ref=f3e49]: Get 10% from thier deposits
+    - generic [ref=f3e55]:
+      - generic [ref=f3e56]: Stay active
+      - generic [ref=f3e57]: Complete tasks
+      - generic [ref=f3e58]: Win rewards & get amazing prizes
+  - generic [ref=f3e63]:
+    - generic [ref=f3e64]:
+      - heading "Signal performance" [level=2] [ref=f3e65]
+      - generic [ref=f3e66]:
+        - button "TP1 RR 1:0.5" [ref=f3e67] [cursor=pointer]:
+          - generic [ref=f3e68]: TP1
+          - generic [ref=f3e69]: RR 1:0.5
+        - button "TP2 RR 1:1" [ref=f3e71] [cursor=pointer]:
+          - generic [ref=f3e72]: TP2
+          - generic [ref=f3e73]: RR 1:1
+        - button "TP3 RR 1:2" [ref=f3e75] [cursor=pointer]:
+          - generic [ref=f3e76]: TP3
+          - generic [ref=f3e77]: RR 1:2
+        - button "TP4 RR 1:3" [ref=f3e79] [cursor=pointer]:
+          - generic [ref=f3e80]: TP4
+          - generic [ref=f3e81]: RR 1:3
+    - generic [ref=f3e82]:
+      - generic [ref=f3e83]: • Last 3 months overview
+      - generic [ref=f3e84]:
+        - generic [ref=f3e85]:
+          - generic [ref=f3e86]: Total signals
+          - generic [ref=f3e87]: "80"
+        - generic [ref=f3e88]:
+          - generic [ref=f3e89]: TP1 reached
+          - generic [ref=f3e90]: "50"
+        - generic [ref=f3e91]:
+          - generic [ref=f3e92]: TP1 hit rate
+          - generic [ref=f3e93]: 62.0%
+    - generic [ref=f3e100]:
+      - generic [ref=f3e101]: September 2026
+      - generic [ref=f3e102]:
+        - generic [ref=f3e103]: Signals
+        - generic [ref=f3e104]: "36"
+      - generic [ref=f3e105]:
+        - generic [ref=f3e106]: TP1 reached
+        - generic [ref=f3e107]: "12"
+      - generic [ref=f3e108]:
+        - generic [ref=f3e109]: TP1 hit rate
+        - generic [ref=f3e110]: 65.4%
+    - generic [ref=f3e111]:
+      - button "Weekly" [ref=f3e112] [cursor=pointer]
+      - button "Monthly" [ref=f3e113] [cursor=pointer]
+      - button "Yearly" [ref=f3e114] [cursor=pointer]
+  - generic [ref=f3e115]:
+    - generic [ref=f3e116]:
+      - heading "Choose your plan" [level=2] [ref=f3e117]
+      - button "Plan info" [ref=f3e118] [cursor=pointer]
+    - button "Silver 200.00 / 1 month" [ref=f3e122] [cursor=pointer]:
+      - generic [ref=f3e123]:
+        - generic [ref=f3e124]: Silver
+        - generic [ref=f3e126]:
+          - generic [ref=f3e129]: "200.00"
+          - generic [ref=f3e130]: / 1 month
+    - button "Gold Most popular 550.00 / 3 months" [ref=f3e131] [cursor=pointer]:
+      - generic [ref=f3e132]:
+        - generic [ref=f3e133]:
+          - generic [ref=f3e134]: Gold
+          - generic [ref=f3e135]: Most popular
+        - generic [ref=f3e136]:
+          - generic [ref=f3e139]: "550.00"
+          - generic [ref=f3e140]: / 3 months
+    - button "Diamond Best value 1700.00 / 12 months" [ref=f3e141] [cursor=pointer]:
+      - generic [ref=f3e142]:
+        - generic [ref=f3e143]:
+          - generic [ref=f3e144]: Diamond
+          - generic [ref=f3e145]: Best value
+        - generic [ref=f3e146]:
+          - generic [ref=f3e149]: "1700.00"
+          - generic [ref=f3e150]: / 12 months
+  - navigation "Primary" [ref=f3e152]:
+    - button "Home" [ref=f3e153] [cursor=pointer]
+    - button "Cashback" [ref=f3e158] [cursor=pointer]
+    - button "Referral" [ref=f3e162] [cursor=pointer]
+    - button "Earning" [ref=f3e169] [cursor=pointer]

@@ -1,0 +1,195 @@
+/* Plan card — Figma 552:3126 "Frame 2147229926/27/28".
+   328x264 card: r12, 1px border (default grey / highlighted blue),
+   12px padding, 12px vertical rhythm between header/divider/features/button
+   (header→divider is 8px — see the negative margin below). */
+.scr-plans-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  box-sizing: border-box;
+  padding: var(--spacing-12);
+  border-radius: var(--radius-medium);
+  border: 1px solid var(--stroke-colors-default);
+  background: var(--bg-colors-container-p);
+}
+
+.scr-plans-card--highlight {
+  border-color: var(--primary-colors-900);
+}
+
+/* ---- shared header block (badge + name/price) ------------------------ */
+.scr-plans-headerblock {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  margin-bottom: -4px; /* 12px card gap - 4px = 8px gap before the divider */
+}
+
+.scr-plans-badge {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.scr-plans-badge--sm {
+  width: 48px;
+  height: 48px;
+}
+
+.scr-plans-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.scr-plans-namerow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-8);
+  width: 100%;
+}
+
+.scr-plans-name {
+  font-family: var(--font-family-base);
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-plans-pricerow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-plans-price {
+  font-family: var(--font-family-base);
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-plans-duration {
+  margin-left: var(--spacing-4);
+  font-family: var(--font-family-base);
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-sub-text);
+}
+
+/* ---- tag pill (Most popular / Best value) ----------------------------- */
+.scr-plans-tag {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 var(--spacing-8);
+  border-radius: var(--radius-infinity);
+  font-family: var(--font-family-base);
+  font-size: 10px;
+  line-height: 20px;
+  font-weight: var(--font-weight-regular);
+  white-space: nowrap;
+}
+
+.scr-plans-tag--popular {
+  background: var(--state-colors-danger-bg);
+  color: var(--state-colors-danger);
+}
+
+/* Diamond's purple has no design-system token — Figma fill is
+   rgba(111,88,174,.08) on white; text is the solid rgba(111,88,174,1). */
+.scr-plans-tag--value {
+  background: rgba(111, 88, 174, 0.08);
+  color: #6f58ae;
+}
+
+/* ---- divider ----------------------------------------------------------- */
+.scr-plans-divider {
+  border-top: 1px dashed var(--stroke-colors-default);
+}
+
+/* ---- feature checklist -------------------------------------------------- */
+.scr-plans-features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  color: var(--base-color-black);
+}
+
+.scr-plans-feature {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  min-height: 24px;
+}
+
+.scr-plans-feature-label {
+  flex: 1 1 auto;
+  font-family: var(--font-family-base);
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-sub-text);
+}
+
+.scr-plans-feature-value {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 var(--spacing-4);
+  font-family: var(--font-family-base);
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--state-colors-info);
+}
+
+/* Continue button — DS Button `outline` already matches the default (grey
+   border + main-text label); Gold's highlighted state re-colours it blue. */
+.scr-plans-continue--highlight.ds-button-outline {
+  border-color: var(--primary-colors-900);
+  color: var(--primary-colors-900);
+}
+.scr-plans-continue--highlight.ds-button-outline:active {
+  background: var(--primary-colors-50);
+}
+
+/* ---- compact variant (Checkout "Change plan" BottomSheet, 748:3736 —
+   no JSON; geometry approximated from the reference PNG: ~68px row height
+   = 48px badge + 10px vertical padding, matched against measured borders). */
+.scr-plans-compact {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px var(--spacing-12);
+  border-radius: var(--radius-medium);
+  border: 1px solid var(--stroke-colors-default);
+  background: var(--bg-colors-container-p);
+  text-align: left;
+  cursor: pointer;
+}
+
+.scr-plans-compact--selected {
+  border-color: var(--primary-colors-900);
+}
+
+.scr-plans-compact-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}

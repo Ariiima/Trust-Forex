@@ -1,0 +1,150 @@
+/* =====================================================================
+   Cashback history — /cashback/history (Figma 881:1391).
+   Back-arrow header (44px, matches BrokerDetail/PlansHeader) + a white
+   rounded card holding a decorative scroll rail and the payout row list.
+   ===================================================================== */
+
+.scr-history {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-colors-container-s);
+  font-family: var(--font-family-base);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-history-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-16);
+  height: 44px;
+  padding: 0 var(--spacing-16);
+  background: var(--bg-colors-container-p);
+  border-bottom: 1px solid var(--stroke-colors-default);
+}
+
+.scr-history-back {
+  display: inline-flex;
+  flex: none;
+  color: var(--base-color-black);
+}
+
+.scr-history-headtitle {
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-history-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-16);
+}
+
+.scr-history-card {
+  flex: 1 1 auto;
+  display: flex;
+  gap: var(--spacing-8);
+  box-sizing: border-box;
+  padding: var(--spacing-8) var(--spacing-16) var(--spacing-16);
+  border-radius: 16px; /* between radius-medium(12) and radius-large(20), matches ds-cashback */
+  background: var(--bg-colors-container-p);
+}
+
+/* Decorative scroll rail (static mock, not synced to real scroll position). */
+.scr-history-scrollbar {
+  position: relative;
+  flex: none;
+  align-self: stretch;
+  width: 8px;
+  border-radius: var(--radius-infinity);
+  background: var(--bg-colors-container-s);
+}
+.scr-history-scrollbar-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 200px;
+  border-radius: var(--radius-infinity);
+  background: var(--stroke-colors-default);
+}
+
+.scr-history-list {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  list-style: none;
+}
+
+.scr-history-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: var(--spacing-12) var(--spacing-8);
+  border: 1px solid var(--stroke-colors-default);
+  border-radius: var(--radius-medium);
+}
+
+.scr-history-row-id {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  min-width: 0;
+}
+
+.scr-history-row-logo {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-infinity);
+  object-fit: cover;
+}
+
+.scr-history-row-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.scr-history-row-name {
+  font-size: 12px;
+  line-height: 24px;
+  color: var(--typography-colors-main-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scr-history-row-date {
+  font-size: 10px;
+  line-height: 20px;
+  color: var(--typography-colors-sub-text);
+}
+
+.scr-history-row-nums {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.scr-history-row-rate {
+  font-size: 10px;
+  line-height: 20px;
+  color: var(--typography-colors-main-text);
+}
+
+.scr-history-row-amount {
+  font-size: 10px;
+  line-height: 20px;
+  color: var(--state-colors-success);
+}

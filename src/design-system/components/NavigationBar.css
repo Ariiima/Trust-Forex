@@ -1,0 +1,16 @@
+/* NavigationBar — bottom tab bar (Figma "Navigation bar", 1029:3889).
+   A floating white pill (328 wide inside a 360 frame → 16px side margins),
+   64px tall, fully rounded, with a soft grey drop shadow. Holds four tabs
+   distributed across the pill; the active one expands to a black label pill. */
+.ds-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  height: 64px;
+  margin: 0 var(--spacing-16);
+  padding: var(--spacing-8);
+  background: var(--bg-colors-container-p);
+  border-radius: var(--radius-infinity);
+  box-shadow: 0 1px 10px rgba(228, 228, 228, 0.64);
+}

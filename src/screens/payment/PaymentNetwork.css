@@ -1,0 +1,186 @@
+/* =====================================================================
+   Payment — select network — /payment/network
+   Geometry & colours from Figma nodes 552-3122 (base picker) and 788-3192
+   (tooltip callout state). Consumes the DS ProgressBar, Button, Icon.
+   ===================================================================== */
+
+.scr-payment-network {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-colors-container-s); /* #F1F1F1 */
+  font-family: var(--font-family-base);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-payment-network-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  padding: var(--spacing-16);
+}
+
+.scr-payment-network-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  padding: var(--spacing-16);
+  border-radius: 16px; /* no named radius token matches (scale jumps 12 -> 20) */
+  background: var(--bg-colors-container-p);
+}
+
+/* ---- Selected-currency summary (779:2555) ------------------------------ */
+.scr-payment-network-selected {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+.scr-payment-network-label {
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-sub-text);
+}
+
+.scr-payment-network-selected-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-12);
+  padding: var(--spacing-8) var(--spacing-16) var(--spacing-8) var(--spacing-12);
+  border: 1px solid var(--stroke-colors-default);
+  border-radius: var(--radius-medium);
+}
+
+.scr-payment-network-selected-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  min-width: 0;
+}
+
+.scr-payment-network-selected-icon {
+  flex: none;
+}
+
+.scr-payment-network-selected-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.scr-payment-network-selected-symbol {
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-payment-network-selected-name {
+  font-size: 10px;
+  line-height: 20px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-sub-text);
+}
+
+.scr-payment-network-change-btn {
+  flex: none;
+  height: 32px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--stroke-colors-default);
+  border-radius: var(--radius-small);
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+  white-space: nowrap;
+}
+
+/* ---- Select network (781:3020 head + 1108:11979 list) ------------------ */
+.scr-payment-network-select {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+
+.scr-payment-network-select-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scr-payment-network-select-title {
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-payment-network-info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--base-color-black);
+  opacity: 0.72;
+}
+
+.scr-payment-network-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+
+/* ---- Dismissible tooltip (788-3192, node 1102:10022) -------------------
+   Positioned absolute within .select-head using exact Figma offsets:
+   tooltip left 14px / top -69px (over the row above), pointer left 260px
+   flush against the tooltip's bottom edge, centred on the info button. */
+.scr-payment-network-tooltip-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 39;
+  background: transparent;
+  cursor: default;
+}
+
+.scr-payment-network-tooltip {
+  position: absolute;
+  left: 14px;
+  top: -69px;
+  width: 296px;
+  box-sizing: border-box;
+  z-index: 40;
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-small);
+  background: var(--base-color-black);
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--base-color-white);
+}
+
+.scr-payment-network-tooltip-arrow {
+  position: absolute;
+  left: 260px;
+  top: 100%;
+  width: 20px;
+  height: 12px;
+  background: var(--base-color-black);
+  opacity: 0.24;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+.scr-payment-network-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  padding: var(--spacing-8) var(--spacing-16) var(--spacing-16);
+  background: var(--bg-colors-container-s);
+}

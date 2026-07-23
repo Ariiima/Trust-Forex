@@ -1,0 +1,31 @@
+- generic [ref=f21e3]:
+  - banner [ref=f21e4]:
+    - generic [ref=f21e5]:
+      - button "Back" [ref=f21e6] [cursor=pointer]
+      - generic [ref=f21e10]: Payment
+  - main [ref=f21e15]:
+    - generic [ref=f21e27]:
+      - heading "Select currency" [level=2] [ref=f21e28]
+      - generic [ref=f21e29]:
+        - button "BTC Bitcoin" [pressed] [ref=f21e30] [cursor=pointer]:
+          - generic [ref=f21e32]:
+            - generic [ref=f21e33]: BTC
+            - generic [ref=f21e34]: Bitcoin
+        - button "USDT Tether" [ref=f21e37] [cursor=pointer]:
+          - generic [ref=f21e39]:
+            - generic [ref=f21e40]: USDT
+            - generic [ref=f21e41]: Tether
+        - button "SOL Solana" [ref=f21e43] [cursor=pointer]:
+          - generic [ref=f21e45]:
+            - generic [ref=f21e46]: SOL
+            - generic [ref=f21e47]: Solana
+        - button "USDC USD coin" [ref=f21e49] [cursor=pointer]:
+          - generic [ref=f21e51]:
+            - generic [ref=f21e52]: USDC
+            - generic [ref=f21e53]: USD coin
+        - button "ETH Ethereum" [ref=f21e55] [cursor=pointer]:
+          - generic [ref=f21e57]:
+            - generic [ref=f21e58]: ETH
+            - generic [ref=f21e59]: Ethereum
+  - contentinfo [ref=f21e61]:
+    - button "Continue" [ref=f21e62] [cursor=pointer]

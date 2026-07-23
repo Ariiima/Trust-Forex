@@ -1,0 +1,76 @@
+/* Button — Figma "Button" component (Color=Primary/Secondary).
+   Radius 8 (radius-small), text 14/w400, most CTAs are 44px tall. */
+.ds-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-8);
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  border-radius: var(--radius-small);
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-regular);
+  font-size: 14px; /* type-text-sm */
+  line-height: 28px;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.ds-button-full {
+  width: 100%;
+}
+
+/* size — height + horizontal padding */
+.ds-button-small {
+  height: 40px;
+  padding: 0 var(--spacing-16);
+}
+.ds-button-medium {
+  height: 44px;
+  padding: 0 var(--spacing-16);
+}
+.ds-button-large {
+  height: 48px;
+  padding: 0 var(--spacing-20);
+}
+
+/* variant — colour */
+.ds-button-primary {
+  background: var(--primary-colors-900);
+  color: var(--base-color-white);
+}
+.ds-button-primary:active {
+  background: var(--primary-colors-800);
+}
+
+.ds-button-secondary {
+  background: var(--primary-colors-50);
+  color: var(--primary-colors-900);
+}
+.ds-button-secondary:active {
+  background: var(--primary-colors-100);
+}
+
+.ds-button-outline {
+  background: transparent;
+  border-color: var(--stroke-colors-default);
+  color: var(--typography-colors-main-text);
+}
+.ds-button-outline:active {
+  background: var(--bg-colors-container-s);
+}
+
+.ds-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ds-button-icon {
+  display: inline-flex;
+  flex: none;
+}
+
+.ds-button-label {
+  display: inline-block;
+}

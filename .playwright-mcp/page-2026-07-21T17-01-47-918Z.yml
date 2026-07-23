@@ -1,0 +1,39 @@
+- generic [ref=f53e3]:
+  - banner [ref=f53e4]:
+    - generic [ref=f53e5]:
+      - button "Back" [ref=f53e6] [cursor=pointer]
+      - generic [ref=f53e10]: Payment
+  - main [ref=f53e11]:
+    - generic [ref=f53e24]:
+      - paragraph [ref=f53e28]: Verify the network, wallet address, and exact amount before making the payment
+      - generic [ref=f53e29]:
+        - generic [ref=f53e30]:
+          - generic [ref=f53e31]:
+            - button "Address QR" [pressed] [ref=f53e32] [cursor=pointer]
+            - button "Payment QR" [ref=f53e33] [cursor=pointer]
+          - img "Payment QR code" [ref=f53e34]
+          - generic [ref=f53e35]:
+            - generic [ref=f53e36]:
+              - generic [ref=f53e37]: Currency (network)
+              - generic [ref=f53e38]: BNB(BEP-20)
+            - generic [ref=f53e39]:
+              - generic [ref=f53e40]: Amount to send
+              - generic [ref=f53e41]:
+                - text: 0.00350773 BNB
+                - button "Copy amount" [ref=f53e42] [cursor=pointer]
+            - generic [ref=f53e46]:
+              - generic [ref=f53e47]: Wallet address
+              - generic [ref=f53e48]:
+                - text: rhgrtg8184..........1vdrg485d
+                - button "Copy wallet address" [ref=f53e49] [cursor=pointer]
+        - generic [ref=f53e53]:
+          - generic [ref=f53e54]: Memo required
+          - generic [ref=f53e55]:
+            - text: "28442536"
+            - button "Copy memo" [ref=f53e56] [cursor=pointer]
+        - generic [ref=f53e60]:
+          - generic [ref=f53e61]: Or pay with connecting wallet
+          - generic [ref=f53e65]:
+            - button "WalletConnect" [ref=f53e66] [cursor=pointer]
+            - button "MetaMask" [ref=f53e67] [cursor=pointer]
+            - button "Other wallet" [ref=f53e68] [cursor=pointer]

@@ -1,0 +1,31 @@
+- generic [ref=f19e128]:
+  - banner [ref=f19e129]:
+    - button "Back" [ref=f19e130] [cursor=pointer]
+    - generic [ref=f19e134]: Checkout
+  - main [ref=f19e135]:
+    - generic [ref=f19e146]:
+      - generic [ref=f19e147]:
+        - generic [ref=f19e148]:
+          - generic [ref=f19e149]: Selected plan
+          - generic [ref=f19e150]:
+            - text: Silver
+            - generic [ref=f19e151]: / 1 month
+        - button "Change plan" [ref=f19e152] [cursor=pointer]
+      - generic [ref=f19e154]:
+        - generic [ref=f19e155]:
+          - generic [ref=f19e156]: Use earning balance
+          - switch "Use earning balance" [checked] [ref=f19e157] [cursor=pointer]
+        - generic [ref=f19e159]:
+          - generic [ref=f19e160]: "Available :"
+          - generic [ref=f19e161]: $ 12.50
+      - generic [ref=f19e163]:
+        - generic [ref=f19e164]: Discount code
+        - generic [ref=f19e175]:
+          - generic [ref=f19e176]: SUMMER12
+          - generic [ref=f19e177]: "-$4.50"
+          - button "Remove discount code" [ref=f19e178] [cursor=pointer]
+      - generic [ref=f19e166]:
+        - generic [ref=f19e167]: Total payable
+        - generic [ref=f19e168]: $ 32.00
+  - contentinfo [ref=f19e169]:
+    - button "Review order" [ref=f19e170] [cursor=pointer]

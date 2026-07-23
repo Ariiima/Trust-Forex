@@ -1,0 +1,53 @@
+- generic [ref=f24e3]:
+  - banner [ref=f24e4]:
+    - generic [ref=f24e5]:
+      - button "Back" [ref=f24e6] [cursor=pointer]
+      - generic [ref=f24e10]: Payment
+  - main [ref=f24e15]:
+    - generic [ref=f24e28]:
+      - paragraph [ref=f24e32]: Verify the network, wallet address, and exact amount before making the payment
+      - generic [ref=f24e33]:
+        - generic [ref=f24e34]:
+          - generic [ref=f24e35]:
+            - button "Address QR" [pressed] [ref=f24e36] [cursor=pointer]
+            - button "Payment QR" [ref=f24e37] [cursor=pointer]
+          - img "Payment QR code" [ref=f24e38]
+          - generic [ref=f24e39]:
+            - generic [ref=f24e40]:
+              - generic [ref=f24e41]: Currency (network)
+              - generic [ref=f24e42]: BNB(BEP-20)
+            - generic [ref=f24e43]:
+              - generic [ref=f24e44]: Amount to send
+              - generic [ref=f24e45]:
+                - text: 0.00350773 BNB
+                - button "Copy amount" [ref=f24e46] [cursor=pointer]
+            - generic [ref=f24e50]:
+              - generic [ref=f24e51]: Wallet address
+              - generic [ref=f24e52]:
+                - text: rhgrtg8184..........1vdrg485d
+                - button "Copy wallet address" [ref=f24e53] [cursor=pointer]
+        - generic [ref=f24e57]:
+          - generic [ref=f24e58]: Memo required
+          - generic [ref=f24e59]:
+            - text: "28442536"
+            - button "Copy memo" [ref=f24e60] [cursor=pointer]
+        - generic [ref=f24e64]:
+          - generic [ref=f24e65]: Or pay with connecting wallet
+          - generic [ref=f24e69]:
+            - button "WalletConnect" [ref=f24e70] [cursor=pointer]
+            - button "MetaMask" [ref=f24e71] [cursor=pointer]
+            - button "Other wallet" [ref=f24e72] [cursor=pointer]
+  - generic [ref=f24e75]:
+    - generic [ref=f24e76]:
+      - paragraph [ref=f24e81]: Your payment is incomplete. You must pay the remaining amount to continue.
+      - generic [ref=f24e82]:
+        - generic [ref=f24e83]:
+          - generic [ref=f24e84]: Amount to be paid
+          - generic [ref=f24e85]: 2.00 USD
+        - generic [ref=f24e86]:
+          - generic [ref=f24e87]: You paid
+          - generic [ref=f24e88]: "---"
+        - generic [ref=f24e89]:
+          - generic [ref=f24e90]: Remaining amount
+          - generic [ref=f24e91]: 1.43 USD
+    - button "Pay remaining amount" [ref=f24e92] [cursor=pointer]

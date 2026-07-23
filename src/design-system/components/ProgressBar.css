@@ -1,0 +1,60 @@
+/* ProgressBar — 3-node horizontal stepper (Figma "Progress bar", 1102:9734).
+   White card (r12, padding 12/16). Nodes are 24px circles:
+   done = solid green + white check; current = green ring + 16px green dot;
+   todo = grey ring + 16px grey dot. Connector fills green after a done step. */
+.ds-progress {
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--spacing-12) var(--spacing-16);
+  border-radius: var(--radius-medium);
+  background: var(--bg-colors-container-p);
+}
+
+.ds-progress-track {
+  display: flex;
+  align-items: center;
+}
+
+.ds-progress-line {
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--stroke-colors-default);
+}
+
+.ds-progress-line-filled {
+  background: var(--state-colors-success);
+}
+
+.ds-progress-dot {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-infinity);
+  border: 1px solid var(--stroke-colors-default);
+}
+
+.ds-progress-inner {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-infinity);
+  background: var(--stroke-colors-default);
+}
+
+/* current — green ring + green inner dot */
+.ds-progress-dot-current {
+  border-color: var(--state-colors-success);
+}
+.ds-progress-dot-current .ds-progress-inner {
+  background: var(--state-colors-success);
+}
+
+/* done — solid green + white check */
+.ds-progress-dot-done {
+  background: var(--state-colors-success);
+  border-color: var(--state-colors-success);
+  color: var(--base-color-white);
+}

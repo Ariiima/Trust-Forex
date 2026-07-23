@@ -1,0 +1,40 @@
+/* Shared header — 44px, white, 1px bottom border. Node: "Telegram header"
+   instance (565:1947 tree), Type: Color=Wight, overridden to "Payment". */
+.scr-payment-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+  padding: 0 var(--spacing-16);
+  background: var(--bg-colors-container-p);
+  border-bottom: 1px solid var(--stroke-colors-default);
+}
+
+.scr-payment-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-16);
+}
+
+.scr-payment-header-back {
+  display: inline-flex;
+  flex: none;
+  color: var(--base-color-black);
+}
+
+.scr-payment-header-title {
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-payment-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  color: var(--base-color-black);
+}

@@ -1,0 +1,71 @@
+- generic [ref=f54e3]:
+  - main [ref=f54e4]:
+    - generic [ref=f54e5]:
+      - generic [ref=f54e6]:
+        - generic [ref=f54e7]:
+          - generic [ref=f54e8]: total cashback
+          - generic [ref=f54e14]:
+            - generic [ref=f54e15]:
+              - generic [ref=f54e16]: $1.245.80
+              - generic [ref=f54e17]: all brokers
+            - generic [ref=f54e18]: +$45.00
+        - generic [ref=f54e25]:
+          - generic [ref=f54e26]:
+            - generic [ref=f54e27]: current state
+            - generic [ref=f54e28]: cashback rate
+          - generic [ref=f54e29]:
+            - generic [ref=f54e32]:
+              - generic [ref=f54e33]: gold plan
+              - generic [ref=f54e34]: 3 months
+            - generic [ref=f54e35]: 20%
+      - generic [ref=f54e36]:
+        - generic [ref=f54e37]: Standard
+        - generic [ref=f54e45]: Silver
+        - generic [ref=f54e53]: Gold
+        - generic [ref=f54e60]: Diamond
+      - generic [ref=f54e66]:
+        - button "Cashback history" [ref=f54e67] [cursor=pointer]
+        - button "Upgrade plan" [ref=f54e68] [cursor=pointer]
+    - region "Promotions" [ref=f54e69]:
+      - article [ref=f54e70]:
+        - generic [ref=f54e71]:
+          - generic [ref=f54e72]: Special Offer
+          - heading "Summer discount" [level=3] [ref=f54e73]
+          - paragraph [ref=f54e74]: get 20% OFF on 12 month plan
+      - article [ref=f54e80]:
+        - generic [ref=f54e81]:
+          - generic [ref=f54e82]: Invite & Earn
+          - heading "invite friends" [level=3] [ref=f54e83]
+          - paragraph [ref=f54e84]: get 10% from thier deposits
+      - article [ref=f54e90]:
+        - generic [ref=f54e91]:
+          - generic [ref=f54e92]: Stay Active
+          - heading "complete tasks" [level=3] [ref=f54e93]
+          - paragraph [ref=f54e94]: win rewards & get amazing prizes
+    - generic [ref=f54e100]:
+      - generic [ref=f54e101]: our brokers
+      - generic [ref=f54e107]:
+        - button "Exness Popular" [ref=f54e108] [cursor=pointer]:
+          - generic [ref=f54e109]:
+            - generic [ref=f54e110]: Exness
+            - generic [ref=f54e112]: Popular
+          - status [ref=f54e116]:
+            - generic [ref=f54e117]: no account
+            - generic [ref=f54e120]: Register To Start Earning Cashback
+        - button "XM" [ref=f54e121] [cursor=pointer]:
+          - status [ref=f54e128]:
+            - generic [ref=f54e129]: waiting for deposit
+            - generic [ref=f54e132]: Make Your First Deposit
+        - button "IC Markets deposit confirmed" [ref=f54e133] [cursor=pointer]:
+          - generic [ref=f54e134]: IC Markets
+          - generic [ref=f54e140]: deposit confirmed
+          - status [ref=f54e143]:
+            - generic [ref=f54e144]: cashback active
+            - generic [ref=f54e147]:
+              - generic [ref=f54e148]: Total Earned
+              - generic [ref=f54e149]: $85.00
+  - navigation "Primary" [ref=f54e151]:
+    - button "Home" [ref=f54e152] [cursor=pointer]
+    - button "Cashback" [ref=f54e156] [cursor=pointer]
+    - button "Referral" [ref=f54e161] [cursor=pointer]
+    - button "Earning" [ref=f54e168] [cursor=pointer]

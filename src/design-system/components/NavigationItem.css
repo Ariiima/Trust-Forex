@@ -1,0 +1,43 @@
+/* NavigationItem — a single tab in the bottom Navigation bar
+   (Figma "navigation items", state=default/Active). Height 48 in every state.
+   Active = black pill with white icon + 14px label; default = grey icon only. */
+.ds-navitem {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-8); /* row gap; active pill uses 6px via override below */
+  box-sizing: border-box;
+  height: 48px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--radius-infinity);
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-regular);
+  font-size: 14px; /* type-text-sm */
+  line-height: 28px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.ds-navitem-icon {
+  display: inline-flex;
+  flex: none;
+}
+
+.ds-navitem-label {
+  display: inline-block;
+}
+
+/* default — icon only, grey */
+.ds-navitem-default {
+  padding: 0 var(--spacing-12);
+  color: var(--typography-colors-sub-text);
+}
+
+/* active — black pill, white content */
+.ds-navitem-active {
+  gap: 6px;
+  padding: 0 var(--spacing-16) 0 var(--spacing-12);
+  background: var(--base-color-black);
+  color: var(--base-color-white);
+}

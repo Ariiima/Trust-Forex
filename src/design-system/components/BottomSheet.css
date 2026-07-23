@@ -1,0 +1,25 @@
+.ds-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+}
+
+.ds-sheet {
+  width: 100%;
+  max-width: 360px;
+  background: var(--base-color-white);
+  border-radius: 20px 20px 0 0;
+  padding: 8px 16px 24px;
+}
+
+.ds-sheet-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: var(--radius-infinity);
+  background: var(--stroke-colors-default);
+  margin: 0 auto 12px;
+}
