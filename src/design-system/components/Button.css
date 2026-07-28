@@ -45,8 +45,10 @@
   background: var(--primary-colors-900);
   color: var(--base-color-white);
 }
+/* Pressed darkens (#002D94) — it does not lighten. Verified against the
+   Figma component set, which has exactly Default/Pressed/Disabled/Loading. */
 .ds-button-primary:active {
-  background: var(--primary-colors-800);
+  background: var(--primary-colors-pressed);
 }
 
 .ds-button-secondary /* Primary-2 */ {
@@ -70,6 +72,7 @@
   border-color: var(--stroke-colors-default);
   color: var(--typography-colors-main-text);
 }
+/* Figma "Tertiary-2, State=Pressed": fill goes #F1F1F1, stroke stays #E4E4E4. */
 .ds-button-outline:active {
   background: var(--bg-colors-container-s);
 }

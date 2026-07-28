@@ -35,6 +35,9 @@
      inner "current state" panel of the Cashback Overview card (#033AB8). */
   --primary-colors-950: #033AB8;
   --primary-colors-900: #144CCD;
+  /* Pressed fill of the blue button (Figma "Primary-2, State=Pressed",
+     1312:7018). Not a named Figma variable — read from the component set. */
+  --primary-colors-pressed: #002D94;
   --primary-colors-800: #2C5ED2;
   --primary-colors-700: #4370D7;
   --primary-colors-600: #5B82DC;

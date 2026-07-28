@@ -465,6 +465,11 @@
 .scr-home-chart {
   position: relative;
   height: 220px;
+  cursor: ew-resize;
+  /* Horizontal drags scrub the crosshair; vertical ones still scroll the page. */
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .scr-home-chart svg.scr-home-chart-svg {
   position: absolute;

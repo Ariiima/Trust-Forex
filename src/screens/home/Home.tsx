@@ -75,6 +75,36 @@ const CHART_LINE =
   'M 0 100 L 8 96 L 16 102 L 24 94 L 32 99 L 40 92 L 48 96 L 56 88 L 64 92 L 72 84 L 80 74 L 86 64 L 92 52 L 98 62 L 104 68 L 110 52 L 118 42 L 126 50 L 134 56 L 141 52 L 148 53 L 155 56 L 164 62 L 172 74 L 180 80 L 188 78 L 196 90 L 204 96 L 212 94 L 220 104 L 228 110 L 236 92 L 243 72 L 250 80 L 258 92 L 266 96 L 274 88 L 282 92 L 290 86 L 296 88';
 const CHART_AREA = `${CHART_LINE} L 296 164 L 0 164 Z`;
 const CHART_PEAK_X = 155; // px within the 296-wide plot (XML crosshair x)
+const CHART_W = 296; // svg is a fixed 296x164 box, so viewBox units are px
+const CHART_TOP = 56; // .scr-home-chart is 220 tall, svg sits flush to the bottom
+
+// "M 0 100 L 8 96 ..." -> [[0,100],[8,96],...]; the drawn curve IS the dataset.
+const CHART_POINTS: readonly (readonly [number, number])[] = (CHART_LINE.match(/[\d.]+ [\d.]+/g) ?? []).map(
+  (p) => p.split(' ').map(Number) as [number, number],
+);
+
+/** Height of the curve at plot x, linearly interpolated between vertices. */
+function chartYAt(x: number): number {
+  const pts = CHART_POINTS;
+  if (x <= pts[0][0]) return pts[0][1];
+  for (let i = 1; i < pts.length; i++) {
+    const [x0, y0] = pts[i - 1];
+    const [x1, y1] = pts[i];
+    if (x <= x1) return y0 + ((y1 - y0) * (x - x0)) / (x1 - x0 || 1);
+  }
+  return pts[pts.length - 1][1];
+}
+
+/* ponytail: no real time-series behind the chart, so the readout is derived
+   from the curve itself — y is inverted (lower pixel = better). Swap this for
+   the API series once /api/signals exists; the drag handling stays as-is. */
+function chartReadout(x: number) {
+  const y = chartYAt(x);
+  const strength = Math.max(0, Math.min(1, (164 - y) / 140));
+  const signals = Math.round(18 + strength * 34);
+  const rate = 38 + strength * 44;
+  return { signals, tp1: Math.round((signals * rate) / 100), rate: rate.toFixed(1) };
+}
 
 /* ===========================================================================
  * Countdown ring — SVG semicircle gauge, green arc via stroke-dasharray.
@@ -233,6 +263,18 @@ function SignalCard(): ReactNode {
   const [period, setPeriod] = useState<Period>('Monthly');
   const cfg = PERIODS[period];
 
+  // Draggable crosshair (tweaks.md: "charts work via dragging the handle").
+  const [chartX, setChartX] = useState(CHART_PEAK_X);
+  const plotRef = useRef<HTMLDivElement>(null);
+  const readout = chartReadout(chartX);
+
+  const trackPointer = (e: React.PointerEvent<HTMLDivElement>) => {
+    const rect = plotRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = ((e.clientX - rect.left) / rect.width) * CHART_W;
+    setChartX(Math.max(0, Math.min(CHART_W, x)));
+  };
+
   return (
     <section className="scr-home-card scr-home-signal">
       <div className="scr-home-signal-head">
@@ -272,7 +314,17 @@ function SignalCard(): ReactNode {
         </div>
       </div>
 
-      <div className="scr-home-chart">
+      <div
+        className="scr-home-chart"
+        ref={plotRef}
+        onPointerDown={(e) => {
+          e.currentTarget.setPointerCapture(e.pointerId);
+          trackPointer(e);
+        }}
+        onPointerMove={(e) => {
+          if (e.currentTarget.hasPointerCapture(e.pointerId)) trackPointer(e);
+        }}
+      >
         <svg className="scr-home-chart-svg" viewBox="0 0 296 164" fill="none" preserveAspectRatio="none">
           <defs>
             <linearGradient id="scr-home-chart-fill" x1="0" y1="0" x2="0" y2="1">
@@ -283,21 +335,24 @@ function SignalCard(): ReactNode {
           <path d={CHART_AREA} fill="url(#scr-home-chart-fill)" />
           <path d={CHART_LINE} stroke="#144CCD" strokeWidth={1.5} strokeLinejoin="round" strokeLinecap="round" />
         </svg>
-        <span className="scr-home-chart-crosshair" style={{ left: `${CHART_PEAK_X}px` }} />
-        <span className="scr-home-chart-marker" style={{ left: `${CHART_PEAK_X}px`, top: 73 }} />
-        <div className="scr-home-tooltip" style={{ left: `${CHART_PEAK_X}px` }}>
+        <span className="scr-home-chart-crosshair" style={{ left: `${chartX}px` }} />
+        <span
+          className="scr-home-chart-marker"
+          style={{ left: `${chartX}px`, top: CHART_TOP + chartYAt(chartX) }}
+        />
+        <div className="scr-home-tooltip" style={{ left: `${chartX}px` }}>
           <span className="scr-home-tooltip-date">{cfg.date}</span>
           <div className="scr-home-tooltip-row">
             <span>Signals</span>
-            <span>36</span>
+            <span>{readout.signals}</span>
           </div>
           <div className="scr-home-tooltip-row">
             <span>TP1 reached</span>
-            <span>12</span>
+            <span>{readout.tp1}</span>
           </div>
           <div className="scr-home-tooltip-row scr-home-tooltip-row--success">
             <span>TP1 hit rate</span>
-            <span>65.4%</span>
+            <span>{readout.rate}%</span>
           </div>
         </div>
       </div>

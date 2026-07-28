@@ -222,6 +222,16 @@
   max-height: var(--scr-broker-vvh, 100dvh);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  /* tweaks.md: the scrollable section needs a visible scrollbar. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--stroke-colors-default) transparent;
+}
+.scr-broker-sheet::-webkit-scrollbar {
+  width: 4px;
+}
+.scr-broker-sheet::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-infinity);
+  background: var(--stroke-colors-default);
 }
 .scr-broker-sheet .ds-sheet-handle {
   display: none;
