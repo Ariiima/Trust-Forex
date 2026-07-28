@@ -1,15 +1,13 @@
-import { Fragment, useLayoutEffect, useRef, useState } from 'react';
-import type { ReactNode, UIEvent } from 'react';
+import { Fragment, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { Icon, NavigationBar } from '../../design-system/components';
 import type { NavigationTab } from '../../design-system/components';
 import { PlanCard } from '../plans/PlanCard';
 import { PLANS } from '../plans/plans-data';
 import type { Plan } from '../plans/plans-data';
+import { PromoCarousel } from './PromoCarousel';
 import heroExpiredArt from '../../assets/home/hero-expired.png';
 import heroWalletArt from '../../assets/home/hero-wallet.png';
-import promoInviteArt from '../../assets/home/promo-invite.png';
-import promoGiftArt from '../../assets/home/promo-gift.png';
-import promoTrophyArt from '../../assets/home/promo-trophy.png';
 import './Home.css';
 
 /* ---------------------------------------------------------------------------
@@ -47,24 +45,6 @@ const PERIODS: Record<Period, { overview: string; date: string }> = {
   Yearly: { overview: 'Last 12 months overview', date: 'Q1 2026' },
 };
 
-interface Promo {
-  id: string;
-  bg: string;
-  tag: string;
-  title: string;
-  subtitle: string;
-  art: string;
-  /** Art layer is 141×148 bleeding past the slide's top+right edge (clipped);
-   *  per-slide offsets from the XML. */
-  artRight: number;
-  artTop: number;
-}
-// Fixed order left→right in the source: Summer, Invite, Complete.
-const PROMOS: readonly Promo[] = [
-  { id: 'summer', bg: '#7A9DFE', tag: 'Special offer', title: 'Summer discount', subtitle: 'Get 20% OFF on 12 month plan', art: promoGiftArt, artRight: -26, artTop: -24 },
-  { id: 'invite', bg: '#68CB64', tag: 'Invite & earn', title: 'Invite friends', subtitle: 'Get 10% from thier deposits', art: promoInviteArt, artRight: -40, artTop: -24 },
-  { id: 'tasks', bg: '#FFA202', tag: 'Stay active', title: 'Complete tasks', subtitle: 'Win rewards & get amazing prizes', art: promoTrophyArt, artRight: -40, artTop: -31 },
-];
 const PROMO_START: Record<Subscription, number> = { active: 1, expired: 2, none: 0 };
 
 
@@ -216,44 +196,6 @@ function HeroMessage({
         {note ? <span className="scr-home-hero-note">{note}</span> : null}
       </div>
     </section>
-  );
-}
-
-/* ---- promo carousel ------------------------------------------------------- */
-function PromoCarousel({ start }: { start: number }): ReactNode {
-  const ref = useRef<HTMLDivElement>(null);
-  const [index, setIndex] = useState(start);
-
-  useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    el.scrollLeft = start * el.clientWidth;
-    setIndex(start);
-  }, [start]);
-
-  const onScroll = (e: UIEvent<HTMLDivElement>): void => {
-    const el = e.currentTarget;
-    setIndex(Math.round(el.scrollLeft / el.clientWidth));
-  };
-
-  return (
-    <div className="scr-home-carousel" ref={ref} onScroll={onScroll}>
-      {PROMOS.map((p) => (
-        <div className="scr-home-slide" key={p.id} style={{ background: p.bg }}>
-          <div className="scr-home-slide-text">
-            <span className="scr-home-slide-tag">{p.tag}</span>
-            <span className="scr-home-slide-title">{p.title}</span>
-            <span className="scr-home-slide-sub">{p.subtitle}</span>
-          </div>
-          <img className="scr-home-slide-art" src={p.art} alt="" width={94} height={110} />
-          <div className="scr-home-dots">
-            {PROMOS.map((d, i) => (
-              <span key={d.id} className={'scr-home-dot' + (i === index ? ' scr-home-dot--on' : '')} />
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
   );
 }
 

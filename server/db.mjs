@@ -9,6 +9,12 @@ CREATE TABLE IF NOT EXISTS orders (
   status TEXT NOT NULL DEFAULT 'pending', txid TEXT, confirmations INTEGER DEFAULT 0,
   detected_at INTEGER, confirmed_at INTEGER, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS seen_txs (txid TEXT PRIMARY KEY, order_id TEXT);
+-- One row per (user, flag) the user has "used up" — currently the once-only
+-- referral/cashback preview pages. Server-side so it survives reinstalls and
+-- follows the account across devices, unlike localStorage.
+CREATE TABLE IF NOT EXISTS user_flags (
+  user_id INTEGER NOT NULL, flag TEXT NOT NULL, set_at INTEGER NOT NULL,
+  PRIMARY KEY (user_id, flag));
 `;
 
 const EXPIRY_MS = 40 * 60 * 1000;
@@ -49,6 +55,8 @@ export function openDb(path = process.env.TF_DB || new URL('./data.sqlite', impo
     insertSeen: db.prepare('INSERT OR IGNORE INTO seen_txs (txid, order_id) VALUES (?, ?)'),
     expire: db.prepare(`UPDATE orders SET status='expired', updated_at=?
       WHERE status IN ('pending','submitted') AND detected_at IS NULL AND created_at < ?`),
+    flags: db.prepare('SELECT flag FROM user_flags WHERE user_id = ?'),
+    setFlag: db.prepare('INSERT OR IGNORE INTO user_flags (user_id, flag, set_at) VALUES (?, ?, ?)'),
   };
 
   const getOrder = (id) => stmts.byId.get(id);
@@ -56,6 +64,16 @@ export function openDb(path = process.env.TF_DB || new URL('./data.sqlite', impo
   return {
     db, // raw DatabaseSync handle
     getOrder,
+
+    /** Flags this user has already consumed, e.g. ['referral_preview_seen']. */
+    getFlags(userId) {
+      return stmts.flags.all(userId).map((r) => r.flag);
+    },
+
+    /** Idempotent — re-marking an already-set flag is a no-op. */
+    setFlag(userId, flag) {
+      stmts.setFlag.run(userId, flag, Date.now());
+    },
 
     createOrder({ id, userId, username, planId, billing, amountUsd }) {
       const now = Date.now();

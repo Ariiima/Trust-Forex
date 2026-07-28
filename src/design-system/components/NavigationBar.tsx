@@ -15,7 +15,7 @@ interface TabDef {
 const TABS: readonly TabDef[] = [
   { key: 'home', label: 'Home', icon: 'home' },
   { key: 'cashback', label: 'Cashback', icon: 'currency-dollar' },
-  { key: 'referral', label: 'Referral', icon: 'users' },
+  { key: 'referral', label: 'Referrals', icon: 'users' },
   { key: 'earning', label: 'Earning', icon: 'award' },
 ];
 

@@ -181,3 +181,26 @@ export function getSubscription(): Promise<Subscription> {
   }
   return request<Subscription>('/me/subscription');
 }
+
+/* ---- once-only preview flags --------------------------------------------
+ * Server-side (see server/index.mjs) so "already saw the intro" follows the
+ * Telegram account rather than one device's localStorage. */
+
+export type UserFlag = 'referral_preview_seen' | 'cashback_preview_seen';
+
+// Mock mode keeps them per-tab; a reload replays the intro, which is what you
+// want when reviewing the preview screens.
+const mockFlags = new Set<UserFlag>();
+
+export function getFlags(): Promise<UserFlag[]> {
+  if (MOCK) return Promise.resolve([...mockFlags]);
+  return request<{ flags: UserFlag[] }>('/me/flags').then((r) => r.flags);
+}
+
+export function setFlag(flag: UserFlag): Promise<UserFlag[]> {
+  if (MOCK) {
+    mockFlags.add(flag);
+    return Promise.resolve([...mockFlags]);
+  }
+  return request<{ flags: UserFlag[] }>(`/me/flags/${flag}`, {}).then((r) => r.flags);
+}

@@ -1,0 +1,120 @@
+- generic [ref=f14e3]:
+  - generic [ref=f14e4]:
+    - generic [ref=f14e5]:
+      - generic [ref=f14e6]:
+        - heading "Total referral earnings" [level=1] [ref=f14e7]
+        - button "About referral" [ref=f14e8] [cursor=pointer]
+      - generic [ref=f14e12]:
+        - generic [ref=f14e13]: $245.00
+        - generic [ref=f14e14]:
+          - generic [ref=f14e15]: 10%
+          - generic [ref=f14e18]: Referral share
+    - separator [ref=f14e19]
+    - list [ref=f14e20]:
+      - listitem [ref=f14e21]:
+        - generic [ref=f14e27]:
+          - generic [ref=f14e28]: Invited users
+          - generic [ref=f14e29]:
+            - generic [ref=f14e30]: "42"
+            - generic [ref=f14e31]: "+2"
+      - listitem [ref=f14e35]:
+        - generic [ref=f14e41]:
+          - generic [ref=f14e42]: Active users
+          - generic [ref=f14e43]: "22"
+      - listitem [ref=f14e45]:
+        - generic [ref=f14e51]:
+          - generic [ref=f14e52]: Plan earnings
+          - generic [ref=f14e53]: $180.00
+      - listitem [ref=f14e55]:
+        - generic [ref=f14e60]:
+          - generic [ref=f14e61]: Cashback earnings
+          - generic [ref=f14e62]: $65.00
+    - generic [ref=f14e64]:
+      - generic [ref=f14e65]:
+        - heading "Copy your referral link" [level=2] [ref=f14e66]
+        - button "About referral links" [ref=f14e67] [cursor=pointer]
+      - generic [ref=f14e71]:
+        - generic [ref=f14e72]: Telegram link
+        - button "Copy" [ref=f14e77] [cursor=pointer]
+      - generic [ref=f14e82]:
+        - generic [ref=f14e83]: Website link
+        - button "Copy" [ref=f14e89] [cursor=pointer]
+  - generic [ref=f14e94]:
+    - generic [ref=f14e96]:
+      - generic [ref=f14e97]: Special offer
+      - generic [ref=f14e98]: Summer discount
+      - generic [ref=f14e99]: Get 20% OFF on 12 month plan
+    - generic [ref=f14e105]:
+      - generic [ref=f14e106]: Invite & earn
+      - generic [ref=f14e107]: Invite friends
+      - generic [ref=f14e108]: Get 10% from thier deposits
+    - generic [ref=f14e114]:
+      - generic [ref=f14e115]: Stay active
+      - generic [ref=f14e116]: Complete tasks
+      - generic [ref=f14e117]: Win rewards & get amazing prizes
+  - generic [ref=f14e122]:
+    - generic [ref=f14e123]:
+      - heading "Your referrals" [level=2] [ref=f14e124]
+      - button "Highest earnings" [ref=f14e125] [cursor=pointer]
+    - list [ref=f14e130]:
+      - listitem [ref=f14e131]:
+        - generic [ref=f14e132]:
+          - generic [ref=f14e133]: "1002"
+          - generic [ref=f14e138]: Joined Sep 12,2026
+        - generic [ref=f14e139]:
+          - generic [ref=f14e140]:
+            - generic [ref=f14e141]: Plan
+            - generic [ref=f14e142]: $12.00
+          - generic [ref=f14e143]:
+            - generic [ref=f14e144]: Cashback
+            - generic [ref=f14e145]: $3.32
+          - generic [ref=f14e146]:
+            - generic [ref=f14e147]: Total
+            - generic [ref=f14e148]: $15.32
+      - listitem [ref=f14e149]:
+        - generic [ref=f14e150]:
+          - generic [ref=f14e151]: "1003"
+          - generic [ref=f14e156]: Joined Sep 12,2026
+        - generic [ref=f14e157]:
+          - generic [ref=f14e158]:
+            - generic [ref=f14e159]: Plan
+            - generic [ref=f14e160]: $0.00
+          - generic [ref=f14e161]:
+            - generic [ref=f14e162]: Cashback
+            - generic [ref=f14e163]: $0.00
+          - generic [ref=f14e164]:
+            - generic [ref=f14e165]: Total
+            - generic [ref=f14e166]: $0.00
+      - listitem [ref=f14e167]:
+        - generic [ref=f14e168]:
+          - generic [ref=f14e169]: "1004"
+          - generic [ref=f14e174]: Joined Sep 12,2026
+        - generic [ref=f14e175]:
+          - generic [ref=f14e176]:
+            - generic [ref=f14e177]: Plan
+            - generic [ref=f14e178]: $12.00
+          - generic [ref=f14e179]:
+            - generic [ref=f14e180]: Cashback
+            - generic [ref=f14e181]: $3.32
+          - generic [ref=f14e182]:
+            - generic [ref=f14e183]: Total
+            - generic [ref=f14e184]: $15.32
+      - listitem [ref=f14e185]:
+        - generic [ref=f14e186]:
+          - generic [ref=f14e187]: "1005"
+          - generic [ref=f14e192]: Joined Sep 12,2026
+        - generic [ref=f14e193]:
+          - generic [ref=f14e194]:
+            - generic [ref=f14e195]: Plan
+            - generic [ref=f14e196]: $12.00
+          - generic [ref=f14e197]:
+            - generic [ref=f14e198]: Cashback
+            - generic [ref=f14e199]: $3.32
+          - generic [ref=f14e200]:
+            - generic [ref=f14e201]: Total
+            - generic [ref=f14e202]: $15.32
+  - navigation "Primary" [ref=f14e203]:
+    - button "Home" [ref=f14e204] [cursor=pointer]
+    - button "Cashback" [ref=f14e208] [cursor=pointer]
+    - button "Referrals" [ref=f14e212] [cursor=pointer]
+    - button "Earning" [ref=f14e220] [cursor=pointer]
