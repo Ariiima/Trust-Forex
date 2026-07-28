@@ -1,0 +1,95 @@
+- generic [ref=f19e3]:
+  - banner [ref=f19e4]:
+    - generic [ref=f19e5]:
+      - button "Back" [ref=f19e6] [cursor=pointer]
+      - generic [ref=f19e10]: Withdraw earnings
+  - main [ref=f19e11]:
+    - generic [ref=f19e12]:
+      - heading "Select currency" [level=2] [ref=f19e13]
+      - list [ref=f19e14]:
+        - listitem [ref=f19e15]:
+          - generic [ref=f19e16] [cursor=pointer]:
+            - generic [ref=f19e17]:
+              - generic [ref=f19e19]:
+                - generic [ref=f19e20]: USDT
+                - generic [ref=f19e21]: BEP20
+              - radio "USDT BEP20 Network fee $1.00 Minimum withdraw $10.00" [ref=f19e22]
+            - generic [ref=f19e23]:
+              - generic [ref=f19e24]:
+                - generic [ref=f19e25]: Network fee
+                - generic [ref=f19e26]: $1.00
+              - generic [ref=f19e27]:
+                - generic [ref=f19e28]: Minimum withdraw
+                - generic [ref=f19e29]: $10.00
+        - listitem [ref=f19e30]:
+          - generic [ref=f19e31] [cursor=pointer]:
+            - generic [ref=f19e32]:
+              - generic [ref=f19e34]:
+                - generic [ref=f19e35]: USDT
+                - generic [ref=f19e36]: TRC20
+              - radio "USDT TRC20 Network fee $1.00 Minimum withdraw $10.00" [ref=f19e37]
+            - generic [ref=f19e38]:
+              - generic [ref=f19e39]:
+                - generic [ref=f19e40]: Network fee
+                - generic [ref=f19e41]: $1.00
+              - generic [ref=f19e42]:
+                - generic [ref=f19e43]: Minimum withdraw
+                - generic [ref=f19e44]: $10.00
+        - listitem [ref=f19e45]:
+          - generic [ref=f19e46] [cursor=pointer]:
+            - generic [ref=f19e47]:
+              - generic [ref=f19e49]:
+                - generic [ref=f19e50]: USDT
+                - generic [ref=f19e51]: ERC20
+              - radio "USDT ERC20 Network fee $1.00 Minimum withdraw $10.00" [ref=f19e52]
+            - generic [ref=f19e53]:
+              - generic [ref=f19e54]:
+                - generic [ref=f19e55]: Network fee
+                - generic [ref=f19e56]: $1.00
+              - generic [ref=f19e57]:
+                - generic [ref=f19e58]: Minimum withdraw
+                - generic [ref=f19e59]: $10.00
+        - listitem [ref=f19e60]:
+          - generic [ref=f19e61] [cursor=pointer]:
+            - generic [ref=f19e62]:
+              - generic [ref=f19e64]:
+                - generic [ref=f19e65]: USDC
+                - generic [ref=f19e66]: BEP20
+              - radio "USDC BEP20 Network fee $1.00 Minimum withdraw $10.00" [ref=f19e67]
+            - generic [ref=f19e68]:
+              - generic [ref=f19e69]:
+                - generic [ref=f19e70]: Network fee
+                - generic [ref=f19e71]: $1.00
+              - generic [ref=f19e72]:
+                - generic [ref=f19e73]: Minimum withdraw
+                - generic [ref=f19e74]: $10.00
+        - listitem [ref=f19e75]:
+          - generic [ref=f19e76] [cursor=pointer]:
+            - generic [ref=f19e77]:
+              - generic [ref=f19e79]:
+                - generic [ref=f19e80]: USDC
+                - generic [ref=f19e81]: TRC20
+              - radio "USDC TRC20 Network fee $1.00 Minimum withdraw $10.00" [ref=f19e82]
+            - generic [ref=f19e83]:
+              - generic [ref=f19e84]:
+                - generic [ref=f19e85]: Network fee
+                - generic [ref=f19e86]: $1.00
+              - generic [ref=f19e87]:
+                - generic [ref=f19e88]: Minimum withdraw
+                - generic [ref=f19e89]: $10.00
+        - listitem [ref=f19e90]:
+          - generic [ref=f19e91] [cursor=pointer]:
+            - generic [ref=f19e92]:
+              - generic [ref=f19e94]:
+                - generic [ref=f19e95]: USDC
+                - generic [ref=f19e96]: ERC20
+              - radio "USDC ERC20 Network fee $1.00 Minimum withdraw $10.00" [ref=f19e97]
+            - generic [ref=f19e98]:
+              - generic [ref=f19e99]:
+                - generic [ref=f19e100]: Network fee
+                - generic [ref=f19e101]: $1.00
+              - generic [ref=f19e102]:
+                - generic [ref=f19e103]: Minimum withdraw
+                - generic [ref=f19e104]: $10.00
+  - contentinfo [ref=f19e105]:
+    - button "Continue" [disabled] [ref=f19e106]
