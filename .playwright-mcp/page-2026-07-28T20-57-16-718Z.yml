@@ -1,0 +1,15 @@
+- generic [ref=f39e5]:
+  - generic [ref=f39e6]:
+    - generic [ref=f39e10]:
+      - status [ref=f39e19]: Screenreader support for the board is currently disabled. To enable it via Accessibility settings, press ⌘K, type Accessibility Settings, and press Enter. To see available keyboard shortcuts, enter ⌃⇧Question mark .
+      - status [ref=f39e21]
+      - region "Left sidebar" [ref=f39e23]:
+        - separator [ref=f39e27]
+    - region "Help/zoom toolbar" [ref=f39e165]:
+      - toolbar "Help/zoom toolbar" [ref=f39e167]:
+        - button "Help" [ref=f39e169]
+  - generic:
+    - status
+    - group [ref=f39e171]:
+      - alert [ref=f39e173]
+      - alert [ref=f39e175]
