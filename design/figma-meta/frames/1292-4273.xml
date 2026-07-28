@@ -1,0 +1,327 @@
+  <frame id="1292:4273" name="Cashback history" x="11688" y="1210" width="360" height="852">
+    <frame id="1292:4274" name="Iphone-Asset" x="0" y="0" width="360" height="32">
+      <frame id="1292:4275" name="Time" x="0" y="0" width="128" height="32">
+        <text id="1292:4276" name="Time" x="52" y="5" width="24" height="22" />
+      </frame>
+      <frame id="1292:4277" name="Levels" x="232" y="0" width="128" height="32">
+        <frame id="1292:4278" name="Frame 10" x="31.834854125976562" y="11.143986701965332" width="64" height="10.712026596069336">
+          <vector id="1292:4279" name="Cellular Connection" x="0.0000152587890625" y="0.3187119960784912" width="15.820839881896973" height="10.074591636657715" />
+          <vector id="1292:4280" name="Wifi" x="21.588829040527344" y="0.2767423987388611" width="14.124768257141113" height="10.158549308776855" />
+          <frame id="1292:4281" name="Battery" x="41.481658935546875" y="0.000004642864951165393" width="22.51835823059082" height="10.712026596069336" />
+        </frame>
+      </frame>
+    </frame>
+    <instance id="1292:4285" name="Telegram header " x="0" y="32" width="360" height="44" />
+    <frame id="1292:4286" name="Frame 2147230006" x="16" y="512" width="328" height="110">
+      <frame id="1292:4287" name="Frame 2147229909" x="0" y="0" width="328" height="110">
+        <frame id="1292:4288" name="Frame 2147230004" x="16" y="16" width="216" height="72">
+          <frame id="1292:4289" name="Frame 2147229917" x="0" y="0" width="86" height="16">
+            <text id="1292:4290" name="Special offer" x="10" y="-4" width="66" height="24" />
+          </frame>
+          <frame id="1292:4291" name="Frame 2147229918" x="0" y="20" width="216" height="52">
+            <text id="1292:4292" name="Summer discount" x="0" y="0" width="216" height="32" />
+            <text id="1292:4293" name="get 20% OFF on 12 month plan" x="0" y="28" width="216" height="24" />
+          </frame>
+        </frame>
+        <rounded-rectangle id="1292:4294" name="ChatGPT Image Jul 10, 2026, 03_08_49 PM 2" x="213" y="-24" width="141" height="148" />
+        <frame id="1292:4295" name="Frame 2147229910" x="144" y="96" width="40" height="6">
+          <frame id="1292:4296" name="Frame 2147230005" x="0" y="0" width="20" height="6">
+            <frame id="1292:4297" name="Frame 2147230003" x="0" y="0" width="10" height="6" />
+          </frame>
+          <frame id="1292:4298" name="Frame 2147230003" x="24" y="0" width="6" height="6" />
+          <frame id="1292:4299" name="Frame 2147230004" x="34" y="0" width="6" height="6" />
+        </frame>
+      </frame>
+      <frame id="1292:4300" name="Frame 2147229984" x="349" y="0" width="328" height="110">
+        <frame id="1292:4301" name="Frame 2147230004" x="16" y="16" width="216" height="72">
+          <frame id="1292:4302" name="Frame 2147229917" x="0" y="0" width="83" height="16">
+            <text id="1292:4303" name="invite &amp; earn" x="10" y="-4" width="63" height="24" />
+          </frame>
+          <frame id="1292:4304" name="Frame 2147229918" x="0" y="20" width="216" height="52">
+            <text id="1292:4305" name="invite friends" x="0" y="0" width="216" height="32" />
+            <text id="1292:4306" name="get 10% from thier deposits" x="0" y="28" width="216" height="24" />
+          </frame>
+        </frame>
+        <rounded-rectangle id="1292:4307" name="ChatGPT Image Jul 10, 2026, 03_08_49 PM 2" x="227" y="-24" width="141" height="148" />
+        <frame id="1292:4308" name="Frame 2147229910" x="144" y="96" width="40" height="6">
+          <frame id="1292:4309" name="Frame 2147230003" x="0" y="0" width="6" height="6" />
+          <frame id="1292:4310" name="Frame 2147230005" x="10" y="0" width="20" height="6">
+            <frame id="1292:4311" name="Frame 2147230003" x="0" y="0" width="10" height="6" />
+          </frame>
+          <frame id="1292:4312" name="Frame 2147230004" x="34" y="0" width="6" height="6" />
+        </frame>
+      </frame>
+      <frame id="1292:4313" name="Frame 2147229985" x="698" y="0" width="328" height="110">
+        <frame id="1292:4314" name="Frame 2147229910" x="144" y="96" width="40" height="6">
+          <frame id="1292:4315" name="Frame 2147230003" x="0" y="0" width="6" height="6" />
+          <frame id="1292:4316" name="Frame 2147230004" x="10" y="0" width="6" height="6" />
+          <frame id="1292:4317" name="Frame 2147230005" x="20" y="0" width="20" height="6">
+            <frame id="1292:4318" name="Frame 2147230003" x="0" y="0" width="10" height="6" />
+          </frame>
+        </frame>
+        <frame id="1292:4319" name="Frame 2147230004" x="16" y="16" width="216" height="72">
+          <frame id="1292:4320" name="Frame 2147229917" x="0" y="0" width="78" height="16">
+            <text id="1292:4321" name="Stay active" x="10" y="-4" width="58" height="24" />
+          </frame>
+          <frame id="1292:4322" name="Frame 2147229918" x="0" y="20" width="216" height="52">
+            <text id="1292:4323" name="complete tasks" x="0" y="0" width="216" height="32" />
+            <text id="1292:4324" name="win rewards &amp; get amazing prizes" x="0" y="28" width="216" height="24" />
+          </frame>
+        </frame>
+        <rounded-rectangle id="1292:4325" name="ChatGPT Image Jul 10, 2026, 03_08_49 PM 2" x="227" y="-31" width="141" height="148" />
+      </frame>
+    </frame>
+    <instance id="1292:4326" name="Cashback Overview" x="16" y="92" width="328" height="396" />
+    <frame id="1292:4327" name="Frame 2147229923" x="16" y="646" width="328" height="890">
+      <frame id="1292:4328" name="Frame 2147229905" x="16" y="16" width="296" height="32">
+        <text id="1292:4329" name="Our brokers" x="0" y="0" width="97" height="32" />
+        <instance id="1292:4330" name="info" x="272" y="4" width="24" height="24" />
+      </frame>
+      <frame id="1292:4331" name="Frame 2147230043" x="16" y="64" width="296" height="738">
+        <frame id="1292:4332" name="Frame 2147230016" x="0" y="0" width="296" height="226">
+          <frame id="1292:4333" name="Frame 2147230038" x="12" y="12" width="272" height="32.000003814697266">
+            <frame id="1292:4334" name="Frame 2147230036" x="0" y="0" width="166" height="32.000003814697266">
+              <frame id="1292:4335" name="BTC" x="0" y="0" width="32.000003814697266" height="32.000003814697266" />
+              <frame id="1292:4336" name="Frame 2147230035" x="40.000003814697266" y="2.000001907348633" width="126" height="28">
+                <text id="1292:4337" name="Exness" x="0" y="0" width="126" height="28" />
+              </frame>
+            </frame>
+            <frame id="1292:4338" name="Frame 2147230037" x="197" y="6.000001907348633" width="75" height="20">
+              <frame id="1292:4339" name="Frame 2147229881" x="0" y="0" width="55" height="20">
+                <text id="1292:4340" name="popular" x="8" y="0" width="39" height="20" />
+              </frame>
+              <instance id="1292:4341" name="chevron-right" x="59" y="2" width="16" height="16" />
+            </frame>
+          </frame>
+          <frame id="1292:4342" name="broker state " x="12" y="54" width="272" height="40">
+            <frame id="1292:4343" name="Frame 2147230063" x="12" y="8" width="248" height="24">
+              <instance id="1292:4344" name="close" x="0" y="4" width="16" height="16" />
+              <text id="1292:4345" name="Account verification failed" x="20" y="0" width="228" height="24" />
+            </frame>
+            <rounded-rectangle id="1292:4346" name="Rectangle 4" x="0" y="38" width="148" height="2" />
+          </frame>
+          <frame id="1292:4347" name="broker state " x="12" y="104" width="272" height="40">
+            <frame id="1292:4348" name="Frame 2147230063" x="12" y="8" width="248" height="24">
+              <instance id="1292:4349" name="check" x="0" y="4" width="16" height="16" />
+              <text id="1292:4350" name="Account verified" x="20" y="0" width="228" height="24" />
+            </frame>
+            <rounded-rectangle id="1292:4351" name="Rectangle 4" x="0" y="38" width="148" height="2" />
+          </frame>
+          <instance id="1292:4352" name="broker state " x="12" y="154" width="272" height="60" />
+        </frame>
+        <frame id="1292:4353" name="Frame 2147230017" x="0" y="238" width="296" height="176">
+          <frame id="1292:4354" name="Frame 2147230038" x="12" y="12" width="272" height="32.000003814697266">
+            <frame id="1292:4355" name="Frame 2147230036" x="0" y="0" width="166" height="32.000003814697266">
+              <frame id="1292:4356" name="BTC" x="0" y="0" width="32.000003814697266" height="32.000003814697266" />
+              <frame id="1292:4357" name="Frame 2147230035" x="40.000003814697266" y="2.000001907348633" width="126" height="28">
+                <text id="1292:4358" name="XM" x="0" y="0" width="126" height="28" />
+              </frame>
+            </frame>
+            <frame id="1292:4359" name="Frame 2147230037" x="256" y="8.000001907348633" width="16" height="16">
+              <instance id="1292:4360" name="chevron-right" x="0" y="0" width="16" height="16" />
+            </frame>
+          </frame>
+          <instance id="1292:4361" name="broker state " x="12" y="54.000003814697266" width="272" height="60" />
+          <frame id="1292:4362" name="broker state " x="12" y="124" width="272" height="40">
+            <frame id="1292:4363" name="Frame 2147230063" x="12" y="8" width="248" height="24">
+              <instance id="1292:4364" name="close" x="0" y="4" width="16" height="16" />
+              <text id="1292:4365" name="Deposit verification failed" x="20" y="0" width="228" height="24" />
+            </frame>
+            <rounded-rectangle id="1292:4366" name="Rectangle 4" x="0" y="38" width="148" height="2" />
+          </frame>
+        </frame>
+        <frame id="1292:4367" name="Frame 2147230018" x="0" y="426" width="296" height="174">
+          <frame id="1292:4368" name="Frame 2147230038" x="12" y="12" width="272" height="32.000003814697266">
+            <frame id="1292:4369" name="Frame 2147230036" x="0" y="0" width="166" height="32.000003814697266">
+              <frame id="1292:4370" name="BTC" x="0" y="0" width="32.000003814697266" height="32.000003814697266" />
+              <frame id="1292:4371" name="Frame 2147230035" x="40.000003814697266" y="2.000001907348633" width="126" height="28">
+                <text id="1292:4372" name="IC Markets" x="0" y="0" width="126" height="28" />
+              </frame>
+            </frame>
+            <frame id="1292:4373" name="Frame 2147230037" x="256" y="8.000001907348633" width="16" height="16">
+              <instance id="1292:4374" name="chevron-right" x="0" y="0" width="16" height="16" />
+            </frame>
+          </frame>
+          <frame id="1292:4375" name="Frame 2147230066" x="12" y="54" width="272" height="108">
+            <frame id="1292:4376" name="broker state " x="0" y="0" width="272" height="40">
+              <frame id="1292:4377" name="Frame 2147230063" x="12" y="8" width="248" height="24">
+                <instance id="1292:4378" name="check" x="0" y="4" width="16" height="16" />
+                <text id="1292:4379" name="Deposit confirmed" x="20" y="0" width="126" height="24" />
+              </frame>
+              <rounded-rectangle id="1292:4380" name="Rectangle 4" x="0" y="38" width="148" height="2" />
+            </frame>
+            <instance id="1292:4381" name="broker state " x="0" y="48" width="272" height="60" />
+          </frame>
+        </frame>
+        <frame id="1292:4382" name="Frame 2147230019" x="0" y="612" width="296" height="126">
+          <frame id="1292:4383" name="Frame 2147230038" x="12" y="12" width="272" height="32.000003814697266">
+            <frame id="1292:4384" name="Frame 2147230036" x="0" y="0" width="166" height="32.000003814697266">
+              <frame id="1292:4385" name="BTC" x="0" y="0" width="32.000003814697266" height="32.000003814697266" />
+              <frame id="1292:4386" name="Frame 2147230035" x="40.000003814697266" y="2.000001907348633" width="126" height="28">
+                <text id="1292:4387" name="XM" x="0" y="0" width="126" height="28" />
+              </frame>
+            </frame>
+            <frame id="1292:4388" name="Frame 2147230037" x="256" y="8.000001907348633" width="16" height="16">
+              <instance id="1292:4389" name="chevron-right" x="0" y="0" width="16" height="16" />
+            </frame>
+          </frame>
+          <instance id="1292:4390" name="broker state " x="12" y="54" width="272" height="60" />
+        </frame>
+      </frame>
+      <text id="1292:4391" name="This list includes every verified broker available in your region." x="16" y="818" width="296" height="56" />
+    </frame>
+    <instance id="1292:4392" name="Navigation bar " x="0" y="772" width="360" height="80" />
+    <frame id="1292:4393" name="Frame 2147230196" x="0" y="0" width="360" height="852">
+      <frame id="1292:4394" name="Frame 2147229965" x="0" y="168" width="360" height="684">
+        <frame id="1292:4395" name="Frame 2147229973" x="16" y="16" width="328" height="44.000030517578125">
+          <frame id="1292:4396" name="Frame 2147229971" x="0" y="0" width="328" height="32">
+            <text id="1292:4397" name="Cashback history" x="0" y="0" width="141" height="32" />
+            <instance id="1292:4398" name="close" x="304" y="4" width="24" height="24" />
+          </frame>
+          <vector id="1292:4399" name="Vector 8" x="0" y="44" width="328" height="0.00002867467082978692" />
+        </frame>
+        <frame id="1292:4400" name="Frame 2147230197" x="16" y="84.00003051757812" width="328" height="564">
+          <frame id="1292:4401" name="Frame 2147230048" x="0" y="0" width="318" height="564">
+            <frame id="1292:4402" name="Frame 2147230033" x="0" y="0" width="318" height="56.000003814697266">
+              <frame id="1292:4403" name="Frame 2147230038" x="12" y="8" width="294" height="40.000003814697266">
+                <frame id="1292:4404" name="Frame 2147230036" x="0" y="0" width="257" height="40.000003814697266">
+                  <frame id="1292:4405" name="BTC" x="0" y="3.999998092651367" width="32.000003814697266" height="32.000003814697266" />
+                  <frame id="1292:4406" name="Frame 2147230035" x="40.000003814697266" y="0" width="217" height="40">
+                    <text id="1292:4407" name="XM" x="0" y="0" width="217" height="24" />
+                    <text id="1292:4408" name="may20,2026" x="0" y="20" width="217" height="20" />
+                  </frame>
+                </frame>
+                <frame id="1292:4409" name="Frame 2147230062" x="257" y="0" width="37" height="40">
+                  <text id="1292:4410" name="10%" x="16" y="0" width="21" height="20" />
+                  <text id="1292:4411" name="$45.00" x="0" y="20" width="37" height="20" />
+                </frame>
+              </frame>
+            </frame>
+            <frame id="1292:4412" name="Frame 2147230036" x="0" y="68" width="318" height="56.000003814697266">
+              <frame id="1292:4413" name="Frame 2147230038" x="12" y="8" width="294" height="40.000003814697266">
+                <frame id="1292:4414" name="Frame 2147230036" x="0" y="0" width="257" height="40.000003814697266">
+                  <frame id="1292:4415" name="BTC" x="0" y="3.999998092651367" width="32.000003814697266" height="32.000003814697266" />
+                  <frame id="1292:4416" name="Frame 2147230035" x="40.000003814697266" y="0" width="217" height="40">
+                    <text id="1292:4417" name="Exness" x="0" y="0" width="217" height="24" />
+                    <text id="1292:4418" name="may18,2026" x="0" y="20" width="217" height="20" />
+                  </frame>
+                </frame>
+                <frame id="1292:4419" name="Frame 2147230062" x="257" y="0" width="37" height="40">
+                  <text id="1292:4420" name="10%" x="16" y="0" width="21" height="20" />
+                  <text id="1292:4421" name="$45.00" x="0" y="20" width="37" height="20" />
+                </frame>
+              </frame>
+            </frame>
+            <frame id="1292:4422" name="Frame 2147230044" x="0" y="136" width="318" height="56.000003814697266">
+              <frame id="1292:4423" name="Frame 2147230038" x="12" y="8" width="294" height="40.000003814697266">
+                <frame id="1292:4424" name="Frame 2147230036" x="0" y="0" width="257" height="40.000003814697266">
+                  <frame id="1292:4425" name="BTC" x="0" y="3.999998092651367" width="32.000003814697266" height="32.000003814697266" />
+                  <frame id="1292:4426" name="Frame 2147230035" x="40.000003814697266" y="0" width="217" height="40">
+                    <text id="1292:4427" name="IC Markets" x="0" y="0" width="217" height="24" />
+                    <text id="1292:4428" name="may14,2026" x="0" y="20" width="217" height="20" />
+                  </frame>
+                </frame>
+                <frame id="1292:4429" name="Frame 2147230062" x="257" y="0" width="37" height="40">
+                  <text id="1292:4430" name="10%" x="16" y="0" width="21" height="20" />
+                  <text id="1292:4431" name="$45.00" x="0" y="20" width="37" height="20" />
+                </frame>
+              </frame>
+            </frame>
+            <frame id="1292:4432" name="Frame 2147230045" x="0" y="204" width="318" height="56.000003814697266">
+              <frame id="1292:4433" name="Frame 2147230038" x="12" y="8" width="294" height="40.000003814697266">
+                <frame id="1292:4434" name="Frame 2147230036" x="0" y="0" width="257" height="40.000003814697266">
+                  <frame id="1292:4435" name="BTC" x="0" y="3.999998092651367" width="32.000003814697266" height="32.000003814697266" />
+                  <frame id="1292:4436" name="Frame 2147230035" x="40.000003814697266" y="0" width="217" height="40">
+                    <text id="1292:4437" name="Exness" x="0" y="0" width="217" height="24" />
+                    <text id="1292:4438" name="may8,2026" x="0" y="20" width="217" height="20" />
+                  </frame>
+                </frame>
+                <frame id="1292:4439" name="Frame 2147230062" x="257" y="0" width="37" height="40">
+                  <text id="1292:4440" name="10%" x="16" y="0" width="21" height="20" />
+                  <text id="1292:4441" name="$45.00" x="0" y="20" width="37" height="20" />
+                </frame>
+              </frame>
+            </frame>
+            <frame id="1292:4442" name="Frame 2147230046" x="0" y="272" width="318" height="56.000003814697266">
+              <frame id="1292:4443" name="Frame 2147230038" x="12" y="8" width="294" height="40.000003814697266">
+                <frame id="1292:4444" name="Frame 2147230036" x="0" y="0" width="257" height="40.000003814697266">
+                  <frame id="1292:4445" name="BTC" x="0" y="3.999998092651367" width="32.000003814697266" height="32.000003814697266" />
+                  <frame id="1292:4446" name="Frame 2147230035" x="40.000003814697266" y="0" width="217" height="40">
+                    <text id="1292:4447" name="IC Markets" x="0" y="0" width="217" height="24" />
+                    <text id="1292:4448" name="may6,2026" x="0" y="20" width="217" height="20" />
+                  </frame>
+                </frame>
+                <frame id="1292:4449" name="Frame 2147230062" x="257" y="0" width="37" height="40">
+                  <text id="1292:4450" name="10%" x="16" y="0" width="21" height="20" />
+                  <text id="1292:4451" name="$45.00" x="0" y="20" width="37" height="20" />
+                </frame>
+              </frame>
+            </frame>
+            <frame id="1292:4452" name="Frame 2147230047" x="0" y="340" width="318" height="56.000003814697266">
+              <frame id="1292:4453" name="Frame 2147230038" x="12" y="8" width="294" height="40.000003814697266">
+                <frame id="1292:4454" name="Frame 2147230036" x="0" y="0" width="257" height="40.000003814697266">
+                  <frame id="1292:4455" name="BTC" x="0" y="3.999998092651367" width="32.000003814697266" height="32.000003814697266" />
+                  <frame id="1292:4456" name="Frame 2147230035" x="40.000003814697266" y="0" width="217" height="40">
+                    <text id="1292:4457" name="XM" x="0" y="0" width="217" height="24" />
+                    <text id="1292:4458" name="may6,2026" x="0" y="20" width="217" height="20" />
+                  </frame>
+                </frame>
+                <frame id="1292:4459" name="Frame 2147230062" x="257" y="0" width="37" height="40">
+                  <text id="1292:4460" name="10%" x="16" y="0" width="21" height="20" />
+                  <text id="1292:4461" name="$45.00" x="0" y="20" width="37" height="20" />
+                </frame>
+              </frame>
+            </frame>
+            <frame id="1292:4462" name="Frame 2147230048" x="0" y="408" width="318" height="56.000003814697266">
+              <frame id="1292:4463" name="Frame 2147230038" x="12" y="8" width="294" height="40.000003814697266">
+                <frame id="1292:4464" name="Frame 2147230036" x="0" y="0" width="257" height="40.000003814697266">
+                  <frame id="1292:4465" name="BTC" x="0" y="3.999998092651367" width="32.000003814697266" height="32.000003814697266" />
+                  <frame id="1292:4466" name="Frame 2147230035" x="40.000003814697266" y="0" width="217" height="40">
+                    <text id="1292:4467" name="XM" x="0" y="0" width="217" height="24" />
+                    <text id="1292:4468" name="may4,2026" x="0" y="20" width="217" height="20" />
+                  </frame>
+                </frame>
+                <frame id="1292:4469" name="Frame 2147230062" x="257" y="0" width="37" height="40">
+                  <text id="1292:4470" name="10%" x="16" y="0" width="21" height="20" />
+                  <text id="1292:4471" name="$45.00" x="0" y="20" width="37" height="20" />
+                </frame>
+              </frame>
+            </frame>
+            <frame id="1292:4472" name="Frame 2147230049" x="0" y="476" width="318" height="56.000003814697266">
+              <frame id="1292:4473" name="Frame 2147230038" x="12" y="8" width="294" height="40.000003814697266">
+                <frame id="1292:4474" name="Frame 2147230036" x="0" y="0" width="257" height="40.000003814697266">
+                  <frame id="1292:4475" name="BTC" x="0" y="3.999998092651367" width="32.000003814697266" height="32.000003814697266" />
+                  <frame id="1292:4476" name="Frame 2147230035" x="40.000003814697266" y="0" width="217" height="40">
+                    <text id="1292:4477" name="XM" x="0" y="0" width="217" height="24" />
+                    <text id="1292:4478" name="may6,2026" x="0" y="20" width="217" height="20" />
+                  </frame>
+                </frame>
+                <frame id="1292:4479" name="Frame 2147230062" x="257" y="0" width="37" height="40">
+                  <text id="1292:4480" name="10%" x="16" y="0" width="21" height="20" />
+                  <text id="1292:4481" name="$45.00" x="0" y="20" width="37" height="20" />
+                </frame>
+              </frame>
+            </frame>
+            <frame id="1292:4482" name="Frame 2147230050" x="0" y="544" width="318" height="56.000003814697266">
+              <frame id="1292:4483" name="Frame 2147230038" x="12" y="8" width="294" height="40.000003814697266">
+                <frame id="1292:4484" name="Frame 2147230036" x="0" y="0" width="257" height="40.000003814697266">
+                  <frame id="1292:4485" name="BTC" x="0" y="3.999998092651367" width="32.000003814697266" height="32.000003814697266" />
+                  <frame id="1292:4486" name="Frame 2147230035" x="40.000003814697266" y="0" width="217" height="40">
+                    <text id="1292:4487" name="XM" x="0" y="0" width="217" height="24" />
+                    <text id="1292:4488" name="may4,2026" x="0" y="20" width="217" height="20" />
+                  </frame>
+                </frame>
+                <frame id="1292:4489" name="Frame 2147230062" x="257" y="0" width="37" height="40">
+                  <text id="1292:4490" name="10%" x="16" y="0" width="21" height="20" />
+                  <text id="1292:4491" name="$45.00" x="0" y="20" width="37" height="20" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <frame id="1292:4492" name="Frame 2147230060" x="326" y="0" width="2" height="564">
+            <frame id="1292:4493" name="Frame 2147230060" x="0" y="0" width="2" height="200" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+  </frame>

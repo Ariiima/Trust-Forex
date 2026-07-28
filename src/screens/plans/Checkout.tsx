@@ -1,19 +1,19 @@
 import { useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { Button, BottomSheet, Icon, ProgressBar } from '../../design-system/components';
+import { Button, BottomSheet, Icon, Input, ProgressBar, Switch } from '../../design-system/components';
 import { PlansHeader } from './PlansHeader';
 import { PlanCard } from './PlanCard';
-import { Toggle } from './Toggle';
+import { OrderSummarySheet } from './OrderSummarySheet';
 import { Glyph } from './icons';
 import { PLANS, DISCOUNT_CODE, DISCOUNT_AMOUNT, EARNING_BALANCE_AVAILABLE, type PlanId } from './plans-data';
 import './Checkout.css';
 
 /**
  * Checkout — route `/checkout`, stepper step 1/3. Figma 552:3115 (base) /
- * 552:3116 (balance toggle on, no JSON — colours sampled from the PNG) /
- * 748:3643 (discount applied, no JSON) / 748:3736 (change-plan BottomSheet,
- * no JSON). One component; toggle / discount / modal are local useState —
- * see PlanCard's compact variant for the modal row geometry note.
+ * 552:3116 (balance on) / 748:3643 (discount) / 748:3736 (change-plan
+ * BottomSheet) / 1206:4219 (order-summary BottomSheet). One component;
+ * toggle / discount / sheets are local useState. "Review order" opens the
+ * OrderSummarySheet; its confirm fires `onReviewOrder` (order creation).
  */
 export interface CheckoutProps {
   initialPlan?: PlanId;
@@ -25,8 +25,10 @@ export default function Checkout({ initialPlan = 'silver', onBack, onReviewOrder
   const [planId, setPlanId] = useState<PlanId>(initialPlan);
   const [useBalance, setUseBalance] = useState(false);
   const [discountApplied, setDiscountApplied] = useState(false);
+  const [discountError, setDiscountError] = useState(false);
   const [discountInput, setDiscountInput] = useState('');
   const [changePlanOpen, setChangePlanOpen] = useState(false);
+  const [orderSummaryOpen, setOrderSummaryOpen] = useState(false);
   const [modalPlanId, setModalPlanId] = useState<PlanId>(initialPlan);
 
   const plan = useMemo(() => PLANS.find((p) => p.id === planId)!, [planId]);
@@ -39,8 +41,13 @@ export default function Checkout({ initialPlan = 'silver', onBack, onReviewOrder
   }, [plan, useBalance, discountApplied]);
 
   const applyDiscount = (): void => {
-    if (discountInput.trim().toUpperCase() === DISCOUNT_CODE) {
+    const code = discountInput.trim();
+    if (!code) return;
+    if (code.toUpperCase() === DISCOUNT_CODE) {
       setDiscountApplied(true);
+      setDiscountError(false);
+    } else {
+      setDiscountError(true);
     }
   };
 
@@ -79,7 +86,7 @@ export default function Checkout({ initialPlan = 'silver', onBack, onReviewOrder
           <div className="scr-checkout-balance">
             <div className="scr-checkout-balance-row">
               <span className="scr-checkout-title14">Use earning balance</span>
-              <Toggle checked={useBalance} onChange={setUseBalance} label="Use earning balance" />
+              <Switch checked={useBalance} onChange={setUseBalance} />
             </div>
             <span className="scr-checkout-available">
               <span className="scr-checkout-label">Available :</span>
@@ -89,9 +96,9 @@ export default function Checkout({ initialPlan = 'silver', onBack, onReviewOrder
 
           <div className="scr-checkout-divider" aria-hidden="true" />
 
-          <div className="scr-checkout-discount">
-            <span className="scr-checkout-title14">Discount code</span>
-            {discountApplied ? (
+          {discountApplied ? (
+            <div className="scr-checkout-discount">
+              <span className="scr-checkout-discount-label">Discount code</span>
               <div className="scr-checkout-chip">
                 <span className="scr-checkout-chip-code">{DISCOUNT_CODE}</span>
                 <span className="scr-checkout-chip-amount">-${DISCOUNT_AMOUNT.toFixed(2)}</span>
@@ -107,19 +114,30 @@ export default function Checkout({ initialPlan = 'silver', onBack, onReviewOrder
                   <Glyph name="close" size={16} strokeWidth={1.5} />
                 </button>
               </div>
-            ) : (
-              <input
-                className="scr-checkout-discountinput"
+            </div>
+          ) : (
+            // ponytail: DS Input exposes no onBlur/onKeyDown, so the wrapper
+            // catches the bubbled events to apply the code on Enter/blur.
+            // Ceiling: breaks if Input ever portals its <input>; upgrade path
+            // is an "Apply" action in Input's rightSlot.
+            <div
+              onBlur={applyDiscount}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') applyDiscount();
+              }}
+            >
+              <Input
+                label="Discount code"
                 value={discountInput}
-                onChange={(e) => setDiscountInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') applyDiscount();
+                onChange={(v) => {
+                  setDiscountInput(v);
+                  setDiscountError(false);
                 }}
-                onBlur={applyDiscount}
                 placeholder="Enter code ( optional )"
+                error={discountError ? 'Invalid code' : undefined}
               />
-            )}
-          </div>
+            </div>
+          )}
 
           <div className="scr-checkout-total">
             <span className="scr-checkout-totallabel">Total payable</span>
@@ -134,7 +152,7 @@ export default function Checkout({ initialPlan = 'silver', onBack, onReviewOrder
           size="medium"
           fullWidth
           iconRight={<Icon name="chevron-right" size={20} strokeWidth={1.6} />}
-          onClick={() => onReviewOrder?.({ planId, total })}
+          onClick={() => setOrderSummaryOpen(true)}
         >
           Review order
         </Button>
@@ -171,6 +189,7 @@ export default function Checkout({ initialPlan = 'silver', onBack, onReviewOrder
             variant="primary"
             size="medium"
             fullWidth
+            className="scr-checkout-sheet-confirm"
             iconRight={<Icon name="chevron-right" size={20} strokeWidth={1.6} />}
             onClick={confirmChangePlan}
           >
@@ -178,6 +197,18 @@ export default function Checkout({ initialPlan = 'silver', onBack, onReviewOrder
           </Button>
         </div>
       </BottomSheet>
+
+      <OrderSummarySheet
+        open={orderSummaryOpen}
+        onClose={() => setOrderSummaryOpen(false)}
+        planName={plan.name}
+        planDuration={plan.duration}
+        price={plan.checkoutPrice}
+        balanceUsed={useBalance ? EARNING_BALANCE_AVAILABLE : undefined}
+        discount={discountApplied ? { code: DISCOUNT_CODE, amount: DISCOUNT_AMOUNT } : undefined}
+        total={total}
+        onConfirm={() => onReviewOrder?.({ planId, total })}
+      />
     </div>
   );
 }

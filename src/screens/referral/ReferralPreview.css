@@ -1,0 +1,86 @@
+/* =====================================================================
+   Referral — preview state (1333:8306). All values are exact px from the
+   frame XML: card 16,92 -> 328x496 (56/32 padding), headline block 210
+   wide centred, benefit rows 264 wide on a 24px rhythm, CTA 16,792.
+   ===================================================================== */
+
+.scr-referral-preview {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--bg-colors-container-s);
+}
+
+.scr-referral-preview-main {
+  flex: 1;
+  padding: var(--spacing-16);
+}
+
+/* ---- card (1341:5185) ------------------------------------------------- */
+.scr-referral-preview-card {
+  padding: 56px var(--spacing-32);
+  border-radius: var(--radius-large);
+  background: var(--bg-colors-container-p);
+}
+
+/* headline 1341:5186 — 210 wide, centred, 3 lines x 44 = 132 tall */
+.scr-referral-preview-title {
+  max-width: 210px;
+  margin: 0 auto;
+  text-align: center;
+  color: var(--typography-colors-main-text);
+}
+
+.scr-referral-preview-accent {
+  color: var(--primary-colors-900);
+}
+
+/* ---- benefits (1341:5187) — 264 wide, rows 52 tall, 24 gap ------------ */
+.scr-referral-preview-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+  margin: var(--spacing-48) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scr-referral-preview-benefit {
+  display: flex;
+  gap: var(--spacing-16);
+}
+
+/* 48x48 badge, nudged 2px down so the 52-tall row centres on the text */
+.scr-referral-preview-benefit-badge {
+  flex: 0 0 48px;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-top: 2px;
+  border-radius: var(--radius-infinity);
+  background: var(--primary-colors-50);
+  color: var(--primary-colors-900);
+}
+
+.scr-referral-preview-benefit-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.scr-referral-preview-benefit-title {
+  color: var(--typography-colors-main-text);
+}
+
+.scr-referral-preview-benefit-sub {
+  color: var(--typography-colors-sub-text);
+}
+
+/* ---- pinned CTA (1333:8340) ------------------------------------------- */
+.scr-referral-preview-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  padding: 0 var(--spacing-16) var(--spacing-16);
+  background: var(--bg-colors-container-s);
+}

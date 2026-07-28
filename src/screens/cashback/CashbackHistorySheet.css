@@ -1,0 +1,146 @@
+/* =====================================================================
+   Cashback history sheet (1292:4273, empty: 1233:6263). Shares the
+   .scr-cashback-sheet-* header from AboutCashbackSheet.css. The sheet
+   body IS the list container — rows + decorative rail sit directly on
+   the sheet's white bg, rail on the right.
+   ===================================================================== */
+
+.ds-sheet.scr-history-sheet {
+  display: flex;
+  flex-direction: column;
+  max-height: min(684px, 80vh);
+}
+
+/* ---- filled list ------------------------------------------------------ */
+.scr-history-sheet-listwrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  gap: var(--spacing-8);
+  margin-top: var(--spacing-24);
+}
+
+.scr-history-sheet-list {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  list-style: none;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.scr-history-sheet-list::-webkit-scrollbar {
+  display: none;
+}
+
+/* Decorative scroll rail (static mock, not synced to real scroll position). */
+.scr-history-sheet-rail {
+  position: relative;
+  flex: none;
+  align-self: stretch;
+  width: 2px;
+  border-radius: var(--radius-infinity);
+  background: var(--bg-colors-container-s);
+}
+.scr-history-sheet-rail-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 200px;
+  border-radius: var(--radius-infinity);
+  background: var(--stroke-colors-default);
+}
+
+.scr-history-sheet-row {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-8) var(--spacing-12);
+  border: 1px solid var(--stroke-colors-default);
+  border-radius: var(--radius-medium);
+}
+
+.scr-history-sheet-row-id {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  min-width: 0;
+}
+
+.scr-history-sheet-row-logo {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-infinity);
+  object-fit: cover;
+}
+
+.scr-history-sheet-row-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.scr-history-sheet-row-name {
+  font-size: 12px;
+  line-height: 24px;
+  color: var(--typography-colors-main-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scr-history-sheet-row-date {
+  font-size: 10px;
+  line-height: 20px;
+  color: var(--typography-colors-sub-text);
+}
+
+.scr-history-sheet-row-nums {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.scr-history-sheet-row-rate {
+  font-size: 10px;
+  line-height: 20px;
+  color: var(--typography-colors-main-text);
+}
+
+.scr-history-sheet-row-amount {
+  font-size: 10px;
+  line-height: 20px;
+  color: var(--state-colors-success);
+}
+
+/* ---- empty state (1233:6263) ------------------------------------------ */
+.scr-history-sheet-empty {
+  display: flex;
+  flex-direction: column;
+  margin-top: 82px; /* exact gap below header per 1233:6263, no spacing token */
+}
+
+.scr-history-sheet-empty-title {
+  margin: 0;
+  font-size: 16px;
+  line-height: 32px;
+  text-align: center;
+  color: var(--typography-colors-main-text);
+}
+
+.scr-history-sheet-empty-body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 28px;
+  text-align: center;
+  color: var(--typography-colors-sub-text);
+}
+
+.scr-history-sheet-empty-cta {
+  margin-top: 82px; /* exact gap per 1233:6263 */
+}

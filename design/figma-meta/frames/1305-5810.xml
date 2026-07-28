@@ -1,0 +1,4 @@
+  <frame id="1305:5810" name="Switch button" x="11180" y="16682" width="80" height="93">
+    <symbol id="1305:5809" name="State=Actived" x="20" y="53" width="40" height="20" />
+    <symbol id="1305:5808" name="State=Disabled" x="20" y="20" width="40" height="20" />
+  </frame>

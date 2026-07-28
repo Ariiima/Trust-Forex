@@ -9,11 +9,13 @@ import PaymentReceive from './screens/payment/PaymentReceive'
 import Cashback from './screens/cashback/Cashback'
 import CashbackHistory from './screens/cashback/CashbackHistory'
 import BrokerDetail from './screens/broker/BrokerDetail'
+import ReferralPreview from './screens/referral/ReferralPreview'
 
-// Tabs without designed screens (referral, earning) stay put for now.
+// `earning` has no built screen yet — its tab stays put.
 const TAB_ROUTES: Partial<Record<NavigationTab, string>> = {
   home: '/',
   cashback: '/cashback',
+  referral: '/referral',
 }
 
 function HomeRoute() {
@@ -51,7 +53,7 @@ function BrokerRoute() {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <AppRoutes />
     </BrowserRouter>
   )
@@ -67,9 +69,10 @@ function AppRoutes() {
       <Route path="/payment/currency" element={<PaymentCurrency onBack={() => nav(-1)} onContinue={() => nav('/payment/network')} />} />
       <Route
         path="/payment/network"
-        element={<PaymentNetwork onBack={() => nav(-1)} onChangeCurrency={() => nav('/payment/currency')} onContinue={() => nav('/payment/receive')} />}
+        element={<PaymentNetwork onBack={() => nav(-1)} onCurrencyChange={() => nav('/payment/currency')} onContinue={() => nav('/payment/receive')} />}
       />
       <Route path="/payment/receive" element={<PaymentReceive onBack={() => nav(-1)} onDone={() => nav('/')} />} />
+      <Route path="/referral" element={<ReferralPreview />} />
       <Route path="/cashback" element={<CashbackRoute />} />
       <Route path="/cashback/history" element={<CashbackHistory onBack={() => nav(-1)} />} />
       <Route path="/cashback/broker/:brokerId" element={<BrokerRoute />} />

@@ -1,6 +1,8 @@
-/* Button — Figma "Button" component (Color=Primary/Secondary).
-   Radius 8 (radius-small), text 14/w400, most CTAs are 44px tall. */
+/* Button — Figma "Button" set (1312:7018): 5 styles × 3 heights (44/40/32)
+   × Default/Pressed/Disabled/Loading. Radius 8 (radius-small), text 14/w400
+   (12/w400 at xsmall). `large` is a deprecated alias of medium (44). */
 .ds-button {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -22,21 +24,24 @@
 }
 
 /* size — height + horizontal padding */
+.ds-button-xsmall {
+  height: 32px;
+  padding: 0 var(--spacing-20);
+  font-size: 12px; /* type-text-xs */
+  line-height: 24px;
+}
 .ds-button-small {
   height: 40px;
   padding: 0 var(--spacing-16);
 }
-.ds-button-medium {
+.ds-button-medium,
+.ds-button-large /* deprecated: Figma has no 48px button */ {
   height: 44px;
   padding: 0 var(--spacing-16);
 }
-.ds-button-large {
-  height: 48px;
-  padding: 0 var(--spacing-20);
-}
 
-/* variant — colour */
-.ds-button-primary {
+/* variant — colour (Figma style in comment) */
+.ds-button-primary /* Primary-1 */ {
   background: var(--primary-colors-900);
   color: var(--base-color-white);
 }
@@ -44,7 +49,7 @@
   background: var(--primary-colors-800);
 }
 
-.ds-button-secondary {
+.ds-button-secondary /* Primary-2 */ {
   background: var(--primary-colors-50);
   color: var(--primary-colors-900);
 }
@@ -52,7 +57,15 @@
   background: var(--primary-colors-100);
 }
 
-.ds-button-outline {
+.ds-button-dark /* "Secodary" */ {
+  background: var(--base-color-black);
+  color: var(--base-color-white);
+}
+.ds-button-dark:active {
+  background: var(--typography-colors-main-text);
+}
+
+.ds-button-outline /* Tertiary-1 */ {
   background: transparent;
   border-color: var(--stroke-colors-default);
   color: var(--typography-colors-main-text);
@@ -61,9 +74,46 @@
   background: var(--bg-colors-container-s);
 }
 
+.ds-button-ghost /* Tertiary-2 */ {
+  background: transparent;
+  color: var(--primary-colors-900);
+}
+.ds-button-ghost:active {
+  background: var(--primary-colors-50);
+}
+
+/* Disabled is its own grey style, not a faded tint of the variant — the
+   preview-page CTA (1333:8341) is grey-on-grey while it counts down. */
 .ds-button:disabled {
-  opacity: 0.4;
+  background: var(--stroke-colors-default);
+  border-color: transparent;
+  color: var(--typography-colors-sub-text);
   cursor: not-allowed;
+}
+
+/* loading — spinner overlay; label stays in the DOM so width doesn't jump */
+.ds-button-loading:disabled {
+  opacity: 1;
+  cursor: default;
+}
+.ds-button-loading .ds-button-label,
+.ds-button-loading .ds-button-icon {
+  visibility: hidden;
+}
+.ds-button-spinner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ds-button-spinner svg {
+  animation: ds-button-spin 0.8s linear infinite;
+}
+@keyframes ds-button-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .ds-button-icon {

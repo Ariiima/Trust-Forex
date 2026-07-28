@@ -54,23 +54,27 @@ interface Promo {
   title: string;
   subtitle: string;
   art: string;
+  /** Art layer is 141×148 bleeding past the slide's top+right edge (clipped);
+   *  per-slide offsets from the XML. */
+  artRight: number;
+  artTop: number;
 }
 // Fixed order left→right in the source: Summer, Invite, Complete.
 const PROMOS: readonly Promo[] = [
-  { id: 'summer', bg: '#7A9DFE', tag: 'Special offer', title: 'Summer discount', subtitle: 'Get 20% OFF on 12 month plan', art: promoGiftArt },
-  { id: 'invite', bg: '#68CB64', tag: 'Invite & earn', title: 'Invite friends', subtitle: 'Get 10% from thier deposits', art: promoInviteArt },
-  { id: 'tasks', bg: '#FFA202', tag: 'Stay active', title: 'Complete tasks', subtitle: 'Win rewards & get amazing prizes', art: promoTrophyArt },
+  { id: 'summer', bg: '#7A9DFE', tag: 'Special offer', title: 'Summer discount', subtitle: 'Get 20% OFF on 12 month plan', art: promoGiftArt, artRight: -26, artTop: -24 },
+  { id: 'invite', bg: '#68CB64', tag: 'Invite & earn', title: 'Invite friends', subtitle: 'Get 10% from thier deposits', art: promoInviteArt, artRight: -40, artTop: -24 },
+  { id: 'tasks', bg: '#FFA202', tag: 'Stay active', title: 'Complete tasks', subtitle: 'Win rewards & get amazing prizes', art: promoTrophyArt, artRight: -40, artTop: -31 },
 ];
 const PROMO_START: Record<Subscription, number> = { active: 1, expired: 2, none: 0 };
 
+
 // Signal-performance area chart — synthesised to match the render's silhouette
 // (exact vector not exported from Figma): high mid baseline, twin peaks at
-// ~31%/40% width, crosshair x=148 on the descending shoulder, trough at ~76%,
-// late rebound bump at ~82%.
+// ~31%/40% width, crosshair x=155, trough at ~76%, late rebound bump at ~82%.
 const CHART_LINE =
-  'M 0 100 L 8 96 L 16 102 L 24 94 L 32 99 L 40 92 L 48 96 L 56 88 L 64 92 L 72 84 L 80 74 L 86 64 L 92 52 L 98 62 L 104 68 L 110 52 L 118 42 L 126 50 L 134 56 L 141 54 L 148 60 L 156 66 L 164 62 L 172 74 L 180 80 L 188 78 L 196 90 L 204 96 L 212 94 L 220 104 L 228 110 L 236 92 L 243 72 L 250 80 L 258 92 L 266 96 L 274 88 L 282 92 L 290 86 L 296 88';
+  'M 0 100 L 8 96 L 16 102 L 24 94 L 32 99 L 40 92 L 48 96 L 56 88 L 64 92 L 72 84 L 80 74 L 86 64 L 92 52 L 98 62 L 104 68 L 110 52 L 118 42 L 126 50 L 134 56 L 141 52 L 148 53 L 155 56 L 164 62 L 172 74 L 180 80 L 188 78 L 196 90 L 204 96 L 212 94 L 220 104 L 228 110 L 236 92 L 243 72 L 250 80 L 258 92 L 266 96 L 274 88 L 282 92 L 290 86 L 296 88';
 const CHART_AREA = `${CHART_LINE} L 296 164 L 0 164 Z`;
-const CHART_PEAK_X = 148; // px within the 296-wide plot
+const CHART_PEAK_X = 155; // px within the 296-wide plot (XML crosshair x)
 
 /* ===========================================================================
  * Countdown ring — SVG semicircle gauge, green arc via stroke-dasharray.
@@ -78,19 +82,21 @@ const CHART_PEAK_X = 148; // px within the 296-wide plot
  * is tuned to match the render (~0.66 of the 180° arc).
  * ========================================================================= */
 function CountdownRing({ days }: { days: number }): ReactNode {
-  const len = Math.PI * 100; // arc length of a 100px-radius semicircle
+  // Arc vector is 224×112 in a 232×112 box (x4..228 incl the 16px stroke)
+  // → path radius 104 centred at (116,104); round caps close flush at y112.
+  const len = Math.PI * 104; // arc length of the semicircle
   const green = len * 0.66;
   return (
     <div className="scr-home-ring">
-      <svg viewBox="0 0 232 116" fill="none">
+      <svg viewBox="0 0 232 112" fill="none">
         <path
-          d="M 16 104 A 100 100 0 0 1 216 104"
+          d="M 12 104 A 104 104 0 0 1 220 104"
           stroke="rgba(255,255,255,0.12)"
           strokeWidth={16}
           strokeLinecap="round"
         />
         <path
-          d="M 16 104 A 100 100 0 0 1 216 104"
+          d="M 12 104 A 104 104 0 0 1 220 104"
           stroke="#48D48A"
           strokeWidth={16}
           strokeLinecap="round"

@@ -1,0 +1,102 @@
+/* =====================================================================
+   About-cashback sheet (1233:5894) + the shared sheet header
+   (.scr-cashback-sheet-*) also consumed by CashbackHistorySheet.
+   DS BottomSheet supplies scrim, white bg, 20px top radius, handle and
+   8/16/24 padding.
+   ===================================================================== */
+
+/* ---- shared sheet header: title row (32) + close (24) + divider ------- */
+.scr-cashback-sheet-head {
+  display: flex;
+  flex-direction: column;
+}
+
+.scr-cashback-sheet-titlerow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-12);
+}
+
+.scr-cashback-sheet-title {
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-cashback-sheet-close {
+  display: inline-flex;
+  flex: none;
+  color: var(--base-color-black);
+}
+
+.scr-cashback-sheet-divider {
+  height: 1px;
+  background: var(--stroke-colors-default);
+}
+
+/* ---- about sheet body ------------------------------------------------- */
+.scr-about-sheet-body {
+  margin-top: var(--spacing-16);
+}
+
+.scr-about-sheet-headline {
+  margin: 0 0 var(--spacing-24);
+  font-size: 20px;
+  line-height: 40px;
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+  color: var(--typography-colors-main-text);
+}
+
+.scr-about-sheet-accent {
+  color: var(--primary-colors-900);
+}
+
+/* Steps block: 261 wide, centered (XML x=33.5), same anatomy as the intro
+   splash steps but with the sheet's own copy. */
+.scr-about-sheet-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+  width: 261px;
+  margin: 0 auto var(--spacing-12);
+}
+
+.scr-about-sheet-step {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-16);
+}
+
+.scr-about-sheet-step-icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-infinity);
+  background: var(--primary-colors-50);
+  color: var(--primary-colors-900);
+}
+
+.scr-about-sheet-step-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.scr-about-sheet-step-title {
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-about-sheet-step-sub {
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-sub-text);
+}

@@ -121,32 +121,24 @@
   color: var(--typography-colors-main-text);
 }
 
-/* ---- discount code ------------------------------------------------------ */
+/* ---- discount code (applied-chip state; the empty/error state is the DS
+   Input component) ------------------------------------------------------- */
 .scr-checkout-discount {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-4);
 }
 
-.scr-checkout-discountinput {
-  box-sizing: border-box;
-  width: 100%;
-  height: 44px;
-  padding: 0 var(--spacing-16);
-  border: none;
-  border-radius: var(--radius-small);
-  background: var(--bg-colors-container-s);
-  font-family: var(--font-family-base);
-  font-size: 12px;
-  line-height: 24px;
+/* Matches the DS Input's 28px label row so the two states line up. */
+.scr-checkout-discount-label {
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
   color: var(--typography-colors-main-text);
 }
-.scr-checkout-discountinput::placeholder {
-  color: var(--typography-colors-sub-text);
-}
 
-/* Discount chip (748:3643, no JSON — approximated from the reference PNG:
-   white card, 1px grey border, code/amount/clear-X on one row). */
+/* Discount chip (748:3736/1206:4219 underlay XML: 296×44, inner row inset
+   (16,10); border style still not in XML — kept 1px solid grey per PNG). */
 .scr-checkout-chip {
   box-sizing: border-box;
   display: flex;
@@ -209,16 +201,16 @@
   position: sticky;
   bottom: 0;
   z-index: 10;
-  padding: var(--spacing-8) var(--spacing-16) var(--spacing-16);
+  padding: 0 var(--spacing-16) var(--spacing-16);
   background: var(--bg-colors-container-s);
 }
 
-/* ---- Change-plan BottomSheet (748:3736, no JSON) --------------------------
+/* ---- Change-plan BottomSheet (748:3736) -----------------------------------
    The DS BottomSheet ships a drag handle + 20px top radius; this design has
    neither a handle nor as large a radius (title sits right at the top edge)
    — same override pattern as src/screens/broker/BrokerDetail.css. */
 .ds-sheet.scr-checkout-sheet {
-  padding: var(--spacing-16) var(--spacing-16) 24px;
+  padding: var(--spacing-16) var(--spacing-16) 36px;
   border-radius: var(--radius-medium) var(--radius-medium) 0 0;
 }
 .scr-checkout-sheet .ds-sheet-handle {
@@ -238,9 +230,9 @@
 }
 
 .scr-checkout-sheet-title {
-  font-size: 20px;
-  line-height: 40px;
-  font-weight: var(--font-weight-bold);
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: var(--font-weight-semibold);
   color: var(--typography-colors-main-text);
 }
 
@@ -251,11 +243,17 @@
 }
 
 .scr-checkout-sheet-divider {
+  margin-top: -4px; /* 16px sheet gap - 4px = the XML's 12px title→divider gap */
   border-top: 1px dashed var(--stroke-colors-default);
 }
 
 .scr-checkout-sheet-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-16);
+  gap: var(--spacing-12);
+}
+
+/* 16px sheet gap + 16px = the XML's 32px list→confirm gap. */
+.scr-checkout-sheet-confirm.ds-button {
+  margin-top: var(--spacing-16);
 }

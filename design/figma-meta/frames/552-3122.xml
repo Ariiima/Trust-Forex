@@ -1,0 +1,107 @@
+  <frame id="552:3122" name="Select network" x="6335" y="2581" width="360" height="852">
+    <frame id="779:2435" name="Iphone-Asset" x="0" y="0" width="360" height="32">
+      <frame id="779:2436" name="Time" x="0" y="0" width="128" height="32">
+        <text id="779:2437" name="Time" x="52" y="5" width="24" height="22" />
+      </frame>
+      <frame id="779:2438" name="Levels" x="232" y="0" width="128" height="32">
+        <frame id="779:2439" name="Frame 10" x="31.834854125976562" y="11.143986701965332" width="64" height="10.712026596069336">
+          <vector id="779:2440" name="Cellular Connection" x="0.0000152587890625" y="0.3187119960784912" width="15.820839881896973" height="10.074591636657715" />
+          <vector id="779:2441" name="Wifi" x="21.588829040527344" y="0.2767423987388611" width="14.124768257141113" height="10.158549308776855" />
+          <frame id="779:2442" name="Battery" x="41.481658935546875" y="0.000004642864951165393" width="22.51835823059082" height="10.712026596069336" />
+        </frame>
+      </frame>
+    </frame>
+    <instance id="779:2446" name="Telegram header " x="0" y="32" width="360" height="44" />
+    <frame id="779:2447" name="Frame 2147229923" x="16" y="156" width="328" height="552">
+      <frame id="1103:10800" name="Frame 2147230149" x="16" y="16" width="296" height="520">
+        <frame id="779:2555" name="Frame 2147230013" x="0" y="0" width="296" height="88">
+          <text id="779:2544" name="Selected currency" x="0" y="0" width="296" height="24" />
+          <frame id="779:2449" name="Frame 2147230008" x="0" y="32" width="296" height="56">
+            <frame id="779:2450" name="Frame 2147230011" x="12" y="8" width="268" height="40">
+              <frame id="779:2451" name="Frame 2147230010" x="0" y="0" width="81" height="40">
+                <instance id="1102:10772" name="BTC" x="0" y="3.999998092651367" width="32.000003814697266" height="32.000003814697266" />
+                <frame id="1102:10778" name="Frame 2147230010" x="44.000003814697266" y="0" width="37" height="40">
+                  <text id="1102:10779" name="BTC" x="0" y="0" width="25" height="24" />
+                  <text id="1102:10780" name="Bitcoin" x="0" y="20" width="37" height="20" />
+                </frame>
+              </frame>
+              <instance id="1312:7692" name="Buttons" x="140" y="4" width="128" height="32" />
+            </frame>
+          </frame>
+        </frame>
+        <frame id="1103:10799" name="Frame 2147230148" x="0" y="104" width="296" height="416">
+          <frame id="781:3020" name="Frame 2147230022" x="0" y="0" width="296" height="32">
+            <text id="779:2448" name="Select network" x="0" y="0" width="123" height="32" />
+            <instance id="781:3017" name="info" x="272" y="4" width="24" height="24" />
+          </frame>
+          <frame id="1305:6284" name="Frame 2147230149" x="0" y="44" width="296" height="372">
+            <frame id="1305:6285" name="Frame 2147230016" x="0" y="0" width="296" height="52.000003814697266">
+              <frame id="1305:6286" name="Frame 2147230016" x="12" y="10" width="196" height="32.000003814697266">
+                <instance id="1305:6287" name="BTC" x="0" y="0" width="32.000003814697266" height="32.000003814697266" />
+                <frame id="1305:6288" name="Frame 2147230009" x="40.000003814697266" y="4.000001907348633" width="156" height="24">
+                  <text id="1305:6289" name="BNB Smart Chain (BEP20)" x="0" y="0" width="156" height="24" />
+                </frame>
+              </frame>
+              <instance id="1305:6290" name="Radio button" x="264" y="16.000001907348633" width="20" height="20" />
+            </frame>
+            <frame id="1305:6291" name="Frame 2147230009" x="0" y="64" width="296" height="52">
+              <frame id="1305:6292" name="Frame 2147230016" x="12" y="10" width="121" height="32">
+                <frame id="1305:6293" name="BTC" x="0" y="0" width="32" height="32">
+                  <frame id="1305:6294" name="Layer x0020 1" x="-0.02031249925494194" y="0.0234375" width="31.996379852294922" height="31.9999942779541" />
+                  <instance id="1305:6297" name="tron-trx-logo" x="6.400000095367432" y="6.400000095367432" width="19.200000762939453" height="19.200000762939453" />
+                </frame>
+                <frame id="1305:6298" name="Frame 2147230009" x="40" y="4" width="81" height="24">
+                  <text id="1305:6299" name="Tron (TRC20)" x="0" y="0" width="81" height="24" />
+                </frame>
+              </frame>
+              <instance id="1305:6300" name="Radio button" x="264" y="16" width="20" height="20" />
+            </frame>
+            <frame id="1305:6301" name="Frame 2147230017" x="0" y="128" width="296" height="52.000003814697266">
+              <frame id="1305:6302" name="Frame 2147230016" x="12" y="10" width="176" height="32.000003814697266">
+                <instance id="1305:6303" name="Ethereum (ETH)" x="0" y="0" width="32.000003814697266" height="32.000003814697266" />
+                <frame id="1305:6304" name="Frame 2147230009" x="40.000003814697266" y="4.000001907348633" width="136" height="24">
+                  <text id="1305:6305" name="Ethereum (ERC20)" x="0" y="0" width="136" height="24" />
+                </frame>
+              </frame>
+              <instance id="1305:6306" name="Radio button" x="264" y="16" width="20" height="20" />
+            </frame>
+            <frame id="1305:6307" name="Frame 2147230018" x="0" y="192" width="296" height="52">
+              <frame id="1305:6308" name="Frame 2147230016" x="12" y="10" width="176" height="32">
+                <frame id="1305:6309" name="BTC" x="0" y="0" width="32" height="32">
+                  <frame id="1305:6310" name="Layer x0020 1" x="-0.02031249925494194" y="0.0234375" width="31.996379852294922" height="31.9999942779541" />
+                  <frame id="1305:6313" name="Polygon" x="4" y="4" width="24" height="24" />
+                </frame>
+                <frame id="1305:6315" name="Frame 2147230009" x="40" y="4" width="136" height="24">
+                  <text id="1305:6316" name="Polygon (POL)" x="0" y="0" width="136" height="24" />
+                </frame>
+              </frame>
+              <instance id="1305:6317" name="Radio button" x="264" y="16" width="20" height="20" />
+            </frame>
+            <frame id="1305:6318" name="Frame 2147230019" x="0" y="256" width="296" height="52">
+              <frame id="1305:6319" name="Frame 2147230016" x="12" y="10" width="176" height="32">
+                <frame id="1305:6320" name="BTC" x="0" y="0" width="32" height="32" />
+                <frame id="1305:6327" name="Frame 2147230009" x="40" y="4" width="136" height="24">
+                  <text id="1305:6328" name="Avalanche C-Chain" x="0" y="0" width="136" height="24" />
+                </frame>
+              </frame>
+              <instance id="1305:6329" name="Radio button" x="264" y="16" width="20" height="20" />
+            </frame>
+            <frame id="1305:6330" name="Frame 2147230020" x="0" y="320" width="296" height="52">
+              <frame id="1305:6331" name="Frame 2147230016" x="12" y="9.75384521484375" width="176" height="32.4923095703125">
+                <instance id="1305:6332" name="SOL" x="0" y="0" width="32.000003814697266" height="32.4923095703125" />
+                <frame id="1305:6333" name="Frame 2147230009" x="40.000003814697266" y="4.24615478515625" width="136" height="24">
+                  <text id="1305:6334" name="Solana (SOL)" x="0" y="0" width="136" height="24" />
+                </frame>
+              </frame>
+              <instance id="1305:6335" name="Radio button" x="264" y="16" width="20" height="20" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="1102:9884" name="Progress bar" x="16" y="92" width="328" height="48" />
+    <frame id="1312:7671" name="Navigation bar " x="0" y="792" width="360" height="60">
+      <instance id="1312:7672" name="Buttons" x="16" y="0" width="328" height="44" />
+      <instance id="1312:7673" name="Safe area" x="0" y="44" width="360" height="16" />
+    </frame>
+  </frame>

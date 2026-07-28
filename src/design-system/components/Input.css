@@ -1,0 +1,84 @@
+/* Input — labelled text field (Figma "Input", 1305:5673).
+   Column: 24px label / 48px field / 24px msg with 4px gaps
+   (Default = 76 tall, Error = 104). Width is fluid — instances are 296 & 328.
+   Focus ("Active"/"Typing") = primary border via :focus-within. */
+.ds-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  width: 100%;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-regular);
+}
+
+.ds-input-label {
+  font-size: 12px; /* type-text-xs */
+  line-height: 24px;
+  color: var(--typography-colors-sub-text);
+}
+
+.ds-input-field {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  box-sizing: border-box;
+  height: 48px;
+  padding: 0 var(--spacing-12);
+  border-radius: var(--radius-small);
+  border: 1px solid var(--stroke-colors-default);
+  background: var(--bg-colors-container-p);
+  transition: border-color 0.15s ease;
+}
+
+.ds-input-field:focus-within {
+  border-color: var(--stroke-colors-primary);
+}
+
+.ds-input-control {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px; /* type-text-sm */
+  line-height: 28px;
+  color: var(--typography-colors-main-text);
+}
+
+.ds-input-control::placeholder {
+  color: var(--typography-colors-sub-text);
+}
+
+.ds-input-right {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+}
+
+.ds-input-msg {
+  font-size: 12px; /* type-text-xs */
+  line-height: 24px;
+  color: var(--typography-colors-sub-text);
+}
+
+.ds-input-msg-error {
+  color: var(--state-colors-eror);
+}
+
+/* error — red border wins over focus */
+.ds-input-error .ds-input-field,
+.ds-input-error .ds-input-field:focus-within {
+  border-color: var(--state-colors-eror);
+}
+
+/* disabled — dimmed field, no focus border (no Figma state; invented for the contract) */
+.ds-input-disabled .ds-input-field,
+.ds-input-disabled .ds-input-field:focus-within {
+  background: var(--bg-colors-container-s);
+  border-color: var(--stroke-colors-default);
+}
+.ds-input-disabled .ds-input-control {
+  color: var(--typography-colors-sub-text);
+}

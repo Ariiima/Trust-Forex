@@ -1,0 +1,128 @@
+  <frame id="1242:7555" name="Waiting for deposit " x="16428" y="564" width="360" height="978">
+    <frame id="1242:7576" name="Frame 2147230093" x="16" y="230" width="328" height="248">
+      <frame id="1242:7577" name="Progress bar" x="16" y="16" width="296" height="24">
+        <frame id="1242:7578" name="Frame 2147230145" x="0" y="0" width="296" height="24">
+          <frame id="1242:7579" name="Frame 2147230141" x="0" y="0" width="296" height="24">
+            <frame id="1242:7580" name="Frame 2147230142" x="0" y="0" width="128" height="24">
+              <frame id="1242:7581" name="Frame 2147230137" x="0" y="0" width="24" height="24">
+                <frame id="1242:7582" name="Frame 2147230176" x="4" y="4" width="16" height="16" />
+              </frame>
+              <vector id="1242:7583" name="Vector 20" x="32" y="12" width="96" height="0" />
+            </frame>
+            <frame id="1242:7584" name="Frame 2147230143" x="136" y="0" width="128" height="24">
+              <frame id="1242:7585" name="Frame 2147230138" x="0" y="0" width="24" height="24">
+                <frame id="1242:7586" name="Frame 2147230176" x="4" y="4" width="16" height="16" hidden="true" />
+                <frame id="1242:7587" name="Frame 2147230177" x="4" y="4" width="16" height="16" />
+              </frame>
+              <vector id="1242:7588" name="Vector 21" x="32" y="12" width="96" height="0" />
+            </frame>
+            <frame id="1242:7589" name="Frame 2147230139" x="272" y="0" width="24" height="24">
+              <frame id="1242:7590" name="Frame 2147230176" x="4" y="4" width="16" height="16" hidden="true" />
+              <frame id="1242:7673" name="Frame 2147230177" x="4" y="4" width="16" height="16" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+      <frame id="1242:7591" name="Frame 2147230132" x="16" y="56" width="296" height="80">
+        <frame id="1242:7592" name="Frame 2147230101" x="0" y="0" width="296" height="80">
+          <text id="1242:7593" name="X Axis Label" x="0" y="0" width="296" height="32" />
+          <text id="1242:7594" name="X Axis Label" x="0" y="32" width="296" height="48" />
+        </frame>
+      </frame>
+      <frame id="1292:5185" name="Frame 2147230202" x="16" y="152" width="296" height="80">
+        <frame id="1292:5186" name="Frame 2147230110" x="0" y="0" width="296" height="24">
+          <text id="1292:5187" name="referral code" x="0" y="0" width="78" height="24" />
+          <frame id="1292:5188" name="Frame 2147230151" x="235" y="0" width="61" height="24">
+            <text id="1292:5189" name="45789632" x="0" y="0" width="61" height="24" />
+          </frame>
+        </frame>
+        <instance id="1316:8023" name="Buttons" x="0" y="36" width="296" height="44" />
+      </frame>
+    </frame>
+    <frame id="1242:7864" name="Frame 2147229966" x="16" y="92" width="328" height="114">
+      <frame id="1242:7865" name="Frame 2147230054" x="16" y="16" width="296" height="32">
+        <frame id="1242:7866" name="Frame 2147230036" x="0" y="0" width="66" height="32">
+          <frame id="1242:7867" name="BTC" x="0" y="0" width="32" height="32" />
+          <frame id="1242:7868" name="Frame 2147230053" x="40" y="0" width="26" height="32">
+            <text id="1242:7869" name="XM" x="0" y="0" width="26" height="32" />
+          </frame>
+        </frame>
+        <frame id="1242:7870" name="Frame 2147229881" x="241" y="6" width="55" height="20">
+          <text id="1242:7871" name="popular" x="8" y="0" width="39" height="20" />
+        </frame>
+      </frame>
+      <instance id="1316:8253" name="Notification" x="16" y="58" width="296" height="40" />
+    </frame>
+    <frame id="1284:3793" name="Frame 2147230115" x="16" y="502" width="328" height="384">
+      <text id="1284:3794" name="Broker details" x="16" y="16" width="113" height="32" />
+      <frame id="1284:3795" name="Frame 2147230109" x="16" y="64" width="296" height="24">
+        <frame id="1284:3796" name="Frame 2147230110" x="0" y="0" width="91" height="24">
+          <instance id="1284:3797" name="shield" x="0" y="2" width="20" height="20" />
+          <text id="1284:3798" name="Regulation" x="24" y="0" width="67" height="24" />
+        </frame>
+        <text id="1284:3799" name="FCA, CySEC" x="223" y="0" width="73" height="24" />
+      </frame>
+      <frame id="1284:3800" name="Frame 2147230110" x="16" y="104" width="296" height="24">
+        <frame id="1284:3801" name="Frame 2147230110" x="0" y="0" width="126" height="24">
+          <instance id="1284:3802" name="monitor" x="0" y="2" width="20" height="20" />
+          <text id="1284:3803" name="Trading Platform" x="24" y="0" width="102" height="24" />
+        </frame>
+        <text id="1284:3804" name="MT4 / MT5" x="234" y="0" width="62" height="24" />
+      </frame>
+      <frame id="1284:3805" name="Frame 2147230114" x="16" y="144" width="296" height="24">
+        <frame id="1284:3806" name="Frame 2147230110" x="0" y="0" width="114" height="24">
+          <instance id="1284:3807" name="user-2" x="0" y="2" width="20" height="20" />
+          <text id="1284:3808" name="Account Types" x="24" y="0" width="90" height="24" />
+        </frame>
+        <text id="1284:3809" name="Standard / ECN" x="203" y="0" width="93" height="24" />
+      </frame>
+      <frame id="1284:3810" name="Frame 2147230113" x="16" y="184" width="296" height="24">
+        <frame id="1284:3811" name="Frame 2147230110" x="0" y="0" width="79" height="24">
+          <instance id="1284:3812" name="maximize" x="0" y="2" width="20" height="20" />
+          <text id="1284:3813" name="Leverage" x="24" y="0" width="55" height="24" />
+        </frame>
+        <text id="1284:3814" name="Up to 1:500" x="226" y="0" width="70" height="24" />
+      </frame>
+      <frame id="1284:3815" name="Frame 2147230111" x="16" y="224" width="296" height="24">
+        <frame id="1284:3816" name="Frame 2147230110" x="0" y="0" width="114" height="24">
+          <instance id="1284:3817" name="gift" x="0" y="2" width="20" height="20" />
+          <text id="1284:3818" name="Deposit Bonus" x="24" y="0" width="90" height="24" />
+        </frame>
+        <text id="1284:3819" name="Up to 50%" x="233" y="0" width="63" height="24" />
+      </frame>
+      <frame id="1284:3820" name="Frame 2147230112" x="16" y="264" width="296" height="24">
+        <frame id="1284:3821" name="Frame 2147230110" x="0" y="0" width="102" height="24">
+          <instance id="1284:3822" name="activity" x="0" y="2" width="20" height="20" />
+          <text id="1284:3823" name="Spread Level" x="24" y="0" width="78" height="24" />
+        </frame>
+        <text id="1284:3824" name="Low" x="271" y="0" width="25" height="24" />
+      </frame>
+      <frame id="1284:3825" name="Frame 2147230115" x="16" y="304" width="296" height="24">
+        <frame id="1284:3826" name="Frame 2147230110" x="0" y="0" width="115" height="24">
+          <instance id="1284:3827" name="cash2" x="0" y="2" width="20" height="20" />
+          <text id="1284:3828" name="Cashback level" x="24" y="0" width="91" height="24" />
+        </frame>
+        <text id="1284:3829" name="High" x="266" y="0" width="30" height="24" />
+      </frame>
+      <frame id="1284:3830" name="Frame 2147230116" x="16" y="344" width="296" height="24">
+        <frame id="1284:3831" name="Frame 2147230110" x="0" y="0" width="127" height="24">
+          <instance id="1284:3832" name="zap" x="0" y="2" width="20" height="20" />
+          <text id="1284:3833" name="Execution Speed" x="24" y="0" width="103" height="24" />
+        </frame>
+        <text id="1284:3834" name="Fast" x="271" y="0" width="25" height="24" />
+      </frame>
+    </frame>
+    <frame id="1242:7556" name="Iphone-Asset" x="0" y="0" width="360" height="32">
+      <frame id="1242:7557" name="Time" x="0" y="0" width="128" height="32">
+        <text id="1242:7558" name="Time" x="52" y="5" width="24" height="22" />
+      </frame>
+      <frame id="1242:7559" name="Levels" x="232" y="0" width="128" height="32">
+        <frame id="1242:7560" name="Frame 10" x="31.833984375" y="11.14398193359375" width="64" height="10.712026596069336">
+          <vector id="1242:7561" name="Cellular Connection" x="0.0000152587890625" y="0.3187119960784912" width="15.820839881896973" height="10.074591636657715" />
+          <vector id="1242:7562" name="Wifi" x="21.588829040527344" y="0.2767423987388611" width="14.124768257141113" height="10.158549308776855" />
+          <frame id="1242:7563" name="Battery" x="41.481658935546875" y="0.000004642864951165393" width="22.51835823059082" height="10.712026596069336" />
+        </frame>
+      </frame>
+    </frame>
+    <instance id="1242:7567" name="Telegram header " x="0" y="32" width="360" height="44" />
+  </frame>

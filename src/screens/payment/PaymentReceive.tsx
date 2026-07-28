@@ -1,3 +1,4 @@
+/* DEPRECATED — superseded by the order-status flow in src/screens/payment/status/ (pending QR → waiting → confirmed/error, driven by src/api/client.ts). Keep unrouted; do not extend. */
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { Button, BottomSheet, Icon, ProgressBar } from '../../design-system/components';

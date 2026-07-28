@@ -1,0 +1,37 @@
+/* Radio — bare 20px trailing row control (Figma "Radio", 1305:6247).
+   Selected = primary ring + 10px primary dot (dot size assumed; recheck
+   visually). The parent row owns the tap target and label. */
+.ds-radio {
+  position: relative;
+  flex: none;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid var(--stroke-colors-default);
+  border-radius: 50%;
+  background: var(--bg-colors-container-p);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.ds-radio-checked {
+  border-color: var(--stroke-colors-primary);
+}
+
+.ds-radio-checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--primary-colors-900);
+  transform: translate(-50%, -50%);
+}
+
+.ds-radio:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

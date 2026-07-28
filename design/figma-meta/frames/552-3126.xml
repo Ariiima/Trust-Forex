@@ -1,0 +1,171 @@
+  <frame id="552:3126" name="Plan page " x="2334" y="461" width="360" height="1096">
+    <text id="674:979" name="Get full signal access with every subscription, plus greater savings and higher benefit rates on longer terms." x="16" y="92" width="328" height="84" />
+    <frame id="647:263" name="Iphone-Asset" x="0" y="0" width="360" height="32">
+      <frame id="647:264" name="Time" x="0" y="0" width="128" height="32">
+        <text id="647:265" name="Time" x="52" y="5" width="24" height="22" />
+      </frame>
+      <frame id="647:266" name="Levels" x="232" y="0" width="128" height="32">
+        <frame id="647:267" name="Frame 10" x="31.834854125976562" y="11.143986701965332" width="64" height="10.712026596069336">
+          <vector id="647:268" name="Cellular Connection" x="0.0000152587890625" y="0.3187119960784912" width="15.820839881896973" height="10.074591636657715" />
+          <vector id="647:269" name="Wifi" x="21.588829040527344" y="0.2767423987388611" width="14.124768257141113" height="10.158549308776855" />
+          <frame id="647:270" name="Battery" x="41.481658935546875" y="0.000004642864951165393" width="22.51835823059082" height="10.712026596069336" />
+        </frame>
+      </frame>
+    </frame>
+    <instance id="647:274" name="Telegram header " x="0" y="32" width="360" height="44" />
+    <frame id="1108:11788" name="Frame 2147230168" x="16" y="192" width="328" height="836">
+      <frame id="1153:2110" name="Frame 2147229926" x="0" y="0" width="328" height="268">
+        <frame id="1153:2111" name="Frame 2147229937" x="12" y="12" width="304" height="68">
+          <frame id="1153:2112" name="Frame 2147230173" x="0" y="0" width="304" height="60">
+            <rounded-rectangle id="1153:2113" name="ChatGPT Image Jul 18, 2026, 01_02_45 PM 2" x="0" y="2" width="56" height="56" />
+            <frame id="1153:2114" name="Frame 2147230172" x="64" y="0" width="240" height="60">
+              <frame id="1153:2115" name="Frame 2147230175" x="0" y="0" width="240" height="32">
+                <text id="1153:2116" name="Silver" x="0" y="0" width="240" height="32" />
+              </frame>
+              <frame id="1153:2119" name="Frame 2147230098" x="0" y="28" width="240" height="32">
+                <frame id="1153:2120" name="Frame 2147229925" x="0" y="0" width="142" height="32">
+                  <frame id="1153:2121" name="Frame 2147229926" x="0" y="0" width="83" height="32">
+                    <instance id="1153:2122" name="currency-dollar1" x="0" y="6" width="20" height="20" />
+                    <text id="1153:2123" name="200.00" x="20" y="0" width="63" height="32" />
+                  </frame>
+                  <text id="1153:2124" name="/ 1 month" x="87" y="4" width="55" height="24" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <vector id="1153:2125" name="Vector 6" x="0" y="68" width="304" height="0" />
+        </frame>
+        <frame id="1153:2126" name="Frame 2147229932" x="12" y="92" width="304" height="108">
+          <frame id="1153:2127" name="Frame 2147229928" x="0" y="0" width="304" height="24">
+            <instance id="1153:2128" name="check" x="0" y="4" width="16" height="16" />
+            <text id="1153:2129" name="VIP signal channel access" x="20" y="0" width="284" height="24" />
+          </frame>
+          <frame id="1153:2130" name="Frame 2147229929" x="0" y="28" width="304" height="24">
+            <instance id="1153:2131" name="check" x="0" y="4" width="16" height="16" />
+            <text id="1153:2132" name="All trading signals included" x="20" y="0" width="284" height="24" />
+          </frame>
+          <frame id="1153:2133" name="Frame 2147229930" x="0" y="56" width="304" height="24">
+            <instance id="1153:2134" name="check" x="0" y="4" width="16" height="16" />
+            <text id="1153:2135" name="Broker cashback boost" x="20" y="0" width="233" height="24" />
+            <frame id="1153:2136" name="Frame 2147229983" x="257" y="0" width="47" height="24">
+              <text id="1153:2137" name="15%" x="4" y="0" width="23" height="24" />
+              <instance id="1153:2138" name="trending-up" x="27" y="4" width="16" height="16" />
+            </frame>
+          </frame>
+          <frame id="1153:2139" name="Frame 2147229931" x="0" y="84" width="304" height="24">
+            <instance id="1153:2140" name="check" x="0" y="4" width="16" height="16" />
+            <text id="1153:2141" name="Referral share boost" x="20" y="0" width="233" height="24" />
+            <frame id="1153:2142" name="Frame 2147229983" x="257" y="0" width="47" height="24">
+              <text id="1153:2143" name="15%" x="4" y="0" width="23" height="24" />
+              <instance id="1153:2144" name="trending-up" x="27" y="4" width="16" height="16" />
+            </frame>
+          </frame>
+        </frame>
+        <instance id="1312:7503" name="Buttons" x="12" y="212" width="304" height="44" />
+      </frame>
+      <frame id="1153:2155" name="Frame 2147229927" x="0" y="284" width="328" height="268">
+        <frame id="1153:2156" name="Frame 2147229937" x="12" y="12" width="304" height="68">
+          <frame id="1153:2157" name="Frame 2147230173" x="0" y="0" width="304" height="60">
+            <rounded-rectangle id="1153:2158" name="ChatGPT Image Jul 18, 2026, 01_02_45 PM 2" x="0" y="2" width="56" height="56" />
+            <frame id="1153:2159" name="Frame 2147230172" x="64" y="0" width="240" height="60">
+              <frame id="1153:2160" name="Frame 2147230175" x="0" y="0" width="240" height="32">
+                <text id="1153:2161" name="Gold" x="0" y="0" width="156" height="32" />
+                <frame id="1153:2162" name="Frame 2147229937" x="156" y="6" width="84" height="20">
+                  <text id="1153:2163" name="Most popular" x="8" y="0" width="68" height="20" />
+                </frame>
+              </frame>
+              <frame id="1153:2164" name="Frame 2147230098" x="0" y="28" width="240" height="32">
+                <frame id="1153:2165" name="Frame 2147229925" x="0" y="0" width="149" height="32">
+                  <frame id="1153:2166" name="Frame 2147229926" x="0" y="0" width="81" height="32">
+                    <instance id="1153:2167" name="currency-dollar1" x="0" y="6" width="20" height="20" />
+                    <text id="1153:2168" name="550.00" x="20" y="0" width="61" height="32" />
+                  </frame>
+                  <text id="1153:2169" name="/ 3 months" x="85" y="4" width="64" height="24" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <vector id="1153:2170" name="Vector 6" x="0" y="68" width="304" height="0" />
+        </frame>
+        <frame id="1153:2171" name="Frame 2147229932" x="12" y="92" width="304" height="108">
+          <frame id="1153:2172" name="Frame 2147229928" x="0" y="0" width="304" height="24">
+            <instance id="1153:2173" name="check" x="0" y="4" width="16" height="16" />
+            <text id="1153:2174" name="VIP signal channel access" x="20" y="0" width="284" height="24" />
+          </frame>
+          <frame id="1153:2175" name="Frame 2147229929" x="0" y="28" width="304" height="24">
+            <instance id="1153:2176" name="check" x="0" y="4" width="16" height="16" />
+            <text id="1153:2177" name="All trading signals included" x="20" y="0" width="284" height="24" />
+          </frame>
+          <frame id="1153:2178" name="Frame 2147229930" x="0" y="56" width="304" height="24">
+            <instance id="1153:2179" name="check" x="0" y="4" width="16" height="16" />
+            <text id="1153:2180" name="Broker cashback boost" x="20" y="0" width="229" height="24" />
+            <frame id="1153:2181" name="Frame 2147229983" x="253" y="0" width="51" height="24">
+              <text id="1153:2182" name="20%" x="4" y="0" width="27" height="24" />
+              <instance id="1153:2183" name="trending-up" x="31" y="4" width="16" height="16" />
+            </frame>
+          </frame>
+          <frame id="1153:2184" name="Frame 2147229931" x="0" y="84" width="304" height="24">
+            <instance id="1153:2185" name="check" x="0" y="4" width="16" height="16" />
+            <text id="1153:2186" name="Referral share boost" x="20" y="0" width="229" height="24" />
+            <frame id="1153:2187" name="Frame 2147229983" x="253" y="0" width="51" height="24">
+              <text id="1153:2188" name="20%" x="4" y="0" width="27" height="24" />
+              <instance id="1153:2189" name="trending-up" x="31" y="4" width="16" height="16" />
+            </frame>
+          </frame>
+        </frame>
+        <instance id="1312:7514" name="Buttons" x="12" y="212" width="304" height="44" />
+      </frame>
+      <frame id="1153:2202" name="Frame 2147229928" x="0" y="568" width="328" height="268">
+        <frame id="1153:2203" name="Frame 2147229937" x="12" y="12" width="304" height="68">
+          <frame id="1153:2204" name="Frame 2147230173" x="0" y="0" width="304" height="60">
+            <rounded-rectangle id="1153:2205" name="ChatGPT Image Jul 18, 2026, 01_02_45 PM 2" x="0" y="2" width="56" height="56" />
+            <frame id="1153:2206" name="Frame 2147230172" x="64" y="0" width="240" height="60">
+              <frame id="1153:2207" name="Frame 2147230175" x="0" y="0" width="240" height="32">
+                <text id="1153:2208" name="Diamond" x="0" y="0" width="172" height="32" />
+                <frame id="1153:2249" name="Frame 2147229881" x="172" y="6" width="68" height="20">
+                  <text id="1153:2250" name="Best value" x="8" y="0" width="52" height="20" />
+                </frame>
+              </frame>
+              <frame id="1153:2211" name="Frame 2147230098" x="0" y="28" width="240" height="32">
+                <frame id="1153:2212" name="Frame 2147229925" x="0" y="0" width="162" height="32">
+                  <frame id="1153:2213" name="Frame 2147229926" x="0" y="0" width="89" height="32">
+                    <instance id="1153:2214" name="currency-dollar1" x="0" y="6" width="20" height="20" />
+                    <text id="1153:2215" name="1700.00" x="20" y="0" width="69" height="32" />
+                  </frame>
+                  <text id="1153:2216" name="/ 12 months" x="93" y="4" width="69" height="24" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+          <vector id="1153:2217" name="Vector 6" x="0" y="68" width="304" height="0" />
+        </frame>
+        <frame id="1153:2218" name="Frame 2147229932" x="12" y="92" width="304" height="108">
+          <frame id="1153:2219" name="Frame 2147229928" x="0" y="0" width="304" height="24">
+            <instance id="1153:2220" name="check" x="0" y="4" width="16" height="16" />
+            <text id="1153:2221" name="VIP signal channel access" x="20" y="0" width="284" height="24" />
+          </frame>
+          <frame id="1153:2222" name="Frame 2147229929" x="0" y="28" width="304" height="24">
+            <instance id="1153:2223" name="check" x="0" y="4" width="16" height="16" />
+            <text id="1153:2224" name="All trading signals included" x="20" y="0" width="284" height="24" />
+          </frame>
+          <frame id="1153:2225" name="Frame 2147229930" x="0" y="56" width="304" height="24">
+            <instance id="1153:2226" name="check" x="0" y="4" width="16" height="16" />
+            <text id="1153:2227" name="Broker cashback boost" x="20" y="0" width="229" height="24" />
+            <frame id="1153:2228" name="Frame 2147229983" x="253" y="0" width="51" height="24">
+              <text id="1153:2229" name="30%" x="4" y="0" width="27" height="24" />
+              <instance id="1153:2230" name="trending-up" x="31" y="4" width="16" height="16" />
+            </frame>
+          </frame>
+          <frame id="1153:2231" name="Frame 2147229931" x="0" y="84" width="304" height="24">
+            <instance id="1153:2232" name="check" x="0" y="4" width="16" height="16" />
+            <text id="1153:2233" name="Referral share boost" x="20" y="0" width="229" height="24" />
+            <frame id="1153:2234" name="Frame 2147229983" x="253" y="0" width="51" height="24">
+              <text id="1153:2235" name="30%" x="4" y="0" width="27" height="24" />
+              <instance id="1153:2236" name="trending-up" x="31" y="4" width="16" height="16" />
+            </frame>
+          </frame>
+        </frame>
+        <instance id="1312:7525" name="Buttons" x="12" y="212" width="304" height="44" />
+      </frame>
+    </frame>
+  </frame>

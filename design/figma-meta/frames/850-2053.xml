@@ -1,0 +1,159 @@
+  <frame id="850:2053" name="Cashback overview" x="11096" y="516" width="360" height="1692">
+    <frame id="856:2129" name="Frame 2147230006" x="16" y="512" width="328" height="110">
+      <frame id="856:2130" name="Frame 2147229909" x="0" y="0" width="328" height="110">
+        <frame id="856:2131" name="Frame 2147230004" x="16" y="16" width="216" height="72">
+          <frame id="856:2132" name="Frame 2147229917" x="0" y="0" width="86" height="16">
+            <text id="856:2133" name="Special offer" x="10" y="-4" width="66" height="24" />
+          </frame>
+          <frame id="856:2134" name="Frame 2147229918" x="0" y="20" width="216" height="52">
+            <text id="856:2135" name="Summer discount" x="0" y="0" width="216" height="32" />
+            <text id="856:2136" name="get 20% OFF on 12 month plan" x="0" y="28" width="216" height="24" />
+          </frame>
+        </frame>
+        <rounded-rectangle id="856:2137" name="ChatGPT Image Jul 10, 2026, 03_08_49 PM 2" x="213" y="-24" width="141" height="148" />
+        <frame id="856:2138" name="Frame 2147229910" x="144" y="96" width="40" height="6">
+          <frame id="856:2139" name="Frame 2147230005" x="0" y="0" width="20" height="6">
+            <frame id="856:2140" name="Frame 2147230003" x="0" y="0" width="10" height="6" />
+          </frame>
+          <frame id="856:2141" name="Frame 2147230003" x="24" y="0" width="6" height="6" />
+          <frame id="856:2142" name="Frame 2147230004" x="34" y="0" width="6" height="6" />
+        </frame>
+      </frame>
+      <frame id="856:2143" name="Frame 2147229984" x="349" y="0" width="328" height="110">
+        <frame id="856:2144" name="Frame 2147230004" x="16" y="16" width="216" height="72">
+          <frame id="856:2145" name="Frame 2147229917" x="0" y="0" width="83" height="16">
+            <text id="856:2146" name="invite &amp; earn" x="10" y="-4" width="63" height="24" />
+          </frame>
+          <frame id="856:2147" name="Frame 2147229918" x="0" y="20" width="216" height="52">
+            <text id="856:2148" name="invite friends" x="0" y="0" width="216" height="32" />
+            <text id="856:2149" name="get 10% from thier deposits" x="0" y="28" width="216" height="24" />
+          </frame>
+        </frame>
+        <rounded-rectangle id="856:2150" name="ChatGPT Image Jul 10, 2026, 03_08_49 PM 2" x="227" y="-24" width="141" height="148" />
+        <frame id="856:2151" name="Frame 2147229910" x="144" y="96" width="40" height="6">
+          <frame id="856:2152" name="Frame 2147230003" x="0" y="0" width="6" height="6" />
+          <frame id="856:2153" name="Frame 2147230005" x="10" y="0" width="20" height="6">
+            <frame id="856:2154" name="Frame 2147230003" x="0" y="0" width="10" height="6" />
+          </frame>
+          <frame id="856:2155" name="Frame 2147230004" x="34" y="0" width="6" height="6" />
+        </frame>
+      </frame>
+      <frame id="856:2156" name="Frame 2147229985" x="698" y="0" width="328" height="110">
+        <frame id="856:2157" name="Frame 2147229910" x="144" y="96" width="40" height="6">
+          <frame id="856:2158" name="Frame 2147230003" x="0" y="0" width="6" height="6" />
+          <frame id="856:2159" name="Frame 2147230004" x="10" y="0" width="6" height="6" />
+          <frame id="856:2160" name="Frame 2147230005" x="20" y="0" width="20" height="6">
+            <frame id="856:2161" name="Frame 2147230003" x="0" y="0" width="10" height="6" />
+          </frame>
+        </frame>
+        <frame id="856:2162" name="Frame 2147230004" x="16" y="16" width="216" height="72">
+          <frame id="856:2163" name="Frame 2147229917" x="0" y="0" width="78" height="16">
+            <text id="856:2164" name="Stay active" x="10" y="-4" width="58" height="24" />
+          </frame>
+          <frame id="856:2165" name="Frame 2147229918" x="0" y="20" width="216" height="52">
+            <text id="856:2166" name="complete tasks" x="0" y="0" width="216" height="32" />
+            <text id="856:2167" name="win rewards &amp; get amazing prizes" x="0" y="28" width="216" height="24" />
+          </frame>
+        </frame>
+        <rounded-rectangle id="856:2168" name="ChatGPT Image Jul 10, 2026, 03_08_49 PM 2" x="227" y="-31" width="141" height="148" />
+      </frame>
+    </frame>
+    <instance id="984:1471" name="Cashback Overview" x="16" y="92" width="328" height="396" />
+    <frame id="1145:1360" name="Frame 2147229923" x="16" y="646" width="328" height="932">
+      <frame id="1145:1361" name="Frame 2147229905" x="16" y="16" width="296" height="32">
+        <text id="1145:1362" name="Partner brokers" x="0" y="0" width="126" height="32" />
+        <instance id="1145:1363" name="info" x="272" y="4" width="24" height="24" />
+      </frame>
+      <frame id="1145:1364" name="Frame 2147230043" x="16" y="72" width="296" height="780">
+        <frame id="1145:1365" name="Frame 2147230016" x="0" y="0" width="296" height="174">
+          <frame id="1145:1366" name="Frame 2147230038" x="12" y="12" width="272" height="32.000003814697266">
+            <frame id="1145:1367" name="Frame 2147230036" x="0" y="0" width="166" height="32.000003814697266">
+              <frame id="1145:1368" name="BTC" x="0" y="0" width="32.000003814697266" height="32.000003814697266" />
+              <frame id="1145:1369" name="Frame 2147230035" x="40.000003814697266" y="2.000001907348633" width="126" height="28">
+                <text id="1145:1370" name="Exness" x="0" y="0" width="126" height="28" />
+              </frame>
+            </frame>
+            <frame id="1145:1371" name="Frame 2147230037" x="197" y="6.000001907348633" width="75" height="20">
+              <frame id="1145:1372" name="Frame 2147229881" x="0" y="0" width="55" height="20">
+                <text id="1145:1373" name="popular" x="8" y="0" width="39" height="20" />
+              </frame>
+              <instance id="1145:1374" name="chevron-right" x="59" y="2" width="16" height="16" />
+            </frame>
+          </frame>
+          <frame id="1242:7422" name="Frame 2147230199" x="12" y="54" width="272" height="108">
+            <instance id="1316:8177" name="Notification" x="0" y="0" width="272" height="40" />
+            <instance id="1231:5063" name="broker state " x="0" y="48" width="272" height="60" />
+          </frame>
+        </frame>
+        <frame id="1145:1376" name="Frame 2147230017" x="0" y="186" width="296" height="222">
+          <frame id="1145:1377" name="Frame 2147230038" x="12" y="12" width="272" height="32.000003814697266">
+            <frame id="1145:1378" name="Frame 2147230036" x="0" y="0" width="166" height="32.000003814697266">
+              <frame id="1145:1379" name="BTC" x="0" y="0" width="32.000003814697266" height="32.000003814697266" />
+              <frame id="1145:1380" name="Frame 2147230035" x="40.000003814697266" y="2.000001907348633" width="126" height="28">
+                <text id="1145:1381" name="XM" x="0" y="0" width="126" height="28" />
+              </frame>
+            </frame>
+            <frame id="1145:1382" name="Frame 2147230037" x="256" y="8.000001907348633" width="16" height="16">
+              <instance id="1145:1383" name="chevron-right" x="0" y="0" width="16" height="16" />
+            </frame>
+          </frame>
+          <frame id="1242:7421" name="Frame 2147230198" x="12" y="54" width="272" height="156">
+            <instance id="1316:8184" name="Notification" x="0" y="0" width="272" height="40" />
+            <instance id="1316:8191" name="Notification" x="0" y="48" width="272" height="40" />
+            <instance id="1231:5062" name="broker state " x="0" y="96" width="272" height="60" />
+          </frame>
+        </frame>
+        <frame id="1145:1385" name="Frame 2147230018" x="0" y="420" width="296" height="174">
+          <frame id="1145:1386" name="Frame 2147230038" x="12" y="12" width="272" height="32.000003814697266">
+            <frame id="1145:1387" name="Frame 2147230036" x="0" y="0" width="166" height="32.000003814697266">
+              <frame id="1145:1388" name="BTC" x="0" y="0" width="32.000003814697266" height="32.000003814697266" />
+              <frame id="1145:1389" name="Frame 2147230035" x="40.000003814697266" y="2.000001907348633" width="126" height="28">
+                <text id="1145:1390" name="IC Markets" x="0" y="0" width="126" height="28" />
+              </frame>
+            </frame>
+            <frame id="1145:1391" name="Frame 2147230037" x="256" y="8.000001907348633" width="16" height="16">
+              <instance id="1145:1392" name="chevron-right" x="0" y="0" width="16" height="16" />
+            </frame>
+          </frame>
+          <frame id="1145:1393" name="Frame 2147230066" x="12" y="54" width="272" height="108">
+            <instance id="1316:8203" name="Notification" x="0" y="0" width="272" height="40" />
+            <instance id="1231:5061" name="broker state " x="0" y="48" width="272" height="60" />
+          </frame>
+        </frame>
+        <frame id="1284:4014" name="Frame 2147230020" x="0" y="606" width="296" height="174">
+          <frame id="1284:4015" name="Frame 2147230038" x="12" y="12" width="272" height="32.000003814697266">
+            <frame id="1284:4016" name="Frame 2147230036" x="0" y="0" width="166" height="32.000003814697266">
+              <frame id="1284:4017" name="BTC" x="0" y="0" width="32.000003814697266" height="32.000003814697266" />
+              <frame id="1284:4018" name="Frame 2147230035" x="40.000003814697266" y="2.000001907348633" width="126" height="28">
+                <text id="1284:4019" name="XM" x="0" y="0" width="126" height="28" />
+              </frame>
+            </frame>
+            <frame id="1284:4020" name="Frame 2147230037" x="256" y="8.000001907348633" width="16" height="16">
+              <instance id="1284:4021" name="chevron-right" x="0" y="0" width="16" height="16" />
+            </frame>
+          </frame>
+          <frame id="1316:8217" name="Frame 2147230276" x="12" y="54.000003814697266" width="272" height="108">
+            <instance id="1316:8210" name="Notification" x="0" y="0" width="272" height="40" />
+            <instance id="1284:4022" name="broker state " x="0" y="48" width="272" height="60" />
+          </frame>
+        </frame>
+      </frame>
+      <frame id="1284:3850" name="broker state " x="16" y="876" width="296" height="40">
+        <text id="1284:3855" name="This list includes every verified broker available in your region." x="12" y="0" width="272" height="40" />
+      </frame>
+    </frame>
+    <instance id="1233:5646" name="Navigation bar " x="0" y="1612" width="360" height="80" />
+    <frame id="850:2054" name="Iphone-Asset" x="0" y="0" width="360" height="32">
+      <frame id="850:2055" name="Time" x="0" y="0" width="128" height="32">
+        <text id="850:2056" name="Time" x="52" y="5" width="24" height="22" />
+      </frame>
+      <frame id="850:2057" name="Levels" x="232" y="0" width="128" height="32">
+        <frame id="850:2058" name="Frame 10" x="31.834854125976562" y="11.143986701965332" width="64" height="10.712026596069336">
+          <vector id="850:2059" name="Cellular Connection" x="0.0000152587890625" y="0.3187119960784912" width="15.820839881896973" height="10.074591636657715" />
+          <vector id="850:2060" name="Wifi" x="21.588829040527344" y="0.2767423987388611" width="14.124768257141113" height="10.158549308776855" />
+          <frame id="850:2061" name="Battery" x="41.481658935546875" y="0.000004642864951165393" width="22.51835823059082" height="10.712026596069336" />
+        </frame>
+      </frame>
+    </frame>
+    <instance id="850:2065" name="Telegram header " x="0" y="32" width="360" height="44" />
+  </frame>

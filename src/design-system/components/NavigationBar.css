@@ -1,11 +1,13 @@
 /* NavigationBar — bottom tab bar (Figma "Navigation bar", 1029:3889).
    A floating white pill (328 wide inside a 360 frame → 16px side margins),
-   64px tall, fully rounded, with a soft grey drop shadow. Holds four tabs
-   distributed across the pill; the active one expands to a black label pill. */
+   64px tall, fully rounded, with a soft grey drop shadow. Holds four tabs;
+   default items take equal flex shares, the active one expands to a black
+   label pill. NOTE: the Figma symbol is 360×80 = this 64px pill + the 16px
+   bottom "Safe area" component — screens own the safe area, not this bar. */
 .ds-navbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-between; /* fallback; items are flex 1 anyway */
   box-sizing: border-box;
   height: 64px;
   margin: 0 var(--spacing-16);

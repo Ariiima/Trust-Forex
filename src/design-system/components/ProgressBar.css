@@ -18,6 +18,7 @@
 .ds-progress-line {
   flex: 1 1 auto;
   height: 1px;
+  margin: 0 var(--spacing-8); /* 8px clear gap dot↔line (Figma 1242-7555) */
   background: var(--stroke-colors-default);
 }
 

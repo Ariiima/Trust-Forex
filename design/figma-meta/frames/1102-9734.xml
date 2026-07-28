@@ -1,0 +1,5 @@
+  <frame id="1102:9734" name="Progress bar" x="10753" y="16682" width="368" height="310">
+    <symbol id="1102:9733" name="State=order created" x="20" y="20" width="328" height="48" />
+    <symbol id="1102:9731" name="State=payment details" x="20" y="112" width="328" height="48" />
+    <symbol id="1102:9730" name="State=make payment" x="20" y="204" width="328" height="48" />
+  </frame>

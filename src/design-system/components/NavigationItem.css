@@ -28,14 +28,21 @@
   display: inline-block;
 }
 
-/* default — icon only, grey */
+/* default — icon only, grey; equal flex share of the pill (Figma 70.33px cells) */
 .ds-navitem-default {
+  flex: 1 1 0;
   padding: 0 var(--spacing-12);
   color: var(--typography-colors-sub-text);
 }
 
-/* active — black pill, white content */
+/* press — grey pill flash (Figma state=press; fill unknowable from XML) */
+.ds-navitem-default:active {
+  background: var(--bg-colors-container-s);
+}
+
+/* active — black pill, white content; hugs its label (Figma 99px) */
 .ds-navitem-active {
+  flex: none;
   gap: 6px;
   padding: 0 var(--spacing-16) 0 var(--spacing-12);
   background: var(--base-color-black);

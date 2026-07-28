@@ -1,0 +1,320 @@
+  <frame id="564:1922" name="Telegram Mini App Guidelines" x="6576" y="16682" width="1512" height="5538">
+    <vector id="564:1923" name="Vector 1" x="48" y="0" width="0" height="5778" />
+    <vector id="564:1924" name="Vector 2" x="1464" y="0" width="0" height="5778" />
+    <frame id="573:1970" name="Group 1" x="0" y="44" width="1512" height="10">
+      <vector id="564:1926" name="Vector 3" x="0" y="49" width="1512" height="0" />
+      <frame id="564:1927" name="Frame 17" x="43" y="44" width="10" height="10" />
+      <frame id="564:1928" name="Frame 18" x="1459" y="44" width="10" height="10" />
+    </frame>
+    <frame id="600:2369" name="Group 2" x="0" y="5468" width="1512" height="10">
+      <vector id="600:2370" name="Vector 3" x="0" y="5473" width="1512" height="0" />
+      <frame id="600:2371" name="Frame 17" x="43" y="5468" width="10" height="10" />
+      <frame id="600:2372" name="Frame 18" x="1459" y="5468" width="10" height="10" />
+    </frame>
+    <text id="564:1930" name="Telegram Mini App Guidelines" x="112" y="118" width="847" height="88" />
+    <frame id="565:1962" name="Frame 19" x="244" y="262" width="1024" height="434">
+      <frame id="565:2009" name="Telegram header " x="538" y="141" width="400" height="152">
+        <symbol id="565:2008" name="Type: Color=Wight" x="20" y="20" width="360" height="44" />
+        <symbol id="565:2007" name="Type: Color=Brand color" x="20" y="88" width="360" height="44" />
+      </frame>
+      <text id="565:2010" name="📃Telegram Header" x="44" y="44" width="231" height="44" />
+      <text id="565:2046" name="The Telegram Mini App native header is not part of the design system. All layouts start below the Telegram-provided header. Spacing has been calculated based on the real Telegram environment on Android and iOS." x="44" y="230" width="390" height="160" />
+    </frame>
+    <frame id="565:2011" name="Frame 20" x="244" y="744" width="1024" height="1910">
+      <text id="565:2035" name="📃Mini app States" x="44" y="44" width="217" height="44" />
+      <frame id="571:5048" name="iPhone 16 - 3" x="95" y="416" width="360" height="665">
+        <frame id="571:5049" name="Frame 24" x="93" y="229" width="174" height="208">
+          <text id="571:5050" name="Device State 01 Normal" x="0" y="0" width="174" height="70" />
+          <text id="571:5051" name="Telegram Header body Content Navigation" x="0" y="100" width="174" height="108" />
+        </frame>
+      </frame>
+      <frame id="571:5052" name="iPhone 16 - 4" x="511" y="416" width="360" height="665">
+        <frame id="571:5053" name="Frame 24" x="65" y="98" width="230" height="208">
+          <text id="571:5054" name="Device State 02 Keyboard Open" x="0" y="0" width="230" height="70" />
+          <text id="571:5055" name="Telegram Header Scrollable Content Keyboard" x="0" y="100" width="230" height="108" />
+        </frame>
+        <frame id="571:4872" name="AlphabeticKeyboard" x="4" y="401" width="352" height="260">
+          <frame id="571:4873" name="Keys" x="2.6896047592163086" y="7.1724138259887695" width="346.96551513671875" height="134.48275756835938">
+            <frame id="571:4874" name="Top Row" x="0" y="0" width="346.96551513671875" height="37.655174255371094">
+              <instance id="571:4875" name="_Key" x="0" y="0" width="30.482759475708008" height="37.655174255371094" />
+              <instance id="571:4876" name="_Key" x="35.862098693847656" y="0.00005051185144111514" width="28.689655303955078" height="37.655174255371094" />
+              <instance id="571:4877" name="_Key" x="69.93106079101562" y="0.00005051185144111514" width="30.482759475708008" height="37.655174255371094" />
+              <instance id="571:4878" name="_Key" x="105.79313659667969" y="0.00005051185144111514" width="29.586206436157227" height="37.655174255371094" />
+              <instance id="571:4879" name="_Key" x="140.75865173339844" y="0.00005051185144111514" width="30.482759475708008" height="37.655174255371094" />
+              <instance id="571:4880" name="_Key" x="176.62071228027344" y="0.00005051185144111514" width="29.586206436157227" height="37.655174255371094" />
+              <instance id="571:4881" name="_Key" x="211.58624267578125" y="0.00005051185144111514" width="29.586206436157227" height="37.655174255371094" />
+              <instance id="571:4882" name="_Key" x="246.5517578125" y="0.00005051185144111514" width="30.482759475708008" height="37.655174255371094" />
+              <instance id="571:4883" name="_Key" x="282.413818359375" y="0.00005051185144111514" width="28.689655303955078" height="37.655174255371094" />
+              <instance id="571:4884" name="_Key" x="316.4827880859375" y="0.00005051185144111514" width="30.482759475708008" height="37.655174255371094" />
+            </frame>
+            <frame id="571:4885" name="Middle Row" x="17.03451156616211" y="48.41384506225586" width="312.89654541015625" height="37.655174255371094">
+              <instance id="571:4886" name="_Key" x="0" y="0" width="30.482759475708008" height="37.655174255371094" />
+              <instance id="571:4887" name="_Key" x="35.86203384399414" y="0.00002525592572055757" width="29.586206436157227" height="37.655174255371094" />
+              <instance id="571:4888" name="_Key" x="70.82755279541016" y="0.00002525592572055757" width="29.586206436157227" height="37.655174255371094" />
+              <instance id="571:4889" name="_Key" x="105.7930679321289" y="0.00002525592572055757" width="30.482759475708008" height="37.655174255371094" />
+              <instance id="571:4890" name="_Key" x="141.65513610839844" y="0.00002525592572055757" width="29.586206436157227" height="37.655174255371094" />
+              <instance id="571:4891" name="_Key" x="176.6206512451172" y="0.00002525592572055757" width="30.482759475708008" height="37.655174255371094" />
+              <instance id="571:4892" name="_Key" x="212.48272705078125" y="0.00002525592572055757" width="29.586206436157227" height="37.655174255371094" />
+              <instance id="571:4893" name="_Key" x="247.4482421875" y="0.00002525592572055757" width="29.586206436157227" height="37.655174255371094" />
+              <instance id="571:4894" name="_Key" x="282.41375732421875" y="0.00002525592572055757" width="30.482759475708008" height="37.655174255371094" />
+            </frame>
+            <frame id="571:4895" name="Bottom Row" x="0.000029465247280313633" y="96.82763671875" width="346.96551513671875" height="37.655174255371094">
+              <frame id="571:4896" name="Keys" x="52.000030517578125" y="0" width="242.96551513671875" height="37.655174255371094">
+                <instance id="571:4897" name="_Key" x="0" y="0" width="30.482759475708008" height="37.655174255371094" />
+                <instance id="571:4898" name="_Key" x="35.862098693847656" y="0" width="28.689655303955078" height="37.655174255371094" />
+                <instance id="571:4899" name="_Key" x="69.93106079101562" y="0" width="30.482759475708008" height="37.655174255371094" />
+                <instance id="571:4900" name="_Key" x="105.79313659667969" y="0" width="31.379310607910156" height="37.655174255371094" />
+                <instance id="571:4901" name="_Key" x="142.5517578125" y="0" width="29.586206436157227" height="37.655174255371094" />
+                <instance id="571:4902" name="_Key" x="177.51727294921875" y="0" width="29.586206436157227" height="37.655174255371094" />
+                <instance id="571:4903" name="_Key" x="212.4827880859375" y="0" width="30.482759475708008" height="37.655174255371094" />
+              </frame>
+              <instance id="571:4904" name="_Key" x="0" y="0" width="37.655174255371094" height="37.655174255371094" />
+              <instance id="571:4905" name="_Key" x="309.31036376953125" y="0" width="37.655174255371094" height="37.655174255371094" />
+            </frame>
+          </frame>
+          <frame id="571:4906" name="Bottom Row" x="2.6896047592163086" y="152.41378784179688" width="346.96551513671875" height="37.655174255371094">
+            <instance id="571:4907" name="_Key" x="0" y="0" width="81.5862045288086" height="37.655174255371094" />
+            <instance id="571:4908" name="_Key" x="86.96551513671875" y="0" width="173.03448486328125" height="37.655174255371094" />
+            <instance id="571:4909" name="_Key" x="265.3793029785156" y="0" width="81.5862045288086" height="37.655174255371094" />
+          </frame>
+          <frame id="571:4910" name="Emoji &amp; Dictation" x="27.793052673339844" y="210.6896514892578" width="296.75860595703125" height="25.10344886779785">
+            <vector id="571:4911" name="Icon / Emoji" x="0" y="0" width="24.20689582824707" height="24.20689582824707" />
+            <vector id="571:4912" name="Icon / Dictation" x="279.7240905761719" y="-0.00004209321195958182" width="17.034482955932617" height="25.10344886779785" />
+          </frame>
+          <instance id="571:4913" name="HomeIndicator" x="0.8965011835098267" y="229.51724243164062" width="351.4482727050781" height="30.482759475708008" />
+        </frame>
+      </frame>
+      <frame id="571:5057" name="iPhone 16 - 5" x="95" y="1137" width="360" height="665">
+        <frame id="571:5058" name="Frame 24" x="65" y="229" width="230" height="208">
+          <text id="571:5059" name="Device State 03 Bottom Sheet" x="0" y="0" width="230" height="70" />
+          <text id="571:5060" name="Telegram Header Content Bottom Sheet" x="0" y="100" width="230" height="108" />
+        </frame>
+      </frame>
+      <frame id="571:5166" name="iPhone 16 - 6" x="511" y="1137" width="360" height="665">
+        <frame id="571:5167" name="Frame 24" x="65" y="193" width="230" height="280">
+          <text id="571:5168" name="Device State 04 Bottom Sheet + Keyboard" x="0" y="0" width="230" height="106" />
+          <text id="571:5169" name="Telegram Header Content Bottom Sheet (Resized) Keyboard" x="0" y="136" width="230" height="144" />
+        </frame>
+      </frame>
+      <text id="572:1969" name="Mini App States document the primary interface scenarios within the Telegram Mini App to ensure consistent behavior across different devices, operating systems, and system interactions. These states define how the layout should adapt when the system keyboard appears, bottom sheets are displayed, or the available viewport changes. During keyboard interactions, the interface should automatically adjust by keeping the focused input visible, allowing content to scroll, hiding temporary UI elements such as the bottom navigation, removing the bottom safe area, and ensuring that interactive components remain accessible without being obscured. This documentation serves as the reference for implementing responsive layout behavior and maintaining a consistent user experience throughout the application." x="44" y="104" width="936" height="256" />
+    </frame>
+    <frame id="565:2044" name="Frame 21" x="244" y="2702" width="1024" height="434">
+      <text id="565:2045" name="📃Telegram Bottom Safe Area" x="44" y="44" width="355" height="44" />
+      <frame id="566:1906" name="iPhone 16 - 19" x="539" y="88" width="360" height="96">
+        <rounded-rectangle id="566:1933" name="Rectangle 1" x="0" y="80" width="360" height="16" />
+        <text id="568:1939" name="Android" x="147" y="32" width="67" height="32" />
+      </frame>
+      <symbol id="639:4397" name="Safe area" x="539" y="50" width="360" height="16" />
+      <frame id="568:1940" name="iPhone 16 - 20" x="539" y="254" width="360" height="96">
+        <rounded-rectangle id="568:1941" name="Rectangle 1" x="0" y="62" width="360" height="34" />
+        <text id="568:1942" name="IOS" x="165" y="32" width="30" height="32" />
+      </frame>
+      <frame id="566:1936" name="Frame 22" x="915" y="160" width="53" height="32">
+        <vector id="566:1935" name="Vector 4" x="0" y="8" width="0" height="16" />
+        <text id="566:1934" name="16px" x="15" y="0" width="38" height="32" />
+      </frame>
+      <frame id="568:1943" name="Frame 23" x="915" y="316" width="55" height="34">
+        <vector id="568:1944" name="Vector 4" x="0" y="0" width="0" height="34" />
+        <text id="568:1945" name="34px" x="15" y="1" width="40" height="32" />
+      </frame>
+      <text id="568:1938" name="The native bottom safe area is not included in the design. During development, please use the platform’s Safe Area APIs / CSS safe-area insets to dynamically apply the required bottom spacing across supported Telegram devices." x="44" y="198" width="390" height="160" />
+    </frame>
+    <frame id="573:2157" name="Frame 22" x="244" y="3184" width="1024" height="500">
+      <text id="573:2158" name="📃Grid Systems" x="44" y="44" width="187" height="44" />
+      <frame id="599:2206" name="Frame 29" x="575" y="44" width="371" height="412">
+        <frame id="573:2162" name="iPhone 16 - 20" x="11" y="63" width="360" height="285">
+          <rounded-rectangle id="573:2163" name="Rectangle 1" x="0" y="0" width="16" height="285" />
+          <rounded-rectangle id="573:2189" name="Rectangle 2" x="86" y="0" width="16" height="285" />
+          <frame id="599:2201" name="Frame 28" x="16" y="67" width="328" height="137">
+            <text id="599:2202" name="328px" x="138" y="53" width="50" height="32" />
+          </frame>
+        </frame>
+        <frame id="573:2168" name="Frame 23" x="0" y="365" width="38" height="47">
+          <vector id="573:2169" name="Vector 4" x="11" y="0" width="16" height="0" />
+          <text id="573:2170" name="16px" x="0" y="15" width="38" height="32" />
+        </frame>
+        <frame id="573:2186" name="Frame 25" x="86" y="365" width="38" height="47">
+          <vector id="573:2187" name="Vector 4" x="11" y="0" width="16" height="0" />
+          <text id="573:2188" name="16px" x="0" y="15" width="38" height="32" />
+        </frame>
+        <frame id="573:2172" name="Frame 24" x="199" y="364" width="69" height="47">
+          <vector id="573:2173" name="Vector 4" x="0" y="0" width="69" height="0" />
+          <text id="573:2174" name="4 culomns" x="-7.5" y="15" width="84" height="32" />
+        </frame>
+        <frame id="573:2195" name="Frame 27" x="11" y="0" width="360" height="47">
+          <text id="573:2197" name="360px" x="153.5" y="0" width="53" height="32" />
+          <vector id="573:2196" name="Vector 4" x="0" y="47" width="360" height="0" />
+        </frame>
+      </frame>
+      <frame id="573:2192" name="Frame 26" x="44" y="264" width="390" height="192">
+        <text id="573:2171" name="Frame width : 360px" x="0" y="0" width="390" height="32" />
+        <text id="599:2204" name="Main container : 328px" x="0" y="40" width="390" height="32" />
+        <text id="573:2193" name="Culomns : 4" x="0" y="80" width="390" height="32" />
+        <text id="573:2190" name="Margin : 16px" x="0" y="120" width="390" height="32" />
+        <text id="573:2191" name="Gutter : 16px" x="0" y="160" width="390" height="32" />
+      </frame>
+    </frame>
+    <frame id="599:2207" name="Frame 23" x="244" y="3732" width="1024" height="236">
+      <text id="599:2208" name="📃Radius Systems" x="44" y="44" width="936" height="44" />
+      <frame id="599:2246" name="Frame 1890164112" x="44" y="136" width="936" height="56">
+        <frame id="599:2233" name="Frame 1890164106" x="0" y="7.105427357601002e-15" width="142.6666717529297" height="56">
+          <text id="599:2234" name="4 px" x="53.99995422363281" y="18" width="35" height="20" />
+        </frame>
+        <frame id="599:2236" name="Frame 1890164107" x="158.6666717529297" y="7.105427357601002e-15" width="142.66665649414062" height="56">
+          <text id="599:2237" name="8 px" x="53.99995422363281" y="18" width="35" height="20" />
+        </frame>
+        <frame id="599:2238" name="Frame 1890164108" x="317.33331298828125" y="7.105427357601002e-15" width="142.66665649414062" height="56">
+          <text id="599:2239" name="12px" x="51.99995422363281" y="18" width="38" height="20" />
+        </frame>
+        <frame id="599:2240" name="Frame 1890164109" x="475.9999694824219" y="7.105427357601002e-15" width="142.66665649414062" height="56">
+          <text id="599:2241" name="16 px" x="49.99995422363281" y="18" width="42" height="20" />
+        </frame>
+        <frame id="599:2242" name="Frame 1890164110" x="634.6666259765625" y="7.105427357601002e-15" width="142.66665649414062" height="56">
+          <text id="599:2243" name="20 px" x="47.99995422363281" y="18" width="46" height="20" />
+        </frame>
+        <frame id="599:2247" name="Frame 1890164112" x="793.333251953125" y="7.105427357601002e-15" width="142.66665649414062" height="56">
+          <text id="599:2248" name="999 px" x="42.99995422363281" y="18" width="57" height="20" />
+        </frame>
+      </frame>
+    </frame>
+    <frame id="599:2250" name="Frame 24" x="244" y="4016" width="1024" height="1356">
+      <text id="599:2251" name="📃spacing Systems" x="44" y="44" width="936" height="44" />
+      <frame id="600:2283" name="Frame 1890164127" x="44" y="136" width="936" height="1176">
+        <frame id="600:2284" name="Frame 1890164128" x="0" y="0" width="936" height="264">
+          <frame id="600:2285" name="Frame 1890164111" x="0" y="0" width="204" height="264">
+            <frame id="600:2286" name="Frame 1890164114" x="5" y="-54" width="194" height="372">
+              <frame id="600:2287" name="Frame 1890164112" x="0" y="0" width="194" height="184" />
+              <frame id="600:2288" name="Frame 1890164113" x="0" y="188" width="194" height="184">
+                <text id="600:2289" name="4px" x="77" y="72" width="47" height="30" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="600:2290" name="Frame 1890164112" x="244" y="0" width="204" height="264">
+            <frame id="600:2291" name="Frame 1890164114" x="5" y="-56" width="194" height="376">
+              <frame id="600:2292" name="Frame 1890164112" x="0" y="0" width="194" height="184" />
+              <frame id="600:2293" name="Frame 1890164113" x="0" y="192" width="194" height="184">
+                <text id="600:2294" name="8px" x="76" y="70" width="47" height="30" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="600:2295" name="Frame 1890164113" x="488" y="0" width="204" height="264">
+            <frame id="600:2296" name="Frame 1890164114" x="5" y="-58" width="194" height="380">
+              <frame id="600:2297" name="Frame 1890164112" x="0" y="0" width="194" height="184" />
+              <frame id="600:2298" name="Frame 1890164113" x="0" y="196" width="194" height="184">
+                <text id="600:2299" name="12px" x="73" y="68" width="56" height="30" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="600:2300" name="Frame 1890164114" x="732" y="0" width="204" height="264">
+            <frame id="600:2301" name="Frame 1890164114" x="5" y="-60" width="194" height="384">
+              <frame id="600:2302" name="Frame 1890164112" x="0" y="0" width="194" height="184" />
+              <frame id="600:2303" name="Frame 1890164113" x="0" y="200" width="194" height="184">
+                <text id="600:2304" name="16px" x="73" y="66" width="58" height="30" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+        <frame id="600:2305" name="Frame 1890164129" x="0" y="304" width="936" height="264">
+          <frame id="600:2306" name="Frame 1890164115" x="0" y="0" width="204" height="264">
+            <frame id="600:2307" name="Frame 1890164114" x="5" y="-62" width="194" height="388">
+              <frame id="600:2308" name="Frame 1890164112" x="0" y="0" width="194" height="184" />
+              <frame id="600:2309" name="Frame 1890164113" x="0" y="204" width="194" height="184">
+                <text id="600:2310" name="20px" x="73" y="64" width="64" height="30" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="600:2311" name="Frame 1890164116" x="244" y="0" width="204" height="264">
+            <frame id="600:2312" name="Frame 1890164114" x="5" y="-64" width="194" height="392">
+              <frame id="600:2313" name="Frame 1890164112" x="0" y="0" width="194" height="184" />
+              <frame id="600:2314" name="Frame 1890164113" x="0" y="208" width="194" height="184">
+                <text id="600:2315" name="24px" x="73" y="62" width="62" height="30" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="600:2316" name="Frame 1890164117" x="488" y="0" width="204" height="264">
+            <frame id="600:2317" name="Frame 1890164114" x="5" y="-68" width="194" height="400">
+              <frame id="600:2318" name="Frame 1890164112" x="0" y="0" width="194" height="184" />
+              <frame id="600:2319" name="Frame 1890164113" x="0" y="216" width="194" height="184">
+                <text id="600:2320" name="32px" x="73" y="58" width="61" height="30" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="600:2321" name="Frame 1890164118" x="732" y="0" width="204" height="264">
+            <frame id="600:2322" name="Frame 1890164114" x="5" y="-72" width="194" height="408">
+              <frame id="600:2323" name="Frame 1890164112" x="0" y="0" width="194" height="184" />
+              <frame id="600:2324" name="Frame 1890164113" x="0" y="224" width="194" height="184">
+                <text id="600:2325" name="40px" x="73" y="54" width="65" height="30" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+        <frame id="600:2326" name="Frame 1890164130" x="0" y="608" width="936" height="264">
+          <frame id="600:2327" name="Frame 1890164119" x="0" y="0" width="204" height="264">
+            <frame id="600:2328" name="Frame 1890164114" x="5" y="-76" width="194" height="416">
+              <frame id="600:2329" name="Frame 1890164112" x="0" y="0" width="194" height="184" />
+              <frame id="600:2330" name="Frame 1890164113" x="0" y="232" width="194" height="184">
+                <text id="600:2331" name="48px" x="69" y="50" width="63" height="30" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="600:2332" name="Frame 1890164120" x="244" y="0" width="204" height="264">
+            <frame id="600:2333" name="Frame 1890164114" x="5" y="-80" width="194" height="424">
+              <frame id="600:2334" name="Frame 1890164112" x="0" y="0" width="194" height="184" />
+              <frame id="600:2335" name="Frame 1890164113" x="0" y="240" width="194" height="184">
+                <text id="600:2336" name="56px" x="73" y="46" width="63" height="30" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="600:2337" name="Frame 1890164121" x="488" y="0" width="204" height="264">
+            <frame id="600:2338" name="Frame 1890164114" x="5" y="-84" width="194" height="432">
+              <frame id="600:2339" name="Frame 1890164112" x="0" y="0" width="194" height="184" />
+              <frame id="600:2340" name="Frame 1890164113" x="0" y="248" width="194" height="184">
+                <text id="600:2341" name="64px" x="70" y="42" width="63" height="30" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="600:2342" name="Frame 1890164122" x="732" y="0" width="204" height="264">
+            <frame id="600:2343" name="Frame 1890164114" x="5" y="-88" width="194" height="440">
+              <frame id="600:2344" name="Frame 1890164112" x="0" y="0" width="194" height="184" />
+              <frame id="600:2345" name="Frame 1890164113" x="0" y="256" width="194" height="184">
+                <text id="600:2346" name="72px" x="69" y="38" width="60" height="30" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+        <frame id="600:2347" name="Frame 1890164131" x="0" y="912" width="936" height="264">
+          <frame id="600:2348" name="Frame 1890164123" x="0" y="0" width="204" height="264">
+            <frame id="600:2349" name="Frame 1890164114" x="5" y="-92" width="194" height="448">
+              <frame id="600:2350" name="Frame 1890164112" x="0" y="0" width="194" height="184" />
+              <frame id="600:2351" name="Frame 1890164113" x="0" y="264" width="194" height="184" />
+            </frame>
+            <text id="600:2352" name="80px" x="75" y="206" width="65" height="30" />
+          </frame>
+          <frame id="600:2353" name="Frame 1890164124" x="244" y="0" width="204" height="264">
+            <frame id="600:2354" name="Frame 1890164114" x="5" y="-96" width="194" height="456">
+              <frame id="600:2355" name="Frame 1890164112" x="0" y="0" width="194" height="184" />
+              <frame id="600:2356" name="Frame 1890164113" x="0" y="272" width="194" height="184">
+                <text id="600:2357" name="88px" x="68" y="30" width="63" height="30" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="600:2358" name="Frame 1890164125" x="488" y="0" width="204" height="264">
+            <frame id="600:2359" name="Frame 1890164114" x="5" y="-100" width="194" height="464">
+              <frame id="600:2360" name="Frame 1890164112" x="0" y="0" width="194" height="184" />
+              <frame id="600:2361" name="Frame 1890164113" x="0" y="280" width="194" height="184">
+                <text id="600:2362" name="96px" x="71" y="26" width="64" height="30" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="600:2363" name="Frame 1890164126" x="732" y="0" width="204" height="264">
+            <frame id="600:2364" name="Frame 1890164114" x="5" y="-104" width="194" height="472">
+              <frame id="600:2365" name="Frame 1890164112" x="0" y="0" width="194" height="184" />
+              <frame id="600:2366" name="Frame 1890164113" x="0" y="288" width="194" height="184">
+                <text id="600:2367" name="104px" x="67" y="22" width="75" height="30" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+  </frame>

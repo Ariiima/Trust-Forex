@@ -1,45 +1,22 @@
 /* =====================================================================
-   Broker detail onboarding — /cashback/broker/:brokerId
-   3-step state machine on a 360px canvas. Geometry & colours taken from
-   Figma nodes 1089-7010 / 1089-8064 / 1090-8188 / 1090-9123 (heroes) and
-   1089-7650 / 1090-8325 (BottomSheet modals). Consumes the DS ProgressBar,
-   BottomSheet, Button and Icon; screen-scoped overrides re-skin the DS
-   ProgressBar for the on-blue stepper (see notes at the bottom).
+   Broker connect flow — /cashback/broker/:brokerId
+   Two-axis state machine on a 360px canvas. Geometry from Figma frames
+   1292-5199 / 1089-7010 / 1233-6658 / 1292-4878 / 1292-5029 / 1233-7121 /
+   1089-8064 / 1242-7675 / 1292-5439 / 1242-7555 (colors are role→token
+   mappings — not in the XML). No in-app header: content starts 16px under
+   the Telegram native header; back nav is the Telegram BackButton.
+   Consumes DS ProgressBar, BottomSheet, Button, Icon, Input, Notification;
+   screen-scoped overrides re-skin the DS ProgressBar for the on-blue
+   stepper (see notes at the bottom).
    ===================================================================== */
 
 .scr-broker {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  overflow-x: hidden;
   background: var(--bg-colors-container-s); /* #F1F1F1 */
   font-family: var(--font-family-base);
-  color: var(--typography-colors-main-text);
-}
-
-/* ---- Header (app content: back arrow + broker name) ------------------ */
-.scr-broker-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-16);
-  height: 44px;
-  padding: 0 var(--spacing-16);
-  background: var(--bg-colors-container-p);
-  border-bottom: 1px solid var(--stroke-colors-default);
-}
-
-.scr-broker-back {
-  display: inline-flex;
-  flex: none;
-  color: var(--base-color-black);
-}
-
-.scr-broker-headtitle {
-  font-size: 14px;
-  line-height: 28px;
-  font-weight: var(--font-weight-regular);
   color: var(--typography-colors-main-text);
 }
 
@@ -49,15 +26,22 @@
   padding: var(--spacing-16);
 }
 
-/* ---- Broker card ----------------------------------------------------- */
+/* ---- Broker card: name row + 0..2 notification banners ---------------- */
+/* Heights seen in frames: 64 (0 banners) / 114 (1) / 164 (2) — auto here. */
 .scr-broker-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* no --spacing-10 token; frame shows 10px stacks */
+  padding: var(--spacing-16);
+  background: var(--bg-colors-container-p);
+  border-radius: var(--radius-medium);
+}
+
+.scr-broker-card-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 64px;
-  padding: 0 var(--spacing-16);
-  background: var(--bg-colors-container-p);
-  border-radius: var(--radius-medium);
+  height: 32px;
 }
 
 .scr-broker-card-left {
@@ -93,9 +77,9 @@
   font-weight: var(--font-weight-regular);
 }
 
-/* ---- Blue onboarding hero ------------------------------------------- */
+/* ---- Blue onboarding hero (328×248) ---------------------------------- */
 .scr-broker-hero {
-  margin-top: var(--spacing-16);
+  margin-top: var(--spacing-24);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-16);
@@ -103,23 +87,6 @@
   border-radius: var(--radius-medium);
   background: var(--primary-colors-900); /* #144CCD */
   color: var(--base-color-white);
-}
-
-.scr-broker-hero-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.scr-broker-hero-content--art {
-  flex-direction: row;
-  align-items: center;
-  gap: var(--spacing-16);
-}
-
-.scr-broker-hero-art {
-  width: 56px;
-  height: 50px;
-  flex: none;
 }
 
 .scr-broker-hero-text {
@@ -141,20 +108,42 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
+/* Referral block (296×80): code row, 12 gap, white CTA */
 .scr-broker-hero-block {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-8);
+  gap: var(--spacing-12);
 }
 
-/* White filled external-link CTA (Create account / Go to broker) */
-.scr-broker-linkbtn {
+.scr-broker-referral {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 24px;
+}
+
+.scr-broker-referral-label {
+  font-size: 12px;
+  line-height: 24px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Tap-to-copy lives on the code itself — no visible copy icon (spec D8) */
+.scr-broker-referral-code {
+  font-size: 12px;
+  line-height: 24px;
+  color: var(--base-color-white);
+}
+
+/* White filled CTA — label + external icon centered as a group (spec D7) */
+.scr-broker-linkbtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-8);
   width: 100%;
   height: 44px;
-  padding: var(--spacing-8) var(--spacing-12) var(--spacing-8) var(--spacing-16);
+  padding: var(--spacing-8) var(--spacing-12);
   border-radius: var(--radius-small);
   background: var(--base-color-white);
   color: var(--primary-colors-900);
@@ -166,60 +155,7 @@
   font-weight: var(--font-weight-regular);
 }
 
-/* Bordered on-blue CTA (open via our link + caption) */
-.scr-broker-linkbtn--outline {
-  height: 64px;
-  align-items: center;
-  padding: var(--spacing-8) var(--spacing-16);
-  background: transparent;
-  border: 1px solid var(--base-color-white);
-  color: var(--base-color-white);
-}
-
-.scr-broker-linkbtn-two {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.scr-broker-linkbtn-caption {
-  font-size: 10px;
-  line-height: 20px;
-  font-weight: var(--font-weight-regular);
-  color: rgba(255, 255, 255, 0.75);
-}
-
-/* Referral code row */
-.scr-broker-referral {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.scr-broker-referral-label {
-  font-size: 12px;
-  line-height: 24px;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.scr-broker-referral-right {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-4);
-}
-
-.scr-broker-referral-code {
-  font-size: 12px;
-  line-height: 24px;
-  color: var(--base-color-white);
-}
-
-.scr-broker-copy {
-  display: inline-flex;
-  color: var(--base-color-white);
-}
-
-/* ---- Broker details spec list --------------------------------------- */
+/* ---- Broker details spec list ---------------------------------------- */
 .scr-broker-details {
   margin-top: var(--spacing-24);
   display: flex;
@@ -265,21 +201,27 @@
   color: var(--typography-colors-main-text);
 }
 
-/* ---- Sticky bottom CTA ---------------------------------------------- */
+/* ---- Sticky bottom CTA (h=60: 44 button + 16 safe area) --------------- */
 .scr-broker-footer {
   position: sticky;
   bottom: 0;
   z-index: 10;
-  padding: var(--spacing-8) var(--spacing-16) var(--spacing-16);
+  padding: 0 var(--spacing-16) var(--spacing-16);
   background: var(--bg-colors-container-s);
 }
 
-/* ---- BottomSheet modals --------------------------------------------- */
+/* ---- BottomSheet modals ---------------------------------------------- */
 /* The DS BottomSheet always renders a drag handle and a 20px top radius;
-   these designs use a title-row-with-close-X and a 16px radius instead. */
+   these designs use a title-row-with-close-X and a 12px radius instead.
+   Keyboard-open behaviour (spec §6): the sheet is clamped to the visual
+   viewport (--scr-broker-vvh set from JS) and scrolls its own content. */
 .ds-sheet.scr-broker-sheet {
-  padding: var(--spacing-16) var(--spacing-16) 36px;
+  padding: var(--spacing-16) var(--spacing-16) var(--spacing-24);
   border-radius: var(--radius-medium) var(--radius-medium) 0 0;
+  max-height: 100vh;
+  max-height: var(--scr-broker-vvh, 100dvh);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .scr-broker-sheet .ds-sheet-handle {
   display: none;
@@ -341,89 +283,46 @@
   margin: 0;
 }
 
+/* DS Input instances, 12px apart (submit-account sheet) */
 .scr-broker-fields {
   display: flex;
   flex-direction: column;
-}
-.scr-broker-fields--input {
   gap: var(--spacing-12);
 }
-.scr-broker-fields--read {
+
+/* Confirm-deposit sheet: ONE bordered container holding both read rows
+   (328×128: 12px vertical padding, 48px rows, 8px between — spec D12) */
+.scr-broker-readcard {
+  display: flex;
+  flex-direction: column;
   gap: var(--spacing-8);
-}
-
-/* Editable field (submit-account modal) */
-.scr-broker-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-4);
-}
-
-.scr-broker-field-label {
-  font-size: 14px;
-  line-height: 28px;
-  font-weight: var(--font-weight-regular);
-  color: var(--typography-colors-main-text);
-}
-
-.scr-broker-input {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-12);
-  height: 44px;
-  padding: 0 var(--spacing-16);
+  padding: var(--spacing-12) var(--spacing-16);
   border-radius: var(--radius-small);
-  background: var(--bg-colors-container-s); /* #F1F1F1 */
-}
-
-.scr-broker-input input {
-  flex: 1 1 auto;
-  min-width: 0;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-family: var(--font-family-base);
-  font-size: 12px;
-  line-height: 24px;
-  color: var(--typography-colors-main-text);
-}
-
-.scr-broker-input input::placeholder {
-  color: var(--typography-colors-sub-text);
-}
-
-.scr-broker-input-clear {
-  display: inline-flex;
-  flex: none;
-  color: var(--base-color-black);
-}
-
-/* Read-only field (made-deposit modal) */
-.scr-broker-readfield {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-12);
-  min-height: 68px;
-  padding: 10px var(--spacing-16);
-  border-radius: var(--radius-small);
-  background: var(--bg-colors-container-p);
   border: 1px solid var(--stroke-colors-default);
+  background: var(--bg-colors-container-p);
+}
+
+.scr-broker-readrow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  height: 48px;
   color: var(--base-color-black);
 }
 
-.scr-broker-readfield-text {
+.scr-broker-readrow-text {
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
 
-.scr-broker-readfield-label {
+.scr-broker-readrow-label {
   font-size: 12px;
   line-height: 24px;
   color: var(--typography-colors-sub-text);
 }
 
-.scr-broker-readfield-value {
+.scr-broker-readrow-value {
   font-size: 12px;
   line-height: 24px;
   color: var(--typography-colors-main-text);
@@ -438,7 +337,7 @@
    check for "done" (built for the payment flow). The broker design sits
    the stepper directly on the blue hero as white radio dots (ring + inner
    dot), empty rings for upcoming steps, white connectors. These overrides
-   are screen-scoped (no DS files touched) — see report for the mismatch.
+   are screen-scoped (no DS files touched).
    ===================================================================== */
 .ds-progress.scr-broker-stepper {
   background: transparent;

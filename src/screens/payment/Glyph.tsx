@@ -14,7 +14,9 @@ export type GlyphName =
   | 'close'
   | 'alert-triangle'
   | 'copy'
-  | 'check-circle';
+  | 'check-circle'
+  | 'clock-hour-5'
+  | 'loader-2';
 
 const GLYPHS: Record<GlyphName, readonly string[]> = {
   back: ['M5 12l14 0', 'M5 12l6 6', 'M5 12l6 -6'],
@@ -34,6 +36,9 @@ const GLYPHS: Record<GlyphName, readonly string[]> = {
     'M6 16a2 2 0 0 1 -2 -2v-8a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2',
   ],
   'check-circle': ['M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0', 'M9 12l2 2l4 -4'],
+  'clock-hour-5': ['M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0', 'M12 7v5l2.5 3.5'],
+  // Tabler loader-2: one 3/4 arc; CSS spins it (see .scr-status-sheet-spinner).
+  'loader-2': ['M12 3a9 9 0 1 0 9 9'],
 };
 
 interface GlyphProps extends Omit<SVGProps<SVGSVGElement>, 'name'> {

@@ -1,34 +1,57 @@
-import { useState } from 'react';
-import type { ReactNode, SVGProps } from 'react';
-import { Button, ProgressBar, BottomSheet, Icon } from '../../design-system/components';
+import { useEffect, useState } from 'react';
+import type { ComponentType, FocusEvent, ReactNode, SVGProps } from 'react';
+import * as DS from '../../design-system/components';
 import type { ProgressStep } from '../../design-system/components';
 import xmLogoUrl from '../../assets/broker/xm-logo.png';
-import depositWaitUrl from '../../assets/broker/deposit-wait.png';
 import './BrokerDetail.css';
 
 /* ---------------------------------------------------------------------------
- * Broker detail onboarding — route /cashback/broker/:brokerId
+ * Broker connect flow — route /cashback/broker/:brokerId
  *
- * One screen, a 3-step onboarding state machine (inventory flow C):
- *   step 1  "Create your broker account"  → sticky CTA "submit account"
- *              → <submit-account> BottomSheet (email + user ID)  → advances to 2
- *   step 2  "Activate your cashback"       → sticky CTA "i made a deposit"
- *              → <made-deposit> BottomSheet (prefilled)          → waiting sub-state
- *   step 2  "waiting for deposit"          → sticky CTA "i made a deposit"
- *              → <made-deposit> BottomSheet                      → advances to 3
- *   step 3  "Cashback activated"           → terminal, no sticky CTA
- *
- * All values are taken from the Figma node JSON (1089-7010 / 1089-8064 /
- * 1090-8188 / 1090-9123 heroes, 1089-7650 / 1090-8325 modals). The XM broker
- * logo and the clock/card illustration are 2x crops in src/assets/broker/.
+ * Two-axis state machine (spec §1, frames 1292-5199 / 1089-7010 / 1233-6658 /
+ * 1292-4878 / 1292-5029 / 1233-7121 / 1089-8064 / 1242-7675 / 1292-5439 /
+ * 1242-7555):
+ *   accountStatus: none | submitted | failed | verified
+ *   depositStatus: none | awaiting | submitted | confirmed
+ *   S1        deposit none            → step 1, CTA "submit account"
+ *   S1-sheet  submit-account sheet    (2 inputs; 1 input when account failed)
+ *   S2        verified + awaiting     → step 2, CTA "i made a deposit"
+ *   S2-sheet  confirm-deposit sheet   (read-only rows)
+ *   S3-review deposit submitted       → step 3, NO footer CTA (under review)
+ *   S4        deposit confirmed       → "Cashback activated" (kept from old step 3;
+ *             'confirmed' extends the spec enum so the terminal copy stays reachable)
+ * No in-app header — back nav is the Telegram BackButton.
  * ------------------------------------------------------------------------- */
+
+const { Button, ProgressBar, BottomSheet, Icon } = DS;
+
+// The ds-components cluster ships Input/Notification in parallel (CONTRACT §DS APIs).
+// ponytail: resolved through the namespace so this file typechecks before they land;
+// null-render fallback only exists mid-build. Upgrade: direct named imports.
+interface DSInputProps {
+  label?: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  error?: string;
+  hint?: string;
+  rightSlot?: ReactNode;
+  disabled?: boolean;
+}
+interface DSNotificationProps {
+  variant: 'success' | 'error' | 'warning' | 'info';
+  title: string;
+  description?: string;
+  onClose?: () => void;
+}
+const dsExtra = DS as unknown as Record<string, unknown>;
+const Input = (dsExtra.Input ?? (() => null)) as ComponentType<DSInputProps>;
+const Notification = (dsExtra.Notification ?? (() => null)) as ComponentType<DSNotificationProps>;
 
 // Inline Tabler glyphs — the DS Icon set does not cover these; per the brief,
 // new glyphs are inlined here with currentColor so the consuming CSS colours them.
 type GlyphName =
-  | 'back'
   | 'external'
-  | 'copy'
   | 'close'
   | 'mail'
   | 'user'
@@ -36,17 +59,12 @@ type GlyphName =
   | 'monitor'
   | 'gift'
   | 'activity'
-  | 'info'
-  | 'zap'
-  | 'credit-card';
+  | 'maximize'
+  | 'cash2'
+  | 'zap';
 
 const GLYPHS: Record<GlyphName, readonly string[]> = {
-  back: ['M5 12l14 0', 'M5 12l6 6', 'M5 12l6 -6'],
   external: ['M4 6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z', 'M9 15l6 -6', 'M11 9h4v4'],
-  copy: [
-    'M10 8h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-8a2 2 0 0 1 2 -2z',
-    'M6 16a2 2 0 0 1 -2 -2v-8a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2',
-  ],
   close: ['M18 6l-12 12', 'M6 6l12 12'],
   mail: ['M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z', 'M3 7l9 6l9 -6'],
   user: ['M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0', 'M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2'],
@@ -59,9 +77,15 @@ const GLYPHS: Record<GlyphName, readonly string[]> = {
     'M7.5 8a2.5 2.5 0 0 1 0 -5a4.8 8 0 0 1 4.5 5a4.8 8 0 0 1 4.5 -5a2.5 2.5 0 0 1 0 5',
   ],
   activity: ['M3 12h4l3 8l4 -16l3 8h4'],
-  info: ['M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0', 'M12 9h.01', 'M11 12h1v4h1'],
+  /* placeholder icon */
+  maximize: ['M4 8v-2a2 2 0 0 1 2 -2h2', 'M4 16v2a2 2 0 0 0 2 2h2', 'M16 4h2a2 2 0 0 1 2 2v2', 'M16 20h2a2 2 0 0 0 2 -2v-2'],
+  /* placeholder icon */
+  cash2: [
+    'M7 9m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z',
+    'M14 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0',
+    'M17 9v-2a2 2 0 0 0 -2 -2h-10a2 2 0 0 0 -2 2v6a2 2 0 0 0 2 2h2',
+  ],
   zap: ['M13 3l0 7l6 0l-8 11l0 -7l-6 0l8 -11'],
-  'credit-card': ['M3 5m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z', 'M3 10l18 0', 'M7 15l.01 0', 'M11 15l2 0'],
 };
 
 interface GlyphProps extends Omit<SVGProps<SVGSVGElement>, 'name'> {
@@ -99,93 +123,164 @@ interface Spec {
   value: string;
 }
 
+// Canonical row order from the 5 newest full screens (spec D4).
 const XM_SPECS: readonly Spec[] = [
   { icon: 'shield', label: 'Regulation', value: 'FCA, CySEC' },
   { icon: 'monitor', label: 'Trading Platform', value: 'MT4 / MT5' },
+  { icon: 'user', label: 'Account Types', value: 'Standard / ECN' },
+  { icon: 'maximize', label: 'Leverage', value: 'Up to 1:500' },
   { icon: 'gift', label: 'Deposit Bonus', value: 'Up to 50%' },
   { icon: 'activity', label: 'Spread Level', value: 'Low' },
-  { icon: 'info', label: 'Leverage', value: 'Up to 1:500' },
-  { icon: 'user', label: 'Account Types', value: 'Standard / ECN' },
+  { icon: 'cash2', label: 'Cashback level', value: 'High' },
   { icon: 'zap', label: 'Execution Speed', value: 'Fast' },
-  { icon: 'credit-card', label: 'Withdrawal Speed', value: 'Fast' },
 ];
 
 const REFERRAL_CODE = '45789632';
 
-type Step = 1 | 2 | 3;
+export type AccountStatus = 'none' | 'submitted' | 'failed' | 'verified';
+export type DepositStatus = 'none' | 'awaiting' | 'submitted' | 'confirmed';
 type Modal = 'submit-account' | 'made-deposit' | null;
 
 interface HeroCopy {
   title: string;
   subtitle: string;
   actionLabel: string;
-  /** Second (caption) line — only the "open via our link" bordered button. */
-  actionCaption?: string;
-  /** 'solid' = white filled CTA; 'outline' = bordered on-blue CTA. */
-  actionStyle: 'solid' | 'outline';
-  showArt: boolean;
-  showReferral: boolean;
 }
 
-function heroCopy(step: Step, depositSubmitted: boolean): HeroCopy {
-  if (step === 1) {
+// Copy is NOT in the XML (generic layers) — current strings retained (spec §10.4).
+function heroCopy(deposit: DepositStatus): HeroCopy {
+  if (deposit === 'none') {
     return {
       title: 'Create your broker account',
       subtitle: 'Register through the link below, then return to submit your account details.',
       actionLabel: 'Create account',
-      actionStyle: 'solid',
-      showArt: false,
-      showReferral: true,
     };
   }
-  if (step === 2 && !depositSubmitted) {
+  if (deposit === 'awaiting') {
     return {
       title: 'Activate your cashback',
       subtitle: 'Fund your registered broker account, then return to submit it for review.',
       actionLabel: 'Go to broker',
-      actionStyle: 'solid',
-      showArt: false,
-      showReferral: true,
     };
   }
-  if (step === 2) {
+  if (deposit === 'submitted') {
     return {
       title: 'waiting for deposit',
       subtitle: 'complete your deposit to unlock full access to your broker account',
-      actionLabel: 'open via our link',
-      actionCaption: 'Use Our Official Link To Ensure Tracking',
-      actionStyle: 'outline',
-      showArt: true,
-      showReferral: false,
+      actionLabel: 'Go to broker',
     };
   }
   return {
     title: 'Cashback activated',
     subtitle: 'Earn cashback on every trade made through your registered broker account',
     actionLabel: 'Go to broker',
-    actionStyle: 'solid',
-    showArt: false,
-    showReferral: true,
   };
+}
+
+interface Banner {
+  key: string;
+  variant: DSNotificationProps['variant'];
+  title: string;
 }
 
 export interface BrokerDetailProps {
   /** Route param (assembly layer passes it); the captured instance is XM. */
   brokerId?: string;
   onBack?: () => void;
+  /** Dev/test hooks until the broker verification backend lands (spec §4). */
+  initialAccountStatus?: AccountStatus;
+  initialDepositStatus?: DepositStatus;
 }
 
-export default function BrokerDetail({ onBack }: BrokerDetailProps): ReactNode {
-  const [step, setStep] = useState<Step>(1);
-  const [depositSubmitted, setDepositSubmitted] = useState(false);
+export default function BrokerDetail({
+  onBack,
+  initialAccountStatus = 'none',
+  initialDepositStatus = 'none',
+}: BrokerDetailProps): ReactNode {
+  const [accountStatus, setAccountStatus] = useState<AccountStatus>(initialAccountStatus);
+  const [depositStatus, setDepositStatus] = useState<DepositStatus>(initialDepositStatus);
   const [modal, setModal] = useState<Modal>(null);
   const [email, setEmail] = useState('');
   const [userId, setUserId] = useState('');
   const [copied, setCopied] = useState(false);
+  const [dismissed, setDismissed] = useState<readonly string[]>([]);
+
+  // No in-app header (spec D1) — Telegram native BackButton drives onBack.
+  // ponytail: talks to window.Telegram directly; swap to useBackButton from
+  // src/telegram once the backend+telegram cluster lands that module.
+  useEffect(() => {
+    const bb = window.Telegram?.WebApp?.BackButton;
+    if (!bb || !onBack) return;
+    bb.onClick(onBack);
+    bb.show();
+    return () => {
+      bb.offClick(onBack);
+      bb.hide();
+    };
+  }, [onBack]);
+
+  // ponytail: verification outcome comes from a backend that doesn't exist yet;
+  // a 2.5s timer auto-verifies (pass initialAccountStatus="failed" to exercise the
+  // resubmit sheet). Upgrade: poll the broker-account endpoint, set failed|verified.
+  useEffect(() => {
+    if (accountStatus !== 'submitted') return;
+    const t = window.setTimeout(() => {
+      setAccountStatus('verified');
+      setDepositStatus((d) => (d === 'none' ? 'awaiting' : d));
+    }, 2500);
+    return () => window.clearTimeout(t);
+  }, [accountStatus]);
+
+  // Keyboard open (spec §6, frame 1233-7121): clamp the sheet to the visual
+  // viewport so head + inputs stay reachable above the keyboard.
+  useEffect(() => {
+    if (!modal) return;
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const clamp = (): void => {
+      document.documentElement.style.setProperty('--scr-broker-vvh', `${vv.height}px`);
+    };
+    clamp();
+    vv.addEventListener('resize', clamp);
+    return () => {
+      vv.removeEventListener('resize', clamp);
+      document.documentElement.style.removeProperty('--scr-broker-vvh');
+    };
+  }, [modal]);
 
   const progress: ProgressStep =
-    step === 1 ? 'order-created' : step === 2 ? 'payment-details' : 'make-payment';
-  const hero = heroCopy(step, depositSubmitted);
+    depositStatus === 'submitted' || depositStatus === 'confirmed'
+      ? 'make-payment'
+      : depositStatus === 'awaiting'
+        ? 'payment-details'
+        : 'order-created';
+  const hero = heroCopy(depositStatus);
+  const resubmit = accountStatus === 'failed';
+
+  // Banner titles are inference (spec §10.1) — only "Account verification failed"
+  // is confirmed copy. All banners are dismissible (S2-sheet frame shows zero).
+  const banners: Banner[] = [];
+  if (accountStatus === 'submitted') {
+    banners.push({ key: 'account-review', variant: 'info', title: 'Account under review' });
+  }
+  if (accountStatus === 'failed') {
+    banners.push({ key: 'account-failed', variant: 'error', title: 'Account verification failed' });
+  }
+  if (accountStatus === 'verified' && depositStatus === 'awaiting') {
+    banners.push({ key: 'account-verified', variant: 'success', title: 'Account verified' });
+    banners.push({ key: 'deposit-awaiting', variant: 'info', title: 'Make a deposit to activate cashback' });
+  }
+  if (depositStatus === 'submitted') {
+    banners.push({ key: 'deposit-review', variant: 'info', title: 'Deposit under review' });
+  }
+  const visibleBanners = banners.filter((b) => !dismissed.includes(b.key));
+
+  const cta =
+    depositStatus === 'none'
+      ? { label: 'submit account', modal: 'submit-account' as const }
+      : depositStatus === 'awaiting'
+        ? { label: 'i made a deposit', modal: 'made-deposit' as const }
+        : null;
 
   const copyReferral = (): void => {
     navigator.clipboard?.writeText(REFERRAL_CODE).catch(() => undefined);
@@ -193,96 +288,78 @@ export default function BrokerDetail({ onBack }: BrokerDetailProps): ReactNode {
     window.setTimeout(() => setCopied(false), 1500);
   };
 
-  // submit-account modal → advance to step 2 (activate)
   const submitAccount = (): void => {
-    setStep(2);
-    setDepositSubmitted(false);
+    setAccountStatus('submitted');
+    setDismissed([]);
     setModal(null);
   };
 
-  // made-deposit modal → activate → waiting → complete
   const confirmDeposit = (): void => {
+    setDepositStatus('submitted');
+    setDismissed([]);
     setModal(null);
-    if (!depositSubmitted) {
-      setDepositSubmitted(true);
-    } else {
-      setStep(3);
-    }
   };
 
-  const displayEmail = email || 'trustforex.info@gmail.com';
-  const displayUserId = userId || 'nimanm24';
+  const scrollFocusedIntoView = (e: FocusEvent<HTMLDivElement>): void => {
+    (e.target as HTMLElement).scrollIntoView?.({ block: 'nearest' });
+  };
+
+  const displayEmail = email || 'Trustforex.info@gmail.com';
+  const displayUserId = userId || 'Nimanm24';
 
   return (
     <div className="scr-broker">
-      <header className="scr-broker-header">
-        <button className="scr-broker-back" type="button" onClick={onBack} aria-label="Back">
-          <Glyph name="back" size={24} strokeWidth={1.5} />
-        </button>
-        <span className="scr-broker-headtitle">xm broker</span>
-      </header>
-
       <main className="scr-broker-body">
-        {/* Broker card */}
+        {/* Broker card: name row + 0..2 dismissible notification banners */}
         <section className="scr-broker-card">
-          <div className="scr-broker-card-left">
-            <img className="scr-broker-logo" src={xmLogoUrl} alt="XM" width={32} height={32} />
-            <span className="scr-broker-name">XM</span>
+          <div className="scr-broker-card-row">
+            <div className="scr-broker-card-left">
+              <img className="scr-broker-logo" src={xmLogoUrl} alt="XM" width={32} height={32} />
+              <span className="scr-broker-name">XM</span>
+            </div>
+            <span className="scr-broker-popular">popular</span>
           </div>
-          <span className="scr-broker-popular">Popular</span>
+          {visibleBanners.map((b) => (
+            <Notification
+              key={b.key}
+              variant={b.variant}
+              title={b.title}
+              onClose={() => setDismissed((d) => [...d, b.key])}
+            />
+          ))}
         </section>
 
         {/* Blue onboarding hero */}
         <section className="scr-broker-hero">
           <ProgressBar current={progress} className="scr-broker-stepper" />
 
-          <div className={'scr-broker-hero-content' + (hero.showArt ? ' scr-broker-hero-content--art' : '')}>
-            {hero.showArt ? (
-              <img className="scr-broker-hero-art" src={depositWaitUrl} alt="" width={56} height={50} />
-            ) : null}
-            <div className="scr-broker-hero-text">
-              <h2 className="scr-broker-hero-title">{hero.title}</h2>
-              <p className="scr-broker-hero-sub">{hero.subtitle}</p>
-            </div>
+          <div className="scr-broker-hero-text">
+            <h2 className="scr-broker-hero-title">{hero.title}</h2>
+            <p className="scr-broker-hero-sub">{hero.subtitle}</p>
           </div>
 
-          {hero.actionStyle === 'solid' ? (
-            <div className="scr-broker-hero-block">
-              <button className="scr-broker-linkbtn" type="button">
-                <span className="scr-broker-linkbtn-label">{hero.actionLabel}</span>
-                <Glyph name="external" size={24} strokeWidth={1.5} />
+          <div className="scr-broker-hero-block">
+            <div className="scr-broker-referral">
+              <span className="scr-broker-referral-label">referral code</span>
+              <button
+                className="scr-broker-referral-code"
+                type="button"
+                onClick={copyReferral}
+                aria-label={copied ? 'Copied' : 'Copy referral code'}
+              >
+                {REFERRAL_CODE}
               </button>
-              {hero.showReferral ? (
-                <div className="scr-broker-referral">
-                  <span className="scr-broker-referral-label">referral code</span>
-                  <span className="scr-broker-referral-right">
-                    <span className="scr-broker-referral-code">{REFERRAL_CODE}</span>
-                    <button
-                      className="scr-broker-copy"
-                      type="button"
-                      onClick={copyReferral}
-                      aria-label={copied ? 'Copied' : 'Copy referral code'}
-                    >
-                      {copied ? <Icon name="check" size={16} strokeWidth={2} /> : <Glyph name="copy" size={16} strokeWidth={1.6} />}
-                    </button>
-                  </span>
-                </div>
-              ) : null}
             </div>
-          ) : (
-            <button className="scr-broker-linkbtn scr-broker-linkbtn--outline" type="button">
-              <span className="scr-broker-linkbtn-two">
-                <span className="scr-broker-linkbtn-label">{hero.actionLabel}</span>
-                <span className="scr-broker-linkbtn-caption">{hero.actionCaption}</span>
-              </span>
+            <button className="scr-broker-linkbtn" type="button">
+              <span className="scr-broker-linkbtn-label">{hero.actionLabel}</span>
               <Glyph name="external" size={24} strokeWidth={1.5} />
             </button>
-          )}
+          </div>
         </section>
 
         {/* Broker details spec list */}
         <section className="scr-broker-details">
-          <h3 className="scr-broker-details-title">broker details</h3>
+          <h3 className="scr-broker-details-title">Broker details</h3>
           {XM_SPECS.map((s) => (
             <div className="scr-broker-spec" key={s.label}>
               <span className="scr-broker-spec-left">
@@ -295,29 +372,29 @@ export default function BrokerDetail({ onBack }: BrokerDetailProps): ReactNode {
         </section>
       </main>
 
-      {/* Sticky bottom CTA — present on steps 1 & 2 only (step 3 is terminal) */}
-      {step !== 3 ? (
+      {/* Sticky bottom CTA — S1 & S2 only; gone once the deposit is under review */}
+      {cta ? (
         <footer className="scr-broker-footer">
           <Button
             variant="primary"
             size="medium"
             fullWidth
             iconRight={<Icon name="chevron-right" size={20} strokeWidth={1.6} />}
-            onClick={() => setModal(step === 1 ? 'submit-account' : 'made-deposit')}
+            onClick={() => setModal(cta.modal)}
           >
-            {step === 1 ? 'submit account' : 'i made a deposit'}
+            {cta.label}
           </Button>
         </footer>
       ) : null}
 
-      {/* Submit-account modal */}
+      {/* Submit-account sheet (2 inputs; 1-input resubmit when verification failed) */}
       <BottomSheet open={modal === 'submit-account'} onClose={() => setModal(null)} className="scr-broker-sheet">
-        <div className="scr-broker-sheet-inner">
+        <div className="scr-broker-sheet-inner" onFocus={scrollFocusedIntoView}>
           <div className="scr-broker-sheet-content">
             <div className="scr-broker-sheet-head">
               <div className="scr-broker-sheet-titledesc">
                 <div className="scr-broker-sheet-titlerow">
-                  <h2 className="scr-broker-sheet-title">submit your account</h2>
+                  <h2 className="scr-broker-sheet-title">Submit account details</h2>
                   <button className="scr-broker-sheet-close" type="button" onClick={() => setModal(null)} aria-label="Close">
                     <Glyph name="close" size={24} strokeWidth={1.5} />
                   </button>
@@ -327,39 +404,21 @@ export default function BrokerDetail({ onBack }: BrokerDetailProps): ReactNode {
               <hr className="scr-broker-sheet-divider" />
             </div>
 
-            <div className="scr-broker-fields scr-broker-fields--input">
-              <label className="scr-broker-field">
-                <span className="scr-broker-field-label">Email address</span>
-                <span className="scr-broker-input">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="enter your email address"
-                  />
-                  {email ? (
-                    <button className="scr-broker-input-clear" type="button" onClick={() => setEmail('')} aria-label="Clear email">
-                      <Glyph name="close" size={16} strokeWidth={1.5} />
-                    </button>
-                  ) : null}
-                </span>
-              </label>
-
-              <label className="scr-broker-field">
-                <span className="scr-broker-field-label">user ID</span>
-                <span className="scr-broker-input">
-                  <input
-                    value={userId}
-                    onChange={(e) => setUserId(e.target.value)}
-                    placeholder="enter your user ID"
-                  />
-                  {userId ? (
-                    <button className="scr-broker-input-clear" type="button" onClick={() => setUserId('')} aria-label="Clear user ID">
-                      <Glyph name="close" size={16} strokeWidth={1.5} />
-                    </button>
-                  ) : null}
-                </span>
-              </label>
+            <div className="scr-broker-fields">
+              <Input
+                label="Email address"
+                value={email}
+                onChange={setEmail}
+                placeholder="enter your email address"
+              />
+              {!resubmit ? (
+                <Input
+                  label="user ID"
+                  value={userId}
+                  onChange={setUserId}
+                  placeholder="enter your user ID"
+                />
+              ) : null}
             </div>
           </div>
 
@@ -375,14 +434,14 @@ export default function BrokerDetail({ onBack }: BrokerDetailProps): ReactNode {
         </div>
       </BottomSheet>
 
-      {/* Made-a-deposit modal (prefilled) */}
+      {/* Confirm-deposit sheet (single bordered container, two read-only rows) */}
       <BottomSheet open={modal === 'made-deposit'} onClose={() => setModal(null)} className="scr-broker-sheet">
         <div className="scr-broker-sheet-inner">
           <div className="scr-broker-sheet-content">
             <div className="scr-broker-sheet-head">
               <div className="scr-broker-sheet-titledesc">
                 <div className="scr-broker-sheet-titlerow">
-                  <h2 className="scr-broker-sheet-title">i made a deposit</h2>
+                  <h2 className="scr-broker-sheet-title">Confirm your deposit</h2>
                   <button className="scr-broker-sheet-close" type="button" onClick={() => setModal(null)} aria-label="Close">
                     <Glyph name="close" size={24} strokeWidth={1.5} />
                   </button>
@@ -392,19 +451,19 @@ export default function BrokerDetail({ onBack }: BrokerDetailProps): ReactNode {
               <hr className="scr-broker-sheet-divider" />
             </div>
 
-            <div className="scr-broker-fields scr-broker-fields--read">
-              <div className="scr-broker-readfield">
+            <div className="scr-broker-readcard">
+              <div className="scr-broker-readrow">
                 <Glyph name="mail" size={20} strokeWidth={1.6} />
-                <div className="scr-broker-readfield-text">
-                  <span className="scr-broker-readfield-label">Email address</span>
-                  <span className="scr-broker-readfield-value">{displayEmail}</span>
+                <div className="scr-broker-readrow-text">
+                  <span className="scr-broker-readrow-label">Email address</span>
+                  <span className="scr-broker-readrow-value">{displayEmail}</span>
                 </div>
               </div>
-              <div className="scr-broker-readfield">
+              <div className="scr-broker-readrow">
                 <Glyph name="user" size={20} strokeWidth={1.6} />
-                <div className="scr-broker-readfield-text">
-                  <span className="scr-broker-readfield-label">user ID</span>
-                  <span className="scr-broker-readfield-value">{displayUserId}</span>
+                <div className="scr-broker-readrow-text">
+                  <span className="scr-broker-readrow-label">User ID</span>
+                  <span className="scr-broker-readrow-value">{displayUserId}</span>
                 </div>
               </div>
             </div>

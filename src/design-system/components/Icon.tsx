@@ -21,7 +21,11 @@ export type IconName =
   | 'check'
   | 'info'
   | 'arrow-up'
-  | 'chevron-right';
+  | 'chevron-right'
+  | 'alert-circle'
+  | 'alert-triangle'
+  | 'close'
+  | 'report';
 
 const ICONS: Record<IconName, readonly string[]> = {
   // Plain pentagon house — the Figma "home" nav glyph (no door/window).
@@ -45,6 +49,22 @@ const ICONS: Record<IconName, readonly string[]> = {
   info: ['M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0', 'M12 9h.01', 'M11 12h1v4h1'],
   'arrow-up': ['M12 5l0 14', 'M18 11l-6 -6', 'M6 11l6 -6'],
   'chevron-right': ['M9 6l6 6l-6 6'],
+  /* placeholder icon */
+  'alert-circle': ['M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0', 'M12 8v4', 'M12 16h.01'],
+  /* placeholder icon */
+  'alert-triangle': [
+    'M12 9v4',
+    'M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z',
+    'M12 16h.01',
+  ],
+  /* placeholder icon */
+  close: ['M18 6l-12 12', 'M6 6l12 12'],
+  // Rounded square framing a rising zig-zag — the "report" glyph used by the
+  // referral preview's third benefit row (1341:5202).
+  report: [
+    'M4 6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z',
+    'M7 14l3 -3l2 2l5 -5',
+  ],
 };
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name'> {

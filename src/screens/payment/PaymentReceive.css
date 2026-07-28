@@ -221,7 +221,7 @@
    32px gap between the content block and the CTA — reskinned via the
    className extension point (BottomSheet.tsx merges it onto .ds-sheet). */
 .ds-sheet.scr-receive-sheet {
-  padding: var(--spacing-16) var(--spacing-16) 36px;
+  padding: var(--spacing-16) var(--spacing-16) var(--spacing-24);
   border-radius: 16px 16px 0 0;
 }
 .scr-receive-sheet .ds-sheet-handle {

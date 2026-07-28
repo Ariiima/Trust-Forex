@@ -1,0 +1,107 @@
+  <frame id="1108:12055" name="Waiting" x="7307" y="3816" width="360" height="852">
+    <frame id="1108:12056" name="Iphone-Asset" x="0" y="0" width="360" height="32">
+      <frame id="1108:12057" name="Time" x="0" y="0" width="128" height="32">
+        <text id="1108:12058" name="Time" x="52" y="5" width="24" height="22" />
+      </frame>
+      <frame id="1108:12059" name="Levels" x="232" y="0" width="128" height="32">
+        <frame id="1108:12060" name="Frame 10" x="31.834854125976562" y="11.143986701965332" width="64" height="10.712026596069336">
+          <vector id="1108:12061" name="Cellular Connection" x="0.0000152587890625" y="0.3187119960784912" width="15.820839881896973" height="10.074591636657715" />
+          <vector id="1108:12062" name="Wifi" x="21.588829040527344" y="0.2767423987388611" width="14.124768257141113" height="10.158549308776855" />
+          <frame id="1108:12063" name="Battery" x="41.481658935546875" y="0.000004642864951165393" width="22.51835823059082" height="10.712026596069336" />
+        </frame>
+      </frame>
+    </frame>
+    <instance id="1108:12067" name="Telegram header " x="0" y="32" width="360" height="44" />
+    <instance id="1108:12110" name="Progress bar" x="16" y="92" width="328" height="48" />
+    <frame id="1213:4801" name="Frame 2147229923" x="16" y="156" width="328" height="660">
+      <frame id="1213:4802" name="Frame 1890164135" x="16" y="16" width="296" height="60">
+        <instance id="1213:4803" name="alert-triangle" x="12" y="20" width="20" height="20" />
+        <text id="1213:4804" name="Verify the network, wallet address, and exact amount before making the payment" x="42" y="10" width="238" height="40" />
+      </frame>
+      <frame id="1213:4805" name="Frame 2147230160" x="16" y="100" width="296" height="528">
+        <frame id="1213:4806" name="Frame 2147230158" x="0" y="0" width="296" height="340">
+          <frame id="1312:7743" name="Frame 2147230153" x="0" y="0" width="296" height="40">
+            <instance id="1312:7744" name="Buttons" x="0" y="0" width="142" height="40" />
+            <instance id="1312:7745" name="Buttons" x="154" y="0" width="142" height="40" />
+          </frame>
+          <frame id="1213:4812" name="QR Code" x="74" y="72" width="148" height="148">
+            <rounded-rectangle id="1213:4813" name="ChatGPT Image Jul 20, 2026, 12_35_16 PM 1" x="0" y="0" width="148" height="149.15625" />
+            <frame id="1213:4814" name="Frame 2147230146" x="46" y="47.078125" width="56" height="56">
+              <instance id="1213:4815" name="BTC" x="8.000001907348633" y="8.000001907348633" width="39.999996185302734" height="39.999996185302734" />
+            </frame>
+          </frame>
+          <frame id="1213:4816" name="Frame 2147230152" x="0" y="252" width="296" height="88">
+            <frame id="1213:4817" name="Frame 2147230109" x="0" y="0" width="296" height="24">
+              <text id="1213:4818" name="Currency (network)" x="0" y="0" width="118" height="24" />
+              <text id="1213:4819" name="BNB(BEP-20)" x="215" y="0" width="81" height="24" />
+            </frame>
+            <frame id="1213:4820" name="Frame 2147230110" x="0" y="32" width="296" height="24">
+              <text id="1213:4821" name="Amount to send" x="0" y="0" width="98" height="24" />
+              <frame id="1213:4822" name="Frame 2147230151" x="170" y="0" width="126" height="24">
+                <text id="1213:4823" name="0.00350773" x="0" y="0" width="75" height="24" />
+                <text id="1213:4824" name="BNB" x="79" y="0" width="27" height="24" />
+                <instance id="1213:4825" name="copy-2" x="110" y="4" width="16" height="16" />
+              </frame>
+            </frame>
+            <frame id="1213:4826" name="Frame 2147230111" x="0" y="64" width="296" height="24">
+              <text id="1213:4827" name="Wallet address" x="0" y="0" width="90" height="24" />
+              <frame id="1213:4828" name="Frame 2147230151" x="161" y="0" width="135" height="24">
+                <text id="1213:4829" name="0X1C42......48Hf7f8" x="0" y="0" width="115" height="24" />
+                <instance id="1213:4830" name="copy-2" x="119" y="4" width="16" height="16" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+        <frame id="1213:4831" name="Frame 1890164134" x="0" y="364" width="296" height="44">
+          <text id="1213:4832" name="Memo required" x="12" y="10" width="94" height="24" />
+          <frame id="1213:4833" name="Frame 2147230151" x="199" y="10" width="81" height="24">
+            <text id="1213:4834" name="28442536" x="0" y="0" width="61" height="24" />
+            <instance id="1213:4835" name="copy-2" x="65" y="4" width="16" height="16" />
+          </frame>
+        </frame>
+        <frame id="1213:4836" name="Frame 2147230159" x="0" y="432" width="296" height="96">
+          <frame id="1213:4837" name="Frame 2147230153" x="0" y="0" width="296" height="24">
+            <vector id="1213:4838" name="Vector 23" x="0" y="12" width="45.5" height="0" />
+            <text id="1213:4839" name="Or pay with connecting wallet" x="57.5" y="0" width="181" height="24" />
+            <vector id="1213:4840" name="Vector 24" x="250.5" y="12" width="45.5" height="0" />
+          </frame>
+          <frame id="1213:4841" name="Frame 2147230157" x="48" y="40" width="200" height="56">
+            <frame id="1213:4842" name="Frame 2147230154" x="0" y="0" width="56" height="56">
+              <rounded-rectangle id="1213:4843" name="trust-wallet-icon 1" x="12" y="12" width="32" height="32" />
+            </frame>
+            <frame id="1213:4844" name="Frame 2147230156" x="72" y="0" width="56" height="56">
+              <rounded-rectangle id="1213:4845" name="trust-wallet-icon 1" x="12" y="12" width="32" height="32" />
+            </frame>
+            <frame id="1213:4846" name="Frame 2147230155" x="144" y="0" width="56" height="56">
+              <rounded-rectangle id="1213:4847" name="trust-wallet-icon 1" x="12" y="12" width="32" height="32" />
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <frame id="794:3205" name="Frame 2147229964" x="0" y="0" width="360" height="852">
+      <frame id="794:3206" name="Frame 2147229965" x="0" y="432" width="360" height="420">
+        <frame id="1108:12375" name="Frame 2147230167" x="16" y="16" width="328" height="72">
+          <frame id="1108:12376" name="Frame 2147230161" x="12" y="12" width="300" height="48">
+            <frame id="1108:12377" name="Frame 2147230162" x="0" y="0" width="300" height="48">
+              <instance id="1108:12378" name="clock-hour-5" x="0" y="12" width="24" height="24" />
+              <text id="1108:12379" name="Your payment is currently under review. Confirmation may take a few moments." x="34" y="0" width="266" height="48" />
+            </frame>
+          </frame>
+        </frame>
+        <frame id="1104:11215" name="Frame 2147230165" x="16" y="112" width="328" height="108">
+          <frame id="1104:11190" name="Frame 2147229955" x="0" y="0" width="328" height="48">
+            <text id="1104:11194" name="Amount to be paid" x="16" y="10" width="133" height="28" />
+            <frame id="1104:11208" name="Frame 2147230164" x="242" y="10" width="70" height="28">
+              <text id="1104:11195" name="2.00" x="0" y="0" width="34" height="28" />
+              <text id="1104:11206" name="USD" x="38" y="0" width="32" height="28" />
+            </frame>
+          </frame>
+          <frame id="1104:11209" name="Frame 2147229956" x="0" y="60" width="328" height="48">
+            <text id="1104:11210" name="You paid" x="16" y="10" width="62" height="28" />
+            <instance id="1213:4791" name="loader-2" x="292" y="14" width="20" height="20" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+  </frame>

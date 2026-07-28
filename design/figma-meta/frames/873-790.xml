@@ -1,0 +1,5 @@
+  <frame id="873:790" name="broker state " x="8726" y="16764" width="312" height="236">
+    <symbol id="873:789" name="State=no account" x="20" y="20" width="272" height="60" />
+    <symbol id="873:788" name="State=cashback active" x="20" y="156" width="272" height="60" />
+    <symbol id="873:787" name="State=waiting for deposit" x="20" y="88" width="272" height="60" />
+  </frame>

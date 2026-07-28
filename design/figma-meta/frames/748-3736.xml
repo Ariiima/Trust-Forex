@@ -1,0 +1,146 @@
+  <frame id="748:3736" name="Change plan - BS" x="4794" y="461" width="360" height="852">
+    <frame id="1206:4114" name="Navigation bar " x="0" y="792" width="360" height="60">
+      <frame id="1206:4115" name="Frame 1890164133" x="16" y="0" width="328" height="44">
+        <text id="1206:4116" name="Review order" x="105.5" y="8" width="93" height="28" />
+        <instance id="1206:4117" name="chevron-right" x="202.5" y="12" width="20" height="20" />
+      </frame>
+      <instance id="1206:4118" name="Safe area" x="0" y="44" width="360" height="16" />
+    </frame>
+    <frame id="748:3737" name="Iphone-Asset" x="0" y="0" width="360" height="32">
+      <frame id="748:3738" name="Time" x="0" y="0" width="128" height="32">
+        <text id="748:3739" name="Time" x="52" y="5" width="24" height="22" />
+      </frame>
+      <frame id="748:3740" name="Levels" x="232" y="0" width="128" height="32">
+        <frame id="748:3741" name="Frame 10" x="31.834854125976562" y="11.143986701965332" width="64" height="10.712026596069336">
+          <vector id="748:3742" name="Cellular Connection" x="0.0000152587890625" y="0.3187119960784912" width="15.820839881896973" height="10.074591636657715" />
+          <vector id="748:3743" name="Wifi" x="21.588829040527344" y="0.2767423987388611" width="14.124768257141113" height="10.158549308776855" />
+          <frame id="748:3744" name="Battery" x="41.481658935546875" y="0.000004642864951165393" width="22.51835823059082" height="10.712026596069336" />
+        </frame>
+      </frame>
+    </frame>
+    <frame id="748:3748" name="Frame 2147229923" x="16" y="156" width="328" height="368.00006103515625">
+      <frame id="748:3749" name="Frame 2147229961" x="16" y="16" width="296" height="336.00006103515625">
+        <frame id="748:3750" name="Frame 2147229960" x="0" y="0" width="296" height="252.0000457763672">
+          <frame id="748:3751" name="Frame 2147229950" x="0" y="0" width="296" height="56">
+            <frame id="748:3752" name="Frame 2147229948" x="0" y="0" width="143" height="56">
+              <text id="748:3753" name="Selected plan" x="0" y="0" width="143" height="24" />
+              <frame id="748:3754" name="Frame 2147229947" x="0" y="24" width="143" height="32">
+                <text id="748:3755" name="Silver" x="0" y="0" width="46" height="32" />
+                <text id="748:3756" name="/ 1 month" x="50" y="4" width="55" height="24" />
+              </frame>
+            </frame>
+            <instance id="1312:7617" name="Buttons" x="182" y="12" width="114" height="32" />
+          </frame>
+          <vector id="748:3759" name="Vector 7" x="0" y="72" width="296" height="0.000025877141865748854" />
+          <frame id="748:3760" name="Frame 2147229954" x="0" y="88" width="296" height="56">
+            <frame id="748:3761" name="Frame 2147229953" x="0" y="0" width="296" height="32">
+              <text id="748:3762" name="Use earning balance" x="0" y="0" width="164" height="32" />
+              <instance id="1305:6236" name="Switch button" x="256" y="6" width="40" height="20" />
+            </frame>
+            <frame id="748:3765" name="Frame 2147229952" x="0" y="32" width="109" height="24">
+              <text id="748:3766" name="Available :" x="0" y="0" width="62" height="24" />
+              <text id="748:3767" name="$ 12.50" x="66" y="0" width="43" height="24" />
+            </frame>
+          </frame>
+          <vector id="748:3768" name="Vector 8" x="0" y="160.00003051757812" width="296" height="0.000025877141865748854" />
+          <frame id="748:3769" name="Frame 2147229956" x="0" y="176.00006103515625" width="296" height="76">
+            <text id="748:3770" name="Discount code" x="0" y="0" width="296" height="28" />
+            <frame id="748:3771" name="Frame 2147229955" x="0" y="32" width="296" height="44">
+              <frame id="748:3772" name="Frame 2147229957" x="16" y="10" width="264" height="24">
+                <text id="748:3773" name="SUMMER12" x="0" y="0" width="182" height="24" />
+                <text id="748:3774" name="-$4.50" x="194" y="0" width="42" height="24" />
+                <instance id="748:3775" name="close" x="248" y="4" width="16" height="16" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+        <frame id="748:3776" name="Frame 2147229959" x="0" y="300.00006103515625" width="296" height="36">
+          <frame id="748:3777" name="Frame 2147229958" x="0" y="0" width="296" height="36">
+            <text id="748:3778" name="Total payable" x="0" y="4" width="94" height="28" />
+            <text id="748:3779" name="$ 32.00" x="225" y="0" width="71" height="36" />
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <instance id="748:3782" name="Telegram header " x="0" y="32" width="360" height="44" />
+    <instance id="1102:9809" name="Progress bar" x="16" y="92" width="328" height="48" />
+    <frame id="748:3690" name="Frame 2147229964" x="0" y="0" width="360" height="852">
+      <frame id="674:1495" name="Frame 2147229965" x="0" y="411.9999694824219" width="360" height="440.0000305175781">
+        <frame id="674:1579" name="Frame 2147229974" x="16" y="16" width="328" height="312.0000305175781">
+          <frame id="674:1578" name="Frame 2147229973" x="0" y="0" width="328" height="44.000030517578125">
+            <frame id="674:1574" name="Frame 2147229971" x="0" y="0" width="328" height="32">
+              <text id="674:1498" name="Change plan" x="0" y="0" width="102" height="32" />
+              <instance id="674:1571" name="close" x="304" y="4" width="24" height="24" />
+            </frame>
+            <vector id="674:1576" name="Vector 8" x="0" y="44" width="328" height="0.00002867467071610008" />
+          </frame>
+          <frame id="1206:4136" name="Frame 2147230177" x="0" y="60.000030517578125" width="328" height="252">
+            <frame id="1206:4137" name="Frame 2147229922" x="0" y="0" width="328" height="76">
+              <frame id="1206:4138" name="Frame 2147230173" x="12" y="8" width="304" height="60">
+                <rounded-rectangle id="1206:4139" name="ChatGPT Image Jul 18, 2026, 01_02_45 PM 2" x="0" y="2" width="56" height="56" />
+                <frame id="1206:4140" name="Frame 2147230172" x="64" y="0" width="240" height="60">
+                  <text id="1206:4141" name="Silver" x="0" y="0" width="240" height="32" />
+                  <frame id="1206:4142" name="Frame 2147230098" x="0" y="28" width="240" height="32">
+                    <frame id="1206:4143" name="Frame 2147229925" x="0" y="0" width="142" height="32">
+                      <frame id="1206:4144" name="Frame 2147229926" x="0" y="0" width="83" height="32">
+                        <instance id="1206:4145" name="currency-dollar1" x="0" y="6" width="20" height="20" />
+                        <text id="1206:4146" name="200.00" x="20" y="0" width="63" height="32" />
+                      </frame>
+                      <text id="1206:4147" name="/ 1 month" x="87" y="4" width="55" height="24" />
+                    </frame>
+                  </frame>
+                </frame>
+              </frame>
+            </frame>
+            <frame id="1206:4148" name="Frame 2147229923" x="0" y="88" width="328" height="76">
+              <frame id="1206:4149" name="Frame 2147229937" x="12" y="8" width="304" height="60">
+                <frame id="1206:4150" name="Frame 2147230173" x="0" y="0" width="304" height="60">
+                  <rounded-rectangle id="1206:4151" name="ChatGPT Image Jul 18, 2026, 01_02_45 PM 2" x="0" y="2" width="56" height="56" />
+                  <frame id="1206:4152" name="Frame 2147230172" x="64" y="0" width="240" height="60">
+                    <frame id="1206:4153" name="Frame 2147230175" x="0" y="0" width="240" height="32">
+                      <text id="1206:4154" name="Gold" x="0" y="0" width="40" height="32" />
+                      <frame id="1206:4155" name="Frame 2147229937" x="156" y="6" width="84" height="20">
+                        <text id="1206:4156" name="Most popular" x="8" y="0" width="68" height="20" />
+                      </frame>
+                    </frame>
+                    <frame id="1206:4157" name="Frame 2147230098" x="0" y="28" width="240" height="32">
+                      <frame id="1206:4158" name="Frame 2147229925" x="0" y="0" width="149" height="32">
+                        <frame id="1206:4159" name="Frame 2147229926" x="0" y="0" width="81" height="32">
+                          <instance id="1206:4160" name="currency-dollar1" x="0" y="6" width="20" height="20" />
+                          <text id="1206:4161" name="550.00" x="20" y="0" width="61" height="32" />
+                        </frame>
+                        <text id="1206:4162" name="/ 3 months" x="85" y="4" width="64" height="24" />
+                      </frame>
+                    </frame>
+                  </frame>
+                </frame>
+              </frame>
+            </frame>
+            <frame id="1206:4185" name="Frame 2147229925" x="0" y="176" width="328" height="76">
+              <frame id="1206:4186" name="Frame 2147230173" x="12" y="8" width="304" height="60">
+                <rounded-rectangle id="1206:4187" name="ChatGPT Image Jul 18, 2026, 01_02_45 PM 2" x="0" y="2" width="56" height="56" />
+                <frame id="1206:4188" name="Frame 2147230172" x="64" y="0" width="240" height="60">
+                  <frame id="1206:4189" name="Frame 2147230174" x="0" y="0" width="240" height="32">
+                    <text id="1206:4190" name="Diamond" x="0" y="0" width="172" height="32" />
+                    <frame id="1206:4191" name="Frame 2147229881" x="172" y="6" width="68" height="20">
+                      <text id="1206:4192" name="Best value" x="8" y="0" width="52" height="20" />
+                    </frame>
+                  </frame>
+                  <frame id="1206:4193" name="Frame 2147230098" x="0" y="28" width="240" height="32">
+                    <frame id="1206:4194" name="Frame 2147229925" x="0" y="0" width="162" height="32">
+                      <frame id="1206:4195" name="Frame 2147229926" x="0" y="0" width="89" height="32">
+                        <instance id="1206:4196" name="currency-dollar1" x="0" y="6" width="20" height="20" />
+                        <text id="1206:4197" name="1700.00" x="20" y="0" width="69" height="32" />
+                      </frame>
+                      <text id="1206:4198" name="/ 12 months" x="93" y="4" width="69" height="24" />
+                    </frame>
+                  </frame>
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+        <instance id="1312:7570" name="Buttons" x="16" y="360.0000305175781" width="328" height="44" />
+      </frame>
+    </frame>
+  </frame>

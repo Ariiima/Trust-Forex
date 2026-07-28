@@ -1,10 +1,9 @@
 /* =====================================================================
    Payment — select currency — /payment/currency
-   Geometry & colours from Figma nodes 552-3121 (base picker) and 789-2421
-   (Change-currency BottomSheet content). Consumes the DS ProgressBar,
-   BottomSheet, Button, Icon; the sheet is reskinned via the className
-   extension point (see notes at the bottom) since the DS BottomSheet's
-   default handle/padding doesn't match this design.
+   Geometry & colours from Figma node 1284:3883 (canonical; geometry-
+   identical to old 552-3121). Consumes the DS ProgressBar, Button, Icon.
+   The Change-currency sheet moved to PaymentNetwork.css (789-2421's
+   backdrop is the network screen).
    ===================================================================== */
 
 .scr-payment-currency {
@@ -52,67 +51,4 @@
   z-index: 10;
   padding: var(--spacing-8) var(--spacing-16) var(--spacing-16);
   background: var(--bg-colors-container-s);
-}
-
-/* ---- "Change currency" BottomSheet (789-2421) ------------------------- */
-/* Figma sheet: 16/16/0/0 corner radius, no drag handle, 16/16/16/36
-   padding, 32px gap between the list block and the CTA. The DS BottomSheet
-   always renders a handle + 20px top radius + 8/16/24 padding — reskinned
-   here via the className extension point (BottomSheet.tsx merges it onto
-   .ds-sheet), not forked. */
-.ds-sheet.scr-payment-currency-sheet {
-  padding: var(--spacing-16) var(--spacing-16) 36px;
-  border-radius: 16px 16px 0 0;
-}
-.scr-payment-currency-sheet .ds-sheet-handle {
-  display: none;
-}
-
-.scr-payment-currency-sheet-inner {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-32);
-}
-
-.scr-payment-currency-sheet-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-16);
-}
-
-.scr-payment-currency-sheet-head {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-12);
-}
-
-.scr-payment-currency-sheet-titlerow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.scr-payment-currency-sheet-title {
-  font-size: 16px;
-  line-height: 32px;
-  font-weight: var(--font-weight-semibold);
-  color: var(--typography-colors-main-text);
-}
-
-.scr-payment-currency-sheet-close {
-  display: inline-flex;
-  flex: none;
-  color: var(--base-color-black);
-}
-
-.scr-payment-currency-sheet-divider {
-  border: none;
-  border-top: 1px dashed var(--stroke-colors-default);
-  margin: 0;
-}
-
-.scr-payment-currency-sheet-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-12);
 }

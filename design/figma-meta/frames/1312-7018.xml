@@ -1,0 +1,135 @@
+  <frame id="1312:7018" name="Button component" x="11877" y="16682" width="2599" height="597">
+    <frame id="1312:6542" name="Frame 2147230212" x="0" y="113" width="110" height="470">
+      <frame id="1312:6537" name="Frame 2147230208" x="0" y="0" width="110" height="56">
+        <text id="1312:6522" name="Primary-1" x="11.5" y="10" width="87" height="36" />
+      </frame>
+      <frame id="1312:6539" name="Frame 2147230209" x="0" y="103.5" width="110" height="56">
+        <text id="1312:6523" name="Primary-2" x="10" y="10" width="90" height="36" />
+      </frame>
+      <frame id="1312:6540" name="Frame 2147230210" x="0" y="207" width="110" height="56">
+        <text id="1312:6524" name="Secodary" x="11.5" y="10" width="87" height="36" />
+      </frame>
+      <frame id="1312:6541" name="Frame 2147230211" x="0" y="310.5" width="110" height="56">
+        <text id="1312:6525" name="Tertiary-1" x="12" y="10" width="86" height="36" />
+      </frame>
+      <frame id="1312:6660" name="Frame 2147230212" x="0" y="414" width="110" height="56">
+        <text id="1312:6661" name="Tertiary-2" x="10" y="10" width="90" height="36" />
+      </frame>
+    </frame>
+    <frame id="1312:6559" name="Frame 2147230216" x="206" y="57" width="696" height="56">
+      <frame id="1312:6544" name="Frame 2147230209" x="0" y="0" width="110" height="56">
+        <text id="1312:6545" name="Default" x="25" y="12" width="60" height="32" />
+      </frame>
+      <frame id="1312:6552" name="Frame 2147230213" x="195.33334350585938" y="0" width="110" height="56">
+        <text id="1312:6553" name="Pressed" x="22.5" y="12" width="65" height="32" />
+      </frame>
+      <frame id="1312:6555" name="Frame 2147230214" x="390.66668701171875" y="0" width="110" height="56">
+        <text id="1312:6556" name="Disabled" x="19" y="12" width="72" height="32" />
+      </frame>
+      <frame id="1312:6557" name="Frame 2147230215" x="586" y="0" width="110" height="56">
+        <text id="1312:6558" name="Loading" x="22" y="12" width="66" height="32" />
+      </frame>
+    </frame>
+    <frame id="1312:6939" name="Frame 2147230274" x="1025" y="57" width="696" height="56">
+      <frame id="1312:6940" name="Frame 2147230209" x="0" y="0" width="110" height="56">
+        <text id="1312:6941" name="Default" x="25" y="12" width="60" height="32" />
+      </frame>
+      <frame id="1312:6942" name="Frame 2147230213" x="195.33334350585938" y="0" width="110" height="56">
+        <text id="1312:6943" name="Pressed" x="22.5" y="12" width="65" height="32" />
+      </frame>
+      <frame id="1312:6944" name="Frame 2147230214" x="390.66668701171875" y="0" width="110" height="56">
+        <text id="1312:6945" name="Disabled" x="19" y="12" width="72" height="32" />
+      </frame>
+      <frame id="1312:6946" name="Frame 2147230215" x="586" y="0" width="110" height="56">
+        <text id="1312:6947" name="Loading" x="22" y="12" width="66" height="32" />
+      </frame>
+    </frame>
+    <frame id="1312:6948" name="Frame 2147230275" x="1842" y="57" width="696" height="56">
+      <frame id="1312:6949" name="Frame 2147230209" x="0" y="0" width="110" height="56">
+        <text id="1312:6950" name="Default" x="25" y="12" width="60" height="32" />
+      </frame>
+      <frame id="1312:6951" name="Frame 2147230213" x="195.33334350585938" y="0" width="110" height="56">
+        <text id="1312:6952" name="Pressed" x="22.5" y="12" width="65" height="32" />
+      </frame>
+      <frame id="1312:6953" name="Frame 2147230214" x="390.66668701171875" y="0" width="110" height="56">
+        <text id="1312:6954" name="Disabled" x="19" y="12" width="72" height="32" />
+      </frame>
+      <frame id="1312:6955" name="Frame 2147230215" x="586" y="0" width="110" height="56">
+        <text id="1312:6956" name="Loading" x="22" y="12" width="66" height="32" />
+      </frame>
+    </frame>
+    <frame id="1312:6527" name="Frame 2147230206" x="0" y="0" width="2599" height="48">
+      <text id="1312:6519" name="Style/State" x="0" y="4" width="113" height="40" />
+      <frame id="1312:6521" name="Frame 2147230205" x="500" y="8" width="107" height="32">
+        <text id="1312:6520" name="( 44 Height )" x="10" y="2" width="87" height="28" />
+      </frame>
+      <frame id="1312:6533" name="Frame 2147230206" x="1327" y="8" width="108" height="32">
+        <text id="1312:6534" name="( 40 Height )" x="10" y="2" width="88" height="28" />
+      </frame>
+      <frame id="1312:6535" name="Frame 2147230207" x="2154" y="8" width="106" height="32">
+        <text id="1312:6536" name="( 32 Height )" x="10" y="2" width="86" height="28" />
+      </frame>
+    </frame>
+    <frame id="1312:7017" name="Buttons" x="176" y="99" width="2409" height="498">
+      <symbol id="1312:6994" name="Style=Primary-1, Size=44px, State=Default" x="20" y="20" width="126" height="44" />
+      <symbol id="1312:6980" name="Style=Primary-1, Size=40px, State=Default" x="847" y="20" width="126" height="40" />
+      <symbol id="1312:7014" name="Style=Primary-1, Size=32px, State=Default" x="1674" y="20" width="114" height="32" />
+      <symbol id="1312:7016" name="Style=Primary-1, Size=44px, State=Loading" x="609" y="20" width="126" height="44" />
+      <symbol id="1312:6989" name="Style=Primary-1, Size=40px, State=Loading" x="1436" y="20" width="126" height="40" />
+      <symbol id="1312:7010" name="Style=Primary-1, Size=32px, State=Loading" x="2263" y="20" width="126" height="32" />
+      <symbol id="1312:7007" name="Style=Primary-1, Size=44px, State=Disabled" x="413" y="20" width="126" height="44" />
+      <symbol id="1312:7003" name="Style=Primary-1, Size=40px, State=Disabled" x="1240" y="20" width="126" height="40" />
+      <symbol id="1312:6975" name="Style=Primary-1, Size=32px, State=Disabled" x="2067" y="20" width="114" height="32" />
+      <symbol id="1312:6999" name="Style=Primary-1, Size=44px, State=Pressed" x="217" y="20" width="126" height="44" />
+      <symbol id="1312:6981" name="Style=Primary-1, Size=40px, State=Pressed" x="1044" y="20" width="126" height="40" />
+      <symbol id="1312:6995" name="Style=Primary-1, Size=32px, State=Pressed" x="1871" y="20" width="122" height="32" />
+      <symbol id="1312:6992" name="Style=Primary-2, Size=44px, State=Default" x="20" y="123" width="126" height="44" />
+      <symbol id="1312:6990" name="Style=Primary-2, Size=40px, State=Default" x="847" y="123" width="126" height="40" />
+      <symbol id="1312:6991" name="Style=Primary-2, Size=32px, State=Default" x="1674" y="123" width="114" height="32" />
+      <symbol id="1312:6987" name="Style=Primary-2, Size=44px, State=Loading" x="609" y="123" width="126" height="44" />
+      <symbol id="1312:7005" name="Style=Primary-2, Size=40px, State=Loading" x="1436" y="123" width="126" height="40" />
+      <symbol id="1312:6984" name="Style=Primary-2, Size=32px, State=Loading" x="2263" y="123" width="126" height="32" />
+      <symbol id="1312:6998" name="Style=Primary-2, Size=44px, State=Disabled" x="413" y="123" width="126" height="44" />
+      <symbol id="1312:7002" name="Style=Primary-2, Size=40px, State=Disabled" x="1240" y="123" width="126" height="40" />
+      <symbol id="1312:6982" name="Style=Primary-2, Size=32px, State=Disabled" x="2067" y="123" width="114" height="32" />
+      <symbol id="1312:6986" name="Style=Primary-2, Size=44px, State=Pressed" x="217" y="123" width="126" height="44" />
+      <symbol id="1312:6993" name="Style=Primary-2, Size=40px, State=Pressed" x="1044" y="123" width="126" height="40" />
+      <symbol id="1312:6978" name="Style=Primary-2, Size=32px, State=Pressed" x="1871" y="123" width="114" height="32" />
+      <symbol id="1312:7013" name="Style=Secodary, Size=44px, State=Default" x="20" y="225" width="126" height="44" />
+      <symbol id="1312:6977" name="Style=Secodary, Size=40px, State=Default" x="847" y="225" width="126" height="40" />
+      <symbol id="1312:7004" name="Style=Secodary, Size=32px, State=Default" x="1674" y="225" width="114" height="32" />
+      <symbol id="1312:6976" name="Style=Secodary, Size=44px, State=Loading" x="609" y="225" width="126" height="44" />
+      <symbol id="1312:6973" name="Style=Secodary, Size=40px, State=Loading" x="1436" y="225" width="126" height="40" />
+      <symbol id="1312:7015" name="Style=Secodary, Size=32px, State=Loading" x="2263" y="225" width="126" height="32" />
+      <symbol id="1312:6972" name="Style=Secodary, Size=44px, State=Disabled" x="413" y="225" width="126" height="44" />
+      <symbol id="1312:7006" name="Style=Secodary, Size=40px, State=Disabled" x="1240" y="225" width="126" height="40" />
+      <symbol id="1312:7012" name="Style=Secodary, Size=32px, State=Disabled" x="2067" y="225" width="114" height="32" />
+      <symbol id="1312:6970" name="Style=Secodary, Size=44px, State=Pressed" x="217" y="225" width="126" height="44" />
+      <symbol id="1312:6996" name="Style=Secodary, Size=40px, State=Pressed" x="1044" y="225" width="126" height="40" />
+      <symbol id="1312:7008" name="Style=Secodary, Size=32px, State=Pressed" x="1871" y="225" width="114" height="32" />
+      <symbol id="1312:6969" name="Style=Tertiary-2, Size=44px, State=Default" x="20" y="434" width="126" height="44" />
+      <symbol id="1312:6985" name="Style=Tertiary-2, Size=40px, State=Default" x="847" y="434" width="126" height="40" />
+      <symbol id="1312:6988" name="Style=Tertiary-2, Size=32px, State=Default" x="1674" y="434" width="114" height="32" />
+      <symbol id="1312:7001" name="Style=Tertiary-2, Size=44px, State=Loading" x="609" y="434" width="126" height="44" />
+      <symbol id="1312:6974" name="Style=Tertiary-2, Size=40px, State=Loading" x="1436" y="434" width="126" height="40" />
+      <symbol id="1312:6968" name="Style=Tertiary-2, Size=32px, State=Loading" x="2263" y="434" width="126" height="32" />
+      <symbol id="1312:6967" name="Style=Tertiary-1, Size=44px, State=Default" x="20" y="328" width="126" height="44" />
+      <symbol id="1312:7011" name="Style=Tertiary-1, Size=40px, State=Default" x="847" y="328" width="126" height="40" />
+      <symbol id="1312:7000" name="Style=Tertiary-1, Size=32px, State=Default" x="1674" y="328" width="114" height="32" />
+      <symbol id="1312:6983" name="Style=Tertiary-1, Size=44px, State=Loading" x="609" y="328" width="126" height="44" />
+      <symbol id="1312:6966" name="Style=Tertiary-1, Size=40px, State=Loading" x="1436" y="328" width="126" height="40" />
+      <symbol id="1312:6965" name="Style=Tertiary-1, Size=32px, State=Loading" x="2263" y="328" width="126" height="32" />
+      <symbol id="1312:6964" name="Style=Tertiary-1, Size=44px, State=Disabled" x="413" y="328" width="126" height="44" />
+      <symbol id="1312:6963" name="Style=Tertiary-1, Size=40px, State=Disabled" x="1240" y="328" width="126" height="40" />
+      <symbol id="1312:6997" name="Style=Tertiary-1, Size=32px, State=Disabled" x="2067" y="328" width="114" height="32" />
+      <symbol id="1312:6962" name="Style=Tertiary-1, Size=44px, State=Pressed" x="217" y="328" width="126" height="44" />
+      <symbol id="1312:6961" name="Style=Tertiary-1, Size=40px, State=Pressed" x="1044" y="328" width="126" height="40" />
+      <symbol id="1312:6971" name="Style=Tertiary-1, Size=32px, State=Pressed" x="1871" y="328" width="114" height="32" />
+      <symbol id="1312:7009" name="Style=Tertiary-2, Size=44px, State=Disabled" x="413" y="434" width="126" height="44" />
+      <symbol id="1312:6960" name="Style=Tertiary-2, Size=40px, State=Disabled" x="1240" y="434" width="126" height="40" />
+      <symbol id="1312:6959" name="Style=Tertiary-2, Size=32px, State=Disabled" x="2067" y="434" width="114" height="32" />
+      <symbol id="1312:6958" name="Style=Tertiary-2, Size=44px, State=Pressed" x="217" y="434" width="126" height="44" />
+      <symbol id="1312:6957" name="Style=Tertiary-2, Size=40px, State=Pressed" x="1044" y="434" width="126" height="40" />
+      <symbol id="1312:6979" name="Style=Tertiary-2, Size=32px, State=Pressed" x="1871" y="434" width="114" height="32" />
+    </frame>
+  </frame>

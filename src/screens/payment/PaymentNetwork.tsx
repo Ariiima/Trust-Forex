@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
-import { Button, Icon, ProgressBar } from '../../design-system/components';
+import { Button, BottomSheet, Icon, ProgressBar } from '../../design-system/components';
+import { Glyph } from './Glyph';
 import { PaymentHeader } from './PaymentHeader';
 import { SelectRow } from './SelectRow';
 import { CURRENCIES } from './currencyData';
@@ -9,37 +10,50 @@ import './PaymentNetwork.css';
 
 /* ---------------------------------------------------------------------------
  * Payment — select network — route /payment/network
- * Checkout step 2/3 (part b). One screen, two states from the inventory:
- *   552-3122  base picker — selected-currency summary card + BNB/Tron/ETH/
- *             Polygon/Avalanche/Solana list, BNB Smart Chain selected
- *   788-3192  same screen with a black tooltip callout open near the info
- *             (i) button, tail pointing down at it
- *
- * The tooltip is a dismissible positioned overlay: tapping the info button
- * toggles it; tapping anywhere outside (a full-screen transparent backdrop)
- * dismisses it. "Change currency" routes back to /payment/currency —
- * assembly wires onChangeCurrency, this screen does not navigate itself.
+ * Checkout step 2/3 (part b). Canonical frame 1292:4030 (geometry-identical
+ * to old 552-3122): selected-currency summary + BNB/Tron/ETH/Polygon/
+ * Avalanche/Solana list, BNB Smart Chain selected. Two overlay states:
+ *   788-3192  black tooltip callout near the info (i) button
+ *   789-2421  "Change currency" BottomSheet — opened by the summary row's
+ *             "Change currency" button (that frame's backdrop is THIS
+ *             screen's layout). Draft selection commits on "Choose
+ *             currency"; close/scrim discards. Currency is uncontrolled
+ *             after mount — commit fires onCurrencyChange for assembly.
  * ------------------------------------------------------------------------- */
 
 export interface PaymentNetworkProps {
-  currencyId?: string;
+  initialCurrencyId?: string;
   initialNetworkId?: string;
   onBack?: () => void;
-  onChangeCurrency?: () => void;
+  onCurrencyChange?: (currencyId: string) => void;
   onContinue?: (networkId: string) => void;
 }
 
 export default function PaymentNetwork({
-  currencyId = 'btc',
+  initialCurrencyId = 'btc',
   initialNetworkId = 'bnb-smart-chain',
   onBack,
-  onChangeCurrency,
+  onCurrencyChange,
   onContinue,
 }: PaymentNetworkProps): ReactNode {
+  const [currencyId, setCurrencyId] = useState(initialCurrencyId);
   const [selected, setSelected] = useState(initialNetworkId);
   const [tooltipOpen, setTooltipOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [draft, setDraft] = useState(initialCurrencyId);
 
   const currency = CURRENCIES.find((c) => c.id === currencyId) ?? CURRENCIES[0];
+
+  const openSheet = (): void => {
+    setDraft(currencyId);
+    setSheetOpen(true);
+  };
+
+  const handleChoose = (): void => {
+    setCurrencyId(draft);
+    setSheetOpen(false);
+    onCurrencyChange?.(draft);
+  };
 
   return (
     <div className="scr-payment-network">
@@ -65,7 +79,7 @@ export default function PaymentNetwork({
                   <span className="scr-payment-network-selected-name">{currency.name}</span>
                 </span>
               </span>
-              <button type="button" className="scr-payment-network-change-btn" onClick={onChangeCurrency}>
+              <button type="button" className="scr-payment-network-change-btn" onClick={openSheet}>
                 Change currency
               </button>
             </div>
@@ -126,6 +140,50 @@ export default function PaymentNetwork({
           Continue
         </Button>
       </footer>
+
+      <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} className="scr-payment-network-sheet">
+        <div className="scr-payment-network-sheet-inner">
+          <div className="scr-payment-network-sheet-content">
+            <div className="scr-payment-network-sheet-head">
+              <div className="scr-payment-network-sheet-titlerow">
+                <h2 className="scr-payment-network-sheet-title">Change currency</h2>
+                <button
+                  className="scr-payment-network-sheet-close"
+                  type="button"
+                  onClick={() => setSheetOpen(false)}
+                  aria-label="Close"
+                >
+                  <Glyph name="close" size={24} strokeWidth={1.5} />
+                </button>
+              </div>
+              <hr className="scr-payment-network-sheet-divider" />
+            </div>
+
+            <div className="scr-payment-network-sheet-list">
+              {CURRENCIES.map((c) => (
+                <SelectRow
+                  key={c.id}
+                  icon={c.icon}
+                  primary={c.symbol}
+                  secondary={c.name}
+                  selected={c.id === draft}
+                  onClick={() => setDraft(c.id)}
+                />
+              ))}
+            </div>
+          </div>
+
+          <Button
+            variant="primary"
+            size="medium"
+            fullWidth
+            iconRight={<Icon name="chevron-right" size={20} />}
+            onClick={handleChoose}
+          >
+            Choose currency
+          </Button>
+        </div>
+      </BottomSheet>
     </div>
   );
 }

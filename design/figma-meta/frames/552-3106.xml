@@ -1,0 +1,277 @@
+  <frame id="552:3106" name="Active" x="1344" y="2493" width="360" height="1614">
+    <frame id="1029:3804" name="Frame 2147229939" x="16" y="1174" width="328" height="328">
+      <frame id="1029:3805" name="Frame 2147229984" x="16" y="16" width="296" height="32">
+        <frame id="1029:3806" name="Frame 2147229991" x="0" y="0" width="296" height="32">
+          <text id="1029:3807" name="Choose your plan" x="0" y="0" width="142" height="32" />
+          <instance id="1029:3808" name="info" x="272" y="4" width="24" height="24" />
+        </frame>
+      </frame>
+      <frame id="1153:1870" name="Frame 2147229922" x="16" y="60" width="296" height="76">
+        <frame id="1153:1871" name="Frame 2147230173" x="12" y="8" width="272" height="60">
+          <rounded-rectangle id="1153:1872" name="ChatGPT Image Jul 18, 2026, 01_02_45 PM 2" x="0" y="2" width="56" height="56" />
+          <frame id="1153:1873" name="Frame 2147230172" x="64" y="0" width="208" height="60">
+            <text id="1153:1874" name="Silver" x="0" y="0" width="208" height="32" />
+            <frame id="1153:1875" name="Frame 2147230098" x="0" y="28" width="208" height="32">
+              <frame id="1153:1876" name="Frame 2147229925" x="0" y="0" width="142" height="32">
+                <frame id="1153:1877" name="Frame 2147229926" x="0" y="0" width="83" height="32">
+                  <instance id="1153:1878" name="currency-dollar1" x="0" y="6" width="20" height="20" />
+                  <text id="1153:1879" name="200.00" x="20" y="0" width="63" height="32" />
+                </frame>
+                <text id="1153:1880" name="/ 1 month" x="87" y="4" width="55" height="24" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+      <frame id="1153:1883" name="Frame 2147229987" x="16" y="148" width="296" height="76">
+        <frame id="1153:1884" name="Frame 2147230173" x="12" y="8" width="272" height="60">
+          <rounded-rectangle id="1153:1885" name="ChatGPT Image Jul 18, 2026, 01_02_45 PM 2" x="0" y="2" width="56" height="56" />
+          <frame id="1153:1886" name="Frame 2147230172" x="64" y="0" width="208" height="60">
+            <frame id="1153:1887" name="Frame 2147230174" x="0" y="0" width="208" height="32">
+              <text id="1153:1888" name="Gold" x="0" y="0" width="124" height="32" />
+              <frame id="1153:1950" name="Frame 2147229937" x="124" y="6" width="84" height="20">
+                <text id="1153:1951" name="Most popular" x="8" y="0" width="68" height="20" />
+              </frame>
+            </frame>
+            <frame id="1153:1891" name="Frame 2147230098" x="0" y="28" width="208" height="32">
+              <frame id="1153:1892" name="Frame 2147229925" x="0" y="0" width="149" height="32">
+                <frame id="1153:1893" name="Frame 2147229926" x="0" y="0" width="81" height="32">
+                  <instance id="1153:1894" name="currency-dollar1" x="0" y="6" width="20" height="20" />
+                  <text id="1153:1895" name="550.00" x="20" y="0" width="61" height="32" />
+                </frame>
+                <text id="1153:1896" name="/ 3 months" x="85" y="4" width="64" height="24" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+      <frame id="1153:1854" name="Frame 2147229986" x="16" y="236" width="296" height="76">
+        <frame id="1153:1855" name="Frame 2147230173" x="12" y="8" width="272" height="60">
+          <rounded-rectangle id="1153:1856" name="ChatGPT Image Jul 18, 2026, 01_02_45 PM 2" x="0" y="2" width="56" height="56" />
+          <frame id="1153:1857" name="Frame 2147230172" x="64" y="0" width="208" height="60">
+            <frame id="1153:1858" name="Frame 2147230174" x="0" y="0" width="208" height="32">
+              <text id="1153:1859" name="Diamond" x="0" y="0" width="140" height="32" />
+              <frame id="1153:1860" name="Frame 2147229881" x="140" y="6" width="68" height="20">
+                <text id="1206:3928" name="Best value" x="8" y="0" width="52" height="20" />
+              </frame>
+            </frame>
+            <frame id="1153:1862" name="Frame 2147230098" x="0" y="28" width="208" height="32">
+              <frame id="1153:1863" name="Frame 2147229925" x="0" y="0" width="162" height="32">
+                <frame id="1153:1864" name="Frame 2147229926" x="0" y="0" width="89" height="32">
+                  <instance id="1153:1865" name="currency-dollar1" x="0" y="6" width="20" height="20" />
+                  <text id="1153:1866" name="1700.00" x="20" y="0" width="69" height="32" />
+                </frame>
+                <text id="1153:1867" name="/ 12 months" x="93" y="4" width="69" height="24" />
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <frame id="767:5817" name="Frame 2147229940" x="16" y="646" width="328" height="504">
+      <frame id="767:5818" name="Frame 2147229944" x="16" y="16" width="296" height="472">
+        <frame id="767:5819" name="Frame 2147229992" x="0" y="0" width="296" height="100">
+          <frame id="767:5820" name="Frame 2147229905" x="0" y="0" width="296" height="32">
+            <text id="767:5821" name="Signal performance" x="0" y="0" width="160" height="32" />
+          </frame>
+          <frame id="1106:11332" name="Frame 2147229906" x="0" y="40" width="296" height="60">
+            <frame id="1106:11333" name="Frame 2147229985" x="8" y="8" width="57" height="44">
+              <text id="1106:11334" name="TP1" x="8" y="2" width="41" height="24" />
+              <text id="1106:11335" name="RR 1:0.5" x="8" y="22" width="41" height="20" />
+            </frame>
+            <vector id="1106:11336" name="Vector 10" x="73" y="22" width="0" height="16" />
+            <frame id="1106:11337" name="Frame 2147229986" x="81" y="10" width="57" height="40">
+              <text id="1106:11338" name="TP2" x="0" y="0" width="57" height="24" />
+              <text id="1106:11339" name="RR 1:1" x="0" y="20" width="57" height="20" />
+            </frame>
+            <vector id="1106:11340" name="Vector 11" x="146" y="22" width="0" height="16" />
+            <frame id="1106:11341" name="Frame 2147229987" x="154" y="10" width="57" height="40">
+              <text id="1106:11342" name="TP3" x="0" y="0" width="57" height="24" />
+              <text id="1106:11343" name="RR 1:2" x="0" y="20" width="57" height="20" />
+            </frame>
+            <vector id="1106:11344" name="Vector 12" x="219" y="22" width="0" height="16" />
+            <frame id="1106:11345" name="Frame 2147229988" x="227" y="10" width="57" height="40">
+              <text id="1106:11346" name="TP4" x="0" y="0" width="57" height="24" />
+              <text id="1106:11347" name="RR 1:3" x="0" y="20" width="57" height="20" />
+            </frame>
+          </frame>
+        </frame>
+        <frame id="767:5838" name="weekly" x="0" y="116" width="296" height="356">
+          <frame id="767:5839" name="Frame 2147229907" x="0" y="0" width="296" height="80">
+            <frame id="767:5840" name="Frame 2147229906" x="12" y="8" width="134" height="20">
+              <text id="767:5841" name="Last 3 months overview" x="0" y="0" width="134" height="20" />
+            </frame>
+            <frame id="767:5842" name="Frame 2147230007" x="12" y="32" width="272" height="40">
+              <frame id="767:5843" name="Frame 2147229986" x="16" y="0" width="63" height="40">
+                <text id="767:5844" name="Total signals" x="0" y="0" width="63" height="20" />
+                <text id="767:5845" name="80" x="24.5" y="20" width="14" height="20" />
+              </frame>
+              <frame id="767:5846" name="Frame 2147229987" x="109.5" y="0" width="61" height="40">
+                <text id="767:5847" name="TP1 reached" x="0" y="0" width="61" height="20" />
+                <text id="767:5848" name="50" x="23.5" y="20" width="14" height="20" />
+              </frame>
+              <frame id="767:5849" name="Frame 2147229988" x="201" y="0" width="55" height="40">
+                <text id="767:5850" name="TP1 hit rate" x="0" y="0" width="55" height="20" />
+                <text id="767:5851" name="62.0%" x="11.5" y="20" width="32" height="20" />
+              </frame>
+            </frame>
+          </frame>
+          <frame id="767:5852" name="Frame 2147230001" x="0" y="96" width="296" height="260">
+            <frame id="767:5853" name="Frame 2147229996" x="0" y="0" width="296" height="220">
+              <frame id="767:5854" name="Frame 2147229942" x="0" y="56" width="296" height="164">
+                <vector id="767:5855" name="Line Gradient" x="0" y="0" width="296" height="164" />
+                <vector id="767:5856" name="Line Gradient" x="0" y="0" width="296" height="90" />
+                <vector id="767:5857" name="Line" x="155" y="6" width="0.000006906399448780576" height="158" />
+              </frame>
+              <ellipse id="767:5858" name="Ellipse 146" x="149" y="50" width="12" height="12" />
+              <frame id="1206:3915" name="Label" x="93" y="0" width="124" height="90">
+                <text id="1206:3916" name="Date Label" x="18" y="4" width="88" height="20" />
+                <frame id="1206:3917" name="Frame 2147230000" x="8" y="24" width="108" height="62">
+                  <frame id="1206:3918" name="Frame 2147229997" x="0" y="0" width="108" height="20">
+                    <text id="1206:3919" name="Date Label" x="0" y="0" width="38" height="20" />
+                    <text id="1206:3920" name="Date Label" x="95" y="0" width="13" height="20" />
+                  </frame>
+                  <frame id="1206:3921" name="Frame 2147229998" x="0" y="21" width="108" height="20">
+                    <text id="1206:3922" name="Date Label" x="0" y="0" width="61" height="20" />
+                    <text id="1206:3923" name="Date Label" x="97" y="0" width="11" height="20" />
+                  </frame>
+                  <frame id="1206:3924" name="Frame 2147229999" x="0" y="42" width="108" height="20">
+                    <text id="1206:3925" name="Date Label" x="0" y="0" width="55" height="20" />
+                    <text id="1206:3926" name="Date Label" x="77" y="0" width="31" height="20" />
+                  </frame>
+                </frame>
+              </frame>
+            </frame>
+            <frame id="767:5871" name="Frame 2147229897" x="0" y="220" width="296" height="40">
+              <frame id="767:5872" name="Frame 2147229901" x="4" y="4" width="288" height="32">
+                <frame id="767:5875" name="Frame 2147229899" x="0" y="0" width="96" height="32">
+                  <text id="767:5876" name="X Axis Label" x="26" y="4" width="44" height="24" />
+                </frame>
+                <frame id="767:5873" name="Frame 2147229898" x="96" y="0" width="96" height="32">
+                  <text id="767:5874" name="X Axis Label" x="23" y="4" width="50" height="24" />
+                </frame>
+                <frame id="767:5877" name="Frame 2147229900" x="192" y="0" width="96" height="32">
+                  <text id="767:5878" name="X Axis Label" x="29.5" y="4" width="37" height="24" />
+                </frame>
+              </frame>
+            </frame>
+          </frame>
+        </frame>
+      </frame>
+    </frame>
+    <frame id="639:4555" name="Iphone-Asset" x="0" y="0" width="360" height="32">
+      <frame id="639:4556" name="Time" x="0" y="0" width="128" height="32">
+        <text id="639:4557" name="Time" x="52" y="5" width="24" height="22" />
+      </frame>
+      <frame id="639:4558" name="Levels" x="232" y="0" width="128" height="32">
+        <frame id="639:4559" name="Frame 10" x="31.834854125976562" y="11.143986701965332" width="64" height="10.712026596069336">
+          <vector id="639:4560" name="Cellular Connection" x="0.0000152587890625" y="0.3187119960784912" width="15.820839881896973" height="10.074591636657715" />
+          <vector id="639:4561" name="Wifi" x="21.588829040527344" y="0.2767423987388611" width="14.124768257141113" height="10.158549308776855" />
+          <frame id="639:4562" name="Battery" x="41.481658935546875" y="0.000004642864951165393" width="22.51835823059082" height="10.712026596069336" />
+        </frame>
+      </frame>
+    </frame>
+    <instance id="639:4566" name="Telegram header " x="0" y="32" width="360" height="44" />
+    <frame id="639:4582" name="Frame 1890164132" x="16" y="92" width="328" height="396">
+      <frame id="748:3642" name="Frame 2147230002" x="16" y="16" width="296" height="288">
+        <frame id="711:2178" name="Frame 2147229982" x="0" y="0" width="296" height="160">
+          <frame id="711:2172" name="Frame 2147229980" x="32" y="24" width="232" height="112.00000762939453">
+            <vector id="711:2167" name="Ellipse 1" x="0" y="0" width="224" height="112.00000762939453" />
+            <vector id="711:2171" name="Ellipse 2" x="1" y="4" width="92" height="108" />
+            <frame id="711:2173" name="Frame 2147229883" x="76" y="32" width="79.85713958740234" height="80">
+              <text id="711:2174" name="22" x="0" y="0" width="79.85713958740234" height="64" />
+              <text id="711:2175" name="Days left" x="0" y="52" width="79.85713958740234" height="28" />
+            </frame>
+          </frame>
+        </frame>
+        <frame id="711:2177" name="Frame 2147229981" x="0" y="176" width="296" height="112">
+          <frame id="640:4598" name="Frame 2147229882" x="0" y="0" width="296" height="28">
+            <text id="631:105" name="Subscription status" x="0" y="0" width="140" height="28" />
+            <frame id="640:4595" name="Frame 2147229881" x="216" y="2" width="80" height="24">
+              <instance id="640:4596" name="check" x="8" y="4" width="16" height="16" />
+              <text id="639:4594" name="Active" x="28" y="0" width="40" height="24" />
+            </frame>
+          </frame>
+          <frame id="640:4614" name="Frame 2147229885" x="0" y="40" width="296" height="32">
+            <text id="640:4612" name="Current plan" x="0" y="2" width="89" height="28" />
+            <frame id="640:4624" name="Frame 2147229886" x="190" y="0" width="106" height="32">
+              <text id="640:4613" name="Silver" x="0" y="0" width="47" height="32" />
+              <text id="640:4618" name="/ 1 Month" x="51" y="4" width="55" height="24" />
+            </frame>
+          </frame>
+          <frame id="640:4626" name="Frame 2147229886" x="0" y="84" width="296" height="28">
+            <text id="640:4627" name="Expires on" x="0" y="0" width="74" height="28" />
+            <text id="640:4630" name="Aug 24,2026" x="205" y="0" width="91" height="28" />
+          </frame>
+        </frame>
+      </frame>
+      <frame id="640:4681" name="Frame 2147229894" x="16" y="336" width="296" height="44">
+        <instance id="1312:7480" name="Buttons" x="0" y="0" width="156" height="44" />
+        <instance id="1312:7487" name="Buttons" x="168" y="0" width="128" height="44" />
+      </frame>
+    </frame>
+    <frame id="752:5181" name="Frame 2147230006" x="16" y="512" width="328" height="110">
+      <frame id="752:5182" name="Frame 2147229909" x="-349" y="0" width="328" height="110">
+        <frame id="752:5183" name="Frame 2147230004" x="16" y="16" width="216" height="72">
+          <frame id="752:5184" name="Frame 2147229917" x="0" y="0" width="86" height="16">
+            <text id="752:5185" name="Special offer" x="10" y="-4" width="66" height="24" />
+          </frame>
+          <frame id="752:5186" name="Frame 2147229918" x="0" y="20" width="216" height="52">
+            <text id="752:5187" name="Summer discount" x="0" y="0" width="216" height="32" />
+            <text id="752:5188" name="get 20% OFF on 12 month plan" x="0" y="28" width="216" height="24" />
+          </frame>
+        </frame>
+        <rounded-rectangle id="752:5189" name="ChatGPT Image Jul 10, 2026, 03_08_49 PM 2" x="213" y="-24" width="141" height="148" />
+        <frame id="752:5190" name="Frame 2147229910" x="144" y="96" width="40" height="6">
+          <frame id="752:5191" name="Frame 2147230005" x="0" y="0" width="20" height="6">
+            <frame id="752:5192" name="Frame 2147230003" x="0" y="0" width="10" height="6" />
+          </frame>
+          <frame id="752:5193" name="Frame 2147230003" x="24" y="0" width="6" height="6" />
+          <frame id="752:5194" name="Frame 2147230004" x="34" y="0" width="6" height="6" />
+        </frame>
+      </frame>
+      <frame id="752:5195" name="Frame 2147229984" x="0" y="0" width="328" height="110">
+        <frame id="752:5196" name="Frame 2147230004" x="16" y="16" width="216" height="72">
+          <frame id="752:5197" name="Frame 2147229917" x="0" y="0" width="83" height="16">
+            <text id="752:5198" name="Invite &amp; earn" x="10" y="-2" width="63" height="20" />
+          </frame>
+          <frame id="752:5199" name="Frame 2147229918" x="0" y="20" width="216" height="52">
+            <text id="752:5200" name="Invite friends" x="0" y="0" width="216" height="32" />
+            <text id="752:5201" name="Get 10% from thier deposits" x="0" y="28" width="216" height="24" />
+          </frame>
+        </frame>
+        <rounded-rectangle id="752:5202" name="ChatGPT Image Jul 10, 2026, 03_08_49 PM 2" x="227" y="-24" width="141" height="148" />
+        <frame id="752:5203" name="Frame 2147229910" x="144" y="96" width="40" height="6">
+          <frame id="752:5204" name="Frame 2147230003" x="0" y="0" width="6" height="6" />
+          <frame id="752:5205" name="Frame 2147230005" x="10" y="0" width="20" height="6">
+            <frame id="752:5206" name="Frame 2147230003" x="0" y="0" width="10" height="6" />
+          </frame>
+          <frame id="752:5207" name="Frame 2147230004" x="34" y="0" width="6" height="6" />
+        </frame>
+      </frame>
+      <frame id="752:5208" name="Frame 2147229985" x="349" y="0" width="328" height="110">
+        <frame id="752:5209" name="Frame 2147229910" x="144" y="96" width="40" height="6">
+          <frame id="752:5210" name="Frame 2147230003" x="0" y="0" width="6" height="6" />
+          <frame id="752:5211" name="Frame 2147230004" x="10" y="0" width="6" height="6" />
+          <frame id="752:5212" name="Frame 2147230005" x="20" y="0" width="20" height="6">
+            <frame id="752:5213" name="Frame 2147230003" x="0" y="0" width="10" height="6" />
+          </frame>
+        </frame>
+        <frame id="752:5214" name="Frame 2147230004" x="16" y="16" width="216" height="72">
+          <frame id="752:5215" name="Frame 2147229917" x="0" y="0" width="78" height="16">
+            <text id="752:5216" name="Stay active" x="10" y="-4" width="58" height="24" />
+          </frame>
+          <frame id="752:5217" name="Frame 2147229918" x="0" y="20" width="216" height="52">
+            <text id="752:5218" name="complete tasks" x="0" y="0" width="216" height="32" />
+            <text id="752:5219" name="win rewards &amp; get amazing prizes" x="0" y="28" width="216" height="24" />
+          </frame>
+        </frame>
+        <rounded-rectangle id="752:5220" name="ChatGPT Image Jul 10, 2026, 03_08_49 PM 2" x="227" y="-31" width="141" height="148" />
+      </frame>
+    </frame>
+    <frame id="1292:4758" name="Frame 2147229983" x="80" y="1121" width="264" height="64">
+      <text id="1292:4759" name="Longer subscriptions include greater savings and higher benefit rates" x="12" y="8" width="240" height="48" />
+      <vector id="1292:4760" name="Polygon 1" x="226" y="76" width="20" height="12" />
+    </frame>
+    <instance id="1292:4801" name="Navigation bar " x="0" y="1534" width="360" height="80" />
+  </frame>

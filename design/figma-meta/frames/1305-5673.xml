@@ -1,0 +1,6 @@
+  <frame id="1305:5673" name="Input" x="11324" y="16682" width="336" height="432">
+    <symbol id="1305:5672" name="State=Default" x="20" y="20" width="296" height="76" />
+    <symbol id="1305:5671" name="State=Active" x="20" y="210" width="296" height="76" />
+    <symbol id="1305:5972" name="State=Tyoing" x="20" y="112" width="296" height="76" />
+    <symbol id="1305:5674" name="State=Eror" x="20" y="308" width="296" height="104" />
+  </frame>

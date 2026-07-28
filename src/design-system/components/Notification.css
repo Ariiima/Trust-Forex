@@ -1,0 +1,62 @@
+/* Notification — inline status strip (Figma "Notification", 1316:8158, h40).
+   Tinted bg + 20px accent icon + 12px title; fluid width, grows to 64 with a
+   description line. Figma "in progress" is mapped to `warning`; `info` is
+   extrapolated (no Figma artwork) — recheck both visually. */
+.ds-notification {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* icon x=12 → text x=42 in the QR warning banner (1102-10506) */
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--spacing-8) var(--spacing-12); /* 24px line + 2×8 = 40 tall */
+  border-radius: var(--radius-small);
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-regular);
+}
+
+.ds-notification-icon {
+  display: inline-flex;
+  flex: none;
+}
+
+.ds-notification-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ds-notification-title {
+  font-size: 12px; /* type-text-xs */
+  line-height: 24px;
+  color: var(--typography-colors-main-text);
+}
+
+.ds-notification-desc {
+  font-size: 12px; /* type-text-xs */
+  line-height: 24px;
+  color: var(--typography-colors-sub-text);
+}
+
+.ds-notification-close {
+  display: inline-flex;
+  flex: none;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--typography-colors-sub-text);
+  cursor: pointer;
+}
+
+/* variant — tinted bg + accent icon */
+.ds-notification-success { background: var(--state-colors-success-bg); }
+.ds-notification-success .ds-notification-icon { color: var(--state-colors-success); }
+
+.ds-notification-error { background: var(--state-colors-eror-bg); }
+.ds-notification-error .ds-notification-icon { color: var(--state-colors-eror); }
+
+.ds-notification-warning { background: var(--state-colors-danger-bg); }
+.ds-notification-warning .ds-notification-icon { color: var(--state-colors-danger); }
+
+.ds-notification-info { background: var(--state-colors-info-bg); }
+.ds-notification-info .ds-notification-icon { color: var(--state-colors-info); }

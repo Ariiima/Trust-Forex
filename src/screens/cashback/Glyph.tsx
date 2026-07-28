@@ -8,10 +8,12 @@ import type { ReactNode, SVGProps } from 'react';
  * `src/screens/broker/BrokerDetail.tsx` / `src/screens/plans/icons.tsx`.
  * Shared by both cashback screens (`Cashback.tsx`, `CashbackHistory.tsx`).
  */
-export type GlyphName = 'back' | 'shield' | 'calendar' | 'trending-up';
+export type GlyphName = 'back' | 'shield' | 'calendar' | 'trending-up' | 'close';
 
 const GLYPHS: Record<GlyphName, readonly string[]> = {
   back: ['M5 12l14 0', 'M5 12l6 6', 'M5 12l6 -6'],
+  /* placeholder icon */ // swap for DS Icon 'close' once ds-components ships one
+  close: ['M18 6l-12 12', 'M6 6l12 12'],
   // Same path as BrokerDetail's "shield" spec-list icon (850:1913 step 1).
   shield: ['M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3'],
   calendar: [

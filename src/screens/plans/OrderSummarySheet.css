@@ -1,0 +1,113 @@
+/* Order summary BottomSheet — Figma 1206:4219. Same DS-sheet overrides as
+   the Checkout change-plan sheet (no handle, 12px top radius, 36px bottom
+   pad) but self-contained so the component works standalone. */
+.ds-sheet.scr-ordersum-sheet {
+  padding: var(--spacing-16) var(--spacing-16) 36px;
+  border-radius: var(--radius-medium) var(--radius-medium) 0 0;
+}
+.scr-ordersum-sheet .ds-sheet-handle {
+  display: none;
+}
+
+.scr-ordersum-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  font-family: var(--font-family-base);
+}
+
+.scr-ordersum-titlerow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scr-ordersum-title {
+  margin: 0;
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-ordersum-close {
+  display: inline-flex;
+  flex: none;
+  color: var(--base-color-black);
+}
+
+.scr-ordersum-divider {
+  border-top: 1px dashed var(--stroke-colors-default);
+}
+
+/* Title-divider → plan row is 16px in the XML; all other gaps are 12. */
+.scr-ordersum-planrow {
+  margin-top: var(--spacing-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scr-ordersum-rowlabel {
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-ordersum-planname {
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-ordersum-duration {
+  margin-left: var(--spacing-4);
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-sub-text);
+}
+
+.scr-ordersum-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+.scr-ordersum-breakrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+}
+
+.scr-ordersum-breaklabel {
+  color: var(--typography-colors-sub-text);
+}
+
+.scr-ordersum-breakvalue {
+  color: var(--typography-colors-main-text);
+}
+
+.scr-ordersum-totalrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 14/28 semibold — deliberately smaller than the checkout card's 18/36. */
+.scr-ordersum-totalvalue {
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--typography-colors-main-text);
+}
+
+/* 12px column gap + 20px = the 32px content→button gap in the XML. */
+.scr-ordersum-confirm.ds-button {
+  margin-top: 20px;
+}

@@ -1,7 +1,9 @@
 /* =====================================================================
    Payment — select network — /payment/network
-   Geometry & colours from Figma nodes 552-3122 (base picker) and 788-3192
-   (tooltip callout state). Consumes the DS ProgressBar, Button, Icon.
+   Geometry & colours from Figma nodes 1292:4030 (canonical base picker;
+   geometry-identical to old 552-3122), 788-3192 (tooltip callout state)
+   and 789-2421 (Change-currency BottomSheet). Consumes the DS
+   ProgressBar, BottomSheet, Button, Icon.
    ===================================================================== */
 
 .scr-payment-network {
@@ -57,7 +59,7 @@
 .scr-payment-network-selected-info {
   display: flex;
   align-items: center;
-  gap: var(--spacing-8);
+  gap: var(--spacing-12); /* 1292:4049/4051 — label block at x=44, wider than list rows' 8 */
   min-width: 0;
 }
 
@@ -87,8 +89,9 @@
 
 .scr-payment-network-change-btn {
   flex: none;
+  width: 128px; /* fixed per instance 1312:7680 (Secondary-32) */
   height: 32px;
-  padding: 0 10px;
+  padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -183,4 +186,67 @@
   z-index: 10;
   padding: var(--spacing-8) var(--spacing-16) var(--spacing-16);
   background: var(--bg-colors-container-s);
+}
+
+/* ---- "Change currency" BottomSheet (789-2421) ------------------------- */
+/* Figma sheet: 16/16/0/0 corner radius, no drag handle, 16/16/16/36
+   padding, 32px gap between the list block and the CTA. The DS BottomSheet
+   always renders a handle + its own top radius/padding — reskinned here via
+   the className extension point (BottomSheet.tsx merges it onto .ds-sheet),
+   not forked. */
+.ds-sheet.scr-payment-network-sheet {
+  padding: var(--spacing-16) var(--spacing-16) var(--spacing-24);
+  border-radius: 16px 16px 0 0;
+}
+.scr-payment-network-sheet .ds-sheet-handle {
+  display: none;
+}
+
+.scr-payment-network-sheet-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-32);
+}
+
+.scr-payment-network-sheet-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+}
+
+.scr-payment-network-sheet-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+
+.scr-payment-network-sheet-titlerow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scr-payment-network-sheet-title {
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-payment-network-sheet-close {
+  display: inline-flex;
+  flex: none;
+  color: var(--base-color-black);
+}
+
+.scr-payment-network-sheet-divider {
+  border: none;
+  border-top: 1px dashed var(--stroke-colors-default);
+  margin: 0;
+}
+
+.scr-payment-network-sheet-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
 }

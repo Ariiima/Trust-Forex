@@ -22,3 +22,16 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Secrets
+.env
+.env.*
+!.env.example
+server/data.sqlite
+
+# Local artifacts
+*-scroll*.png
+*-viewport.png
+referral-preview.png
+referral-fixed.png
+tweaks.md
