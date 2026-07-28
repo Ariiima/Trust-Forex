@@ -209,6 +209,11 @@
   color: var(--typography-colors-main-text);
 }
 
+.scr-refmain-empty {
+  margin: var(--spacing-24) 0 0;
+  color: var(--typography-colors-sub-text);
+}
+
 .scr-refmain-referrals {
   display: flex;
   flex-direction: column;

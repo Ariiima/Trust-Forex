@@ -1,0 +1,42 @@
+/* Shared benefit rows — 52 tall on a 24 rhythm, 48px badge, 16 gap to the
+   text column (1341:5187 / 1362:4756). Callers own the surrounding width. */
+
+.scr-referral-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scr-referral-benefit {
+  display: flex;
+  gap: var(--spacing-16);
+}
+
+/* 48x48 badge, nudged 2px down so the 52-tall row centres on the text */
+.scr-referral-benefit-badge {
+  flex: 0 0 48px;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-top: 2px;
+  border-radius: var(--radius-infinity);
+  background: var(--primary-colors-50);
+  color: var(--primary-colors-900);
+}
+
+.scr-referral-benefit-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.scr-referral-benefit-title {
+  color: var(--typography-colors-main-text);
+}
+
+.scr-referral-benefit-sub {
+  color: var(--typography-colors-sub-text);
+}

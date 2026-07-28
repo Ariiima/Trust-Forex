@@ -5,6 +5,7 @@ import type { NavigationTab } from '../../design-system/components';
 import { Glyph } from './Glyph';
 import type { ReferralGlyphName } from './Glyph';
 import { PromoCarousel } from '../home/PromoCarousel';
+import { AboutReferralSheet } from './AboutReferralSheet';
 import './ReferralMain.css';
 
 /* ---------------------------------------------------------------------------
@@ -61,6 +62,7 @@ export function ReferralMain({
   onAbout,
 }: ReferralMainProps): ReactNode {
   const [copied, setCopied] = useState<'telegram' | 'website' | null>(null);
+  const [aboutOpen, setAboutOpen] = useState(false);
   // null = as-delivered order, which is what frame 1333:8366 shows even though
   // the control is labelled "Highest earnings". Sorting starts on first tap.
   const [sortDesc, setSortDesc] = useState<boolean | null>(null);
@@ -94,7 +96,7 @@ export function ReferralMain({
         <div className="scr-refmain-card-top">
           <div className="scr-refmain-head">
             <h1 className="scr-refmain-head-title type-text-base">Total referral earnings</h1>
-            <button type="button" className="scr-refmain-info" onClick={onAbout} aria-label="About referral">
+            <button type="button" className="scr-refmain-info" onClick={onAbout ?? (() => setAboutOpen(true))} aria-label="About referral">
               <Icon name="info" size={24} strokeWidth={1.6} />
             </button>
           </div>
@@ -138,7 +140,7 @@ export function ReferralMain({
         <div className="scr-refmain-links">
           <div className="scr-refmain-head">
             <h2 className="scr-refmain-head-title type-text-base">Copy your referral link</h2>
-            <button type="button" className="scr-refmain-info" onClick={onAbout} aria-label="About referral links">
+            <button type="button" className="scr-refmain-info" onClick={onAbout ?? (() => setAboutOpen(true))} aria-label="About referral links">
               <Icon name="info" size={20} strokeWidth={1.6} />
             </button>
           </div>
@@ -173,6 +175,13 @@ export function ReferralMain({
             <span className="type-text-xs">{sortDesc === false ? 'Lowest earnings' : 'Highest earnings'}</span>
           </button>
         </div>
+
+        {referrals.length === 0 ? (
+          // Empty variant 1436:14439 — the list is replaced by one 296-wide line.
+          <p className="scr-refmain-empty type-text-sm">
+            You have no referrals yet, share your link to invite your first friend and start earning together.
+          </p>
+        ) : null}
 
         <ul className="scr-refmain-referrals">
           {sorted.map((r) => (
@@ -209,6 +218,8 @@ export function ReferralMain({
           ))}
         </ul>
       </section>
+
+      <AboutReferralSheet open={aboutOpen} onClose={() => setAboutOpen(false)} />
 
       <NavigationBar active="referral" onChange={onNavigate} className="scr-refmain-nav" />
     </div>
