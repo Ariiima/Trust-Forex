@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { Button, Icon, Input } from '../../design-system/components';
 import { PaymentHeader } from '../payment/PaymentHeader';
 import { WITHDRAW_OPTIONS } from './withdraw-data';
+import { WithdrawSummarySheet } from './WithdrawSummarySheet';
 import './WithdrawAmount.css';
 
 /* ---------------------------------------------------------------------------
@@ -37,6 +38,7 @@ export function WithdrawAmount({
   const [amount, setAmount] = useState('');
   const [wallet, setWallet] = useState('');
   const [touched, setTouched] = useState(false);
+  const [summary, setSummary] = useState<'closed' | 'confirm' | 'submitted'>('closed');
 
   const numeric = Number(amount);
   const belowMinimum = touched && amount !== '' && (!Number.isFinite(numeric) || numeric < option.minimum);
@@ -113,11 +115,26 @@ export function WithdrawAmount({
           fullWidth
           disabled={!ready}
           iconRight={<Icon name="chevron-right" size={20} strokeWidth={1.6} />}
-          onClick={() => onContinue?.(numeric, wallet)}
+          onClick={() => {
+            setSummary('confirm');
+            onContinue?.(numeric, wallet);
+          }}
         >
           Continue
         </Button>
       </footer>
+
+      <WithdrawSummarySheet
+        open={summary !== 'closed'}
+        state={summary === 'submitted' ? 'submitted' : 'confirm'}
+        currency={option.symbol}
+        network={option.network}
+        wallet={wallet}
+        amount={numeric || 0}
+        networkFee={option.networkFee}
+        onClose={() => setSummary('closed')}
+        onConfirm={() => setSummary('submitted')}
+      />
     </div>
   );
 }
