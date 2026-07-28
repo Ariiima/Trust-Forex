@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Button, Icon, NavigationBar } from '../../design-system/components';
 import type { NavigationTab } from '../../design-system/components';
+import { WithdrawHistorySheet } from './WithdrawHistorySheet';
 import './EarningMain.css';
 
 /* ---------------------------------------------------------------------------
@@ -66,6 +67,7 @@ export function EarningMain({
   const referral = useMemo(() => makeSeries(7, 240, 120), []);
   const cashback = useMemo(() => makeSeries(13, 150, 90), []);
 
+  const [historyOpen, setHistoryOpen] = useState(false);
   const [offset, setOffset] = useState(0); // first visible week
   const [cursor, setCursor] = useState(6); // selected week, relative to window
   const plotRef = useRef<HTMLDivElement>(null);
@@ -152,7 +154,7 @@ export function EarningMain({
           >
             Withdraw earnings
           </Button>
-          <button type="button" className="scr-earn-ghost type-text-sm-semibold" onClick={onHistory}>
+          <button type="button" className="scr-earn-ghost type-text-sm-semibold" onClick={onHistory ?? (() => setHistoryOpen(true))}>
             Withdraw history
           </button>
         </div>
@@ -260,6 +262,8 @@ export function EarningMain({
           </li>
         </ul>
       </section>
+
+      <WithdrawHistorySheet open={historyOpen} onClose={() => setHistoryOpen(false)} />
 
       <NavigationBar active="earning" onChange={onNavigate} className="scr-earn-nav" />
     </div>

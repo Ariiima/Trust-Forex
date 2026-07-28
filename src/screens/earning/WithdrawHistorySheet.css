@@ -1,0 +1,135 @@
+/* "Withdraw history" sheet (1404:7767). Filter track 328x40 with 4px inset
+   pills, rows 318x108 on a 12 gap with 12 inner padding. */
+
+.ds-sheet.scr-wdhist-sheet {
+  display: flex;
+  flex-direction: column;
+  max-height: min(635px, 85vh);
+  padding: var(--spacing-16) var(--spacing-16) var(--spacing-24);
+  border-radius: var(--radius-large) var(--radius-large) 0 0;
+}
+
+.scr-wdhist-sheet .ds-sheet-handle {
+  display: none;
+}
+
+.scr-wdhist-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-8);
+  padding-bottom: var(--spacing-12);
+  border-bottom: 1px dashed var(--stroke-colors-default);
+}
+
+.scr-wdhist-title {
+  margin: 0;
+  color: var(--typography-colors-main-text);
+}
+
+.scr-wdhist-close {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--typography-colors-main-text);
+}
+
+/* ---- filter bar -------------------------------------------------------- */
+.scr-wdhist-filters {
+  display: flex;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-16);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-small);
+  background: var(--bg-colors-container-s);
+}
+
+.scr-wdhist-filter {
+  flex: 1;
+  height: 32px;
+  border-radius: 6px;
+  color: var(--typography-colors-sub-text);
+}
+
+.scr-wdhist-filter--on {
+  background: var(--bg-colors-container-p);
+  color: var(--typography-colors-main-text);
+}
+
+/* ---- rows -------------------------------------------------------------- */
+.scr-wdhist-list {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  margin: var(--spacing-16) 0 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--stroke-colors-default) transparent;
+}
+
+.scr-wdhist-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scr-wdhist-list::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-infinity);
+  background: var(--stroke-colors-default);
+}
+
+.scr-wdhist-row {
+  padding: var(--spacing-12);
+  border-radius: var(--radius-medium);
+  border: 1px solid var(--stroke-colors-default);
+}
+
+.scr-wdhist-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-8);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-wdhist-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+}
+
+.scr-wdhist-pair img {
+  border-radius: var(--radius-infinity);
+}
+
+/* ---- status chip ------------------------------------------------------- */
+.scr-wdhist-chip {
+  display: inline-block;
+  margin-top: var(--spacing-4);
+  padding: 0 var(--spacing-8);
+  border-radius: var(--radius-small);
+}
+
+.scr-wdhist-chip--completed {
+  background: var(--state-colors-success-bg);
+  color: var(--state-colors-success);
+}
+
+.scr-wdhist-chip--pending {
+  background: var(--state-colors-danger-bg);
+  color: var(--state-colors-danger);
+}
+
+.scr-wdhist-chip--rejected {
+  background: var(--state-colors-eror-bg);
+  color: var(--state-colors-eror);
+}
+
+.scr-wdhist-row-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-8);
+  margin-top: var(--spacing-8);
+  color: var(--typography-colors-sub-text);
+}
