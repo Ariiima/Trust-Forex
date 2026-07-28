@@ -6,6 +6,23 @@
   align-items: flex-end;
   justify-content: center;
   z-index: 100;
+  animation: ds-sheet-scrim 0.2s ease-out;
+}
+
+/* Sheets rise from the bottom edge; the scrim dims the page behind them. */
+@keyframes ds-sheet-scrim {
+  from { background: rgba(0, 0, 0, 0); }
+}
+
+@keyframes ds-sheet-rise {
+  from { transform: translateY(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-sheet-overlay,
+  .ds-sheet {
+    animation: none;
+  }
 }
 
 .ds-sheet {
@@ -14,6 +31,7 @@
   background: var(--base-color-white);
   border-radius: 20px 20px 0 0;
   padding: 8px 16px 24px;
+  animation: ds-sheet-rise 0.25s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .ds-sheet-handle {

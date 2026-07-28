@@ -388,13 +388,15 @@ export default function Home({ initialSubscription = 'active', onNavigate, onTab
   return (
     <div className="scr-home">
       {/* dev-only switcher so all three states are reachable in review */}
-      <div className="scr-home-switcher" role="group" aria-label="Subscription state">
-        {(['active', 'expired', 'none'] as Subscription[]).map((s) => (
-          <button key={s} type="button" data-on={subscription === s} onClick={() => setSubscription(s)}>
-            {s}
-          </button>
-        ))}
-      </div>
+      {import.meta.env.DEV && (
+        <div className="scr-home-switcher" role="group" aria-label="Subscription state">
+          {(['active', 'expired', 'none'] as Subscription[]).map((s) => (
+            <button key={s} type="button" data-on={subscription === s} onClick={() => setSubscription(s)}>
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
 
       {subscription === 'active' ? (
         <HeroActive onNavigate={onNavigate} />
