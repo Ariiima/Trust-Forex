@@ -12,6 +12,7 @@ import BrokerDetail from './screens/broker/BrokerDetail'
 import ReferralRoute from './screens/referral/ReferralRoute'
 import EarningMain from './screens/earning/EarningMain'
 import WithdrawCurrency from './screens/earning/WithdrawCurrency'
+import WithdrawAmount from './screens/earning/WithdrawAmount'
 
 const TAB_ROUTES: Partial<Record<NavigationTab, string>> = {
   home: '/',
@@ -76,7 +77,8 @@ function AppRoutes() {
       <Route path="/payment/receive" element={<PaymentReceive onBack={() => nav(-1)} onDone={() => nav('/')} />} />
       <Route path="/referral" element={<ReferralRoute onNavigate={(tab) => TAB_ROUTES[tab] && nav(TAB_ROUTES[tab])} />} />
       <Route path="/earning" element={<EarningMain onNavigate={(tab) => TAB_ROUTES[tab] && nav(TAB_ROUTES[tab])} onWithdraw={() => nav('/earning/withdraw')} />} />
-      <Route path="/earning/withdraw" element={<WithdrawCurrency onBack={() => nav(-1)} />} />
+      <Route path="/earning/withdraw" element={<WithdrawCurrency onBack={() => nav(-1)} onContinue={() => nav('/earning/withdraw/amount')} />} />
+      <Route path="/earning/withdraw/amount" element={<WithdrawAmount onBack={() => nav(-1)} onChangeCurrency={() => nav(-1)} />} />
       <Route path="/cashback" element={<CashbackRoute />} />
       <Route path="/cashback/history" element={<CashbackHistory onBack={() => nav(-1)} />} />
       <Route path="/cashback/broker/:brokerId" element={<BrokerRoute />} />

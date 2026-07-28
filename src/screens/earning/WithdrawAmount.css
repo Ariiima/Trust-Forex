@@ -1,0 +1,95 @@
+/* =====================================================================
+   Withdraw earnings — step 2 (1402:7310). Card 328 wide @16,92 with 16
+   padding; currency row 296x56 (inner inset 12/8), amount block, then the
+   wallet field. Gaps from the frame: 12 title->row, 16 row->amount,
+   7 field->balance, 12 balance->wallet.
+   ===================================================================== */
+
+.scr-wdamt {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--bg-colors-container-s);
+}
+
+.scr-wdamt-main {
+  flex: 1;
+  padding: var(--spacing-16);
+}
+
+.scr-wdamt-card {
+  padding: var(--spacing-16);
+  border-radius: 16px;
+  background: var(--bg-colors-container-p);
+}
+
+.scr-wdamt-title {
+  margin: 0 0 var(--spacing-12);
+  color: var(--typography-colors-sub-text);
+}
+
+/* ---- chosen currency -------------------------------------------------- */
+.scr-wdamt-currency {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  height: 56px;
+  padding: 0 var(--spacing-12);
+  border-radius: var(--radius-medium);
+  border: 1px solid var(--stroke-colors-default);
+}
+
+.scr-wdamt-coin img {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-infinity);
+}
+
+.scr-wdamt-currency-name {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.scr-wdamt-currency-symbol {
+  color: var(--typography-colors-main-text);
+}
+
+.scr-wdamt-currency-network {
+  color: var(--typography-colors-sub-text);
+}
+
+.ds-button.scr-wdamt-change {
+  flex: 0 0 auto;
+  height: 32px;
+  padding: 0 var(--spacing-12);
+}
+
+/* ---- amount ----------------------------------------------------------- */
+.scr-wdamt-amount {
+  margin: var(--spacing-16) 0 var(--spacing-12);
+}
+
+.scr-wdamt-balance {
+  margin: 7px 0 0;
+  color: var(--typography-colors-sub-text);
+}
+
+.scr-wdamt-max {
+  padding: 0;
+  color: var(--primary-colors-900);
+}
+
+.scr-wdamt-scan {
+  color: var(--typography-colors-sub-text);
+}
+
+/* ---- sticky CTA ------------------------------------------------------- */
+.scr-wdamt-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  padding: 0 var(--spacing-16) var(--spacing-16);
+  background: var(--bg-colors-container-s);
+}

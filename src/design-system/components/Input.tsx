@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import type { ReactNode } from 'react';
+import { Icon } from './Icon';
 import './Input.css';
 
 export interface InputProps {
@@ -62,6 +63,7 @@ export function Input({
       </div>
       {msg ? (
         <span id={msgId} className={`ds-input-msg${error ? ' ds-input-msg-error' : ''}`}>
+          {error ? <Icon name="alert-circle" size={16} strokeWidth={1.75} /> : null}
           {msg}
         </span>
       ) : null}

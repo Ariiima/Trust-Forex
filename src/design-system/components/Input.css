@@ -58,9 +58,17 @@
 }
 
 .ds-input-msg {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
   font-size: 12px; /* type-text-xs */
   line-height: 24px;
   color: var(--typography-colors-sub-text);
+}
+
+/* the error line leads with an alert-circle (1402:7310) */
+.ds-input-msg svg {
+  flex: 0 0 auto;
 }
 
 .ds-input-msg-error {

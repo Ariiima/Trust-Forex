@@ -25,7 +25,8 @@ export type IconName =
   | 'alert-circle'
   | 'alert-triangle'
   | 'close'
-  | 'report';
+  | 'report'
+  | 'scan';
 
 const ICONS: Record<IconName, readonly string[]> = {
   // Plain pentagon house — the Figma "home" nav glyph (no door/window).
@@ -64,6 +65,13 @@ const ICONS: Record<IconName, readonly string[]> = {
   report: [
     'M4 6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z',
     'M7 14l3 -3l2 2l5 -5',
+  ],
+  // Viewfinder corners — the wallet-address field's scan affordance (1402:7345).
+  scan: [
+    'M4 8v-2a2 2 0 0 1 2 -2h2',
+    'M4 16v2a2 2 0 0 0 2 2h2',
+    'M16 4h2a2 2 0 0 1 2 2v2',
+    'M16 20h2a2 2 0 0 0 2 -2v-2',
   ],
 };
 

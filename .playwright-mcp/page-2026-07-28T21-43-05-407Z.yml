@@ -1,0 +1,298 @@
+- generic [ref=f10e5]:
+  - generic [ref=f10e6]:
+    - generic [ref=f10e7]:
+      - generic [ref=f10e10]:
+        - application [active] [ref=f10e19]
+        - status [ref=f10e20]: Screenreader support for the board is currently disabled. To enable it via Accessibility settings, press ⌘K, type Accessibility Settings, and press Enter. To see available keyboard shortcuts, enter ⌃⇧Question mark .
+        - status [ref=f10e22]
+        - generic:
+          - generic:
+            - generic:
+              - region "Comments on canvas":
+                - button "Create new comment"
+        - region "Left sidebar" [ref=f10e24]:
+          - toolbar "Navigation Bar" [ref=f10e25]:
+            - generic [ref=f10e26]:
+              - button "Main menu" [ref=f10e27]
+              - separator [ref=f10e28]
+              - button "File" [expanded] [ref=f10e29]
+            - generic [ref=f10e30]:
+              - status
+          - generic [ref=f10e31]:
+            - generic [ref=f10e32]:
+              - generic [ref=f10e34]:
+                - generic [ref=f10e36]:
+                  - generic [ref=f10e38]:
+                    - button "Trust Forex, file name" [ref=f10e39]: Trust Forex
+                    - generic [ref=f10e40]: File name
+                  - button "Edit file menu" [ref=f10e44]
+                - button "Minimize UI" [ref=f10e45]
+              - generic [ref=f10e46]:
+                - generic [ref=f10e48]:
+                  - heading [level=2] [ref=f10e49]:
+                    - generic [ref=f10e50]:
+                      - button "Pages" [expanded] [ref=f10e51]
+                      - button "Find" [ref=f10e54]
+                  - generic [ref=f10e57]:
+                    - grid [ref=f10e64]:
+                      - row [ref=f10e66]:
+                        - gridcell [ref=f10e67]:
+                          - button "| Style guide + Component + Archive" [ref=f10e70]
+                      - row [ref=f10e74]:
+                        - gridcell [ref=f10e75]:
+                          - button "| Trust forex mini app" [ref=f10e78]
+                      - row [ref=f10e82]:
+                        - gridcell [ref=f10e83]:
+                          - button "| Trust forex Website" [ref=f10e86]
+                    - slider "Resize handle" [ref=f10e89]
+                - generic [ref=f10e91]:
+                  - heading [level=2] [ref=f10e92]:
+                    - button "Layers" [expanded] [ref=f10e94]
+                  - generic [ref=f10e101]:
+                    - generic [ref=f10e103]:
+                      - img "Vector" [ref=f10e106]
+                      - generic [ref=f10e110]: Vector 71
+                    - generic [ref=f10e113]:
+                      - img "Vector" [ref=f10e116]
+                      - generic [ref=f10e120]: Vector 72
+                    - generic [ref=f10e123]:
+                      - img "Vector" [ref=f10e126]
+                      - generic [ref=f10e130]: Vector 68
+                    - generic [ref=f10e133]:
+                      - img "Vector" [ref=f10e136]
+                      - generic [ref=f10e139]: Vector 67
+                    - generic [ref=f10e142]:
+                      - img "Vector" [ref=f10e145]
+                      - generic [ref=f10e149]: Vector 70
+                    - generic [ref=f10e152]:
+                      - img "Frame" [ref=f10e155]
+                      - generic [ref=f10e159]: Withdraw earnings/2-2
+                    - generic [ref=f10e162]:
+                      - img "Frame" [ref=f10e165]
+                      - generic [ref=f10e169]: Withdraw earnings/2-1
+                    - generic [ref=f10e172]:
+                      - img "Frame" [ref=f10e175]
+                      - generic [ref=f10e179]: Withdraw earnings/2-5
+                    - generic [ref=f10e182]:
+                      - img "Frame" [ref=f10e185]
+                      - generic [ref=f10e189]: Withdraw earnings/2-4
+                    - generic [ref=f10e192]:
+                      - img "Frame" [ref=f10e195]
+                      - generic [ref=f10e199]: Withdraw earnings/2-3
+                    - generic [ref=f10e202]:
+                      - img "Vector" [ref=f10e205]
+                      - generic [ref=f10e209]: Vector 69
+                    - generic [ref=f10e212]:
+                      - img "Frame" [ref=f10e215]
+                      - generic [ref=f10e219]: Withdraw earnings/1-1
+                    - generic [ref=f10e222]:
+                      - img "Frame" [ref=f10e225]
+                      - generic [ref=f10e229]: Withdraw earnings/1-1
+                    - generic [ref=f10e232]:
+                      - img "Component" [ref=f10e235]
+                      - generic [ref=f10e239]: Notification
+                    - generic [ref=f10e242]:
+                      - img "Frame" [ref=f10e245]
+                      - generic [ref=f10e249]: Button component
+                    - generic [ref=f10e252]:
+                      - img "Component" [ref=f10e255]
+                      - generic [ref=f10e259]: Radio button
+                    - generic [ref=f10e262]:
+                      - img "Component" [ref=f10e265]
+                      - generic [ref=f10e269]: Switch button
+                    - generic [ref=f10e272]:
+                      - img "Component" [ref=f10e275]
+                      - generic [ref=f10e279]: Input
+                    - generic [ref=f10e282]:
+                      - img "Vector" [ref=f10e285]
+                      - generic [ref=f10e289]: Vector 59
+                    - generic [ref=f10e292]:
+                      - img "Vector" [ref=f10e295]
+                      - generic [ref=f10e299]: Vector 57
+                    - generic [ref=f10e302]:
+                      - img "Vector" [ref=f10e305]
+                      - generic [ref=f10e309]: Vector 56
+                    - generic [ref=f10e312]:
+                      - img "Vector" [ref=f10e315]
+                      - generic [ref=f10e319]: Vector 55
+                    - generic [ref=f10e322]:
+                      - img "Vector" [ref=f10e325]
+                      - generic [ref=f10e329]: Vector 53
+                    - generic [ref=f10e332]:
+                      - img "Vector" [ref=f10e335]
+                      - generic [ref=f10e338]: Vector 44
+                    - generic [ref=f10e341]:
+                      - img "Vector" [ref=f10e344]
+                      - generic [ref=f10e347]: Vector 41
+                    - generic [ref=f10e350]:
+                      - img "Vector" [ref=f10e353]
+                      - generic [ref=f10e357]: Vector 40
+                    - generic [ref=f10e360]:
+                      - img "Vector" [ref=f10e363]
+                      - generic [ref=f10e366]: Vector 39
+                    - generic [ref=f10e369]:
+                      - img "Vector" [ref=f10e372]
+                      - generic [ref=f10e376]: Vector 37
+                    - generic [ref=f10e379]:
+                      - img "Vector" [ref=f10e382]
+                      - generic [ref=f10e385]: Vector 34
+                    - generic [ref=f10e388]:
+                      - img "Vector" [ref=f10e391]
+                      - generic [ref=f10e395]: Vector 33
+                    - generic [ref=f10e398]:
+                      - img "Vector" [ref=f10e401]
+                      - generic [ref=f10e405]: Vector 35
+                    - generic [ref=f10e408]:
+                      - img "Vector" [ref=f10e411]
+                      - generic [ref=f10e415]: Vector 32
+                    - generic [ref=f10e418]:
+                      - img "Vector" [ref=f10e421]
+                      - generic [ref=f10e425]: Vector 31
+                    - generic [ref=f10e428]:
+                      - img "Vector" [ref=f10e431]
+                      - generic [ref=f10e435]: Vector 30
+                    - generic [ref=f10e438]:
+                      - img "Vector" [ref=f10e441]
+                      - generic [ref=f10e444]: Vector 29
+                    - generic [ref=f10e447]:
+                      - img "Vector" [ref=f10e450]
+                      - generic [ref=f10e454]: Vector 28
+                    - generic [ref=f10e457]:
+                      - img "Vector" [ref=f10e460]
+                      - generic [ref=f10e463]: Vector 27
+                    - generic [ref=f10e466]:
+                      - img "Vector" [ref=f10e469]
+                      - generic [ref=f10e473]: Vector 26
+                    - generic [ref=f10e476]:
+                      - img "Text" [ref=f10e479]
+                      - generic [ref=f10e483]: "----"
+                    - generic [ref=f10e486]:
+                      - img "Text" [ref=f10e489]
+                      - generic [ref=f10e493]: "----"
+                    - generic [ref=f10e496]:
+                      - img "Text" [ref=f10e499]
+                      - generic [ref=f10e503]: "----"
+                    - generic [ref=f10e506]:
+                      - img "Text" [ref=f10e509]
+                      - generic [ref=f10e513]: "----"
+                    - generic [ref=f10e516]:
+                      - img "Vector" [ref=f10e519]
+                      - generic [ref=f10e522]: Vector 25
+                    - generic [ref=f10e525]:
+                      - img "Component" [ref=f10e528]
+                      - generic [ref=f10e532]: Progress bar
+            - slider "Resize handle" [ref=f10e535]
+        - generic:
+          - generic:
+            - region "Right sidebar":
+              - generic [ref=f10e536]:
+                - generic [ref=f10e538]:
+                  - generic [ref=f10e540]:
+                    - generic [ref=f10e542]:
+                      - button "Multiplayer tools" [ref=f10e544]:
+                        - generic: H
+                      - generic [ref=f10e550]:
+                        - button "Follow Hamidd-reza Nasrabadi" [ref=f10e551]
+                        - generic [ref=f10e552]: H
+                    - generic [ref=f10e560]:
+                      - group "Prototype view" [ref=f10e561]:
+                        - button "Present" [ref=f10e562]
+                        - button "Prototype view" [ref=f10e563]
+                      - generic [ref=f10e564]:
+                        - button "Share" [ref=f10e565]
+                        - status
+                  - generic [ref=f10e566]:
+                    - tablist [ref=f10e568]:
+                      - tab "Comments" [ref=f10e569]
+                      - tab "Properties" [selected] [ref=f10e572]
+                    - button "92%" [ref=f10e576]
+                  - generic [ref=f10e583]:
+                    - generic [ref=f10e584]:
+                      - img "Frame" [ref=f10e585]
+                      - button "Withdraw earnings/2-1" [ref=f10e589]
+                    - generic [ref=f10e590]:
+                      - generic [ref=f10e591]:
+                        - heading "Layout" [level=3] [ref=f10e596]
+                        - button "Copy" [ref=f10e598]
+                      - generic [ref=f10e599]:
+                        - 'button "Copy Width: 360px" [ref=f10e601]':
+                          - generic "Width" [ref=f10e603]
+                          - generic "360px" [ref=f10e605]
+                        - 'button "Copy Height: 852px" [ref=f10e607]':
+                          - generic "Height" [ref=f10e609]
+                          - generic "852px" [ref=f10e611]
+                    - generic [ref=f10e612]:
+                      - generic [ref=f10e613]:
+                        - heading "Colors" [level=3] [ref=f10e618]
+                        - generic [ref=f10e619]:
+                          - generic [ref=f10e620]:
+                            - generic [ref=f10e621]: Color format
+                            - combobox "Color format" [ref=f10e622]:
+                              - generic [ref=f10e623]: Hex
+                          - button "Copy" [ref=f10e627]
+                      - generic [ref=f10e628]:
+                        - button "BG Colors/Container - S BG Colors/Container - S" [ref=f10e630]:
+                          - generic:
+                            - img "BG Colors/Container - S":
+                              - generic: "?"
+                            - generic:
+                              - button "BG Colors/Container - S":
+                                - generic:
+                                  - generic "BG Colors/Container - S"
+                        - button "#F1F1F1" [ref=f10e633]
+                    - generic [ref=f10e640]:
+                      - button "Export" [ref=f10e641]
+                      - button "Add export settings" [ref=f10e645]
+                - slider "Resize handle" [ref=f10e646]
+      - generic:
+        - generic:
+          - generic:
+            - region "Application toolbar":
+              - toolbar "Editor" [ref=f10e649]:
+                - generic [ref=f10e651]:
+                  - generic:
+                    - generic [ref=f10e655]:
+                      - button "Move" [pressed] [ref=f10e656]
+                      - button "Move" [pressed] [ref=f10e657]
+                      - button "Hand tool" [ref=f10e658]
+                      - button "Copy colors" [ref=f10e659]
+                      - button "Comment (1 unread)" [ref=f10e660]
+                      - generic [ref=f10e661]:
+                        - button "Ask to edit" [ref=f10e663]
+                        - text: Request sent
+                    - generic [ref=f10e668]:
+                      - button "Move" [pressed] [ref=f10e669]
+                      - button "Hand tool" [ref=f10e670]
+                      - button "Comment (1 unread)" [ref=f10e671]
+                      - generic [ref=f10e672]:
+                        - button "Ask to edit" [ref=f10e674]
+                        - text: Request sent
+                    - generic [ref=f10e679]:
+                      - button "Move" [pressed] [ref=f10e680]
+                      - button "Hand tool" [ref=f10e681]
+                      - button "Comment (1 unread)" [ref=f10e682]
+                      - generic [ref=f10e683]:
+                        - button "Ask to edit" [ref=f10e685]
+                        - text: Request sent
+                - radiogroup "Toolbelt Mode" [ref=f10e690]:
+                  - generic [ref=f10e692]:
+                    - generic [ref=f10e694]:
+                      - radio "Draw" [ref=f10e695]
+                      - generic [ref=f10e699]: Draw
+                    - generic [ref=f10e700]:
+                      - radio "Design" [checked] [ref=f10e701]
+                      - generic [ref=f10e705]: Design
+                    - generic [ref=f10e706]:
+                      - radio "Motion" [ref=f10e707]
+                      - generic [ref=f10e711]: Motion
+                    - generic [ref=f10e712]:
+                      - radio "Dev Mode" [ref=f10e713]
+                      - generic [ref=f10e717]: Dev Mode
+    - region "Help/zoom toolbar" [ref=f10e720]:
+      - toolbar "Help/zoom toolbar" [ref=f10e722]:
+        - button "Help" [ref=f10e724]
+  - generic:
+    - status
+    - group [ref=f10e726]:
+      - alert [ref=f10e728]
+      - alert [ref=f10e730]
