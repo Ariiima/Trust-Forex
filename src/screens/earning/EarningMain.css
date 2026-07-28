@@ -1,0 +1,323 @@
+/* =====================================================================
+   Earning — main page (1367:5166). Blue card 328x396 @16,92 (16 padding,
+   296 column); analysis card 328x420 @16,513 with a 296x164 plot on a
+   6-row $0..$500 grid (rows 24 tall, 32 apart).
+   ===================================================================== */
+
+.scr-earn {
+  display: flex;
+  flex-direction: column;
+  gap: 25px; /* card bottoms 488 -> 513 */
+  min-height: 100%;
+  padding: var(--spacing-16) var(--spacing-16) 104px;
+  background: var(--bg-colors-container-s);
+}
+
+/* ---- balance card ----------------------------------------------------- */
+.scr-earn-card {
+  padding: var(--spacing-16);
+  border-radius: 16px;
+  background: var(--primary-colors-900);
+  color: var(--base-color-white);
+}
+
+.scr-earn-balance-label {
+  margin: 0;
+  font-weight: var(--font-weight-regular);
+}
+
+.scr-earn-balance-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.scr-earn-total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.scr-earn-total-label {
+  opacity: 0.75;
+}
+
+/* the frame draws this rule dashed */
+.scr-earn-rule {
+  height: 0;
+  margin: var(--spacing-12) 0 var(--spacing-16);
+  border: 0;
+  border-top: 1px dashed rgba(255, 255, 255, 0.32);
+}
+
+.scr-earn-breakdown-title {
+  margin: 0 0 var(--spacing-8);
+  font-weight: var(--font-weight-regular);
+}
+
+/* ---- split bar -------------------------------------------------------- */
+.scr-earn-bar {
+  display: flex;
+  height: 24px;
+  overflow: hidden;
+  border-radius: var(--radius-infinity);
+}
+
+.scr-earn-bar-seg {
+  display: grid;
+  place-items: center;
+  color: var(--base-color-white);
+}
+
+.scr-earn-bar-seg--referral {
+  background: var(--state-colors-success);
+}
+
+.scr-earn-bar-seg--cashback {
+  background: var(--state-colors-danger);
+}
+
+/* ---- legend ----------------------------------------------------------- */
+.scr-earn-legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  margin: var(--spacing-8) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scr-earn-legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 28px;
+}
+
+.scr-earn-legend-left {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.scr-earn-legend-right {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+}
+
+/* 12x6 pill in the legend, 6x6 dot as the value separator */
+.scr-earn-dot {
+  width: 12px;
+  height: 6px;
+  border-radius: var(--radius-infinity);
+}
+
+.scr-earn-dot--referral {
+  background: var(--state-colors-success);
+}
+
+.scr-earn-dot--cashback {
+  background: var(--state-colors-danger);
+}
+
+.scr-earn-legend-sep {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-infinity);
+  background: currentColor;
+  opacity: 0.5;
+}
+
+/* ---- CTAs ------------------------------------------------------------- */
+.scr-earn-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  margin-top: var(--spacing-20);
+}
+
+/* white-on-blue primary (Figma "Primary-1") */
+.ds-button.scr-earn-cta {
+  background: var(--base-color-white);
+  color: var(--primary-colors-900);
+}
+.ds-button.scr-earn-cta:active {
+  background: var(--primary-colors-50);
+}
+
+.scr-earn-ghost {
+  height: 44px;
+  border-radius: var(--radius-small);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  color: var(--base-color-white);
+}
+.scr-earn-ghost:active {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* ---- analysis card ---------------------------------------------------- */
+.scr-earn-analysis {
+  padding: var(--spacing-16);
+  border-radius: 16px;
+  background: var(--bg-colors-container-p);
+}
+
+.scr-earn-analysis-title {
+  margin: 0;
+  color: var(--typography-colors-main-text);
+}
+
+.scr-earn-range {
+  margin: var(--spacing-16) 0 0;
+  color: var(--typography-colors-sub-text);
+  text-align: center;
+}
+
+/* ---- plot ------------------------------------------------------------- */
+.scr-earn-plot-wrap {
+  position: relative;
+  margin-top: var(--spacing-16);
+  height: 184px;
+}
+
+.scr-earn-grid {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.scr-earn-grid-row {
+  position: relative;
+  height: 24px;
+  border-bottom: 1px solid var(--stroke-colors-default);
+}
+
+.scr-earn-grid-label {
+  color: var(--typography-colors-sub-text);
+}
+
+.scr-earn-plot {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 164px;
+  cursor: ew-resize;
+  touch-action: pan-y;
+}
+
+.scr-earn-plot svg {
+  width: 100%;
+  height: 100%;
+}
+
+.scr-earn-crosshair {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dashed var(--typography-colors-sub-text);
+}
+
+/* ---- tooltip ---------------------------------------------------------- */
+.scr-earn-tooltip {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  width: 196px;
+  padding: var(--spacing-8);
+  border-radius: var(--radius-small);
+  border: 1px solid var(--stroke-colors-default);
+  background: var(--bg-colors-container-p);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.scr-earn-tooltip-date {
+  color: var(--typography-colors-main-text);
+  text-align: center;
+}
+
+.scr-earn-tooltip-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-8);
+  color: var(--typography-colors-sub-text);
+}
+
+/* ---- brush ------------------------------------------------------------ */
+.scr-earn-brush {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-16);
+}
+
+.scr-earn-brush-handle {
+  width: 20px;
+  height: 40px;
+  border-radius: var(--radius-small);
+  background: var(--bg-colors-container-s);
+  color: var(--typography-colors-main-text);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.scr-earn-brush-handle:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.scr-earn-brush-track {
+  position: relative;
+  flex: 1;
+  height: 40px;
+  overflow: hidden;
+  border-radius: var(--radius-small);
+  background: var(--bg-colors-container-s);
+}
+
+.scr-earn-brush-track svg {
+  width: 100%;
+  height: 100%;
+}
+
+.scr-earn-brush-window {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border: 1px solid var(--stroke-colors-default);
+  border-radius: var(--radius-small);
+  background: var(--bg-colors-container-p);
+  opacity: 0.55;
+}
+
+.scr-earn-foot-legend {
+  display: flex;
+  justify-content: space-between;
+  margin: var(--spacing-16) 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--typography-colors-sub-text);
+}
+
+.scr-earn-foot-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+/* ---- floating nav ----------------------------------------------------- */
+.scr-earn-nav {
+  position: fixed;
+  left: 50%;
+  bottom: var(--spacing-16);
+  transform: translateX(-50%);
+  width: calc(100% - var(--spacing-32));
+  max-width: 328px;
+}

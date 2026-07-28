@@ -10,12 +10,13 @@ import Cashback from './screens/cashback/Cashback'
 import CashbackHistory from './screens/cashback/CashbackHistory'
 import BrokerDetail from './screens/broker/BrokerDetail'
 import ReferralRoute from './screens/referral/ReferralRoute'
+import EarningMain from './screens/earning/EarningMain'
 
-// `earning` has no built screen yet — its tab stays put.
 const TAB_ROUTES: Partial<Record<NavigationTab, string>> = {
   home: '/',
   cashback: '/cashback',
   referral: '/referral',
+  earning: '/earning',
 }
 
 function HomeRoute() {
@@ -73,6 +74,7 @@ function AppRoutes() {
       />
       <Route path="/payment/receive" element={<PaymentReceive onBack={() => nav(-1)} onDone={() => nav('/')} />} />
       <Route path="/referral" element={<ReferralRoute onNavigate={(tab) => TAB_ROUTES[tab] && nav(TAB_ROUTES[tab])} />} />
+      <Route path="/earning" element={<EarningMain onNavigate={(tab) => TAB_ROUTES[tab] && nav(TAB_ROUTES[tab])} />} />
       <Route path="/cashback" element={<CashbackRoute />} />
       <Route path="/cashback/history" element={<CashbackHistory onBack={() => nav(-1)} />} />
       <Route path="/cashback/broker/:brokerId" element={<BrokerRoute />} />
