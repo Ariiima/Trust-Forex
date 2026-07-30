@@ -1,0 +1,62 @@
+/* =====================================================================
+   Splash screen (548:3095). Hero 360x429 from y=92 (i.e. 16 below the
+   Telegram header), copy block 296 wide inset 32, progress track 215x8.
+   ===================================================================== */
+
+.scr-splash {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--bg-colors-container-s);
+}
+
+/* Placeholder for the exported hero collage — see the note in Splash.tsx. */
+.scr-splash-hero {
+  height: 429px;
+  margin-top: var(--spacing-16);
+  background: linear-gradient(160deg, var(--primary-colors-100) 0%, var(--primary-colors-50) 60%, var(--bg-colors-container-s) 100%);
+}
+
+.scr-splash-copy {
+  margin: 48px auto 0; /* hero ends 521, copy starts 569 */
+  padding: 0 var(--spacing-32);
+  max-width: 360px;
+  text-align: center;
+}
+
+.scr-splash-title {
+  margin: 0;
+  color: var(--typography-colors-main-text);
+}
+
+.scr-splash-body {
+  margin: var(--spacing-4) 0 0;
+  color: var(--typography-colors-sub-text);
+}
+
+/* ---- progress --------------------------------------------------------- */
+.scr-splash-progress {
+  margin-top: var(--spacing-40);
+}
+
+.scr-splash-track {
+  width: 215px;
+  height: 8px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: var(--radius-infinity);
+  background: var(--stroke-colors-default);
+}
+
+.scr-splash-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-infinity);
+  background: var(--primary-colors-900);
+  transition: width 0.3s ease;
+}
+
+.scr-splash-label {
+  margin: var(--spacing-8) 0 0;
+  color: var(--typography-colors-sub-text);
+}

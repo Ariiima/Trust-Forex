@@ -13,6 +13,8 @@ import ReferralRoute from './screens/referral/ReferralRoute'
 import EarningMain from './screens/earning/EarningMain'
 import WithdrawCurrency from './screens/earning/WithdrawCurrency'
 import WithdrawAmount from './screens/earning/WithdrawAmount'
+import Splash from './screens/splash/Splash'
+import HomeSkeleton from './screens/home/HomeSkeleton'
 
 const TAB_ROUTES: Partial<Record<NavigationTab, string>> = {
   home: '/',
@@ -75,6 +77,8 @@ function AppRoutes() {
         element={<PaymentNetwork onBack={() => nav(-1)} onCurrencyChange={() => nav('/payment/currency')} onContinue={() => nav('/payment/receive')} />}
       />
       <Route path="/payment/receive" element={<PaymentReceive onBack={() => nav(-1)} onDone={() => nav('/')} />} />
+      <Route path="/splash" element={<Splash />} />
+      <Route path="/loading" element={<HomeSkeleton />} />
       <Route path="/referral" element={<ReferralRoute onNavigate={(tab) => TAB_ROUTES[tab] && nav(TAB_ROUTES[tab])} />} />
       <Route path="/earning" element={<EarningMain onNavigate={(tab) => TAB_ROUTES[tab] && nav(TAB_ROUTES[tab])} onWithdraw={() => nav('/earning/withdraw')} />} />
       <Route path="/earning/withdraw" element={<WithdrawCurrency onBack={() => nav(-1)} onContinue={() => nav('/earning/withdraw/amount')} />} />
