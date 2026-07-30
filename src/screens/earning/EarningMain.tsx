@@ -42,6 +42,8 @@ function weekLabel(i: number): string {
 }
 
 export interface EarningMainProps {
+  /** Review deep-link: open the history sheet on mount. */
+  initialSheet?: 'history';
   availableBalance?: number;
   totalEarnings?: number;
   referralEarnings?: number;
@@ -52,6 +54,7 @@ export interface EarningMainProps {
 }
 
 export function EarningMain({
+  initialSheet,
   availableBalance = 245,
   totalEarnings = 360,
   referralEarnings = 288,
@@ -67,7 +70,7 @@ export function EarningMain({
   const referral = useMemo(() => makeSeries(7, 240, 120), []);
   const cashback = useMemo(() => makeSeries(13, 150, 90), []);
 
-  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(initialSheet === 'history');
   const [offset, setOffset] = useState(0); // first visible week
   const [cursor, setCursor] = useState(6); // selected week, relative to window
   const plotRef = useRef<HTMLDivElement>(null);

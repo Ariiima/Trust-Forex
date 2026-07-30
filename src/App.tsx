@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useNavigate, useParams } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import type { NavigationTab } from './design-system/components'
 import Home from './screens/home/Home'
 import ChoosePlan from './screens/plans/ChoosePlan'
@@ -56,6 +56,61 @@ function BrokerRoute() {
   return <BrokerDetail brokerId={brokerId} onBack={() => nav(-1)} />
 }
 
+/* ---------------------------------------------------------------------------
+ * Query-param wrappers. They exist so design/review/index.html can deep-link
+ * every designed state (sheets, prefilled forms, empty lists) side by side with
+ * its Figma frame. Harmless in normal use — no param means default state.
+ * ------------------------------------------------------------------------- */
+function ReferralRouteQ() {
+  const nav = useNavigate()
+  const [q] = useSearchParams()
+  return (
+    <ReferralRoute
+      force={(q.get('state') as 'preview' | 'main' | 'empty' | null) ?? undefined}
+      initialSheet={q.get('sheet') === 'about' ? 'about' : undefined}
+      onNavigate={(tab) => TAB_ROUTES[tab] && nav(TAB_ROUTES[tab])}
+    />
+  )
+}
+
+function EarningRouteQ() {
+  const nav = useNavigate()
+  const [q] = useSearchParams()
+  return (
+    <EarningMain
+      initialSheet={q.get('sheet') === 'history' ? 'history' : undefined}
+      onNavigate={(tab) => TAB_ROUTES[tab] && nav(TAB_ROUTES[tab])}
+      onWithdraw={() => nav('/earning/withdraw')}
+    />
+  )
+}
+
+function WithdrawCurrencyQ() {
+  const nav = useNavigate()
+  const [q] = useSearchParams()
+  return (
+    <WithdrawCurrency
+      initialSelected={q.get('selected') ?? undefined}
+      onBack={() => nav(-1)}
+      onContinue={() => nav('/earning/withdraw/amount')}
+    />
+  )
+}
+
+function WithdrawAmountQ() {
+  const nav = useNavigate()
+  const [q] = useSearchParams()
+  const sheet = q.get('sheet')
+  return (
+    <WithdrawAmount
+      initialAmount={q.get('amount') ?? undefined}
+      initialWallet={q.get('wallet') ?? undefined}
+      initialSheet={sheet === 'change' || sheet === 'summary' || sheet === 'submitted' ? sheet : undefined}
+      onBack={() => nav(-1)}
+    />
+  )
+}
+
 function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
@@ -79,10 +134,10 @@ function AppRoutes() {
       <Route path="/payment/receive" element={<PaymentReceive onBack={() => nav(-1)} onDone={() => nav('/')} />} />
       <Route path="/splash" element={<Splash />} />
       <Route path="/loading" element={<HomeSkeleton />} />
-      <Route path="/referral" element={<ReferralRoute onNavigate={(tab) => TAB_ROUTES[tab] && nav(TAB_ROUTES[tab])} />} />
-      <Route path="/earning" element={<EarningMain onNavigate={(tab) => TAB_ROUTES[tab] && nav(TAB_ROUTES[tab])} onWithdraw={() => nav('/earning/withdraw')} />} />
-      <Route path="/earning/withdraw" element={<WithdrawCurrency onBack={() => nav(-1)} onContinue={() => nav('/earning/withdraw/amount')} />} />
-      <Route path="/earning/withdraw/amount" element={<WithdrawAmount onBack={() => nav(-1)} />} />
+      <Route path="/referral" element={<ReferralRouteQ />} />
+      <Route path="/earning" element={<EarningRouteQ />} />
+      <Route path="/earning/withdraw" element={<WithdrawCurrencyQ />} />
+      <Route path="/earning/withdraw/amount" element={<WithdrawAmountQ />} />
       <Route path="/cashback" element={<CashbackRoute />} />
       <Route path="/cashback/history" element={<CashbackHistory onBack={() => nav(-1)} />} />
       <Route path="/cashback/broker/:brokerId" element={<BrokerRoute />} />

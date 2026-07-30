@@ -41,6 +41,8 @@ export interface ReferralMainProps {
   planEarnings?: number;
   cashbackEarnings?: number;
   referrals?: readonly Referral[];
+  /** Review deep-link: open the About sheet on mount. */
+  initialSheet?: 'about';
   telegramLink?: string;
   websiteLink?: string;
   onNavigate?: (tab: NavigationTab) => void;
@@ -56,13 +58,14 @@ export function ReferralMain({
   planEarnings = 180,
   cashbackEarnings = 65,
   referrals = [],
+  initialSheet,
   telegramLink = '',
   websiteLink = '',
   onNavigate,
   onAbout,
 }: ReferralMainProps): ReactNode {
   const [copied, setCopied] = useState<'telegram' | 'website' | null>(null);
-  const [aboutOpen, setAboutOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(initialSheet === 'about');
   // null = as-delivered order, which is what frame 1333:8366 shows even though
   // the control is labelled "Highest earnings". Sorting starts on first tap.
   const [sortDesc, setSortDesc] = useState<boolean | null>(null);

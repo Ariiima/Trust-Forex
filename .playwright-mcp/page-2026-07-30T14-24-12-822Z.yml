@@ -1,0 +1,699 @@
+- generic [ref=f38e1]:
+  - banner [ref=f38e2]:
+    - heading "Trust Forex — design vs build" [level=1] [ref=f38e3]
+    - generic [ref=f38e4]: "build: https://ariiima.github.io/Trust-Forex"
+    - 'button "Overlay mode: off" [ref=f38e5] [cursor=pointer]'
+    - button "Copy all comments" [ref=f38e6] [cursor=pointer]
+    - button "Clear" [ref=f38e7] [cursor=pointer]
+  - main [ref=f38e8]:
+    - generic [ref=f38e9]:
+      - heading "Splash" [level=2] [ref=f38e10]
+      - paragraph [ref=f38e11]:
+        - text: Figma
+        - code [ref=f38e12]: 548-3095
+        - text: · build
+        - code [ref=f38e13]: /splash
+        - text: · frame height 852px
+      - generic [ref=f38e14]:
+        - generic [ref=f38e15]:
+          - generic [ref=f38e16]: Design
+          - iframe [ref=f38e18]:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic [ref=f39e3]:
+                        - generic [ref=f39e5]:
+                          - main:
+                            - paragraph [ref=f39e6]: Screenreader support is currently disabled. To enable it, use the Accessibility settings from the Options menu.
+                        - text: Give feedback, ask a question, or just leave a note of appreciation. Click anywhere in the file to leave a comment.
+                      - group [ref=f39e12]:
+                        - alert [ref=f39e14]
+                        - alert [ref=f39e16]
+        - generic [ref=f38e19]:
+          - generic [ref=f38e20]: Build
+          - iframe [ref=f38e22]:
+            - generic [ref=f40e5]:
+              - heading "A Smarter Way to Trade" [level=1] [ref=f40e6]
+              - paragraph [ref=f40e7]: Manage your membership, signals, rewards & trading services, all in one trusted place.
+              - generic [ref=f40e8]:
+                - progressbar [ref=f40e9]
+                - paragraph [ref=f40e11]: Preparing...
+        - generic [ref=f38e23]:
+          - generic [ref=f38e24]: Differences / issues — Splash
+          - textbox "Differences / issues — Splash" [ref=f38e25]:
+            - /placeholder: e.g. missing the 3D illustration above the heading; heading should wrap to 2 lines not 3
+    - generic [ref=f38e27]:
+      - heading "Loading skeleton" [level=2] [ref=f38e28]
+      - paragraph [ref=f38e29]:
+        - text: Figma
+        - code [ref=f38e30]: 551-3097
+        - text: · build
+        - code [ref=f38e31]: /loading
+        - text: · frame height 1806px
+      - generic [ref=f38e32]:
+        - generic [ref=f38e33]:
+          - generic [ref=f38e34]: Design
+          - iframe [ref=f38e36]:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic [ref=f41e3]:
+                        - generic [ref=f41e5]:
+                          - main:
+                            - paragraph [ref=f41e6]: Screenreader support is currently disabled. To enable it, use the Accessibility settings from the Options menu.
+                        - text: Give feedback, ask a question, or just leave a note of appreciation. Click anywhere in the file to leave a comment.
+                      - group [ref=f41e12]:
+                        - alert [ref=f41e14]
+                        - alert [ref=f41e16]
+        - generic [ref=f38e37]:
+          - generic [ref=f38e38]: Build
+          - iframe [ref=f38e40]:
+            - generic "Loading" [ref=f42e3]
+        - generic [ref=f38e41]:
+          - generic [ref=f38e42]: Differences / issues — Loading skeleton
+          - textbox "Differences / issues — Loading skeleton" [ref=f38e43]:
+            - /placeholder: e.g. missing the 3D illustration above the heading; heading should wrap to 2 lines not 3
+    - generic [ref=f38e45]:
+      - heading "Referral — preview (intro)" [level=2] [ref=f38e46]
+      - paragraph [ref=f38e47]:
+        - text: Figma
+        - code [ref=f38e48]: 1333-8306
+        - text: · build
+        - code [ref=f38e49]: /referral?state=preview
+        - text: · frame height 852px
+      - generic [ref=f38e50]:
+        - generic [ref=f38e51]:
+          - generic [ref=f38e52]: Design
+          - iframe [ref=f38e54]:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic [ref=f43e3]:
+                        - generic [ref=f43e5]:
+                          - main:
+                            - paragraph [ref=f43e6]: Screenreader support is currently disabled. To enable it, use the Accessibility settings from the Options menu.
+                        - text: Give feedback, ask a question, or just leave a note of appreciation. Click anywhere in the file to leave a comment.
+                      - group [ref=f43e12]:
+                        - alert [ref=f43e14]
+                        - alert [ref=f43e16]
+        - generic [ref=f38e55]:
+          - generic [ref=f38e56]: Build
+          - iframe [ref=f38e58]:
+            - generic [ref=f44e3]:
+              - main [ref=f44e4]:
+                - generic [ref=f44e5]:
+                  - heading "Turn your network into referral income" [level=1] [ref=f44e6]
+                  - list [ref=f44e7]:
+                    - listitem [ref=f44e8]:
+                      - generic [ref=f44e15]:
+                        - generic [ref=f44e16]: Invite your friends
+                        - generic [ref=f44e17]: to start earning together
+                    - listitem [ref=f44e18]:
+                      - generic [ref=f44e24]:
+                        - generic [ref=f44e25]: Earn more rewards
+                        - generic [ref=f44e26]: as friends become active
+                    - listitem [ref=f44e27]:
+                      - generic [ref=f44e32]:
+                        - generic [ref=f44e33]: Track every referral
+                        - generic [ref=f44e34]: to clearly follow your progress
+              - contentinfo [ref=f44e35]:
+                - button "Start inviting" [ref=f44e36] [cursor=pointer]
+        - generic [ref=f38e59]:
+          - generic [ref=f38e60]: Differences / issues — Referral — preview (intro)
+          - textbox "Differences / issues — Referral — preview (intro)" [ref=f38e61]:
+            - /placeholder: e.g. missing the 3D illustration above the heading; heading should wrap to 2 lines not 3
+    - generic [ref=f38e63]:
+      - heading "Referral — main" [level=2] [ref=f38e64]
+      - paragraph [ref=f38e65]:
+        - text: Figma
+        - code [ref=f38e66]: 1333-8366
+        - text: · build
+        - code [ref=f38e67]: /referral?state=main
+        - text: · frame height 1266px
+      - generic [ref=f38e68]:
+        - generic [ref=f38e69]:
+          - generic [ref=f38e70]: Design
+          - iframe [ref=f38e72]
+        - generic [ref=f38e73]:
+          - generic [ref=f38e74]: Build
+          - iframe [ref=f38e76]
+        - generic [ref=f38e77]:
+          - generic [ref=f38e78]: Differences / issues — Referral — main
+          - textbox "Differences / issues — Referral — main" [ref=f38e79]:
+            - /placeholder: e.g. missing the 3D illustration above the heading; heading should wrap to 2 lines not 3
+    - generic [ref=f38e81]:
+      - heading "Referral — main, empty list" [level=2] [ref=f38e82]
+      - paragraph [ref=f38e83]:
+        - text: Figma
+        - code [ref=f38e84]: 1436-14439
+        - text: · build
+        - code [ref=f38e85]: /referral?state=empty
+        - text: · frame height 978px
+      - generic [ref=f38e86]:
+        - generic [ref=f38e87]:
+          - generic [ref=f38e88]: Design
+          - iframe [ref=f38e90]
+        - generic [ref=f38e91]:
+          - generic [ref=f38e92]: Build
+          - iframe [ref=f38e94]
+        - generic [ref=f38e95]:
+          - generic [ref=f38e96]: Differences / issues — Referral — main, empty list
+          - textbox "Differences / issues — Referral — main, empty list" [ref=f38e97]:
+            - /placeholder: e.g. missing the 3D illustration above the heading; heading should wrap to 2 lines not 3
+    - generic [ref=f38e99]:
+      - heading "Referral — About sheet" [level=2] [ref=f38e100]
+      - paragraph [ref=f38e101]:
+        - text: Figma
+        - code [ref=f38e102]: 1391-5964
+        - text: · build
+        - code [ref=f38e103]: /referral?state=main&sheet=about
+        - text: · frame height 852px
+      - generic [ref=f38e104]:
+        - generic [ref=f38e105]:
+          - generic [ref=f38e106]: Design
+          - iframe [ref=f38e108]
+        - generic [ref=f38e109]:
+          - generic [ref=f38e110]: Build
+          - iframe [ref=f38e112]
+        - generic [ref=f38e113]:
+          - generic [ref=f38e114]: Differences / issues — Referral — About sheet
+          - textbox "Differences / issues — Referral — About sheet" [ref=f38e115]:
+            - /placeholder: e.g. missing the 3D illustration above the heading; heading should wrap to 2 lines not 3
+    - generic [ref=f38e117]:
+      - heading "Earning — main" [level=2] [ref=f38e118]
+      - paragraph [ref=f38e119]:
+        - text: Figma
+        - code [ref=f38e120]: 1367-5166
+        - text: · build
+        - code [ref=f38e121]: /earning
+        - text: · frame height 1045px
+      - generic [ref=f38e122]:
+        - generic [ref=f38e123]:
+          - generic [ref=f38e124]: Design
+          - iframe [ref=f38e126]
+        - generic [ref=f38e127]:
+          - generic [ref=f38e128]: Build
+          - iframe [ref=f38e130]
+        - generic [ref=f38e131]:
+          - generic [ref=f38e132]: Differences / issues — Earning — main
+          - textbox "Differences / issues — Earning — main" [ref=f38e133]:
+            - /placeholder: e.g. missing the 3D illustration above the heading; heading should wrap to 2 lines not 3
+    - generic [ref=f38e135]:
+      - heading "Earning — Withdraw history" [level=2] [ref=f38e136]
+      - paragraph [ref=f38e137]:
+        - text: Figma
+        - code [ref=f38e138]: 1404-7767
+        - text: · build
+        - code [ref=f38e139]: /earning?sheet=history
+        - text: · frame height 852px
+      - generic [ref=f38e140]:
+        - generic [ref=f38e141]:
+          - generic [ref=f38e142]: Design
+          - iframe [ref=f38e144]
+        - generic [ref=f38e145]:
+          - generic [ref=f38e146]: Build
+          - iframe [ref=f38e148]
+        - generic [ref=f38e149]:
+          - generic [ref=f38e150]: Differences / issues — Earning — Withdraw history
+          - textbox "Differences / issues — Earning — Withdraw history" [ref=f38e151]:
+            - /placeholder: e.g. missing the 3D illustration above the heading; heading should wrap to 2 lines not 3
+    - generic [ref=f38e153]:
+      - heading "Withdraw — pick currency" [level=2] [ref=f38e154]
+      - paragraph [ref=f38e155]:
+        - text: Figma
+        - code [ref=f38e156]: 1379-6901
+        - text: · build
+        - code [ref=f38e157]: /earning/withdraw
+        - text: · frame height 1000px
+      - generic [ref=f38e158]:
+        - generic [ref=f38e159]:
+          - generic [ref=f38e160]: Design
+          - iframe [ref=f38e162]
+        - generic [ref=f38e163]:
+          - generic [ref=f38e164]: Build
+          - iframe [ref=f38e166]
+        - generic [ref=f38e167]:
+          - generic [ref=f38e168]: Differences / issues — Withdraw — pick currency
+          - textbox "Differences / issues — Withdraw — pick currency" [ref=f38e169]:
+            - /placeholder: e.g. missing the 3D illustration above the heading; heading should wrap to 2 lines not 3
+    - generic [ref=f38e171]:
+      - heading "Withdraw — currency chosen" [level=2] [ref=f38e172]
+      - paragraph [ref=f38e173]:
+        - text: Figma
+        - code [ref=f38e174]: 1482-5747
+        - text: · build
+        - code [ref=f38e175]: /earning/withdraw?selected=usdt-bep20
+        - text: · frame height 1000px
+      - generic [ref=f38e176]:
+        - generic [ref=f38e177]:
+          - generic [ref=f38e178]: Design
+          - iframe [ref=f38e180]
+        - generic [ref=f38e181]:
+          - generic [ref=f38e182]: Build
+          - iframe [ref=f38e184]
+        - generic [ref=f38e185]:
+          - generic [ref=f38e186]: Differences / issues — Withdraw — currency chosen
+          - textbox "Differences / issues — Withdraw — currency chosen" [ref=f38e187]:
+            - /placeholder: e.g. missing the 3D illustration above the heading; heading should wrap to 2 lines not 3
+    - generic [ref=f38e189]:
+      - heading "Withdraw — amount (empty)" [level=2] [ref=f38e190]
+      - paragraph [ref=f38e191]:
+        - text: Figma
+        - code [ref=f38e192]: 1402-7310
+        - text: · build
+        - code [ref=f38e193]: /earning/withdraw/amount
+        - text: · frame height 852px
+      - generic [ref=f38e194]:
+        - generic [ref=f38e195]:
+          - generic [ref=f38e196]: Design
+          - iframe [active] [ref=f38e198]:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic [ref=f59e3]:
+                        - generic [ref=f59e5]:
+                          - main:
+                            - paragraph [ref=f59e6]: Screenreader support is currently disabled. To enable it, use the Accessibility settings from the Options menu.
+                        - text: Give feedback, ask a question, or just leave a note of appreciation. Click anywhere in the file to leave a comment.
+                      - group [ref=f59e12]:
+                        - alert [ref=f59e14]
+                        - alert [ref=f59e16]
+        - generic [ref=f38e199]:
+          - generic [ref=f38e200]: Build
+          - iframe [ref=f38e202]:
+            - generic [ref=f60e3]:
+              - banner [ref=f60e4]:
+                - generic [ref=f60e5]:
+                  - button "Back" [ref=f60e6] [cursor=pointer]
+                  - generic [ref=f60e10]: Withdraw earnings
+              - main [ref=f60e11]:
+                - generic [ref=f60e12]:
+                  - heading "Withdrawal details" [level=2] [ref=f60e13]
+                  - generic [ref=f60e14]:
+                    - generic [ref=f60e16]:
+                      - generic [ref=f60e17]: USDT
+                      - generic [ref=f60e18]: (BEP20)
+                    - button "Change currency" [ref=f60e19] [cursor=pointer]
+                  - generic [ref=f60e21]:
+                    - generic [ref=f60e22]:
+                      - generic [ref=f60e23]: Amount to withdraw
+                      - generic [ref=f60e24]:
+                        - textbox "Amount to withdraw" [ref=f60e25]:
+                          - /placeholder: Enter amount
+                        - button "Max" [ref=f60e27] [cursor=pointer]
+                    - paragraph [ref=f60e28]: "Available balance: $245.00"
+                  - generic [ref=f60e29]:
+                    - generic [ref=f60e30]: Wallet address
+                    - textbox "Wallet address" [ref=f60e32]:
+                      - /placeholder: Enter wallet address
+              - contentinfo [ref=f60e39]:
+                - button "Continue" [disabled] [ref=f60e40]
+        - generic [ref=f38e203]:
+          - generic [ref=f38e204]: Differences / issues — Withdraw — amount (empty)
+          - textbox "Differences / issues — Withdraw — amount (empty)" [ref=f38e205]:
+            - /placeholder: e.g. missing the 3D illustration above the heading; heading should wrap to 2 lines not 3
+    - generic [ref=f38e207]:
+      - heading "Withdraw — amount (filled)" [level=2] [ref=f38e208]
+      - paragraph [ref=f38e209]:
+        - text: Figma
+        - code [ref=f38e210]: 1402-6771
+        - text: · build
+        - code [ref=f38e211]: /earning/withdraw/amount?amount=245&wallet=0X1C4212345678948Hf7f8
+        - text: · frame height 852px
+      - generic [ref=f38e212]:
+        - generic [ref=f38e213]:
+          - generic [ref=f38e214]: Design
+          - iframe [ref=f38e216]:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic [ref=f61e3]:
+                        - generic [ref=f61e5]:
+                          - main:
+                            - paragraph [ref=f61e6]: Screenreader support is currently disabled. To enable it, use the Accessibility settings from the Options menu.
+                        - text: Give feedback, ask a question, or just leave a note of appreciation. Click anywhere in the file to leave a comment.
+                      - group [ref=f61e12]:
+                        - alert [ref=f61e14]
+                        - alert [ref=f61e16]
+        - generic [ref=f38e217]:
+          - generic [ref=f38e218]: Build
+          - iframe [ref=f38e220]:
+            - generic [ref=f62e3]:
+              - banner [ref=f62e4]:
+                - generic [ref=f62e5]:
+                  - button "Back" [ref=f62e6] [cursor=pointer]
+                  - generic [ref=f62e10]: Withdraw earnings
+              - main [ref=f62e11]:
+                - generic [ref=f62e12]:
+                  - heading "Withdrawal details" [level=2] [ref=f62e13]
+                  - generic [ref=f62e14]:
+                    - generic [ref=f62e16]:
+                      - generic [ref=f62e17]: USDT
+                      - generic [ref=f62e18]: (BEP20)
+                    - button "Change currency" [ref=f62e19] [cursor=pointer]
+                  - generic [ref=f62e21]:
+                    - generic [ref=f62e22]:
+                      - generic [ref=f62e23]: Amount to withdraw
+                      - generic [ref=f62e24]:
+                        - textbox "Amount to withdraw" [ref=f62e25]:
+                          - /placeholder: Enter amount
+                          - text: "245"
+                        - button "Max" [ref=f62e27] [cursor=pointer]
+                    - paragraph [ref=f62e28]: "Available balance: $245.00"
+                  - generic [ref=f62e29]:
+                    - generic [ref=f62e30]: Wallet address
+                    - textbox "Wallet address" [ref=f62e32]:
+                      - /placeholder: Enter wallet address
+                      - text: 0X1C4212345678948Hf7f8
+              - contentinfo [ref=f62e39]:
+                - button "Continue" [ref=f62e40] [cursor=pointer]
+        - generic [ref=f38e221]:
+          - generic [ref=f38e222]: Differences / issues — Withdraw — amount (filled)
+          - textbox "Differences / issues — Withdraw — amount (filled)" [ref=f38e223]:
+            - /placeholder: e.g. missing the 3D illustration above the heading; heading should wrap to 2 lines not 3
+    - generic [ref=f38e225]:
+      - heading "Withdraw — change currency" [level=2] [ref=f38e226]
+      - paragraph [ref=f38e227]:
+        - text: Figma
+        - code [ref=f38e228]: 1402-7191
+        - text: · build
+        - code [ref=f38e229]: /earning/withdraw/amount?sheet=change
+        - text: · frame height 852px
+      - generic [ref=f38e230]:
+        - generic [ref=f38e231]:
+          - generic [ref=f38e232]: Design
+          - iframe [ref=f38e234]:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic [ref=f63e3]:
+                        - generic [ref=f63e5]:
+                          - main:
+                            - paragraph [ref=f63e6]: Screenreader support is currently disabled. To enable it, use the Accessibility settings from the Options menu.
+                        - text: Give feedback, ask a question, or just leave a note of appreciation. Click anywhere in the file to leave a comment.
+                      - group [ref=f63e12]:
+                        - alert [ref=f63e14]
+                        - alert [ref=f63e16]
+        - generic [ref=f38e235]:
+          - generic [ref=f38e236]: Build
+          - iframe [ref=f38e238]:
+            - generic [ref=f64e3]:
+              - banner [ref=f64e4]:
+                - generic [ref=f64e5]:
+                  - button "Back" [ref=f64e6] [cursor=pointer]
+                  - generic [ref=f64e10]: Withdraw earnings
+              - main [ref=f64e11]:
+                - generic [ref=f64e12]:
+                  - heading "Withdrawal details" [level=2] [ref=f64e13]
+                  - generic [ref=f64e14]:
+                    - generic [ref=f64e16]:
+                      - generic [ref=f64e17]: USDT
+                      - generic [ref=f64e18]: (BEP20)
+                    - button "Change currency" [ref=f64e19] [cursor=pointer]
+                  - generic [ref=f64e21]:
+                    - generic [ref=f64e22]:
+                      - generic [ref=f64e23]: Amount to withdraw
+                      - generic [ref=f64e24]:
+                        - textbox "Amount to withdraw" [ref=f64e25]:
+                          - /placeholder: Enter amount
+                        - button "Max" [ref=f64e27] [cursor=pointer]
+                    - paragraph [ref=f64e28]: "Available balance: $245.00"
+                  - generic [ref=f64e29]:
+                    - generic [ref=f64e30]: Wallet address
+                    - textbox "Wallet address" [ref=f64e32]:
+                      - /placeholder: Enter wallet address
+              - contentinfo [ref=f64e39]:
+                - button "Continue" [disabled] [ref=f64e40]
+              - generic [ref=f64e46]:
+                - generic [ref=f64e47]:
+                  - heading "Change currency" [level=2] [ref=f64e48]
+                  - button "Close" [ref=f64e49] [cursor=pointer]
+                - list [ref=f64e53]:
+                  - listitem [ref=f64e54]:
+                    - generic [ref=f64e55] [cursor=pointer]:
+                      - generic [ref=f64e56]:
+                        - generic [ref=f64e58]:
+                          - generic [ref=f64e59]: USDT
+                          - generic [ref=f64e60]: BEP20
+                        - radio "USDT BEP20 Network fee $1.00 Minimum withdraw $10.00" [checked] [ref=f64e61]
+                      - generic [ref=f64e62]:
+                        - generic [ref=f64e63]:
+                          - generic [ref=f64e64]: Network fee
+                          - generic [ref=f64e65]: $1.00
+                        - generic [ref=f64e66]:
+                          - generic [ref=f64e67]: Minimum withdraw
+                          - generic [ref=f64e68]: $10.00
+                  - listitem [ref=f64e69]:
+                    - generic [ref=f64e70] [cursor=pointer]:
+                      - generic [ref=f64e71]:
+                        - generic [ref=f64e73]:
+                          - generic [ref=f64e74]: USDT
+                          - generic [ref=f64e75]: TRC20
+                        - radio "USDT TRC20 Network fee $1.00 Minimum withdraw $10.00" [ref=f64e76]
+                      - generic [ref=f64e77]:
+                        - generic [ref=f64e78]:
+                          - generic [ref=f64e79]: Network fee
+                          - generic [ref=f64e80]: $1.00
+                        - generic [ref=f64e81]:
+                          - generic [ref=f64e82]: Minimum withdraw
+                          - generic [ref=f64e83]: $10.00
+                  - listitem [ref=f64e84]:
+                    - generic [ref=f64e85] [cursor=pointer]:
+                      - generic [ref=f64e86]:
+                        - generic [ref=f64e88]:
+                          - generic [ref=f64e89]: USDT
+                          - generic [ref=f64e90]: ERC20
+                        - radio "USDT ERC20 Network fee $1.00 Minimum withdraw $10.00" [ref=f64e91]
+                      - generic [ref=f64e92]:
+                        - generic [ref=f64e93]:
+                          - generic [ref=f64e94]: Network fee
+                          - generic [ref=f64e95]: $1.00
+                        - generic [ref=f64e96]:
+                          - generic [ref=f64e97]: Minimum withdraw
+                          - generic [ref=f64e98]: $10.00
+                  - listitem [ref=f64e99]:
+                    - generic [ref=f64e100] [cursor=pointer]:
+                      - generic [ref=f64e101]:
+                        - generic [ref=f64e103]:
+                          - generic [ref=f64e104]: USDC
+                          - generic [ref=f64e105]: BEP20
+                        - radio "USDC BEP20 Network fee $1.00 Minimum withdraw $10.00" [ref=f64e106]
+                      - generic [ref=f64e107]:
+                        - generic [ref=f64e108]:
+                          - generic [ref=f64e109]: Network fee
+                          - generic [ref=f64e110]: $1.00
+                        - generic [ref=f64e111]:
+                          - generic [ref=f64e112]: Minimum withdraw
+                          - generic [ref=f64e113]: $10.00
+                  - listitem [ref=f64e114]:
+                    - generic [ref=f64e115] [cursor=pointer]:
+                      - generic [ref=f64e116]:
+                        - generic [ref=f64e118]:
+                          - generic [ref=f64e119]: USDC
+                          - generic [ref=f64e120]: TRC20
+                        - radio "USDC TRC20 Network fee $1.00 Minimum withdraw $10.00" [ref=f64e121]
+                      - generic [ref=f64e122]:
+                        - generic [ref=f64e123]:
+                          - generic [ref=f64e124]: Network fee
+                          - generic [ref=f64e125]: $1.00
+                        - generic [ref=f64e126]:
+                          - generic [ref=f64e127]: Minimum withdraw
+                          - generic [ref=f64e128]: $10.00
+                  - listitem [ref=f64e129]:
+                    - generic [ref=f64e130] [cursor=pointer]:
+                      - generic [ref=f64e131]:
+                        - generic [ref=f64e133]:
+                          - generic [ref=f64e134]: USDC
+                          - generic [ref=f64e135]: ERC20
+                        - radio "USDC ERC20 Network fee $1.00 Minimum withdraw $10.00" [ref=f64e136]
+                      - generic [ref=f64e137]:
+                        - generic [ref=f64e138]:
+                          - generic [ref=f64e139]: Network fee
+                          - generic [ref=f64e140]: $1.00
+                        - generic [ref=f64e141]:
+                          - generic [ref=f64e142]: Minimum withdraw
+                          - generic [ref=f64e143]: $10.00
+                - button "Choose currency" [ref=f64e144] [cursor=pointer]
+        - generic [ref=f38e239]:
+          - generic [ref=f38e240]: Differences / issues — Withdraw — change currency
+          - textbox "Differences / issues — Withdraw — change currency" [ref=f38e241]:
+            - /placeholder: e.g. missing the 3D illustration above the heading; heading should wrap to 2 lines not 3
+    - generic [ref=f38e243]:
+      - heading "Withdraw — summary" [level=2] [ref=f38e244]
+      - paragraph [ref=f38e245]:
+        - text: Figma
+        - code [ref=f38e246]: 1402-7573
+        - text: · build
+        - code [ref=f38e247]: /earning/withdraw/amount?sheet=summary&amount=245&wallet=0X1C4212345678948Hf7f8
+        - text: · frame height 852px
+      - generic [ref=f38e248]:
+        - generic [ref=f38e249]:
+          - generic [ref=f38e250]: Design
+          - iframe [ref=f38e252]:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic [ref=f65e3]:
+                        - generic [ref=f65e5]:
+                          - main:
+                            - paragraph [ref=f65e6]: Screenreader support is currently disabled. To enable it, use the Accessibility settings from the Options menu.
+                        - text: Give feedback, ask a question, or just leave a note of appreciation. Click anywhere in the file to leave a comment.
+                      - group [ref=f65e12]:
+                        - alert [ref=f65e14]
+                        - alert [ref=f65e16]
+        - generic [ref=f38e253]:
+          - generic [ref=f38e254]: Build
+          - iframe [ref=f38e256]:
+            - generic [ref=f66e3]:
+              - banner [ref=f66e4]:
+                - generic [ref=f66e5]:
+                  - button "Back" [ref=f66e6] [cursor=pointer]
+                  - generic [ref=f66e10]: Withdraw earnings
+              - main [ref=f66e11]:
+                - generic [ref=f66e12]:
+                  - heading "Withdrawal details" [level=2] [ref=f66e13]
+                  - generic [ref=f66e14]:
+                    - generic [ref=f66e16]:
+                      - generic [ref=f66e17]: USDT
+                      - generic [ref=f66e18]: (BEP20)
+                    - button "Change currency" [ref=f66e19] [cursor=pointer]
+                  - generic [ref=f66e21]:
+                    - generic [ref=f66e22]:
+                      - generic [ref=f66e23]: Amount to withdraw
+                      - generic [ref=f66e24]:
+                        - textbox "Amount to withdraw" [ref=f66e25]:
+                          - /placeholder: Enter amount
+                          - text: "245"
+                        - button "Max" [ref=f66e27] [cursor=pointer]
+                    - paragraph [ref=f66e28]: "Available balance: $245.00"
+                  - generic [ref=f66e29]:
+                    - generic [ref=f66e30]: Wallet address
+                    - textbox "Wallet address" [ref=f66e32]:
+                      - /placeholder: Enter wallet address
+                      - text: 0X1C4212345678948Hf7f8
+              - contentinfo [ref=f66e39]:
+                - button "Continue" [ref=f66e40] [cursor=pointer]
+              - generic [ref=f66e46]:
+                - generic [ref=f66e47]:
+                  - heading "Withdrawal summary" [level=2] [ref=f66e48]
+                  - button "Close" [ref=f66e49] [cursor=pointer]
+                - generic [ref=f66e53]:
+                  - generic [ref=f66e54]:
+                    - term [ref=f66e55]: Currency
+                    - definition [ref=f66e56]: USDT (BEP20)
+                  - generic [ref=f66e57]:
+                    - term [ref=f66e58]: Wallet address
+                    - definition [ref=f66e59]: 0X1C42......48Hf7f8
+                  - generic [ref=f66e60]:
+                    - term [ref=f66e61]: Withdrawal amount
+                    - definition [ref=f66e62]: $245.00
+                  - generic [ref=f66e63]:
+                    - generic [ref=f66e64]:
+                      - term [ref=f66e65]: Network fee
+                      - definition [ref=f66e66]: $1.00
+                    - generic [ref=f66e67]:
+                      - term [ref=f66e68]: Final amount
+                      - definition [ref=f66e69]: $244.00
+                - button "Request withdrawal" [ref=f66e70] [cursor=pointer]
+        - generic [ref=f38e257]:
+          - generic [ref=f38e258]: Differences / issues — Withdraw — summary
+          - textbox "Differences / issues — Withdraw — summary" [ref=f38e259]:
+            - /placeholder: e.g. missing the 3D illustration above the heading; heading should wrap to 2 lines not 3
+    - generic [ref=f38e261]:
+      - heading "Withdraw — submitted" [level=2] [ref=f38e262]
+      - paragraph [ref=f38e263]:
+        - text: Figma
+        - code [ref=f38e264]: 1404-7924
+        - text: · build
+        - code [ref=f38e265]: /earning/withdraw/amount?sheet=submitted&amount=245&wallet=0X1C4212345678948Hf7f8
+        - text: · frame height 852px
+      - generic [ref=f38e266]:
+        - generic [ref=f38e267]:
+          - generic [ref=f38e268]: Design
+          - iframe [ref=f38e270]:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic [ref=f67e3]:
+                        - generic [ref=f67e5]:
+                          - main:
+                            - paragraph [ref=f67e6]: Screenreader support is currently disabled. To enable it, use the Accessibility settings from the Options menu.
+                        - text: Give feedback, ask a question, or just leave a note of appreciation. Click anywhere in the file to leave a comment.
+                      - group [ref=f67e12]:
+                        - alert [ref=f67e14]
+                        - alert [ref=f67e16]
+        - generic [ref=f38e271]:
+          - generic [ref=f38e272]: Build
+          - iframe [ref=f38e274]:
+            - generic [ref=f68e3]:
+              - banner [ref=f68e4]:
+                - generic [ref=f68e5]:
+                  - button "Back" [ref=f68e6] [cursor=pointer]
+                  - generic [ref=f68e10]: Withdraw earnings
+              - main [ref=f68e11]:
+                - generic [ref=f68e12]:
+                  - heading "Withdrawal details" [level=2] [ref=f68e13]
+                  - generic [ref=f68e14]:
+                    - generic [ref=f68e16]:
+                      - generic [ref=f68e17]: USDT
+                      - generic [ref=f68e18]: (BEP20)
+                    - button "Change currency" [ref=f68e19] [cursor=pointer]
+                  - generic [ref=f68e21]:
+                    - generic [ref=f68e22]:
+                      - generic [ref=f68e23]: Amount to withdraw
+                      - generic [ref=f68e24]:
+                        - textbox "Amount to withdraw" [ref=f68e25]:
+                          - /placeholder: Enter amount
+                          - text: "245"
+                        - button "Max" [ref=f68e27] [cursor=pointer]
+                    - paragraph [ref=f68e28]: "Available balance: $245.00"
+                  - generic [ref=f68e29]:
+                    - generic [ref=f68e30]: Wallet address
+                    - textbox "Wallet address" [ref=f68e32]:
+                      - /placeholder: Enter wallet address
+                      - text: 0X1C4212345678948Hf7f8
+              - contentinfo [ref=f68e39]:
+                - button "Continue" [ref=f68e40] [cursor=pointer]
+              - generic [ref=f68e46]:
+                - generic [ref=f68e47]:
+                  - heading "Withdrawal summary" [level=2] [ref=f68e48]
+                  - button "Close" [ref=f68e49] [cursor=pointer]
+                - paragraph [ref=f68e57]: Your withdrawal request was successfully submitted and is now under review.
+                - generic [ref=f68e58]:
+                  - generic [ref=f68e59]:
+                    - term [ref=f68e60]: Currency
+                    - definition [ref=f68e61]: USDT (BEP20)
+                  - generic [ref=f68e62]:
+                    - term [ref=f68e63]: Wallet address
+                    - definition [ref=f68e64]: 0X1C42......48Hf7f8
+                  - generic [ref=f68e65]:
+                    - term [ref=f68e66]: Withdrawal amount
+                    - definition [ref=f68e67]: $245.00
+                  - generic [ref=f68e68]:
+                    - generic [ref=f68e69]:
+                      - term [ref=f68e70]: Network fee
+                      - definition [ref=f68e71]: $1.00
+                    - generic [ref=f68e72]:
+                      - term [ref=f68e73]: Final amount
+                      - definition [ref=f68e74]: $244.00
+                - button "Done" [ref=f68e75] [cursor=pointer]
+        - generic [ref=f38e275]:
+          - generic [ref=f38e276]: Differences / issues — Withdraw — submitted
+          - textbox "Differences / issues — Withdraw — submitted" [ref=f38e277]:
+            - /placeholder: e.g. missing the 3D illustration above the heading; heading should wrap to 2 lines not 3

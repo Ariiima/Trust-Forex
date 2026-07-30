@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Trust Forex — design vs build</title>
+<style>
+  :root {
+    --w: 360px;
+    --ink: #212121;
+    --sub: #7c7c7c;
+    --line: #e4e4e4;
+    --bg: #f6f7f9;
+    --blue: #144ccd;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 12px 20px;
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+  }
+  header h1 { margin: 0; font-size: 15px; }
+  header .spacer { flex: 1; }
+  button {
+    font: inherit;
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+  }
+  button.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .hint { color: var(--sub); font-size: 12px; }
+
+  .screen {
+    padding: 24px 20px 32px;
+    border-bottom: 1px solid var(--line);
+  }
+  .screen h2 { margin: 0 0 2px; font-size: 16px; }
+  .screen .meta { margin: 0 0 14px; color: var(--sub); font-size: 12px; }
+  .screen .meta code { background: #fff; padding: 1px 5px; border-radius: 4px; border: 1px solid var(--line); }
+
+  .cols { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+  .pane { display: flex; flex-direction: column; gap: 6px; }
+  .pane > .cap { font-size: 12px; color: var(--sub); }
+  .frame {
+    position: relative;
+    width: var(--w);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .frame iframe { display: block; width: 100%; border: 0; }
+
+  /* overlay mode: stack the build on top of the design at 50% */
+  .screen.overlay .cols { position: relative; }
+  .screen.overlay .pane--build {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: .5;
+    pointer-events: none;
+  }
+  .screen.overlay .pane--build .cap { visibility: hidden; }
+  .screen.overlay .pane--build .frame { mix-blend-mode: difference; background: #000; }
+
+  .notes { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 280px; }
+  .notes label { font-size: 12px; color: var(--sub); }
+  textarea {
+    font: inherit;
+    min-height: 180px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    resize: vertical;
+  }
+  textarea:focus { outline: 2px solid var(--blue); outline-offset: -1px; }
+  .saved { font-size: 11px; color: #48a068; height: 14px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Trust Forex — design vs build</h1>
+  <span class="hint" id="src"></span>
+  <span class="spacer"></span>
+  <button id="toggleOverlay">Overlay mode: off</button>
+  <button class="primary" id="copyAll">Copy all comments</button>
+  <button id="clearAll">Clear</button>
+</header>
+
+<main id="list"></main>
+
+<script>
+/* Left = the Figma frame via prototype embed (renders 1:1, no canvas chrome).
+   Right = the built screen, deep-linked to the same state.
+   Comments autosave to localStorage; "Copy all comments" puts them on the
+   clipboard as markdown so they can be pasted straight back into the chat. */
+
+const FIGMA_KEY = 'wRpTrsYbng1DgKVYjDTgkp';
+
+// Flip to the deployed build if the dev server isn't running.
+const APP = new URLSearchParams(location.search).get('app')
+  || 'https://ariiima.github.io/Trust-Forex';
+
+const SCREENS = [
+  { id: 'splash',        title: 'Splash',                      node: '548-3095',   h: 852,  route: '/splash' },
+  { id: 'skeleton',      title: 'Loading skeleton',            node: '551-3097',   h: 1806, route: '/loading' },
+  { id: 'ref-preview',   title: 'Referral — preview (intro)',  node: '1333-8306',  h: 852,  route: '/referral?state=preview' },
+  { id: 'ref-main',      title: 'Referral — main',             node: '1333-8366',  h: 1266, route: '/referral?state=main' },
+  { id: 'ref-empty',     title: 'Referral — main, empty list', node: '1436-14439', h: 978,  route: '/referral?state=empty' },
+  { id: 'ref-about',     title: 'Referral — About sheet',      node: '1391-5964',  h: 852,  route: '/referral?state=main&sheet=about' },
+  { id: 'earn-main',     title: 'Earning — main',              node: '1367-5166',  h: 1045, route: '/earning' },
+  { id: 'earn-history',  title: 'Earning — Withdraw history',  node: '1404-7767',  h: 852,  route: '/earning?sheet=history' },
+  { id: 'wd-cur',        title: 'Withdraw — pick currency',    node: '1379-6901',  h: 1000, route: '/earning/withdraw' },
+  { id: 'wd-cur-sel',    title: 'Withdraw — currency chosen',  node: '1482-5747',  h: 1000, route: '/earning/withdraw?selected=usdt-bep20' },
+  { id: 'wd-amt',        title: 'Withdraw — amount (empty)',   node: '1402-7310',  h: 852,  route: '/earning/withdraw/amount' },
+  { id: 'wd-amt-filled', title: 'Withdraw — amount (filled)',  node: '1402-6771',  h: 852,  route: '/earning/withdraw/amount?amount=245&wallet=0X1C4212345678948Hf7f8' },
+  { id: 'wd-change',     title: 'Withdraw — change currency',  node: '1402-7191',  h: 852,  route: '/earning/withdraw/amount?sheet=change' },
+  { id: 'wd-summary',    title: 'Withdraw — summary',          node: '1402-7573',  h: 852,  route: '/earning/withdraw/amount?sheet=summary&amount=245&wallet=0X1C4212345678948Hf7f8' },
+  { id: 'wd-submitted',  title: 'Withdraw — submitted',        node: '1404-7924',  h: 852,  route: '/earning/withdraw/amount?sheet=submitted&amount=245&wallet=0X1C4212345678948Hf7f8' },
+];
+
+const figmaSrc = (node) =>
+  `https://embed.figma.com/proto/${FIGMA_KEY}/Trust-Forex?node-id=${node}`
+  + `&scaling=min-zoom&content-scaling=fixed&hide-ui=1&embed-host=share`;
+
+const appSrc = (route) => APP + route;
+const key = (id) => 'tf-review:' + id;
+
+document.getElementById('src').textContent = 'build: ' + APP;
+
+const list = document.getElementById('list');
+
+for (const s of SCREENS) {
+  const sec = document.createElement('section');
+  sec.className = 'screen';
+  sec.innerHTML = `
+    <h2>${s.title}</h2>
+    <p class="meta">
+      Figma <code>${s.node}</code>
+      &nbsp;·&nbsp; build <code>${s.route}</code>
+      &nbsp;·&nbsp; frame height ${s.h}px
+    </p>
+    <div class="cols">
+      <div class="pane pane--design">
+        <span class="cap">Design</span>
+        <div class="frame"><iframe loading="lazy" src="${figmaSrc(s.node)}" height="${s.h}"></iframe></div>
+      </div>
+      <div class="pane pane--build">
+        <span class="cap">Build</span>
+        <div class="frame"><iframe loading="lazy" src="${appSrc(s.route)}" height="${s.h}"></iframe></div>
+      </div>
+      <div class="notes">
+        <label for="n-${s.id}">Differences / issues — ${s.title}</label>
+        <textarea id="n-${s.id}" placeholder="e.g. missing the 3D illustration above the heading; heading should wrap to 2 lines not 3"></textarea>
+        <span class="saved" id="s-${s.id}"></span>
+      </div>
+    </div>`;
+  list.appendChild(sec);
+
+  const ta = sec.querySelector('textarea');
+  const flag = sec.querySelector('.saved');
+  ta.value = localStorage.getItem(key(s.id)) || '';
+  let t;
+  ta.addEventListener('input', () => {
+    localStorage.setItem(key(s.id), ta.value);
+    flag.textContent = 'saved';
+    clearTimeout(t);
+    t = setTimeout(() => (flag.textContent = ''), 1200);
+  });
+}
+
+document.getElementById('toggleOverlay').addEventListener('click', (e) => {
+  const on = !document.body.dataset.overlay;
+  document.body.dataset.overlay = on ? '1' : '';
+  if (!on) delete document.body.dataset.overlay;
+  document.querySelectorAll('.screen').forEach((el) => el.classList.toggle('overlay', on));
+  e.target.textContent = 'Overlay mode: ' + (on ? 'on (difference blend)' : 'off');
+});
+
+document.getElementById('copyAll').addEventListener('click', async (e) => {
+  const out = SCREENS
+    .map((s) => ({ s, v: (localStorage.getItem(key(s.id)) || '').trim() }))
+    .filter((x) => x.v)
+    .map((x) => `### ${x.s.title}  (Figma ${x.s.node} · ${x.s.route})\n${x.v}`)
+    .join('\n\n');
+  const text = out || '(no comments yet)';
+  try {
+    await navigator.clipboard.writeText(text);
+    e.target.textContent = 'Copied!';
+  } catch {
+    e.target.textContent = 'Copy failed — see console';
+    console.log(text);
+  }
+  setTimeout(() => (e.target.textContent = 'Copy all comments'), 1500);
+});
+
+document.getElementById('clearAll').addEventListener('click', () => {
+  if (!confirm('Clear all comments?')) return;
+  SCREENS.forEach((s) => localStorage.removeItem(key(s.id)));
+  document.querySelectorAll('textarea').forEach((t) => (t.value = ''));
+});
+</script>
+</body>
+</html>

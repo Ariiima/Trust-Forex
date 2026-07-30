@@ -15,12 +15,14 @@ import './WithdrawCurrency.css';
  * ------------------------------------------------------------------------- */
 
 export interface WithdrawCurrencyProps {
+  /** Review deep-link: preselect an option. */
+  initialSelected?: string;
   onBack?: () => void;
   onContinue?: (optionId: string) => void;
 }
 
-export function WithdrawCurrency({ onBack, onContinue }: WithdrawCurrencyProps): ReactNode {
-  const [selected, setSelected] = useState<string | null>(null);
+export function WithdrawCurrency({ initialSelected, onBack, onContinue }: WithdrawCurrencyProps): ReactNode {
+  const [selected, setSelected] = useState<string | null>(initialSelected ?? null);
 
   return (
     <div className="scr-wdcur">

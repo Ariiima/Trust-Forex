@@ -10,10 +10,20 @@ import { REFERRALS } from './referral-data';
  * the server (GET/POST /api/me/flags) rather than in localStorage. While the
  * flag is loading we render nothing — a flash of the intro to a returning user
  * is worse than a blank frame for one tick. */
-export function ReferralRoute({ onNavigate }: { onNavigate?: (tab: NavigationTab) => void }): ReactNode {
-  const [seen, setSeen] = useState<boolean | null>(null);
+export function ReferralRoute({
+  onNavigate,
+  force,
+  initialSheet,
+}: {
+  onNavigate?: (tab: NavigationTab) => void;
+  /** Review deep-link: bypass the server flag and pin a state. */
+  force?: 'preview' | 'main' | 'empty';
+  initialSheet?: 'about';
+}): ReactNode {
+  const [seen, setSeen] = useState<boolean | null>(force ? force !== 'preview' : null);
 
   useEffect(() => {
+    if (force) return;
     let live = true;
     getFlags()
       .then((flags) => live && setSeen(flags.includes('referral_preview_seen')))
@@ -21,7 +31,7 @@ export function ReferralRoute({ onNavigate }: { onNavigate?: (tab: NavigationTab
     return () => {
       live = false;
     };
-  }, []);
+  }, [force]);
 
   if (seen === null) return null;
 
@@ -36,7 +46,13 @@ export function ReferralRoute({ onNavigate }: { onNavigate?: (tab: NavigationTab
     );
   }
 
-  return <ReferralMain referrals={REFERRALS} onNavigate={onNavigate} />;
+  return (
+    <ReferralMain
+      referrals={force === 'empty' ? [] : REFERRALS}
+      initialSheet={initialSheet}
+      onNavigate={onNavigate}
+    />
+  );
 }
 
 export default ReferralRoute;

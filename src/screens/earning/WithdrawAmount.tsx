@@ -23,6 +23,10 @@ const money = (n: number) => `$${n.toFixed(2)}`;
 export interface WithdrawAmountProps {
   optionId?: string;
   availableBalance?: number;
+  /** Review deep-links: prefill the form / open a sheet (see design/review). */
+  initialAmount?: string;
+  initialWallet?: string;
+  initialSheet?: 'change' | 'summary' | 'submitted';
   onBack?: () => void;
   onChangeCurrency?: () => void;
   onContinue?: (amount: number, wallet: string) => void;
@@ -31,17 +35,22 @@ export interface WithdrawAmountProps {
 export function WithdrawAmount({
   optionId = 'usdt-bep20',
   availableBalance = 245,
+  initialAmount = '',
+  initialWallet = '',
+  initialSheet,
   onBack,
   onChangeCurrency,
   onContinue,
 }: WithdrawAmountProps): ReactNode {
   const [currencyId, setCurrencyId] = useState(optionId);
-  const [changeOpen, setChangeOpen] = useState(false);
+  const [changeOpen, setChangeOpen] = useState(initialSheet === 'change');
   const option = WITHDRAW_OPTIONS.find((o) => o.id === currencyId) ?? WITHDRAW_OPTIONS[0];
-  const [amount, setAmount] = useState('');
-  const [wallet, setWallet] = useState('');
-  const [touched, setTouched] = useState(false);
-  const [summary, setSummary] = useState<'closed' | 'confirm' | 'submitted'>('closed');
+  const [amount, setAmount] = useState(initialAmount);
+  const [wallet, setWallet] = useState(initialWallet);
+  const [touched, setTouched] = useState(initialAmount !== '');
+  const [summary, setSummary] = useState<'closed' | 'confirm' | 'submitted'>(
+    initialSheet === 'summary' ? 'confirm' : initialSheet === 'submitted' ? 'submitted' : 'closed',
+  );
 
   const numeric = Number(amount);
   const belowMinimum = touched && amount !== '' && (!Number.isFinite(numeric) || numeric < option.minimum);
