@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
-import { Button, Icon, Radio } from '../../design-system/components';
+import { Button, Icon } from '../../design-system/components';
 import { PaymentHeader } from '../payment/PaymentHeader';
 import { WITHDRAW_OPTIONS } from './withdraw-data';
+import { WithdrawOptionCard } from './WithdrawOptionCard';
 import './WithdrawCurrency.css';
 
 /* ---------------------------------------------------------------------------
@@ -12,8 +13,6 @@ import './WithdrawCurrency.css';
  * network, a radio at x=252, then the network-fee / minimum-withdraw row.
  * The CTA stays disabled until something is picked (1482:5747 shows it live).
  * ------------------------------------------------------------------------- */
-
-const money = (n: number) => `$${n.toFixed(2)}`;
 
 export interface WithdrawCurrencyProps {
   onBack?: () => void;
@@ -34,30 +33,7 @@ export function WithdrawCurrency({ onBack, onContinue }: WithdrawCurrencyProps):
           <ul className="scr-wdcur-list">
             {WITHDRAW_OPTIONS.map((o) => (
               <li key={o.id}>
-                <label className={'scr-wdcur-opt' + (selected === o.id ? ' scr-wdcur-opt--on' : '')}>
-                  <span className="scr-wdcur-opt-top">
-                    <span className="scr-wdcur-coin">
-                      <img src={o.icon} alt="" width={32} height={32} />
-                      <img className="scr-wdcur-coin-net" src={o.networkIcon} alt="" width={16} height={16} />
-                    </span>
-                    <span className="scr-wdcur-opt-name">
-                      <span className="scr-wdcur-opt-symbol type-text-sm-semibold">{o.symbol}</span>
-                      <span className="scr-wdcur-opt-network type-text-xs-10">{o.network}</span>
-                    </span>
-                    <Radio checked={selected === o.id} onChange={() => setSelected(o.id)} />
-                  </span>
-
-                  <span className="scr-wdcur-opt-meta">
-                    <span className="scr-wdcur-meta-cell">
-                      <span className="scr-wdcur-meta-label type-text-xs-10">Network fee</span>
-                      <span className="scr-wdcur-meta-value type-text-xs">{money(o.networkFee)}</span>
-                    </span>
-                    <span className="scr-wdcur-meta-cell">
-                      <span className="scr-wdcur-meta-label type-text-xs-10">Minimum withdraw</span>
-                      <span className="scr-wdcur-meta-value type-text-xs">{money(o.minimum)}</span>
-                    </span>
-                  </span>
-                </label>
+                <WithdrawOptionCard option={o} selected={selected === o.id} onSelect={() => setSelected(o.id)} />
               </li>
             ))}
           </ul>

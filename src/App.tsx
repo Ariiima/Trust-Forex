@@ -78,7 +78,7 @@ function AppRoutes() {
       <Route path="/referral" element={<ReferralRoute onNavigate={(tab) => TAB_ROUTES[tab] && nav(TAB_ROUTES[tab])} />} />
       <Route path="/earning" element={<EarningMain onNavigate={(tab) => TAB_ROUTES[tab] && nav(TAB_ROUTES[tab])} onWithdraw={() => nav('/earning/withdraw')} />} />
       <Route path="/earning/withdraw" element={<WithdrawCurrency onBack={() => nav(-1)} onContinue={() => nav('/earning/withdraw/amount')} />} />
-      <Route path="/earning/withdraw/amount" element={<WithdrawAmount onBack={() => nav(-1)} onChangeCurrency={() => nav(-1)} />} />
+      <Route path="/earning/withdraw/amount" element={<WithdrawAmount onBack={() => nav(-1)} />} />
       <Route path="/cashback" element={<CashbackRoute />} />
       <Route path="/cashback/history" element={<CashbackHistory onBack={() => nav(-1)} />} />
       <Route path="/cashback/broker/:brokerId" element={<BrokerRoute />} />

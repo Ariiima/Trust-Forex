@@ -1,0 +1,87 @@
+/* Selectable currency+network card (1379:6901 / 1402:7191). 112 tall: a
+   40-tall top row inset 12/10, then the fee + minimum row. */
+
+/* ---- one option ------------------------------------------------------- */
+.scr-wdopt {
+  display: flex;
+  flex-direction: column;
+  padding: 10px var(--spacing-12);
+  border-radius: var(--radius-medium);
+  border: 1px solid var(--stroke-colors-default);
+  cursor: pointer;
+}
+
+.scr-wdopt--on {
+  border-color: var(--stroke-colors-primary);
+}
+
+.scr-wdopt-top {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  height: 40px;
+}
+
+/* 32px coin with the network badge overlapping its bottom-right */
+.scr-wdopt-coin {
+  position: relative;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+}
+
+.scr-wdopt-coin img {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-infinity);
+}
+
+/* Scoped past `.scr-wdopt-coin img` — that selector is more specific than a
+   bare class and would otherwise stretch the badge to the full 32px coin. */
+.scr-wdopt-coin .scr-wdopt-coin-net {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-infinity);
+  border: 1.5px solid var(--bg-colors-container-p);
+}
+
+.scr-wdopt-name {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.scr-wdopt-symbol {
+  color: var(--typography-colors-main-text);
+}
+
+.scr-wdopt-network {
+  color: var(--typography-colors-sub-text);
+}
+
+/* ---- fee / minimum row ------------------------------------------------ */
+.scr-wdopt-meta {
+  display: flex;
+  gap: 32px;
+  margin-top: var(--spacing-12);
+  padding-left: var(--spacing-16);
+}
+
+.scr-wdopt-meta-cell {
+  display: flex;
+  flex-direction: column;
+  width: 112px;
+}
+
+.scr-wdopt-meta-label {
+  color: var(--typography-colors-sub-text);
+}
+
+.scr-wdopt-meta-value {
+  color: var(--typography-colors-main-text);
+}
+

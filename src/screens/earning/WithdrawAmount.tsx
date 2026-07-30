@@ -4,6 +4,7 @@ import { Button, Icon, Input } from '../../design-system/components';
 import { PaymentHeader } from '../payment/PaymentHeader';
 import { WITHDRAW_OPTIONS } from './withdraw-data';
 import { WithdrawSummarySheet } from './WithdrawSummarySheet';
+import { ChangeCurrencySheet } from './ChangeCurrencySheet';
 import './WithdrawAmount.css';
 
 /* ---------------------------------------------------------------------------
@@ -34,7 +35,9 @@ export function WithdrawAmount({
   onChangeCurrency,
   onContinue,
 }: WithdrawAmountProps): ReactNode {
-  const option = WITHDRAW_OPTIONS.find((o) => o.id === optionId) ?? WITHDRAW_OPTIONS[0];
+  const [currencyId, setCurrencyId] = useState(optionId);
+  const [changeOpen, setChangeOpen] = useState(false);
+  const option = WITHDRAW_OPTIONS.find((o) => o.id === currencyId) ?? WITHDRAW_OPTIONS[0];
   const [amount, setAmount] = useState('');
   const [wallet, setWallet] = useState('');
   const [touched, setTouched] = useState(false);
@@ -67,7 +70,7 @@ export function WithdrawAmount({
               <span className="scr-wdamt-currency-symbol type-text-sm-semibold">{option.symbol}</span>
               <span className="scr-wdamt-currency-network type-text-xs-10">({option.network})</span>
             </span>
-            <Button variant="outline" size="xsmall" className="scr-wdamt-change" onClick={onChangeCurrency}>
+            <Button variant="outline" size="xsmall" className="scr-wdamt-change" onClick={onChangeCurrency ?? (() => setChangeOpen(true))}>
               Change currency
             </Button>
           </div>
@@ -123,6 +126,16 @@ export function WithdrawAmount({
           Continue
         </Button>
       </footer>
+
+      <ChangeCurrencySheet
+        open={changeOpen}
+        selectedId={currencyId}
+        onClose={() => setChangeOpen(false)}
+        onChoose={(id) => {
+          setCurrencyId(id);
+          setChangeOpen(false);
+        }}
+      />
 
       <WithdrawSummarySheet
         open={summary !== 'closed'}
