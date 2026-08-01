@@ -26,7 +26,7 @@ export function WithdrawOptionCard({
           <img className="scr-wdopt-coin-net" src={option.networkIcon} alt="" width={16} height={16} />
         </span>
         <span className="scr-wdopt-name">
-          <span className="scr-wdopt-symbol type-text-sm-semibold">{option.symbol}</span>
+          <span className="scr-wdopt-symbol type-text-xs">{option.symbol}</span>
           <span className="scr-wdopt-network type-text-xs-10">{option.network}</span>
         </span>
         <Radio checked={selected} onChange={onSelect} />

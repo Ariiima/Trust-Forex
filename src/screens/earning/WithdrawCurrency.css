@@ -1,6 +1,8 @@
 /* =====================================================================
-   Withdraw earnings — step 1 (1379:6901). Card 328x816 @16,92 with 16
-   padding; options 296x112 on a 12 gap, inner rows inset 12.
+   Withdraw earnings — step 1 (1379:6901). The frame's top 76px is Telegram
+   chrome the app never draws, so the 328x816 card at frame 16,92 sits at
+   16,16 on screen: 16 padding, options 296 wide on a 12 gap, inner rows
+   inset 12. Sticky 44px CTA 16 off the bottom.
    ===================================================================== */
 
 .scr-wdcur {
@@ -35,6 +37,17 @@
   list-style: none;
 }
 
+/* 1379:6901 draws the last four options 116 tall against 112 for the first
+   two — the extra 4px all sits above the fee/minimum row. Measured off the
+   frame (tops 144/268/392/520/648/776, bottoms 255/379/507/635/763/891). */
+.scr-wdcur-list > li:nth-child(n + 3) .scr-wdopt {
+  height: 116px;
+}
+
+.scr-wdcur-list > li:nth-child(n + 3) .scr-wdopt-meta {
+  margin-top: 16px;
+}
+
 /* ---- sticky CTA ------------------------------------------------------- */
 .scr-wdcur-footer {
   position: sticky;
@@ -42,4 +55,11 @@
   z-index: 10;
   padding: 0 var(--spacing-16) var(--spacing-16);
   background: var(--bg-colors-container-s);
+}
+
+/* The frame sets 4px between the label and the trailing chevron; the DS
+   button defaults to 8 and centres the pair, so the label lands 2px left.
+   Scoped override until the DS component is corrected. */
+.scr-wdcur-footer .ds-button {
+  gap: var(--spacing-4);
 }

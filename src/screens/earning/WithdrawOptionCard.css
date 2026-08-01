@@ -1,11 +1,16 @@
 /* Selectable currency+network card (1379:6901 / 1402:7191). 112 tall: a
-   40-tall top row inset 12/10, then the fee + minimum row. */
+   40-tall top row inset 12/10, then the fee + minimum row.
+
+   Figma measures padding from the frame edge and paints the 1px stroke on
+   top of it, so under border-box the CSS padding is the Figma value minus
+   the border (12 -> 11, 10 -> 9) to land content on the same pixel. */
 
 /* ---- one option ------------------------------------------------------- */
 .scr-wdopt {
   display: flex;
   flex-direction: column;
-  padding: 10px var(--spacing-12);
+  height: 112px;
+  padding: 9px 11px;
   border-radius: var(--radius-medium);
   border: 1px solid var(--stroke-colors-default);
   cursor: pointer;
@@ -37,7 +42,8 @@
 }
 
 /* Scoped past `.scr-wdopt-coin img` — that selector is more specific than a
-   bare class and would otherwise stretch the badge to the full 32px coin. */
+   bare class and would otherwise stretch the badge to the full 32px coin.
+   The frame draws the badge flat on the coin: no white keyline. */
 .scr-wdopt-coin .scr-wdopt-coin-net {
   position: absolute;
   right: -4px;
@@ -45,7 +51,6 @@
   width: 16px;
   height: 16px;
   border-radius: var(--radius-infinity);
-  border: 1.5px solid var(--bg-colors-container-p);
 }
 
 .scr-wdopt-name {
@@ -55,26 +60,29 @@
   min-width: 0;
 }
 
+/* 12/20 + 10/16 — the frame stacks the two lines tighter than the stock
+   type scale (which would be 12/24 + 10/20 and push them 5px apart). */
 .scr-wdopt-symbol {
+  line-height: 20px;
   color: var(--typography-colors-main-text);
 }
 
 .scr-wdopt-network {
+  line-height: 16px;
   color: var(--typography-colors-sub-text);
 }
 
 /* ---- fee / minimum row ------------------------------------------------ */
 .scr-wdopt-meta {
   display: flex;
-  gap: 32px;
-  margin-top: var(--spacing-12);
+  margin-top: 12px;
   padding-left: var(--spacing-16);
 }
 
 .scr-wdopt-meta-cell {
   display: flex;
   flex-direction: column;
-  width: 112px;
+  width: 128px;
 }
 
 .scr-wdopt-meta-label {
@@ -82,6 +90,6 @@
 }
 
 .scr-wdopt-meta-value {
+  line-height: 16px;
   color: var(--typography-colors-main-text);
 }
-
