@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Button, BottomSheet, Icon, Input, ProgressBar, Switch } from '../../design-system/components';
-import { PlansHeader } from './PlansHeader';
 import { PlanCard } from './PlanCard';
 import { OrderSummarySheet } from './OrderSummarySheet';
 import { Glyph } from './icons';
@@ -21,7 +20,14 @@ export interface CheckoutProps {
   onReviewOrder?: (summary: { planId: PlanId; total: number }) => void;
 }
 
-export default function Checkout({ initialPlan = 'silver', onBack, onReviewOrder }: CheckoutProps): ReactNode {
+// `onBack` is accepted for API compatibility (App.tsx wires it up) but
+// unused here: this screen renders no in-app header. Figma 552:3115 shows
+// only one back/title bar in the top 76px, which is the "Telegram header"
+// chrome instance, not app content — pixel-verified against the reference
+// (with no header, the progress bar lands at build y=16, matching ref
+// y=92 minus the 76px chrome exactly). A PlansHeader call previously
+// duplicated that chrome, pushing every element down 44px.
+export default function Checkout({ initialPlan = 'silver', onReviewOrder }: CheckoutProps): ReactNode {
   const [planId, setPlanId] = useState<PlanId>(initialPlan);
   const [useBalance, setUseBalance] = useState(false);
   const [discountApplied, setDiscountApplied] = useState(false);
@@ -63,8 +69,6 @@ export default function Checkout({ initialPlan = 'silver', onBack, onReviewOrder
 
   return (
     <div className="scr-checkout">
-      <PlansHeader title="Checkout" onBack={onBack} />
-
       <main className="scr-checkout-body">
         <ProgressBar current="order-created" />
 
@@ -121,13 +125,20 @@ export default function Checkout({ initialPlan = 'silver', onBack, onReviewOrder
             // Ceiling: breaks if Input ever portals its <input>; upgrade path
             // is an "Apply" action in Input's rightSlot.
             <div
+              className="scr-checkout-discount"
               onBlur={applyDiscount}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') applyDiscount();
               }}
             >
+              <span className="scr-checkout-discount-label">Discount code</span>
+              {/* Input's own `label` prop is skipped — this screen's field
+                  uses the filled 44px variant (see Checkout.css), which
+                  doesn't match the DS Input's default 48px outlined field
+                  or its 12/24 label; the label above is rendered locally at
+                  14/28 to match the chip-applied state instead. */}
               <Input
-                label="Discount code"
+                className="scr-checkout-discount-field"
                 value={discountInput}
                 onChange={(v) => {
                   setDiscountInput(v);
@@ -138,15 +149,14 @@ export default function Checkout({ initialPlan = 'silver', onBack, onReviewOrder
               />
             </div>
           )}
-
-          <div className="scr-checkout-total">
-            <span className="scr-checkout-totallabel">Total payable</span>
-            <span className="scr-checkout-totalvalue">$ {total.toFixed(2)}</span>
-          </div>
         </section>
       </main>
 
       <footer className="scr-checkout-footer">
+        <div className="scr-checkout-total">
+          <span className="scr-checkout-totallabel">Total payable</span>
+          <span className="scr-checkout-totalvalue">$ {total.toFixed(2)}</span>
+        </div>
         <Button
           variant="primary"
           size="medium"

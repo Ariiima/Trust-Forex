@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
-import { PlansHeader } from './PlansHeader';
 import { PlanCard } from './PlanCard';
 import { PLANS, type PlanId } from './plans-data';
 import './ChoosePlan.css';
+import { useBackButton } from '../../telegram';
 
 /**
  * Choose your plan — route `/plans`. Figma node 552:3126.
@@ -17,9 +17,10 @@ export interface ChoosePlanProps {
 }
 
 export default function ChoosePlan({ onBack, onContinue }: ChoosePlanProps): ReactNode {
+  // No in-app header: the 44px bar in the frame is Telegram's own chrome.
+  useBackButton(onBack);
   return (
     <div className="scr-choose">
-      <PlansHeader title="Choose your plan" onBack={onBack} />
 
       <main className="scr-choose-body">
         <p className="scr-choose-subtitle">

@@ -81,7 +81,10 @@
   align-items: center;
   justify-content: center;
   height: 32px;
-  padding: 0 var(--spacing-8);
+  /* 18px measured directly off the ref bitmap (button spans x213–328,
+     114.5px, against a 74px text run) — close to spacing-20 minus the 1px
+     border the frame's stroke paints over, but empirically 18 not 19. */
+  padding: 0 18px;
   border-radius: var(--radius-small);
   border: 1px solid var(--stroke-colors-default);
   background: var(--bg-colors-container-p);
@@ -137,6 +140,29 @@
   color: var(--typography-colors-main-text);
 }
 
+/* Discount code field — DS Input override. The DS component ships a 48px
+   outlined field with a 12/24 label + 14/28 control (Input.css); this frame
+   uses a 44px *filled* field (bg = page background, no border, r8) with the
+   label/control sizes swapped: 14/28 label (rendered locally above, not via
+   Input's own `label` prop) and 12/24 control text. Measured off the ref
+   bitmap: field 296×44 (fills the card's content width exactly), radius
+   fits r≈7.5 (the DS default --radius-small token), no border. Belongs in
+   Input.css as a `variant="filled"` prop if another screen needs it too. */
+.scr-checkout-discount-field.ds-input .ds-input-field {
+  height: 44px;
+  padding: 0 var(--spacing-16);
+  border: none;
+  border-radius: var(--radius-small);
+  background: var(--bg-colors-container-s);
+}
+.scr-checkout-discount-field.ds-input.ds-input-error .ds-input-field {
+  border: 1px solid var(--state-colors-eror);
+}
+.scr-checkout-discount-field.ds-input .ds-input-control {
+  font-size: 12px;
+  line-height: 24px;
+}
+
 /* Discount chip (748:3736/1206:4219 underlay XML: 296×44, inner row inset
    (16,10); border style still not in XML — kept 1px solid grey per PNG). */
 .scr-checkout-chip {
@@ -174,12 +200,20 @@
   color: var(--base-color-black);
 }
 
-/* ---- total payable ------------------------------------------------------ */
+/* ---- total payable -------------------------------------------------------
+   A separate card, not part of .scr-checkout-card: it lives in the sticky
+   footer, pinned just above the CTA. Measured from the ref: 52px tall,
+   16px horizontal / 8px vertical padding, r12 (fitted circular corner ~11px
+   on the reference bitmap; 12 is the nearest token and the closest visual
+   match), same 16px side margins as the content card above it. */
 .scr-checkout-total {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 32px; /* 16px card gap + 32px = 48px, matching Figma's gap */
+  padding: var(--spacing-8) var(--spacing-16);
+  border-radius: var(--radius-medium);
+  background: var(--bg-colors-container-p);
 }
 
 .scr-checkout-totallabel {
@@ -196,11 +230,19 @@
   color: var(--typography-colors-main-text);
 }
 
-/* ---- sticky footer -------------------------------------------------------- */
+/* ---- sticky footer --------------------------------------------------------
+   Contains the total-payable card + CTA, both pinned to the bottom of the
+   frame regardless of content length above (measured gap total-card→button
+   = 12px on the ref; card+gap+button+bottom-pad = 52+12+44+16 = 124px,
+   which matches the 776px viewport exactly when the card top sits at
+   y=652 = ref y728 − 76). */
 .scr-checkout-footer {
   position: sticky;
   bottom: 0;
   z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
   padding: 0 var(--spacing-16) var(--spacing-16);
   background: var(--bg-colors-container-s);
 }
