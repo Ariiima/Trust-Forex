@@ -49,7 +49,9 @@
 .scr-receive-card {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-16);
+  /* 24, not 16: the frame's banner ends on 155 and the tab row starts on 180.
+     The card only ever has these two children, so this is that one gap. */
+  gap: var(--spacing-24);
   padding: var(--spacing-16) var(--spacing-16) 24px; /* bottom pad is 24, not 16 — 1102:10519 */
   border-radius: 16px; /* no named radius token matches (scale jumps 12 -> 20) */
   background: var(--bg-colors-container-p);
@@ -73,13 +75,14 @@
 .scr-receive-warning-text {
   flex: 1 1 auto;
   margin: 0;
-  font-size: 12px;
-  line-height: 24px;
+  /* 10/20, not 12/24 with negative tracking. The frame's first line inks 224
+     wide; the build at 12px inks 238 even after -0.7px per glyph, and would be
+     ~270 without it — 224/270 is exactly 10/12. That also makes the banner 60
+     tall (2 x 20 + 10 + 10) against the frame's 96-155, and the two-line wrap
+     falls out naturally. */
+  font-size: 10px;
+  line-height: 20px;
   font-weight: var(--font-weight-regular);
-  /* Sora's browser metrics run ~10% wider per glyph than the Figma export at
-     this size, tipping the line wrap from 2 lines to 3 right at "exact" —
-     nudge tracking so the wrap matches the reference (1206:4618). */
-  letter-spacing: -0.7px;
   color: var(--typography-colors-main-text);
 }
 
