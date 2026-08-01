@@ -3,7 +3,7 @@ import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { Button, BottomSheet, Icon, ProgressBar } from '../../design-system/components';
 import { Glyph } from './Glyph';
-import { PaymentHeader } from './PaymentHeader';
+import { useBackButton } from '../../telegram';
 import qrPlaceholder from '../../assets/qr-placeholder.png';
 import wallet1 from '../../assets/payment/wallet-connect-1.png';
 import wallet2 from '../../assets/payment/wallet-connect-2.png';
@@ -79,6 +79,7 @@ export default function PaymentReceive({
   onPayRemaining,
   onDone,
 }: PaymentReceiveProps): ReactNode {
+  useBackButton(onBack);
   const [tab, setTab] = useState<QrTab>(initialTab);
   const [modal, setModal] = useState<ModalKind>(initialModal);
   const [copiedField, setCopiedField] = useState<CopyField>(null);
@@ -106,8 +107,6 @@ export default function PaymentReceive({
 
   return (
     <div className="scr-receive">
-      <PaymentHeader onBack={onBack} />
-
       <main className="scr-receive-body">
         <ProgressBar current="make-payment" />
 

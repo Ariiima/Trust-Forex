@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { Button, BottomSheet, Icon, ProgressBar } from '../../design-system/components';
+import { useBackButton } from '../../telegram';
 import { Glyph } from './Glyph';
-import { PaymentHeader } from './PaymentHeader';
 import { SelectRow } from './SelectRow';
 import { CURRENCIES } from './currencyData';
 import { NETWORKS } from './networkData';
@@ -36,6 +36,8 @@ export default function PaymentNetwork({
   onCurrencyChange,
   onContinue,
 }: PaymentNetworkProps): ReactNode {
+  // No in-app header: Telegram draws the bar, so back lives on its BackButton.
+  useBackButton(onBack);
   const [currencyId, setCurrencyId] = useState(initialCurrencyId);
   const [selected, setSelected] = useState(initialNetworkId);
   const [tooltipOpen, setTooltipOpen] = useState(false);
@@ -57,8 +59,6 @@ export default function PaymentNetwork({
 
   return (
     <div className="scr-payment-network">
-      <PaymentHeader onBack={onBack} />
-
       <main className="scr-payment-network-body">
         <ProgressBar current="payment-details" />
 
