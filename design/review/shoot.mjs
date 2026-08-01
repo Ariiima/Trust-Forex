@@ -10,6 +10,9 @@ const browser = await chromium.launch();
 const page = await browser.newPage({
   viewport: { width: Number(w), height: Number(h) },
   deviceScaleFactor: 1, // must stay 1: the Figma reference is 1 CSS px per px
+  // The Figma reference is a still frame, so freeze anything animated (the
+  // loading skeleton's shimmer) or the diff is non-deterministic.
+  reducedMotion: 'reduce',
 });
 await page.goto(url, { waitUntil: 'networkidle' });
 await page.waitForTimeout(Number(wait));
