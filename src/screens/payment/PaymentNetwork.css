@@ -51,7 +51,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-12);
-  padding: var(--spacing-8) var(--spacing-16) var(--spacing-8) var(--spacing-12);
+  padding: var(--spacing-8) 15px var(--spacing-8) 11px; /* 16/12 less the 1px inside stroke */
   border: 1px solid var(--stroke-colors-default);
   border-radius: var(--radius-medium);
 }
@@ -75,14 +75,14 @@
 
 .scr-payment-network-selected-symbol {
   font-size: 12px;
-  line-height: 24px;
+  line-height: 20px;
   font-weight: var(--font-weight-regular);
   color: var(--typography-colors-main-text);
 }
 
 .scr-payment-network-selected-name {
   font-size: 10px;
-  line-height: 20px;
+  line-height: 18px;
   font-weight: var(--font-weight-regular);
   color: var(--typography-colors-sub-text);
 }

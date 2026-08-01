@@ -5,17 +5,21 @@
   gap: var(--spacing-12);
   width: 100%;
   box-sizing: border-box;
-  padding: var(--spacing-8) var(--spacing-12);
+  /* Figma draws the 1px stroke INSIDE the 12px padding box, so the CSS
+     border must eat 1px of it: 11 + 1px border = the frame's 12. */
+  padding: var(--spacing-8) 11px;
   border: 1px solid var(--stroke-colors-default);
   border-radius: var(--radius-medium);
   background: var(--bg-colors-container-p);
   text-align: left;
 }
 
-/* Single-line (network) rows are 52px tall with 10px vertical padding vs
-   the two-line (currency) rows' 56px/8px — 1108:11980 vs 779:2365. */
+/* Single-line (network) rows are 52px tall — 1 border + 9 pad + the 32px
+   icon + 9 pad + 1 border (measured: row 244-295, icon ink 254-285 in the
+   1:1 frame). The two-line (currency) rows are 56 with 8px pad, driven by
+   their 38-tall label block. 1108:11980 vs 779:2365. */
 .scr-select-row-single {
-  padding: 10px var(--spacing-12);
+  padding: 9px 11px;
 }
 
 .scr-select-row-selected {
