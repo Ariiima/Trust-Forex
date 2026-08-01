@@ -3,10 +3,49 @@ import type { ReactNode } from 'react';
 import { Button, CashbackOverview, BrokerState, NavigationBar, Icon } from '../../design-system/components';
 import type { NavigationTab } from '../../design-system/components';
 import { Glyph } from './Glyph';
-import { BROKERS, BROKER_INFO, type BrokerId } from './brokers-data';
-import goldBadgeUrl from '../../assets/brokers/gold-badge.png';
+import { BROKERS, BROKER_INFO, OVERVIEW, type BrokerId, type BrokerBanner } from './brokers-data';
 import giftUrl from '../../assets/brokers/cashback-gift.png';
 import './Cashback.css';
+
+/* Status-banner icon per Figma "Notification" variant (1316:8158). `pending`
+ * ("in progress") has no icon in the DS Icon set, so it's a small local arc —
+ * static, not spinning (the reference is a still frame; shoot.mjs freezes
+ * motion anyway, so an animated one would drift from whatever angle the
+ * capture lands on). */
+function PendingGlyph(): ReactNode {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+      <path d="M12 3a9 9 0 1 0 9 9" />
+    </svg>
+  );
+}
+
+const BANNER_ICON: Record<BrokerBanner['variant'], ReactNode> = {
+  error: <Icon name="close" size={16} strokeWidth={2.5} />,
+  success: <Icon name="check" size={16} strokeWidth={1.8} />,
+  pending: <PendingGlyph />,
+};
+
+/* Standard-tier hero badge (982:1427, "State=Standard user"). No raster
+ * export exists for it in this repo (only the Gold badge was ever
+ * exported — see report), so it's reconstructed as an inline SVG: an
+ * inset hexagon "face" (leaving the outer ds-cashback-badge-standard
+ * gradient showing as a bevel ring) plus a person glyph, both colours
+ * sampled from the reference (face #e2a06c → #7a4a28, glyph #f2c896). */
+const STANDARD_BADGE: ReactNode = (
+  <svg width={56} height={56} viewBox="0 0 56 56" aria-hidden="true">
+    <defs>
+      <linearGradient id="scr-cashback-std-badge-face" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stopColor="#f0b47e" />
+        <stop offset="0.45" stopColor="#976232" />
+        <stop offset="1" stopColor="#6b3f22" />
+      </linearGradient>
+    </defs>
+    <polygon points="28,4.2 48.4,16.1 48.4,39.9 28,51.8 7.6,39.9 7.6,16.1" fill="url(#scr-cashback-std-badge-face)" />
+    <circle cx="28" cy="24" r="6" fill="#f2c896" />
+    <path d="M17 40a11 11 0 0 1 22 0z" fill="#f2c896" />
+  </svg>
+);
 
 /* ---------------------------------------------------------------------------
  * Cashback hub — route `/cashback` (bottom-nav tab 2).
@@ -70,8 +109,21 @@ export default function Cashback({
   return (
     <div className="scr-cashback">
       <main className="scr-cashback-body">
+        {/* 850:2053's own Cashback Overview instance is the "State=Standard
+            user" variant (982:1427) — $0 balance, Standard/Base access,
+            10% rate, no delta chip, stacked full-width actions. Nothing on
+            this screen is wired to real account data yet (brokers-data.ts
+            is static too), so — like every other value on this card —
+            this is the literal default for the dashboard frame, not a
+            reviewer-only edge case; it's set directly rather than gated
+            behind a query param. The DS CashbackOverview component has no
+            props for "no delta" / "no current-state label row" / stacked
+            actions, so those three are scoped CSS overrides below (see
+            report) rather than edits to design-system/CashbackOverview.*. */}
         <CashbackOverview
-          badge={<img src={goldBadgeUrl} alt="" width={56} height={56} />}
+          className="scr-cashback-hero"
+          {...OVERVIEW}
+          badge={STANDARD_BADGE}
           onCashbackHistory={onCashbackHistory}
           onUpgrade={onUpgradePlan}
         />
@@ -100,18 +152,18 @@ export default function Cashback({
 
         <section className="scr-cashback-brokers">
           <div className="scr-cashback-brokers-head">
-            <span className="scr-cashback-brokers-title">our brokers</span>
+            <span className="scr-cashback-brokers-title">Partner brokers</span>
             <span className="scr-cashback-brokers-info">
               <Icon name="info" size={24} strokeWidth={1.8} />
             </span>
           </div>
 
           <div className="scr-cashback-brokers-list">
-            {BROKERS.map((broker) => {
+            {BROKERS.map((broker, i) => {
               const info = BROKER_INFO[broker.id];
               return (
                 <button
-                  key={broker.id}
+                  key={broker.key ?? `${broker.id}-${i}`}
                   type="button"
                   className="scr-cashback-broker"
                   onClick={() => onOpenBroker?.(broker.id)}
@@ -127,18 +179,35 @@ export default function Cashback({
                     </span>
                   </span>
 
-                  {broker.state === 'cashback-active' ? (
-                    <span className="scr-cashback-broker-confirmed">
-                      <Icon name="check" size={16} strokeWidth={1.8} />
-                      deposit confirmed
-                    </span>
-                  ) : null}
+                  {/* Each broker gets 1-2 status banners (Figma "Notification",
+                      1316:8158) above its BrokerState panel — not just the
+                      single cashback-active case the previous build special-cased. */}
+                  <span className="scr-cashback-broker-content">
+                    {broker.banners?.map((banner, bi) => (
+                      <span
+                        key={bi}
+                        className={`scr-cashback-broker-banner scr-cashback-broker-banner--${banner.variant}`}
+                      >
+                        {BANNER_ICON[banner.variant]}
+                        {banner.title}
+                      </span>
+                    ))}
 
-                  <BrokerState state={broker.state} value={broker.totalEarned} />
+                    <BrokerState
+                      state={broker.state}
+                      label={broker.stateLabel}
+                      caption={broker.stateCaption}
+                      value={broker.totalEarned}
+                    />
+                  </span>
                 </button>
               );
             })}
           </div>
+
+          <p className="scr-cashback-brokers-note">
+            This list includes every verified broker available in your region.
+          </p>
         </section>
       </main>
 

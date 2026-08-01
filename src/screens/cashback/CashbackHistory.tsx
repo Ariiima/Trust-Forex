@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { CashbackOverview } from '../../design-system/components';
 import { CashbackHistorySheet } from './CashbackHistorySheet';
+import { OVERVIEW } from './brokers-data';
 import './CashbackHistory.css';
 
 /**
@@ -22,7 +23,7 @@ export default function CashbackHistory({ onBack }: CashbackHistoryProps): React
   return (
     <div className="scr-history">
       <div className="scr-history-bg" aria-hidden="true">
-        <CashbackOverview />
+        <CashbackOverview {...OVERVIEW} />
       </div>
 
       <CashbackHistorySheet open onClose={() => onBack?.()} />

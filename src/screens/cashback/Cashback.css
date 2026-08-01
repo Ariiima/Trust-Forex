@@ -124,7 +124,88 @@
   background: var(--base-color-white);
 }
 
-/* ---- "our brokers" card ----------------------------------------------- */
+/* ---- Hero card (CashbackOverview) overrides ---------------------------
+   850:2053's Cashback Overview instance is the "State=Standard user"
+   variant: no delta chip, no "current state / cashback rate" label row
+   above the plan panel, and full-width STACKED actions (history above
+   upgrade) instead of the DS component's side-by-side row. None of the
+   three are exposed as props on design-system/CashbackOverview — scoped
+   here instead of editing that file (out of scope for this screen; see
+   report for the suggested prop additions). ---------------------------- */
+.scr-cashback-hero .ds-cashback-delta {
+  display: none;
+}
+.scr-cashback-hero .ds-cashback-divider {
+  /* The Standard-user variant has no rule between the summary and the plan
+     panel. Scanning the frame for the divider's own colour (24% white over
+     #144CCD = (76,119,217)) finds it nowhere in the card — only the two button
+     borders lower down. */
+  display: none;
+}
+.scr-cashback-hero .ds-cashback-top {
+  /* 24 with the divider gone: the summary block ends on 107 and the panel's
+     top edge is on 132. */
+  gap: var(--spacing-24);
+}
+.scr-cashback-hero .ds-cashback-current > .ds-cashback-row:first-child {
+  display: none;
+}
+/* "Cashback rate" isn't a header label in the reference — it's a caption
+   under the rate value, mirroring "Base access" under "Standard" on the
+   left (measured: both captions' ink sits at the same y96-103 inside the
+   panel). The DS rate span has no caption slot, so it's added as static
+   ::after content (this label is fixed copy, not data) rather than piping
+   a ReactNode through the `rate` prop, which is typed as `string`. */
+.scr-cashback-hero .ds-cashback-rate {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.scr-cashback-hero .ds-cashback-rate::after {
+  content: 'Cashback rate';
+  margin-top: -12px; /* 44 (value line-height) + 24 (caption) - 12 = 56, matching the plan-text column's own height */
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+  color: rgba(255, 255, 255, 0.72);
+}
+.scr-cashback-hero .ds-cashback-current {
+  /* was 10px 16px 16px (extra top clearance for the now-hidden label row).
+     Ref panel is 80px tall (measured: top border y132, bottom y212 in the
+     cropped reference) with 56px of content (badge height) => 12px top +
+     12px bottom, symmetric now that the label row is gone. */
+  padding: var(--spacing-12) var(--spacing-16);
+}
+.scr-cashback-hero .ds-cashback-actions {
+  flex-direction: column;
+}
+.scr-cashback-hero .ds-cashback-btn-upgrade {
+  width: 100%;
+  /* DS uses stroke-colors-default (#E4E4E4, an opaque grey meant for white
+     backgrounds); sampling the ref button's border (76,119,217 over the
+     144CCD hero bg) solves to rgba(255,255,255,0.24) — the same translucent
+     white already used for .ds-cashback-divider on this same card. */
+  border-color: rgba(255, 255, 255, 0.24);
+}
+.scr-cashback-hero {
+  /* 23, not the DS default 24 (the className lands on the .ds-cashback root
+     itself, so this targets the element, not a descendant). Measured off the
+     two button edges: the summary+panel block ends on 211, and the frame puts
+     the buttons at 296-339 and 352-395, which back-solves to 23 through the
+     38-tall tier stepper. */
+  gap: 23px;
+}
+.scr-cashback-hero .ds-cashback-badge-standard {
+  /* Grey DS placeholder swapped for the warm copper tone sampled from the
+     reference badge — a bright rim highlight (~#f6b982, x49-51 y172 of the
+     cropped reference) fading to a dark edge (~#5e3219, x52-53) — showing
+     through around the inset face polygon (STANDARD_BADGE, Cashback.tsx)
+     as a bevel ring. No raster asset for the Standard-tier badge exists in
+     this repo (see report). */
+  background: linear-gradient(160deg, #f6b982, #5e3219);
+}
+
+/* ---- "Partner brokers" card -------------------------------------------- */
 .scr-cashback-brokers {
   display: flex;
   flex-direction: column;
@@ -165,11 +246,29 @@
   gap: 10px;
   width: 100%;
   box-sizing: border-box;
-  padding: var(--spacing-12);
+  /* 11px, not spacing-12: Figma's 1px stroke draws inside the frame (the
+     project-wide "inside stroke" gotcha), so a 174px-tall reference card
+     (measured: card top y634 -> panel top y736 in the cropped reference,
+     which is border(1) + pad + header(32) + gap(10) + banner(40) + gap(8))
+     only resolves to pad=11, not 12. Verified against all 4 card heights. */
+  padding: 11px;
   border: 1px solid var(--stroke-colors-default);
   border-radius: var(--radius-medium);
   background: var(--bg-colors-container-p);
   text-align: left;
+}
+
+/* BrokerState (design-system) also draws its 1px stroke inside an 8px
+   padding, and gives the value/caption sub-row a taller line-height than
+   the plain caption (24px vs 20px), both of which inflate its measured
+   height to 62-66px against the reference's flat 60px. Not editable there
+   (design-system/**); scoped fixes instead of a duplicate local component,
+   since everything else about BrokerState is already correct. */
+.scr-cashback-broker-content .ds-broker {
+  padding: 7px var(--spacing-12);
+}
+.scr-cashback-broker-content .ds-broker-value {
+  line-height: 20px;
 }
 
 .scr-cashback-broker-top {
@@ -221,26 +320,38 @@
   font-weight: var(--font-weight-regular);
 }
 
-/* "deposit confirmed" banner — only the cashback-active card (IC Markets in
-   the reference); no DS equivalent, composed locally above <BrokerState>. */
-.scr-cashback-broker-confirmed {
+/* Status banners + state panel — grouped so the 10px header gap and the 8px
+   inter-row gap (measured: 174px card = 12+32+10+108+12; 108px content =
+   40 notification + 8 gap + 60 state panel) can differ. */
+.scr-cashback-broker-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+/* Status banner row — Figma "Notification" (1316:8158): tinted strip, a
+   16px accent icon and (error/success only) a short colour-matched
+   underline bar. Built locally rather than the DS Notification component,
+   which has neither the underline accent nor a neutral/"in progress"
+   variant (see report). */
+.scr-cashback-broker-banner {
   position: relative;
   display: flex;
   align-items: center;
   gap: var(--spacing-4);
   padding: var(--spacing-8) var(--spacing-12);
   border-radius: var(--radius-small);
-  background: var(--state-colors-success-bg);
   color: var(--typography-colors-main-text);
   font-size: 12px;
   line-height: 24px;
   font-weight: var(--font-weight-regular);
 }
-.scr-cashback-broker-confirmed svg {
+.scr-cashback-broker-banner svg {
   flex: none;
-  color: var(--state-colors-success);
 }
-.scr-cashback-broker-confirmed::after {
+/* underline bar — only the two "resolved" states show it in the reference */
+.scr-cashback-broker-banner--error::after,
+.scr-cashback-broker-banner--success::after {
   content: '';
   position: absolute;
   left: var(--spacing-12);
@@ -249,7 +360,54 @@
   max-width: calc(100% - 24px);
   height: 2px;
   border-radius: var(--radius-infinity);
+}
+
+.scr-cashback-broker-banner--error {
+  background: var(--state-colors-eror-bg);
+}
+.scr-cashback-broker-banner--error svg {
+  color: var(--state-colors-eror);
+}
+.scr-cashback-broker-banner--error::after {
+  background: var(--state-colors-eror);
+}
+
+.scr-cashback-broker-banner--success {
+  background: var(--state-colors-success-bg);
+}
+.scr-cashback-broker-banner--success svg {
+  color: var(--state-colors-success);
+}
+.scr-cashback-broker-banner--success::after {
   background: var(--state-colors-success);
+}
+
+/* neutral/"in progress" — sampled flat #F1F1F1 (bg-colors-container-s),
+   dark icon, no underline */
+.scr-cashback-broker-banner--pending {
+  background: var(--bg-colors-container-s);
+}
+.scr-cashback-broker-banner--pending svg {
+  color: var(--typography-colors-main-text);
+}
+
+/* Footer note under the broker list (1284:3850). Figma's own text box is
+   272px (296 frame - 12px each side) and still wraps after "in", not
+   "broker" — Chromium measures this Sora string a few px wider than Figma
+   does, so the naive 272px box wraps one word early. Letting it use the
+   full 296px content width (no extra inset) reproduces the reference's
+   break without a hard-coded <br>. */
+.scr-cashback-brokers-note {
+  /* 10/20, not 12: the frame's first line inks 248 wide against the build's
+     297 at 12px, and 248/297 is 10/12. At 10px it wraps where the frame wraps
+     inside the card's own content box, so the negative inset that was forcing
+     the wrap comes off too. */
+  margin: var(--spacing-8) 0 0;
+  text-align: center;
+  font-size: 10px;
+  line-height: 20px;
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-sub-text);
 }
 
 /* ---- Floating nav bar — fixed + centered with no backdrop, identical to
