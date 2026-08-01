@@ -70,13 +70,6 @@
   height: 20px;
 }
 
-/* The DS "info" circle is r=9/24; the Figma glyph is r=10/24, i.e. 22px of
-   ring inside a 24 box instead of 20. Scale to match without touching the
-   shared Icon component. */
-.scr-refmain-info svg {
-  transform: scale(1.1);
-}
-
 .scr-refmain-amount-row {
   display: flex;
   align-items: flex-start;
