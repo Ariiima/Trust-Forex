@@ -52,11 +52,16 @@ const PROMO_START: Record<Subscription, number> = { active: 1, expired: 2, none:
 // (exact vector not exported from Figma): high mid baseline, twin peaks at
 // ~31%/40% width, crosshair x=155, trough at ~76%, late rebound bump at ~82%.
 const CHART_LINE =
-  'M 0 100 L 8 96 L 16 102 L 24 94 L 32 99 L 40 92 L 48 96 L 56 88 L 64 92 L 72 84 L 80 74 L 86 64 L 92 52 L 98 62 L 104 68 L 110 52 L 118 42 L 126 50 L 134 56 L 141 52 L 148 53 L 155 56 L 164 62 L 172 74 L 180 80 L 188 78 L 196 90 L 204 96 L 212 94 L 220 104 L 228 110 L 236 92 L 243 72 L 250 80 L 258 92 L 266 96 L 274 88 L 282 92 L 290 86 L 296 88';
+  // Traced off design/review/ref/home-active.png: the topmost stroke pixel per
+  // column of the 296x164 plot (+0.75 for the 1.5px stroke's centreline),
+  // Douglas-Peucker'd at 0.6px. The 44 columns hidden behind the readout
+  // tooltip are bridged with an arc that stays above the chord, so they keep
+  // sitting behind the same box.
+  'M 0 103.8 L 3 101.8 L 6 101.8 L 12 106.8 L 18 102.8 L 22 102.8 L 25 104.8 L 27 103.8 L 32 97.8 L 34 97.8 L 40 105.8 L 42 105.8 L 45 102.8 L 54 103.8 L 58 98.8 L 62 96.8 L 67 96.8 L 73 88.8 L 75 88.8 L 78 90.8 L 81 90.8 L 83 88.8 L 85 83.8 L 93 77.8 L 97 67.8 L 100 62.8 L 102 62.8 L 104 64.8 L 109 77.8 L 113 80.8 L 120 83.8 L 122 80.8 L 126 67.8 L 129 64.8 L 134 64.8 L 138 53.8 L 141 49.4 L 151 41.1 L 160 38.3 L 167 39.2 L 174 42.8 L 182 50.3 L 187 57.8 L 190 58.8 L 193 56.8 L 195 56.8 L 201 59.8 L 209 69.8 L 215 68.8 L 220 79.8 L 221 80.8 L 225 80.8 L 227 81.8 L 231 85.8 L 233 90.8 L 235 92.8 L 242 92.8 L 248 101.8 L 250 101.8 L 251 100.8 L 256 90.8 L 260 76.8 L 262 73.8 L 265 74.8 L 270 82.8 L 275 80.8 L 278 82.8 L 282 88.8 L 286 86.8 L 290 86.8 L 295 92.8';
 const CHART_AREA = `${CHART_LINE} L 296 164 L 0 164 Z`;
 const CHART_PEAK_X = 155; // px within the 296-wide plot (XML crosshair x)
 const CHART_W = 296; // svg is a fixed 296x164 box, so viewBox units are px
-const CHART_TOP = 56; // .scr-home-chart is 220 tall, svg sits flush to the bottom
+const CHART_TOP = 40; // .scr-home-chart is 204 tall, svg (164) sits flush to the bottom
 
 // "M 0 100 L 8 96 ..." -> [[0,100],[8,96],...]; the drawn curve IS the dataset.
 const CHART_POINTS: readonly (readonly [number, number])[] = (CHART_LINE.match(/[\d.]+ [\d.]+/g) ?? []).map(
@@ -88,14 +93,15 @@ function chartReadout(x: number) {
 
 /* ===========================================================================
  * Countdown ring — SVG semicircle gauge, green arc via stroke-dasharray.
- * The exact filled-crescent geometry isn't derivable, so the green fraction
- * is tuned to match the render (~0.66 of the 180° arc).
+ * The exact filled-crescent geometry isn't derivable, so the green fraction is
+ * tuned to the render: the frame's green ends at 84.9 degrees from the 9
+ * o'clock start, less the 8px round cap's ~4.4 degrees = 0.42 of the arc.
  * ========================================================================= */
 function CountdownRing({ days }: { days: number }): ReactNode {
   // Arc vector is 224×112 in a 232×112 box (x4..228 incl the 16px stroke)
   // → path radius 104 centred at (116,104); round caps close flush at y112.
   const len = Math.PI * 104; // arc length of the semicircle
-  const green = len * 0.66;
+  const green = len * 0.42;
   return (
     <div className="scr-home-ring">
       <svg viewBox="0 0 232 112" fill="none">
@@ -239,7 +245,10 @@ function SignalCard(): ReactNode {
       </div>
 
       <div className="scr-home-overview">
-        <span className="scr-home-overview-title">• {cfg.overview}</span>
+        <span className="scr-home-overview-title">
+          <span className="scr-home-overview-bullet">•</span>
+          {cfg.overview}
+        </span>
         <div className="scr-home-overview-stats">
           <div className="scr-home-stat">
             <span className="scr-home-stat-label">Total signals</span>
@@ -326,8 +335,10 @@ function PlanRow({ plan, onClick }: { plan: Plan; onClick?: () => void }): React
           {plan.tag ? <span className={`scr-home-tag scr-home-tag--${plan.tag.variant}`}>{plan.tag.label}</span> : null}
         </span>
         <span className="scr-home-planrow-pricerow">
-          <Icon name="currency-dollar" size={20} strokeWidth={1.7} />
-          <span className="scr-home-planrow-price">{plan.price}</span>
+          <span className="scr-home-planrow-price">
+            <span className="scr-home-planrow-currency">$</span>
+            {plan.price}
+          </span>
           <span className="scr-home-planrow-duration">/ {plan.duration}</span>
         </span>
       </span>
@@ -343,7 +354,11 @@ function ChoosePlanSection({
   subscription: Subscription;
   onNavigate?: (r: string) => void;
 }): ReactNode {
-  const [tipOpen, setTipOpen] = useState(false);
+  // ?tip opens it on load — design/review/ref/home-active.png captures this
+  // frame with the callout showing.
+  const [tipOpen, setTipOpen] = useState(
+    () => import.meta.env.DEV && new URLSearchParams(window.location.search).has('tip'),
+  );
 
   return (
     <section className="scr-home-card scr-home-plans">
@@ -384,8 +399,10 @@ export default function Home({ initialSubscription = 'active', onNavigate, onTab
 
   return (
     <div className="scr-home">
-      {/* dev-only switcher so all three states are reachable in review */}
-      {import.meta.env.DEV && (
+      {/* Review-only switcher so all three states are reachable. Gated on
+          ?switcher rather than DEV: it overlays the hero, which made the dev
+          server useless for pixel-diffing home. */}
+      {import.meta.env.DEV && new URLSearchParams(window.location.search).has('switcher') && (
         <div className="scr-home-switcher" role="group" aria-label="Subscription state">
           {(['active', 'expired', 'none'] as Subscription[]).map((s) => (
             <button key={s} type="button" data-on={subscription === s} onClick={() => setSubscription(s)}>

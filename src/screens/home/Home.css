@@ -87,19 +87,21 @@
 .scr-home-ringbox {
   display: flex;
   justify-content: center;
-  padding: var(--spacing-24) var(--spacing-32);
+  /* 24/32 less the 1px inside stroke. Frame: box 32-191 (160 tall), arc ink
+     56-167, so the content box is exactly the ring's 232x112. */
+  padding: 23px 31px;
   border-radius: var(--radius-medium);
   border: 1px solid rgba(255, 255, 255, 0.16);
 }
 .scr-home-ring {
   position: relative;
   width: 232px;
-  height: 116px;
+  height: 112px; /* was 116, which stretched the 232x112 viewBox */
 }
 .scr-home-ring svg {
   display: block;
   width: 232px;
-  height: 116px;
+  height: 112px;
 }
 .scr-home-ring-center {
   position: absolute;
@@ -205,7 +207,7 @@
   color: var(--primary-colors-900);
 }
 .scr-home-herobtn--ghost {
-  flex: 0 0 120px;
+  flex: 0 0 128px; /* frame: 156 + 12 + 128 across the 296 content box */
   background: transparent;
   border-color: rgba(228, 228, 228, 0.16);
   color: #fff;
@@ -355,7 +357,10 @@
 .scr-home-card-title {
   font-size: 16px;
   line-height: 32px;
-  font-weight: var(--font-weight-semibold);
+  /* Regular, not semibold: "Signal performance" inks 793 over 158px in the
+     frame; at 400 the build inks 772 over the same 158, at 500 it is 822/159.
+     (Figma rasterises a few percent heavier than Chromium at equal weight.) */
+  font-weight: var(--font-weight-regular);
   color: var(--typography-colors-main-text);
 }
 
@@ -380,12 +385,13 @@
   gap: var(--spacing-8);
   box-sizing: border-box;
   height: 60px;
-  padding: var(--spacing-8) var(--spacing-8) var(--spacing-8) var(--spacing-12);
+  padding: 7px; /* symmetric 8 less the inside stroke — frame dividers land on 104.5/177.5/250.5 */
   border-radius: var(--radius-medium);
   border: 1px solid var(--stroke-colors-default);
 }
 .scr-home-tp-btn {
   display: flex;
+  min-width: 0;
   flex: 1 1 0;
   flex-direction: column;
   align-items: center;
@@ -397,7 +403,11 @@
 }
 .scr-home-tp-btn--on {
   gap: 0;
-  padding: 2px 8px;
+  /* No side padding: the button is already a 1/4 flex share, and 8px of extra
+     padding was landing outside its flex basis, widening it to 69 against the
+     siblings' 53 and pushing every divider right. Frame: pill 40-96 (57),
+     dividers 104.5 / 177.5 / 250.5. */
+  padding: 2px 0;
   border-radius: var(--radius-small);
   background: var(--primary-colors-50);
 }
@@ -429,7 +439,7 @@
   flex-direction: column;
   gap: var(--spacing-4);
   box-sizing: border-box;
-  padding: var(--spacing-8) var(--spacing-12);
+  padding: 7px var(--spacing-12); /* frame box is 702-781, i.e. 80 not 82 */
   border-radius: var(--radius-medium);
   border: 1px solid var(--stroke-colors-default);
 }
@@ -437,6 +447,11 @@
   font-size: 10px;
   line-height: 20px;
   color: var(--base-color-black);
+}
+/* Frame: bullet ink on 50-52, label from 60. A literal "• " put them on 46
+   and 52. */
+.scr-home-overview-bullet {
+  padding: 0 6px 0 4px;
 }
 .scr-home-overview-stats {
   display: flex;
@@ -465,7 +480,10 @@
 /* ---- chart ------------------------------------------------------------ */
 .scr-home-chart {
   position: relative;
-  height: 220px;
+  /* 204, not 220: the frame's tabs row starts at 1018 with the card's 16px
+     gap above it, so the plot bottom is 1001 and its top 798. The readout
+     tooltip is top-anchored, so it does not move. */
+  height: 204px;
   cursor: ew-resize;
   /* Horizontal drags scrub the crosshair; vertical ones still scroll the page. */
   touch-action: pan-y;
@@ -582,9 +600,11 @@
 .scr-home-infotip {
   position: absolute;
   z-index: 5;
-  bottom: calc(100% - 6px);
-  left: -4px;
-  right: -4px;
+  /* Frame: box 1045-1108 x 80-343, i.e. 264 wide flush to the card's right
+     edge, its bottom sitting 10px inside the card's top. */
+  bottom: calc(100% - 11px);
+  right: 0;
+  width: 264px;
   box-sizing: border-box;
   padding: var(--spacing-8) var(--spacing-12);
   border-radius: var(--radius-small);
@@ -596,11 +616,14 @@
 .scr-home-infotip::after {
   content: '';
   position: absolute;
-  bottom: -6px;
-  right: 20px;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 8px solid var(--base-color-black);
+  /* 18x9 and translucent, not 16x8 and solid: the frame's arrow rows 1109-1117
+     sample (195,195,195) over the white card = 24% black. */
+  bottom: -9px;
+  right: 19px;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 9px solid var(--base-color-black);
+  opacity: 0.24;
 }
 
 /* ---- compact plan row (Silver / Gold / Diamond) ----------------------- */
@@ -610,7 +633,7 @@
   gap: var(--spacing-8);
   box-sizing: border-box;
   width: 100%;
-  padding: var(--spacing-8) var(--spacing-12);
+  padding: 7px 11px; /* 8/12 less the 1px inside stroke — frame rows are 76, not 78 */
   border-radius: var(--radius-medium);
   border: 1px solid var(--stroke-colors-default);
   background: var(--bg-colors-container-p);
@@ -642,18 +665,25 @@
 }
 .scr-home-planrow-pricerow {
   display: flex;
-  align-items: center;
+  /* Same 28-tall row over 24-tall line boxes as the full plan card. */
+  height: 28px;
+  align-items: flex-start;
   gap: var(--spacing-4);
-  margin-top: -4px;
   color: var(--typography-colors-main-text);
 }
 .scr-home-planrow-price {
   font-size: 16px;
-  line-height: 32px;
+  line-height: 24px;
   font-weight: var(--font-weight-semibold);
 }
+/* The frame's "$" is type — larger and heavier than the digits beside it —
+   not the stroked currency-dollar icon this used to render. */
+.scr-home-planrow-currency {
+  padding: 0 4px;
+  font-size: 18px;
+  font-weight: 700;
+}
 .scr-home-planrow-duration {
-  margin-left: var(--spacing-4);
   font-size: 12px;
   line-height: 24px;
   color: var(--typography-colors-sub-text);
