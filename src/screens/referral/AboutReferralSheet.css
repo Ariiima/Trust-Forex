@@ -1,22 +1,53 @@
-/* "About referral" sheet (1391:5964). Header 328x44 with a rule under it,
-   body inset 33px each side to the 262-wide content column. */
+/* =====================================================================
+   "About referral" sheet (1391:5964). Measured off the 1:1 frame render;
+   frame coords, the sheet's top edge sitting at y=307 of the 852 frame:
+
+     sheet      307 -> 852  (545 tall), 16 radius, 16/16/32 padding
+     header     323 -> 355  (32-tall row: 16/32 title + 24 close)
+     rule       366 -> 367  (dashed, 16 -> 344)
+     art        393 -> 497  (144x104, centred on x=180)
+     headline   513 -> 593  (2 x 40)
+     benefits   616 -> 820  (3 rows on the shared 76px pitch)
+
+   The 20px --radius-large token is wrong here: the corner arc measures 16
+   (white reaches x=7 on the 4th row, x=2 on the 9th).
+   ===================================================================== */
 
 .ds-sheet.scr-about-ref-sheet {
-  padding: var(--spacing-16) var(--spacing-16) var(--spacing-24);
-  border-radius: var(--radius-large) var(--radius-large) 0 0;
+  padding: var(--spacing-16) var(--spacing-16) var(--spacing-32);
+  border-radius: 16px 16px 0 0;
 }
 
 .scr-about-ref-sheet .ds-sheet-handle {
   display: none;
 }
 
+/* ---- header ----------------------------------------------------------
+   A 32-tall row (the title's own line box) with the rule 11 below it. */
 .scr-about-ref-head {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-8);
-  padding-bottom: var(--spacing-12);
-  border-bottom: 1px solid var(--stroke-colors-default);
+  padding-bottom: 13px; /* 11 to the rule + the rule's own 2 */
+}
+
+/* Figma centres a 1px #E4E4E4 dashed stroke on the pixel boundary under the
+   header, so it rasterises as TWO rows of #F1F1F1, not one of #E4E4E4.
+   Reproduce the raster: 2px tall, 4 on / 4 off, phase -2 so the first dash is
+   clipped to 2px and the last one lands on 342-343. */
+.scr-about-ref-head::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background-image: linear-gradient(90deg, #f1f1f1 0 50%, transparent 50% 100%);
+  background-repeat: repeat-x;
+  background-size: 8px 2px;
+  background-position: -2px 0;
 }
 
 .scr-about-ref-title {
@@ -31,12 +62,25 @@
   color: var(--typography-colors-main-text);
 }
 
+/* ---- body -------------------------------------------------------------
+   261-wide column centred in the sheet's 328 content box (badge left edge
+   measures 49.5), 25 down from the rule. */
 .scr-about-ref-body {
-  padding: var(--spacing-24) 17px 0; /* 16 sheet padding + 17 = the frame's 33 */
+  padding: 25px 33.5px 0;
 }
 
+/* Same illustration as the preview page, scaled 168x120 -> 144x104 */
+.scr-about-ref-art {
+  display: block;
+  width: 144px;
+  height: 104px;
+  margin: 0 auto var(--spacing-16);
+}
+
+/* 2 lines x 40; the preview's copy of this headline is 24/44 on a wider
+   column, so the size stays with the caller rather than the shared block. */
 .scr-about-ref-headline {
-  margin: 0 0 var(--spacing-24);
+  margin: 0 0 23px;
   text-align: center;
   color: var(--typography-colors-main-text);
 }
