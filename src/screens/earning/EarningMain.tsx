@@ -21,7 +21,8 @@ const PLOT_W = 296; // x32..328 — the card's content width
 const PLOT_H = 160; // $500 grid line (y568) .. $0 grid line (y728)
 const GRID = ['$500', '$400', '$300', '$200', '$100', '$0'];
 const WEEKS = 20; // Jul 2026 W6 .. Sep 2026 W1 across the full series
-const WINDOW = 13; // weeks visible at once; the brush pans this window
+const WINDOW = 13; // weeks visible at once by default
+const MIN_WINDOW = 4; // smallest range the brush can be squeezed to
 /** The frame shows the newest window selected — brush mask 36% / window 64%. */
 const OFFSET_0 = WEEKS - WINDOW;
 /** Crosshair, as a fraction of the plot width. 168/296 — where the frame puts it. */
@@ -89,7 +90,6 @@ export function EarningMain({
   const cashbackPct = 100 - referralPct;
 
   const [historyOpen, setHistoryOpen] = useState(initialSheet === 'history');
-  const [offset, setOffset] = useState(OFFSET_0); // first visible week
   const [cursor, setCursor] = useState(CURSOR_0); // 0..1 across the visible window
   const plotRef = useRef<HTMLDivElement>(null);
 
@@ -107,20 +107,69 @@ export function EarningMain({
       })
       .join(' ');
 
-  const absWeek = offset + Math.round(cursor * (WINDOW - 1));
-
   const track = (e: React.PointerEvent<HTMLDivElement>) => {
     const rect = plotRef.current?.getBoundingClientRect();
     if (!rect) return;
     setCursor(Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)));
   };
 
-  const pan = (dir: -1 | 1) => setOffset((o) => Math.max(0, Math.min(WEEKS - WINDOW, o + dir * 3)));
+  /* The brush is a real range control: drag either handle to resize the window,
+     drag the window itself to pan. Both edges are week indices into the series;
+     `span` is derived, so the plot re-scales as the range narrows. */
+  const [range, setRange] = useState({ from: OFFSET_0, to: OFFSET_0 + WINDOW - 1 });
+  const brushRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{ mode: 'from' | 'to' | 'pan'; grabWeek: number; from: number; to: number } | null>(null);
+
+  const offset = range.from;
+  const span = range.to - range.from + 1;
+
+  /** Pointer x -> fractional week index across the whole strip. */
+  const weekAt = (clientX: number) => {
+    const rect = brushRef.current?.getBoundingClientRect();
+    if (!rect) return 0;
+    return ((clientX - rect.left) / rect.width) * (WEEKS - 1);
+  };
+
+  const onBrushDown = (mode: 'from' | 'to' | 'pan') => (e: React.PointerEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    // Capture on the strip, not the handle: the pointer routinely leaves a 12px
+    // handle mid-drag, and the move handler lives on the strip.
+    brushRef.current?.setPointerCapture(e.pointerId);
+    dragRef.current = { mode, grabWeek: weekAt(e.clientX), from: range.from, to: range.to };
+  };
+
+  const onBrushMove = (e: React.PointerEvent) => {
+    const d = dragRef.current;
+    if (!d) return;
+    const delta = weekAt(e.clientX) - d.grabWeek;
+    const clamp = (v: number) => Math.max(0, Math.min(WEEKS - 1, Math.round(v)));
+
+    if (d.mode === 'pan') {
+      const width = d.to - d.from;
+      let from = clamp(d.from + delta);
+      from = Math.min(from, WEEKS - 1 - width);
+      setRange({ from, to: from + width });
+    } else if (d.mode === 'from') {
+      const from = Math.min(clamp(d.from + delta), d.to - (MIN_WINDOW - 1));
+      setRange({ from, to: d.to });
+    } else {
+      const to = Math.max(clamp(d.to + delta), d.from + (MIN_WINDOW - 1));
+      setRange({ from: d.from, to });
+    }
+  };
+
+  const endDrag = (e: React.PointerEvent) => {
+    brushRef.current?.releasePointerCapture?.(e.pointerId);
+    dragRef.current = null;
+  };
 
   /* The series is plotted point-to-edge, so the brush window spans the same
      fractions of the strip that its first and last points sit at. */
-  const windowLeft = (offset / (WEEKS - 1)) * 100;
-  const windowWidth = ((WINDOW - 1) / (WEEKS - 1)) * 100;
+  const windowLeft = (range.from / (WEEKS - 1)) * 100;
+  const windowWidth = ((range.to - range.from) / (WEEKS - 1)) * 100;
+
+  const absWeek = offset + Math.round(cursor * (span - 1));
 
   return (
     <div className="scr-earn">
@@ -197,7 +246,7 @@ export function EarningMain({
         <p className="scr-earn-range">
           {weekLabel(offset)}
           <span className="scr-earn-range-sep">–</span>
-          {weekLabel(offset + WINDOW - 1)}
+          {weekLabel(range.to)}
         </p>
 
         <div className="scr-earn-plot-wrap">
@@ -248,9 +297,19 @@ export function EarningMain({
         </div>
 
         {/* brush — pans the visible window (the frame's ‹ › handles) */}
-        <div className="scr-earn-brush">
+        <div
+          className="scr-earn-brush"
+          ref={brushRef}
+          onPointerMove={onBrushMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+        >
           <span className="scr-earn-brush-mask" style={{ width: `${windowLeft}%` }} />
-          <span className="scr-earn-brush-window" style={{ left: `${windowLeft}%`, width: `${windowWidth}%` }} />
+          <span
+            className="scr-earn-brush-window"
+            style={{ left: `${windowLeft}%`, width: `${windowWidth}%` }}
+            onPointerDown={onBrushDown('pan')}
+          />
           <svg className="scr-earn-brush-chart" viewBox={`0 0 ${PLOT_W} 32`} fill="none" preserveAspectRatio="none">
             <path d={path(referral, PLOT_W, 32, WEEKS, true)} stroke={REFERRAL_COLOR} strokeWidth={2} strokeLinejoin="round" />
             <path d={path(cashback, PLOT_W, 32, WEEKS, true)} stroke={CASHBACK_COLOR} strokeWidth={2} strokeLinejoin="round" />
@@ -259,9 +318,8 @@ export function EarningMain({
             type="button"
             className="scr-earn-brush-handle"
             style={{ left: `${windowLeft}%` }}
-            onClick={() => pan(-1)}
-            disabled={offset === 0}
-            aria-label="Earlier weeks"
+            onPointerDown={onBrushDown('from')}
+            aria-label="Drag to change the start of the range"
           >
             <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
               <path d="M7.5 2 L3.5 6 L7.5 10" fill="none" stroke="currentColor" strokeWidth="1" />
@@ -271,9 +329,8 @@ export function EarningMain({
             type="button"
             className="scr-earn-brush-handle"
             style={{ left: `${windowLeft + windowWidth}%`, marginLeft: '-12px' }}
-            onClick={() => pan(1)}
-            disabled={offset >= WEEKS - WINDOW}
-            aria-label="Later weeks"
+            onPointerDown={onBrushDown('to')}
+            aria-label="Drag to change the end of the range"
           >
             <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
               <path d="M4.5 2 L8.5 6 L4.5 10" fill="none" stroke="currentColor" strokeWidth="1" />

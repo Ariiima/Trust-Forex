@@ -371,6 +371,7 @@
 
 /* ---- brush ------------------------------------------------------------ */
 .scr-earn-brush {
+  touch-action: none;
   position: relative;
   height: 48px;
   margin-top: 23px;
@@ -389,13 +390,18 @@
 }
 
 .scr-earn-brush-window {
+  z-index: 1;
+  cursor: grab;
+  touch-action: none;
   position: absolute;
   top: 0;
   bottom: 0;
   background: var(--bg-colors-container-p);
 }
 
+/* Decorative: it must not intercept the drag. */
 .scr-earn-brush-chart {
+  pointer-events: none;
   position: absolute;
   left: 0;
   top: 12px;
@@ -404,6 +410,9 @@
 }
 
 .scr-earn-brush-handle {
+  z-index: 2;
+  cursor: ew-resize;
+  touch-action: none;
   position: absolute;
   top: 0;
   display: grid;
