@@ -40,6 +40,7 @@ tweaks.md
 design/review/out/
 *-v[0-9].png
 
-# playwright-mcp session artifacts
+# playwright-mcp per-session snapshots only — NOT the reference screenshots
+# that live alongside them.
 .playwright-mcp/page-*.yml
 .playwright-mcp/console-*.log
