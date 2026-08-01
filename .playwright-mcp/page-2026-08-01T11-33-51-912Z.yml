@@ -1,0 +1,15 @@
+- generic [active]:
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - generic [ref=f100e2]:
+            - region "Prototype controls": Skip to content
+            - generic [ref=f100e3]:
+              - generic [ref=f100e5]:
+                - main:
+                  - paragraph [ref=f100e6]: Screenreader support is currently disabled. To enable it, use the Accessibility settings from the Options menu.
+              - text: Give feedback, ask a question, or just leave a note of appreciation. Click anywhere in the file to leave a comment.
+          - group [ref=f100e22]:
+            - alert [ref=f100e24]
+            - alert [ref=f100e26]

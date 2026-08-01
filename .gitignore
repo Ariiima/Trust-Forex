@@ -35,3 +35,7 @@ server/data.sqlite
 referral-preview.png
 referral-fixed.png
 tweaks.md
+
+# review scratch renders
+design/review/out/
+*-v[0-9].png

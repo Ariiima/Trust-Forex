@@ -1,62 +1,94 @@
 /* =====================================================================
-   Splash screen (548:3095). Hero 360x429 from y=92 (i.e. 16 below the
-   Telegram header), copy block 296 wide inset 32, progress track 215x8.
+   Splash screen (548:3095). Values below are the frame's own, read from
+   Figma design context — not inferred:
+     root            bg #144CCD (full bleed)
+     hero visual     360x429 @ top 92, centred, clipped
+     copy block      296 wide @ 32,569 — column, gap 40, centred
+       text group    column, gap 4, white
+         title       Sora Bold 20/40
+         body        Sora Regular 14/28, opacity .72
+       progress      column, gap 8
+         track       215x8, r999, rgba(255,255,255,.08)
+         fill        94x8,  r999, #FFF
+         label       Sora Regular 14/28, opacity .72
    ===================================================================== */
 
+/* Flex column, not block flow: the hero's top margin would otherwise collapse
+   out through this element and push #root down by 16px. */
 .scr-splash {
   display: flex;
   flex-direction: column;
+  align-items: center;
   min-height: 100dvh;
-  background: var(--bg-colors-container-s);
+  background: var(--primary-colors-900);
+  color: var(--base-color-white);
 }
 
-/* Placeholder for the exported hero collage — see the note in Splash.tsx. */
+/* The frame layers the illustration under an elliptical vignette that fades it
+   into the flat blue at the edges. The asset is captured from the composited
+   frame, so the vignette is already baked in — do not re-apply it here. */
 .scr-splash-hero {
+  display: block;
+  width: 360px;
   height: 429px;
   margin-top: var(--spacing-16);
-  background: linear-gradient(160deg, var(--primary-colors-100) 0%, var(--primary-colors-50) 60%, var(--bg-colors-container-s) 100%);
 }
 
 .scr-splash-copy {
-  margin: 48px auto 0; /* hero ends 521, copy starts 569 */
-  padding: 0 var(--spacing-32);
-  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-40);
+  width: 296px;
+  margin-top: 48px; /* hero ends 521, copy starts 569 */
   text-align: center;
+}
+
+.scr-splash-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  width: 100%;
 }
 
 .scr-splash-title {
   margin: 0;
-  color: var(--typography-colors-main-text);
+  color: var(--base-color-white);
 }
 
 .scr-splash-body {
-  margin: var(--spacing-4) 0 0;
-  color: var(--typography-colors-sub-text);
+  margin: 0;
+  color: var(--base-color-white);
+  opacity: 0.72;
 }
 
 /* ---- progress --------------------------------------------------------- */
 .scr-splash-progress {
-  margin-top: var(--spacing-40);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-8);
+  width: 100%;
 }
 
 .scr-splash-track {
   width: 215px;
   height: 8px;
-  margin: 0 auto;
   overflow: hidden;
   border-radius: var(--radius-infinity);
-  background: var(--stroke-colors-default);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .scr-splash-fill {
   display: block;
   height: 100%;
   border-radius: var(--radius-infinity);
-  background: var(--primary-colors-900);
+  background: var(--base-color-white);
   transition: width 0.3s ease;
 }
 
 .scr-splash-label {
-  margin: var(--spacing-8) 0 0;
-  color: var(--typography-colors-sub-text);
+  margin: 0;
+  color: var(--base-color-white);
+  opacity: 0.72;
 }
