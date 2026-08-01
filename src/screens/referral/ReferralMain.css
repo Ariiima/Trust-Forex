@@ -269,8 +269,16 @@
   color: var(--typography-colors-main-text);
 }
 
+/* Empty variant 1436:14439 — the card collapses to 328x220 (app y 570..790),
+   the sort pill is dropped and the copy is centred: three 28px lines whose
+   first line box starts at y 658, i.e. 40px under the 32px head row. */
+.scr-refmain-list-card--empty {
+  height: 220px;
+}
+
 .scr-refmain-empty {
-  margin: var(--spacing-24) 0 0;
+  margin: var(--spacing-40) 0 0;
+  text-align: center;
   color: var(--typography-colors-sub-text);
 }
 

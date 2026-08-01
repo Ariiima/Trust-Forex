@@ -182,17 +182,23 @@ export function ReferralMain({
 
       <PromoCarousel start={1} />
 
-      <section className="scr-refmain-list-card">
+      <section
+        className={'scr-refmain-list-card' + (referrals.length === 0 ? ' scr-refmain-list-card--empty' : '')}
+      >
         <div className="scr-refmain-list-head">
           <h2 className="scr-refmain-list-title type-text-base">Your referrals</h2>
-          <button type="button" className="scr-refmain-sort" onClick={() => setSortDesc((v) => v === false)}>
-            <Glyph name="swap-vertical" size={16} strokeWidth={1.42} />
-            <span className="type-text-xs">{sortDesc === false ? 'Lowest earnings' : 'Highest earnings'}</span>
-          </button>
+          {/* Empty variant 1436:14439 drops the sort control entirely — there is
+              nothing to order, so the head row is title-only. */}
+          {referrals.length > 0 ? (
+            <button type="button" className="scr-refmain-sort" onClick={() => setSortDesc((v) => v === false)}>
+              <Glyph name="swap-vertical" size={16} strokeWidth={1.42} />
+              <span className="type-text-xs">{sortDesc === false ? 'Lowest earnings' : 'Highest earnings'}</span>
+            </button>
+          ) : null}
         </div>
 
         {referrals.length === 0 ? (
-          // Empty variant 1436:14439 — the list is replaced by one 296-wide line.
+          // Empty variant 1436:14439 — the list is replaced by three centred lines.
           <p className="scr-refmain-empty type-text-sm">
             You have no referrals yet, share your link to invite your first friend and start earning together.
           </p>

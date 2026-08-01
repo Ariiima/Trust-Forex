@@ -122,10 +122,7 @@ export function WithdrawHistorySheet({
                 <span className="scr-wdhist-dot" aria-hidden="true" />
                 <span>{r.time}</span>
               </span>
-              <span className="scr-wdhist-to">
-                <span>To:</span>
-                <span>{r.to}</span>
-              </span>
+              <span className="scr-wdhist-to">To: {r.to}</span>
             </div>
           </li>
         ))}

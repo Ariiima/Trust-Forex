@@ -33,7 +33,10 @@
   width: 100%;
   max-width: 360px;
   background: var(--base-color-white);
-  border-radius: 20px 20px 0 0;
+  /* 16, not --radius-large. Measured at 16 on every sheet frame checked so far
+     (1402:7573, 1402:7191, 1404:7767) and independently chosen by the payment
+     sheets before that — five screens were overriding the 20 default. */
+  border-radius: 16px 16px 0 0;
   padding: 8px 16px 24px;
   animation: ds-sheet-rise 0.25s cubic-bezier(0.32, 0.72, 0, 1);
 }

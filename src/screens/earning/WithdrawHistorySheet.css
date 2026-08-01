@@ -9,7 +9,9 @@
   height: 635px;
   max-height: 100%;
   padding: var(--spacing-16) var(--spacing-16) var(--spacing-24);
-  border-radius: var(--radius-large) var(--radius-large) 0 0;
+  /* Measured off the arc: 16, not the 20 --radius-large that BottomSheet.css
+     applies by default (the reference corner is ~4px tighter). */
+  border-radius: 16px 16px 0 0;
 }
 
 .scr-wdhist-sheet .ds-sheet-handle {
@@ -199,10 +201,15 @@
   color: var(--typography-colors-sub-text);
 }
 
-.scr-wdhist-when,
-.scr-wdhist-to {
+.scr-wdhist-when {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-4);
+  white-space: nowrap;
+}
+
+/* The destination is one text run — "To:" and the address sit a plain space
+   apart in the reference, not on the 4px gap the date/time pair uses. */
+.scr-wdhist-to {
   white-space: nowrap;
 }
