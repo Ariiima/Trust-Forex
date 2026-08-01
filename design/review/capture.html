@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>frame capture</title>
+<style>
+  /* Each frame is boxed at exactly 2x its design size. Figma's prototype
+     "contain" scaling then renders the vector content at 2x — genuinely sharp,
+     not an upscale. Slice the full-page screenshot on these known offsets. */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #000; }
+  .cap { display: block; width: 720px; border: 0; }
+</style>
+</head>
+<body>
+<script>
+const KEY = 'wRpTrsYbng1DgKVYjDTgkp';
+const BATCH = Number(new URLSearchParams(location.search).get('batch') || 0);
+
+const FRAMES = [
+  ['splash',        '548-3095',   852],
+  ['skeleton',      '551-3097',   1806],
+  ['ref-preview',   '1333-8306',  852],
+  ['ref-main',      '1333-8366',  1266],
+  ['ref-empty',     '1436-14439', 978],
+  ['ref-about',     '1391-5964',  852],
+  ['earn-main',     '1367-5166',  1045],
+  ['earn-history',  '1404-7767',  852],
+  ['wd-cur',        '1379-6901',  1000],
+  ['wd-cur-sel',    '1482-5747',  1000],
+  ['wd-amt',        '1402-7310',  852],
+  ['wd-amt-filled', '1402-6771',  852],
+  ['wd-change',     '1402-7191',  852],
+  ['wd-summary',    '1402-7573',  852],
+  ['wd-submitted',  '1404-7924',  852],
+];
+
+const PER = 5;
+const slice = FRAMES.slice(BATCH * PER, BATCH * PER + PER);
+const manifest = [];
+let y = 0;
+for (const [name, node, h] of slice) {
+  const f = document.createElement('iframe');
+  f.className = 'cap';
+  f.height = h * 2;
+  f.src = `https://embed.figma.com/proto/${KEY}/Trust-Forex?node-id=${node}`
+        + `&scaling=contain&hide-ui=1&embed-host=share`;
+  document.body.appendChild(f);
+  manifest.push({ name, node, y, w: 720, h: h * 2 });
+  y += h * 2;
+}
+window.__MANIFEST__ = manifest;
+document.title = `capture batch ${BATCH} (${slice.length})`;
+</script>
+</body>
+</html>
