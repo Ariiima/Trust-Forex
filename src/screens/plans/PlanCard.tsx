@@ -45,8 +45,10 @@ export function PlanCard({ plan, variant, selected, onSelect, onContinue }: Plan
             {plan.tag ? <PlanTag tag={plan.tag} /> : null}
           </span>
           <span className="scr-plans-pricerow">
-            <Icon name="currency-dollar" size={20} strokeWidth={1.7} />
-            <span className="scr-plans-price">{plan.price}</span>
+            <span className="scr-plans-price">
+              <span className="scr-plans-currency">$</span>
+              {plan.price}
+            </span>
             <span className="scr-plans-duration">/ {plan.duration}</span>
           </span>
         </span>
@@ -64,8 +66,10 @@ export function PlanCard({ plan, variant, selected, onSelect, onContinue }: Plan
             {plan.tag ? <PlanTag tag={plan.tag} /> : null}
           </span>
           <span className="scr-plans-pricerow">
-            <Icon name="currency-dollar" size={20} strokeWidth={1.7} />
-            <span className="scr-plans-price">{plan.price}</span>
+            <span className="scr-plans-price">
+              <span className="scr-plans-currency">$</span>
+              {plan.price}
+            </span>
             <span className="scr-plans-duration">/ {plan.duration}</span>
           </span>
         </div>
@@ -100,7 +104,7 @@ export function PlanCard({ plan, variant, selected, onSelect, onContinue }: Plan
 
       <Button
         variant="outline"
-        size="small"
+        size="medium"
         fullWidth
         className={plan.highlighted ? 'scr-plans-continue--highlight' : ''}
         onClick={onContinue}

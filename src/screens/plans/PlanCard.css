@@ -7,7 +7,10 @@
   flex-direction: column;
   gap: var(--spacing-12);
   box-sizing: border-box;
-  padding: var(--spacing-12);
+  /* Figma's 1px stroke is drawn INSIDE the 12px padding box, so CSS needs
+     11 + 1px border. Measured: badge ink starts x=32 in the frame, 33 in the
+     build. */
+  padding: 11px;
   border-radius: var(--radius-medium);
   border: 1px solid var(--stroke-colors-default);
   background: var(--bg-colors-container-p);
@@ -22,7 +25,7 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-8);
-  margin-bottom: -4px; /* 12px card gap - 4px = 8px gap before the divider */
+  margin-bottom: -5px; /* 12px card gap - 5 = 7 before the divider (frame: header 128-187, dashed rule on 195) */
 }
 
 .scr-plans-badge {
@@ -62,7 +65,11 @@
 
 .scr-plans-pricerow {
   display: flex;
-  align-items: center;
+  /* 28-tall row holding 24-tall line boxes, top-aligned: the frame puts the
+     price ink on 165-177 and the duration on 167-175 with the row starting
+     at 160. Centring them would drop both 2px. */
+  height: 28px;
+  align-items: flex-start;
   gap: var(--spacing-4);
   color: var(--typography-colors-main-text);
 }
@@ -70,18 +77,27 @@
 .scr-plans-price {
   font-family: var(--font-family-base);
   font-size: 16px;
-  line-height: 32px;
+  line-height: 24px;
   font-weight: var(--font-weight-semibold);
   color: var(--typography-colors-main-text);
 }
 
 .scr-plans-duration {
-  margin-left: var(--spacing-4);
   font-family: var(--font-family-base);
   font-size: 12px;
   line-height: 24px;
   font-weight: var(--font-weight-regular);
   color: var(--typography-colors-sub-text);
+}
+
+/* The frame's "$" is a heavier, larger glyph than the price digits (ink
+   12x18 against the digits' 9x12) — it is type, not the stroked
+   currency-dollar icon this used to render. Padding places its ink on x=96
+   with the digits following at 113. */
+.scr-plans-currency {
+  padding: 0 4px 0 4px;
+  font-size: 18px;
+  font-weight: 700;
 }
 
 /* ---- tag pill (Most popular / Best value) ----------------------------- */
