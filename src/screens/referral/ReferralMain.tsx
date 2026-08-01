@@ -6,13 +6,16 @@ import { Glyph } from './Glyph';
 import type { ReferralGlyphName } from './Glyph';
 import { PromoCarousel } from '../home/PromoCarousel';
 import { AboutReferralSheet } from './AboutReferralSheet';
+import shareCoin from '../../assets/referral/referral-share-coin.png';
 import './ReferralMain.css';
 
 /* ---------------------------------------------------------------------------
  * Referral — main page — route /referral
- * Frame 1333:8366 (360x1266). Blue earnings card (16,92 -> 328x396) holding a
- * 2x2 stat grid and the two copyable links, the shared promo carousel
- * (16,512 -> 328x110), then the "Your referrals" list (16,646 -> 328x508).
+ * Frame 1333:8366 (360x1266, 76px of that is chrome the app does not draw, so
+ * every y below is frame-y minus 76). Blue earnings card (16,16 -> 328x396)
+ * holding a 2x2 stat grid and the two copyable links, the shared promo carousel
+ * (16,436 -> 328x110), then the "Your referrals" card (16,570 -> 328x508) whose
+ * list scrolls inside a 296x428 viewport.
  * Variants 1408:2763 (same height) and 1436:14439 (978 tall = empty list).
  * ------------------------------------------------------------------------- */
 
@@ -96,41 +99,45 @@ export function ReferralMain({
   return (
     <div className="scr-refmain">
       <section className="scr-refmain-card">
-        <div className="scr-refmain-card-top">
-          <div className="scr-refmain-head">
-            <h1 className="scr-refmain-head-title type-text-base">Total referral earnings</h1>
-            <button type="button" className="scr-refmain-info" onClick={onAbout ?? (() => setAboutOpen(true))} aria-label="About referral">
-              <Icon name="info" size={24} strokeWidth={1.6} />
-            </button>
-          </div>
+        <div className="scr-refmain-head">
+          <h1 className="scr-refmain-head-title type-text-sm">Total referral earnings</h1>
+          <button
+            type="button"
+            className="scr-refmain-info"
+            onClick={onAbout ?? (() => setAboutOpen(true))}
+            aria-label="About referral"
+          >
+            <Icon name="info" size={24} strokeWidth={1.33} />
+          </button>
+        </div>
 
-          <div className="scr-refmain-amount-row">
-            <span className="scr-refmain-amount type-text-2xl-bold">{money(totalEarnings)}</span>
-            <div className="scr-refmain-share">
-              <div className="scr-refmain-share-top">
-                <span className="scr-refmain-share-coin" aria-hidden="true" />
-                <span className="scr-refmain-share-pct type-text-base-bold">{sharePct}%</span>
-              </div>
-              <span className="scr-refmain-share-label type-text-xs-10">Referral share</span>
+        <div className="scr-refmain-amount-row">
+          <span className="scr-refmain-amount type-text-2xl-semibold">{money(totalEarnings)}</span>
+          <div className="scr-refmain-share">
+            <div className="scr-refmain-share-top">
+              {/* 1429:14241 is a raster badge in Figma — cropped 1:1 out of the frame. */}
+              <img className="scr-refmain-share-coin" src={shareCoin} alt="" width={24} height={24} />
+              <span className="scr-refmain-share-pct type-text-base-semibold">{sharePct}%</span>
             </div>
+            <span className="scr-refmain-share-label type-text-xs-10">Referral share</span>
           </div>
         </div>
 
-        <hr className="scr-refmain-rule" />
+        <div className="scr-refmain-rule" />
 
         <ul className="scr-refmain-stats">
           {stats.map((s) => (
             <li key={s.label} className="scr-refmain-stat">
               <span className="scr-refmain-stat-badge">
-                <Glyph name={s.icon} size={18} />
+                <Glyph name={s.icon} size={20} strokeWidth={1.35} />
               </span>
               <span className="scr-refmain-stat-text">
                 <span className="scr-refmain-stat-label type-text-xs-10">{s.label}</span>
                 <span className="scr-refmain-stat-value-row">
-                  <span className="scr-refmain-stat-value type-text-base-bold">{s.value}</span>
+                  <span className="scr-refmain-stat-value type-text-sm-semibold">{s.value}</span>
                   {s.delta ? (
                     <span className="scr-refmain-stat-delta type-text-xs">
-                      <Icon name="arrow-up" size={16} strokeWidth={2} />
+                      <Icon name="arrow-up" size={16} strokeWidth={1.7} />
                       {s.delta}
                     </span>
                   ) : null}
@@ -142,26 +149,31 @@ export function ReferralMain({
 
         <div className="scr-refmain-links">
           <div className="scr-refmain-head">
-            <h2 className="scr-refmain-head-title type-text-base">Copy your referral link</h2>
-            <button type="button" className="scr-refmain-info" onClick={onAbout ?? (() => setAboutOpen(true))} aria-label="About referral links">
-              <Icon name="info" size={20} strokeWidth={1.6} />
+            <h2 className="scr-refmain-head-title type-text-sm">Copy your referral link</h2>
+            <button
+              type="button"
+              className="scr-refmain-info scr-refmain-info--sm"
+              onClick={onAbout ?? (() => setAboutOpen(true))}
+              aria-label="About referral links"
+            >
+              <Icon name="info" size={20} strokeWidth={1.4} />
             </button>
           </div>
 
           {(
             [
-              { key: 'telegram' as const, icon: 'send' as const, label: 'Telegram link', value: telegramLink },
-              { key: 'website' as const, icon: 'globe' as const, label: 'Website link', value: websiteLink },
+              { key: 'telegram' as const, icon: 'send' as const, stroke: 1.34, label: 'Telegram link', value: telegramLink },
+              { key: 'website' as const, icon: 'globe' as const, stroke: 1.42, label: 'Website link', value: websiteLink },
             ]
           ).map((l) => (
             <div key={l.key} className="scr-refmain-link">
               <span className="scr-refmain-link-main">
-                <Glyph name={l.icon} size={20} className="scr-refmain-link-icon" />
-                <span className="scr-refmain-link-label type-text-sm-semibold">{l.label}</span>
+                <Glyph name={l.icon} size={20} strokeWidth={l.stroke} className="scr-refmain-link-icon" />
+                <span className="scr-refmain-link-label type-text-sm">{l.label}</span>
               </span>
               <button type="button" className="scr-refmain-copy" onClick={() => copy(l.key, l.value)}>
                 <span className="type-text-xs">{copied === l.key ? 'Copied' : 'Copy'}</span>
-                <Glyph name="copy" size={16} />
+                <Glyph name="copy" size={16} strokeWidth={1.59} />
               </button>
             </div>
           ))}
@@ -172,9 +184,9 @@ export function ReferralMain({
 
       <section className="scr-refmain-list-card">
         <div className="scr-refmain-list-head">
-          <h2 className="scr-refmain-list-title type-text-base-semibold">Your referrals</h2>
+          <h2 className="scr-refmain-list-title type-text-base">Your referrals</h2>
           <button type="button" className="scr-refmain-sort" onClick={() => setSortDesc((v) => v === false)}>
-            <Glyph name="swap-vertical" size={16} />
+            <Glyph name="swap-vertical" size={16} strokeWidth={1.42} />
             <span className="type-text-xs">{sortDesc === false ? 'Lowest earnings' : 'Highest earnings'}</span>
           </button>
         </div>
@@ -184,42 +196,47 @@ export function ReferralMain({
           <p className="scr-refmain-empty type-text-sm">
             You have no referrals yet, share your link to invite your first friend and start earning together.
           </p>
-        ) : null}
-
-        <ul className="scr-refmain-referrals">
-          {sorted.map((r) => (
-            <li key={r.id} className="scr-refmain-referral">
-              <div className="scr-refmain-referral-top">
-                <span className="scr-refmain-referral-id">
-                  <Glyph name="user" size={16} />
-                  <span className="type-text-xs">{r.id}</span>
-                </span>
-                <span className="scr-refmain-referral-joined type-text-xs-10">Joined {r.joined}</span>
-              </div>
-              <div className="scr-refmain-referral-cols">
-                {[
-                  { label: 'Plan', value: money(r.plan) },
-                  { label: 'Cashback', value: money(r.cashback) },
-                  // Green only when there is something to show — 1003's $0.00
-                  // stays default-coloured in the frame.
-                  { label: 'Total', value: money(total(r)), strong: total(r) > 0 },
-                ].map((c) => (
-                  <span key={c.label} className="scr-refmain-referral-col">
-                    <span className="scr-refmain-referral-col-label type-text-xs-10">{c.label}</span>
-                    <span
-                      className={
-                        'scr-refmain-referral-col-value type-text-xs' +
-                        (c.strong ? ' scr-refmain-referral-col-value--total' : '')
-                      }
-                    >
-                      {c.value}
+        ) : (
+          <div className="scr-refmain-list-port">
+            <div className="scr-refmain-list-scroll">
+              <ul className="scr-refmain-referrals">
+              {sorted.map((r) => (
+                <li key={r.id} className="scr-refmain-referral">
+                  <div className="scr-refmain-referral-top">
+                    <span className="scr-refmain-referral-id">
+                      <Glyph name="user" size={16} strokeWidth={1.13} />
+                      <span className="type-text-xs">{r.id}</span>
                     </span>
-                  </span>
-                ))}
-              </div>
-            </li>
-          ))}
-        </ul>
+                    <span className="scr-refmain-referral-joined type-text-xs-10">Joined {r.joined}</span>
+                  </div>
+                  <div className="scr-refmain-referral-cols">
+                    {[
+                      { label: 'Plan', value: money(r.plan) },
+                      { label: 'Cashback', value: money(r.cashback) },
+                      // Green only when there is something to show — 1003's $0.00
+                      // stays default-coloured in the frame.
+                      { label: 'Total', value: money(total(r)), strong: total(r) > 0 },
+                    ].map((c) => (
+                      <span key={c.label} className="scr-refmain-referral-col">
+                        <span className="scr-refmain-referral-col-label type-text-xs-10">{c.label}</span>
+                        <span
+                          className={
+                            'scr-refmain-referral-col-value type-text-xs' +
+                            (c.strong ? ' scr-refmain-referral-col-value--total' : '')
+                          }
+                        >
+                          {c.value}
+                        </span>
+                      </span>
+                    ))}
+                  </div>
+                </li>
+              ))}
+              </ul>
+            </div>
+            <span className="scr-refmain-list-rail" aria-hidden="true" />
+          </div>
+        )}
       </section>
 
       <AboutReferralSheet open={aboutOpen} onClose={() => setAboutOpen(false)} />

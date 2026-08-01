@@ -1,8 +1,22 @@
 /* =====================================================================
-   Referral — main page (1333:8366). Exact px from the frame XML:
-   blue card 328x396 @16,92 (16 padding, 296 content column), 2x2 stat grid
-   on 44-tall rows with an 8 gap, link rows 296x48 with an 8 gap, referral
-   rows 286x108 with a 12 gap.
+   Referral — main page (1333:8366).
+
+   Every number below was read straight off the 1:1 frame render, in
+   *app* coordinates (frame y minus the 76px of status bar + Telegram
+   header the app does not draw):
+
+     blue card      16,16   328x396  r16
+       head row       32..60   (14/28 title + 24 info icon)
+       amount row     70..118  (24/48) | share block 72..116
+       dashed rule    127..129 (2px, 4-on/4-off)
+       stat grid      140..236 (two 44 rows, 8 gap)
+       links head     256..284 (14/28 title + 20 info icon)
+       link rows      292..340 / 348..396  (296x48 r8)
+     promo carousel 16,436  328x110
+     referrals card 16,570  328x508  r16
+       head row       586..618 (16/32 title + 144x32 sort pill)
+       scroll port    634..1062 (296x428, 2px scrollbar, 286-wide rows)
+     floating nav   16,1110 328x64
    ===================================================================== */
 
 .scr-refmain {
@@ -10,7 +24,7 @@
   flex-direction: column;
   gap: var(--spacing-24);
   min-height: 100%;
-  padding: var(--spacing-16) var(--spacing-16) 104px; /* clearance for the floating nav */
+  padding: var(--spacing-16) var(--spacing-16) 112px; /* clearance for the floating nav */
   background: var(--bg-colors-container-s);
 }
 
@@ -22,68 +36,99 @@
   color: var(--base-color-white);
 }
 
+/* White at 72% is the exact sampled value of every muted label on the card
+   (#BECDF1 over #144CCD). */
+.scr-refmain-card :is(.scr-refmain-head-title, .scr-refmain-stat-label, .scr-refmain-share-label),
+.scr-refmain-info {
+  color: rgba(255, 255, 255, 0.72);
+}
+
 .scr-refmain-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-8);
+  height: 28px;
 }
 
 .scr-refmain-head-title {
   margin: 0;
   font-weight: var(--font-weight-regular);
+  line-height: 28px;
 }
 
 .scr-refmain-info {
   display: grid;
   place-items: center;
+  width: 24px;
+  height: 24px;
   padding: 0;
-  color: inherit;
-  opacity: 0.9;
+}
+
+.scr-refmain-info--sm {
+  width: 20px;
+  height: 20px;
+}
+
+/* The DS "info" circle is r=9/24; the Figma glyph is r=10/24, i.e. 22px of
+   ring inside a 24 box instead of 20. Scale to match without touching the
+   shared Icon component. */
+.scr-refmain-info svg {
+  transform: scale(1.1);
 }
 
 .scr-refmain-amount-row {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-top: var(--spacing-8);
+  margin-top: 10px;
 }
 
+/* 24/44 is the token line-height; the row is 46 tall because the badge block
+   below hangs 2px lower than the numerals. */
 .scr-refmain-amount {
   display: block;
 }
 
-/* 70x48 badge: 24px coin + "10%" on one row, caption under it */
+/* 70x44 badge block: 24px coin + "10%" on one 24-tall row, caption under it */
 .scr-refmain-share {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  margin-top: 2px;
 }
 
 .scr-refmain-share-top {
   display: flex;
   align-items: center;
-  gap: var(--spacing-12);
-  height: 32px;
+  gap: var(--spacing-4);
+  height: 24px;
 }
 
 .scr-refmain-share-coin {
+  display: block;
   width: 24px;
   height: 24px;
-  border-radius: var(--radius-infinity);
-  /* placeholder coin — the frame uses a raster badge (1429:14241) */
-  background: linear-gradient(180deg, #ffc300 0%, #ff8a00 100%);
+}
+
+.scr-refmain-share-pct {
+  line-height: 24px;
 }
 
 .scr-refmain-share-label {
-  opacity: 0.75;
+  line-height: 20px;
 }
 
+/* 4px dash / 4px gap, phase-shifted so the run starting at x=32 is 2px long. */
 .scr-refmain-rule {
-  height: 1px;
-  margin: var(--spacing-12) 0;
-  border: 0;
-  background: rgba(255, 255, 255, 0.16);
+  height: 2px;
+  margin-top: 11px;
+  background-image: repeating-linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.08) 0 4px,
+    transparent 4px 8px
+  );
+  background-position-x: -2px;
 }
 
 /* ---- 2x2 stat grid ---------------------------------------------------- */
@@ -91,14 +136,16 @@
   display: grid;
   grid-template-columns: 132px 1fr;
   gap: var(--spacing-8) 17px; /* col x=0 and x=149 -> 17 gutter */
-  margin: 0;
+  margin: 11px 0 0;
   padding: 0;
   list-style: none;
 }
 
 .scr-refmain-stat {
   display: flex;
+  align-items: center;
   gap: var(--spacing-8);
+  height: 44px;
   min-width: 0;
 }
 
@@ -108,25 +155,33 @@
   place-items: center;
   width: 36px;
   height: 36px;
-  margin-top: 4px;
   border-radius: var(--radius-infinity);
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
 }
 
+/* 20 (label) + 20 (value) = 40 sitting at the top of the 44 row; only the
+   badge is centred. */
 .scr-refmain-stat-text {
   display: flex;
   flex-direction: column;
+  align-self: flex-start;
+  height: 40px;
   min-width: 0;
 }
 
 .scr-refmain-stat-label {
-  opacity: 0.8;
+  line-height: 20px;
 }
 
 .scr-refmain-stat-value-row {
   display: flex;
   align-items: center;
   gap: var(--spacing-4);
+  height: 20px;
+}
+
+.scr-refmain-stat-value {
+  line-height: 20px;
 }
 
 .scr-refmain-stat-delta {
@@ -143,17 +198,13 @@
   margin-top: var(--spacing-20);
 }
 
-.scr-refmain-links .scr-refmain-head {
-  margin-bottom: var(--spacing-8);
-}
-
 .scr-refmain-link {
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 48px;
   padding: 0 var(--spacing-8) 0 var(--spacing-16);
-  border-radius: var(--radius-medium);
+  border-radius: 7px;
   background: var(--base-color-white);
 }
 
@@ -164,19 +215,32 @@
   min-width: 0;
 }
 
+/* Figma's stroke set fills 20/24 of its box where Tabler's fills 18/24, so the
+   glyph is drawn 18px inside its 20px slot instead of 16.3px. */
+.scr-refmain-link-icon {
+  transform: scale(1.1);
+}
+
+.scr-refmain-referral-id svg {
+  transform: scale(1.3);
+}
+
 .scr-refmain-link-icon,
-.scr-refmain-link-label {
+.scr-refmain-link-label,
+.scr-refmain-copy {
   color: var(--primary-colors-900);
 }
 
+/* 69x32 outlined button, right edge flush at x=320 (8px inside the row). */
 .scr-refmain-copy {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-4);
   height: 32px;
-  padding: 0 var(--spacing-8);
-  border-radius: var(--radius-small);
-  color: var(--typography-colors-main-text);
+  padding: 0 7px 0 var(--spacing-8);
+  border: 1px solid var(--primary-colors-900);
+  border-radius: 4px;
+  background: transparent;
 }
 
 /* ---- "Your referrals" list ------------------------------------------- */
@@ -191,21 +255,24 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-8);
+  height: 32px;
 }
 
 .scr-refmain-list-title {
   margin: 0;
+  line-height: 32px;
   color: var(--typography-colors-main-text);
 }
 
 .scr-refmain-sort {
   display: inline-flex;
   align-items: center;
-  gap: var(--spacing-12);
+  gap: var(--spacing-4);
   height: 32px;
-  padding: 0 var(--spacing-8);
-  border-radius: var(--radius-small);
+  padding: 0 12px 0 7px;
+  border-radius: 7px;
   border: 1px solid var(--stroke-colors-default);
+  background: var(--bg-colors-container-p);
   color: var(--typography-colors-main-text);
 }
 
@@ -214,18 +281,61 @@
   color: var(--typography-colors-sub-text);
 }
 
+/* 296x428 viewport: 286-wide rows, 8px gutter, then a 2px indicator hard
+   against the right edge. The frame draws that indicator as a fixed 199px
+   thumb (it is decoration, not a live scroll ratio), so the native bar is
+   hidden and the rail is drawn instead. */
+.scr-refmain-list-port {
+  position: relative;
+  height: 428px;
+  margin-top: var(--spacing-16);
+}
+
+.scr-refmain-list-scroll {
+  height: 100%;
+  width: 286px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.scr-refmain-list-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.scr-refmain-list-rail {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  background: var(--bg-colors-container-s);
+}
+
+.scr-refmain-list-rail::before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 0;
+  width: 2px;
+  height: 199px;
+  background: var(--stroke-colors-default);
+}
+
 .scr-refmain-referrals {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-12);
-  margin: var(--spacing-16) 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/* 286x108. Figma's 12px padding is measured from the frame edge, so with a
+   1px inside stroke the CSS padding is 11. */
 .scr-refmain-referral {
-  padding: var(--spacing-12);
-  border-radius: var(--radius-medium);
+  padding: 11px;
+  border-radius: 11px;
   border: 1px solid var(--stroke-colors-default);
 }
 
@@ -234,6 +344,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-8);
+  height: 24px;
 }
 
 .scr-refmain-referral-id {
@@ -244,16 +355,21 @@
 }
 
 .scr-refmain-referral-joined {
+  margin-right: 1px;
+  line-height: 20px;
   color: var(--typography-colors-sub-text);
 }
 
+/* 262x56 outlined box; the three columns sit 11px in from the left edge and
+   flush to the right one — that asymmetry is in the frame. */
 .scr-refmain-referral-cols {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   margin-top: var(--spacing-4);
-  padding: var(--spacing-8) 0;
-  border-radius: var(--radius-small);
-  background: var(--bg-colors-container-s);
+  padding: 9px 0 9px 11px;
+  border-radius: 7px;
+  border: 1px solid var(--stroke-colors-default);
+  background: var(--bg-colors-container-p);
 }
 
 .scr-refmain-referral-col {
@@ -263,10 +379,12 @@
 }
 
 .scr-refmain-referral-col-label {
+  line-height: 16px;
   color: var(--typography-colors-sub-text);
 }
 
 .scr-refmain-referral-col-value {
+  line-height: 20px;
   color: var(--typography-colors-main-text);
 }
 
@@ -275,11 +393,13 @@
 }
 
 /* ---- floating nav ----------------------------------------------------- */
-.scr-refmain-nav {
+/* Two classes deep so it beats .ds-navbar's own `margin: 0 16px`, which would
+   otherwise push the fixed bar 16px off-centre. */
+.scr-refmain .scr-refmain-nav {
   position: fixed;
-  left: 50%;
+  left: 0;
+  right: 0;
   bottom: var(--spacing-16);
-  transform: translateX(-50%);
-  width: calc(100% - var(--spacing-32));
-  max-width: 328px;
+  width: min(328px, calc(100% - var(--spacing-32)));
+  margin: 0 auto;
 }
