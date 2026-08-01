@@ -25,7 +25,7 @@ export default function CashbackHistory({ onBack }: CashbackHistoryProps): React
         <CashbackOverview />
       </div>
 
-      <CashbackHistorySheet open onClose={onBack} />
+      <CashbackHistorySheet open onClose={() => onBack?.()} />
     </div>
   );
 }
