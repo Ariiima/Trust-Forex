@@ -399,8 +399,10 @@
   background: var(--bg-colors-container-p);
 }
 
-/* Decorative: it must not intercept the drag. */
+/* Sits ABOVE the mask and the window so both series stay visible across the
+   whole strip, but must not intercept the drag. */
 .scr-earn-brush-chart {
+  z-index: 2;
   pointer-events: none;
   position: absolute;
   left: 0;
@@ -410,7 +412,7 @@
 }
 
 .scr-earn-brush-handle {
-  z-index: 2;
+  z-index: 3;
   cursor: ew-resize;
   touch-action: none;
   position: absolute;
