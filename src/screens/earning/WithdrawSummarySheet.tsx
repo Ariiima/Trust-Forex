@@ -13,6 +13,10 @@ import './WithdrawSummarySheet.css';
 
 const money = (n: number) => `$${n.toFixed(2)}`;
 
+/** Both frames spell the chain with a hyphen here — "USDT (BEP-20)" — while the
+    catalogue (and the currency chip behind the sheet) stores the bare "BEP20". */
+const dashNetwork = (n: string) => n.replace(/^([A-Za-z]+)(\d+)$/, '$1-$2');
+
 export interface WithdrawSummarySheetProps {
   open: boolean;
   /** `submitted` swaps the CTA for the under-review banner (1404:7924). */
@@ -43,32 +47,45 @@ export function WithdrawSummarySheet({
   onConfirm,
 }: WithdrawSummarySheetProps): ReactNode {
   const rows = [
-    { label: 'Currency', value: `${currency} (${network})` },
+    { label: 'Currency', value: `${currency} (${dashNetwork(network)})` },
     { label: 'Wallet address', value: shorten(wallet) },
     { label: 'Withdrawal amount', value: money(amount) },
     { label: 'Network fee', value: money(networkFee) },
     { label: 'Final amount', value: money(Math.max(0, amount - networkFee)) },
   ];
 
+  const submitted = state === 'submitted';
+
   return (
-    <BottomSheet open={open} onClose={onClose} className="scr-wdsum-sheet">
-      <div className="scr-wdsum-head">
-        <h2 className="scr-wdsum-title type-text-base">Withdrawal summary</h2>
-        <button type="button" className="scr-wdsum-close" onClick={onClose} aria-label="Close">
-          <Icon name="close" size={24} strokeWidth={1.6} />
-        </button>
-      </div>
-
-      <div className="scr-wdsum-rule" />
-
-      {state === 'submitted' ? (
+    <BottomSheet
+      open={open}
+      onClose={onClose}
+      className={`scr-wdsum-sheet${submitted ? ' scr-wdsum-sheet-submitted' : ''}`}
+    >
+      {submitted ? (
         <div className="scr-wdsum-banner">
-          <Glyph name="clock-hour-5" size={24} strokeWidth={1.6} className="scr-wdsum-banner-icon" />
+          <Glyph
+            name="clock-hour-5"
+            size={24}
+            strokeWidth={1.45}
+            className="scr-wdsum-banner-icon"
+          />
           <p className="scr-wdsum-banner-text type-text-xs">
             Your withdrawal request was successfully submitted and is now under review.
           </p>
         </div>
-      ) : null}
+      ) : (
+        <>
+          <div className="scr-wdsum-head">
+            <h2 className="scr-wdsum-title type-text-base">Withdrawal summary</h2>
+            <button type="button" className="scr-wdsum-close" onClick={onClose} aria-label="Close">
+              <Icon name="close" size={24} strokeWidth={1.6} />
+            </button>
+          </div>
+
+          <div className="scr-wdsum-rule" />
+        </>
+      )}
 
       <dl className="scr-wdsum-rows">
         {rows.map((r) => (
@@ -79,7 +96,11 @@ export function WithdrawSummarySheet({
         ))}
       </dl>
 
-      {state === 'confirm' ? (
+      {submitted ? (
+        <Button variant="outline" size="medium" fullWidth className="scr-wdsum-cta" onClick={onClose}>
+          Back to Earnings
+        </Button>
+      ) : (
         <Button
           variant="primary"
           size="medium"
@@ -89,10 +110,6 @@ export function WithdrawSummarySheet({
           onClick={onConfirm}
         >
           Request withdrawal
-        </Button>
-      ) : (
-        <Button variant="primary" size="medium" fullWidth className="scr-wdsum-cta" onClick={onClose}>
-          Done
         </Button>
       )}
     </BottomSheet>

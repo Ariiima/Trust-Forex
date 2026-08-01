@@ -26,6 +26,24 @@
   border-radius: 16px 16px 0 0;
 }
 
+/* The submitted frame (1404:7924) drops the header and the dashed rule and
+   leads with the banner, so the sheet grows to 392 and starts 16 above it:
+
+       0   sheet top (radius 16)
+       16  banner top     — 72 tall
+       88  banner bottom
+       104 rows top       — the same 5x28-on-12 stack, 188 tall
+       292 rows bottom
+       324 CTA top        — 44 tall, outline style
+       368 CTA bottom
+       392 sheet bottom   (= 24 bottom padding)
+
+   Both frames put the row stack at y=564 and the CTA at y=784 in the 852-tall
+   artboard; only the sheet's top edge moves (488 -> 460). */
+.ds-sheet.scr-wdsum-sheet-submitted {
+  padding-top: var(--spacing-16);
+}
+
 .scr-wdsum-sheet .ds-sheet-handle {
   display: none;
 }
@@ -69,19 +87,30 @@
   background-position: -2px 0;
 }
 
-/* ---- under-review banner (1404:8028) ---------------------------------- */
+/* ---- under-review banner (1404:8028) ----------------------------------
+   328x72 at x=16, radius 8 (not 12 — the corner reaches full fill 7 rows down,
+   which only solves for r=8), fill #FFFBEF. 12 padding all round, 10 between
+   the icon and the copy, and the icon is centred on the two-line text block
+   (its ink centre sits at banner-local 35.5 = the middle of the 12..60 content
+   box), not top-aligned. */
 .scr-wdsum-banner {
   display: flex;
+  align-items: center;
   gap: 10px;
   margin-bottom: var(--spacing-16);
   padding: var(--spacing-12);
-  border-radius: var(--radius-medium);
+  border-radius: var(--radius-small);
   background: var(--state-colors-danger-bg);
 }
 
+/* The frame's clock is 22px of ink inside its 24 box; the Tabler path we have
+   draws 20 (r=9 + a 1.6 stroke). Scale the paint 1.1x about the centre — the
+   box stays 24 so the copy still starts at x=62 — and thin the stroke to 1.45
+   so 1.45 x 1.1 lands back on the frame's ~1.6. */
 .scr-wdsum-banner-icon {
   flex: 0 0 24px;
   color: var(--state-colors-danger);
+  transform: scale(1.1);
 }
 
 .scr-wdsum-banner-text {
@@ -109,8 +138,13 @@
   color: var(--typography-colors-sub-text);
 }
 
+/* The right-aligned values end their advance half a pixel short of the 344
+   content edge in both frames — every value's ink sits 0.5px left of where a
+   flush right edge puts it (sampled on the trailing ")" of "USDT (BEP-20)":
+   22% ink in the frame at x=342 against 85% flush). Swept 0/0.5/0.75/1: 0.5
+   is the minimum on both frames. */
 .scr-wdsum-value {
-  margin: 0;
+  margin: 0 0.5px 0 0;
   color: var(--typography-colors-main-text);
   text-align: right;
 }
