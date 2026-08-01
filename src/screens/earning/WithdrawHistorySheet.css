@@ -1,10 +1,13 @@
-/* "Withdraw history" sheet (1404:7767). Filter track 328x40 with 4px inset
-   pills, rows 318x108 on a 12 gap with 12 inner padding. */
+/* "Withdraw history" sheet (1404:7767).
+   Every number below is measured off design/review/ref/earn-history.png.
+   Note: Figma measures padding from the frame edge and the 1px stroke paints
+   over it, so under border-box the CSS padding is the Figma value minus 1. */
 
 .ds-sheet.scr-wdhist-sheet {
   display: flex;
   flex-direction: column;
-  max-height: min(635px, 85vh);
+  height: 635px;
+  max-height: 100%;
   padding: var(--spacing-16) var(--spacing-16) var(--spacing-24);
   border-radius: var(--radius-large) var(--radius-large) 0 0;
 }
@@ -13,13 +16,13 @@
   display: none;
 }
 
+/* ---- header ------------------------------------------------------------ */
 .scr-wdhist-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-8);
-  padding-bottom: var(--spacing-12);
-  border-bottom: 1px dashed var(--stroke-colors-default);
+  height: 32px; /* the title's own line box — the close icon centres on it */
 }
 
 .scr-wdhist-title {
@@ -30,29 +33,54 @@
 .scr-wdhist-close {
   display: grid;
   place-items: center;
+  width: 24px;
+  height: 24px;
   padding: 0;
   color: var(--typography-colors-main-text);
+}
+
+/* Figma draws a 1px dashed stroke centred on the header's bottom edge, so it
+   lands as two half-covered rows. 4px on / 4px off, phase-shifted 2px left so
+   the first dash is clipped exactly as in the reference. */
+.scr-wdhist-rule {
+  height: 2px;
+  margin-top: 11px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--bg-colors-container-s) 0 2px,
+    transparent 2px 6px,
+    var(--bg-colors-container-s) 6px 8px
+  );
 }
 
 /* ---- filter bar -------------------------------------------------------- */
 .scr-wdhist-filters {
   display: flex;
-  gap: var(--spacing-4);
-  margin-top: var(--spacing-16);
-  padding: var(--spacing-4);
+  height: 40px;
+  margin-top: 15px;
+  padding: 3px; /* Figma 4 − 1px border */
+  border: 1px solid var(--stroke-colors-default);
   border-radius: var(--radius-small);
-  background: var(--bg-colors-container-s);
+  background: var(--bg-colors-container-p);
 }
 
 .scr-wdhist-filter {
-  flex: 1;
-  height: 32px;
-  border-radius: 6px;
+  flex: 1 1 0;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 4px;
+  background: transparent;
   color: var(--typography-colors-sub-text);
 }
 
+/* "All" hugs its label; the remaining three share the rest of the track. */
+.scr-wdhist-filter:first-child {
+  flex: 0 0 48px;
+}
+
 .scr-wdhist-filter--on {
-  background: var(--bg-colors-container-p);
+  background: var(--bg-colors-container-s);
   color: var(--typography-colors-main-text);
 }
 
@@ -63,52 +91,86 @@
   flex-direction: column;
   gap: var(--spacing-12);
   margin: var(--spacing-16) 0 0;
-  padding: 0;
+  padding: 0 10px 0 0; /* 8px gutter + the 2px rail */
   list-style: none;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--stroke-colors-default) transparent;
+  overscroll-behavior: contain;
+  /* 2px rail pinned to the right edge of the viewport. Painted as a background
+     so it stays put while the rows scroll under it. */
+  background: linear-gradient(var(--bg-colors-container-s), var(--bg-colors-container-s))
+    no-repeat right 0 top 0 / 2px 100%;
+  scrollbar-width: none;
 }
 
 .scr-wdhist-list::-webkit-scrollbar {
-  width: 4px;
+  display: none;
 }
 
-.scr-wdhist-list::-webkit-scrollbar-thumb {
+.scr-wdhist-row {
+  flex: 0 0 auto;
+  height: 108px;
+  /* Figma 12 − 1px border. The extra half pixel on the right is Figma rounding
+     a hugging text box up to a whole pixel before right-aligning it, which
+     shifts the amount and the destination line half a pixel left. */
+  padding: 11px 11.5px 11px 11px;
+  border: 1px solid var(--stroke-colors-default);
+  border-radius: var(--radius-medium);
+  background: var(--bg-colors-container-p);
+}
+
+.scr-wdhist-pair {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  height: 24px;
+  color: var(--typography-colors-main-text);
+}
+
+.scr-wdhist-pair img {
+  margin-right: var(--spacing-4); /* 4 + the 4 flex gap = 8 to the symbol */
+  border-radius: var(--radius-infinity);
+}
+
+/* Both separators are drawn discs, not middle-dot glyphs: 4px on the symbol
+   line, 2px on the date line, both #E4E4E4. The half-pixel margins recover the
+   sub-pixel offset Figma's own layout gives them. */
+.scr-wdhist-bullet,
+.scr-wdhist-dot {
+  flex: none;
   border-radius: var(--radius-infinity);
   background: var(--stroke-colors-default);
 }
 
-.scr-wdhist-row {
-  padding: var(--spacing-12);
-  border-radius: var(--radius-medium);
-  border: 1px solid var(--stroke-colors-default);
+.scr-wdhist-bullet {
+  width: 4px;
+  height: 4px;
+  margin: 0 0.5px;
 }
 
-.scr-wdhist-row-top {
+.scr-wdhist-dot {
+  width: 2px;
+  height: 2px;
+  margin-left: 0.5px;
+}
+
+.scr-wdhist-mid {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-8);
+  height: 24px;
+  margin-top: var(--spacing-8);
+}
+
+.scr-wdhist-amount {
   color: var(--typography-colors-main-text);
-}
-
-.scr-wdhist-pair {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-8);
-}
-
-.scr-wdhist-pair img {
-  border-radius: var(--radius-infinity);
 }
 
 /* ---- status chip ------------------------------------------------------- */
 .scr-wdhist-chip {
-  display: inline-block;
-  margin-top: var(--spacing-4);
   padding: 0 var(--spacing-8);
   border-radius: var(--radius-small);
+  white-space: nowrap;
 }
 
 .scr-wdhist-chip--completed {
@@ -126,10 +188,21 @@
   color: var(--state-colors-eror);
 }
 
-.scr-wdhist-row-foot {
+/* ---- date / destination ------------------------------------------------ */
+.scr-wdhist-foot {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: var(--spacing-8);
+  height: 20px;
   margin-top: var(--spacing-8);
   color: var(--typography-colors-sub-text);
+}
+
+.scr-wdhist-when,
+.scr-wdhist-to {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  white-space: nowrap;
 }

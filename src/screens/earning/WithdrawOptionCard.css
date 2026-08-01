@@ -79,10 +79,14 @@
   padding-left: var(--spacing-16);
 }
 
+/* The frame splits the fee row 50/50, so this has to be a fraction, not a
+   constant: 128 only happens to be half of the 296-wide step-1 card. The same
+   card is 318 wide inside the change-currency sheet, where the frame puts
+   "Minimum withdraw" at 139. */
 .scr-wdopt-meta-cell {
   display: flex;
   flex-direction: column;
-  width: 128px;
+  flex: 1 1 0;
 }
 
 .scr-wdopt-meta-label {

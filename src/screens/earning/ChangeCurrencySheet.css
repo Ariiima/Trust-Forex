@@ -1,25 +1,38 @@
-/* "Change currency" sheet (1402:7191). Header 328x44 with a rule, the option
-   list scrolls, CTA pinned under it. */
+/* =====================================================================
+   "Change currency" sheet — frame 1402:7191.
+
+   Measured off the frame render (screen space = frame y - 76 chrome):
+     sheet        141 -> 776   (360 x 635), top corners 16
+     padding      16 sides, 16 top, 24 bottom
+     header row   157 -> 189   (32 = the 16/32 title line box)
+     dashed rule  200.5        (1px #E4E4E4, 4 on / 4 off, phase -2)
+     list         217 -> 684   (467 tall, 328 wide incl. a 2px rail)
+     CTA          708 -> 752   (44 tall, 328 wide, 24 above and below)
+   ===================================================================== */
 
 .ds-sheet.scr-chgcur-sheet {
+  position: relative;
   display: flex;
   flex-direction: column;
-  max-height: min(631px, 85vh);
+  height: 635px;
+  max-height: 100%;
   padding: var(--spacing-16) var(--spacing-16) var(--spacing-24);
-  border-radius: var(--radius-large) var(--radius-large) 0 0;
+  /* 16, not --radius-large: the arc reaches the frame edge 14px down. */
+  border-radius: 16px 16px 0 0;
 }
 
 .scr-chgcur-sheet .ds-sheet-handle {
   display: none;
 }
 
+/* ---- header ----------------------------------------------------------- */
 .scr-chgcur-head {
   display: flex;
+  flex: none;
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-8);
-  padding-bottom: var(--spacing-12);
-  border-bottom: 1px solid var(--stroke-colors-default);
+  height: 32px;
 }
 
 .scr-chgcur-title {
@@ -34,28 +47,105 @@
   color: var(--typography-colors-main-text);
 }
 
+/* Dashed rule, not the solid hairline the other sheets use: 4px dashes on a
+   4px gap, the run starting 2px before the left edge so the first dash is
+   clipped to 2px. The half-pixel margins put the line on y=200.5, where the
+   frame's centre-aligned 1px stroke sits; Chromium then snaps the fill down
+   to row 201 while Figma spreads it 50/50 over 200-201. */
+.scr-chgcur-rule {
+  flex: none;
+  height: 1px;
+  margin: 11.5px 0 15.5px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--stroke-colors-default) 0 4px,
+    transparent 4px 8px
+  );
+  background-position-x: -2px;
+}
+
+/* ---- option list ------------------------------------------------------ */
 .scr-chgcur-list {
   flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-12);
-  margin: var(--spacing-16) 0 0;
-  padding: 0;
+  margin: 0;
+  /* 8px clear of the cards + the 2px rail: this is what makes the options
+     318 wide rather than the 328 of the scroll area. */
+  padding: 0 10px 0 0;
   list-style: none;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--stroke-colors-default) transparent;
+  overflow-y: scroll;
+  overscroll-behavior: contain;
+  scroll-timeline-name: --scr-chgcur-scroll;
+  scroll-timeline-axis: y;
+  /* The rail below is drawn by hand; the UA bar would double it. */
+  scrollbar-width: none;
 }
 
 .scr-chgcur-list::-webkit-scrollbar {
-  width: 4px;
+  display: none;
 }
 
-.scr-chgcur-list::-webkit-scrollbar-thumb {
+/* Scroll rail — the frame draws a 2px #F1F1F1 track the full height of the
+   viewport with a 200px #E4E4E4 thumb, drawn against the right edge of the
+   sheet's 16px gutter. It is hand-drawn because this Chromium ships overlay
+   scrollbars: ::-webkit-scrollbar reserves no width and paints nothing. */
+.scr-chgcur-sheet::before,
+.scr-chgcur-sheet::after {
+  content: '';
+  position: absolute;
+  top: 76px; /* = the list's own top, 217 on screen */
+  right: var(--spacing-16);
+  width: 2px;
   border-radius: var(--radius-infinity);
+}
+
+.scr-chgcur-sheet::before {
+  height: 467px;
+  background: var(--bg-colors-container-s);
+}
+
+.scr-chgcur-sheet::after {
+  height: 200px;
   background: var(--stroke-colors-default);
 }
 
-.scr-chgcur-cta {
+/* Drive the thumb off the list's own scroll position where the engine can
+   (Chrome 116+). Guarded: without a scroll timeline `animation` would fall
+   back to the document timeline and snap straight to the end frame. */
+@supports (animation-timeline: scroll()) {
+  .scr-chgcur-sheet {
+    timeline-scope: --scr-chgcur-scroll;
+  }
+
+  .scr-chgcur-sheet::after {
+    animation: scr-chgcur-thumb linear both;
+    animation-timeline: --scr-chgcur-scroll;
+  }
+
+  @keyframes scr-chgcur-thumb {
+    to {
+      transform: translateY(267px); /* 467 track - 200 thumb */
+    }
+  }
+}
+
+/* Same 112 / 116-from-the-third rule as the step-1 picker (1379:6901); the
+   extra 4px all sits above the fee row. */
+.scr-chgcur-list > li:nth-child(n + 3) .scr-wdopt {
+  height: 116px;
+}
+
+.scr-chgcur-list > li:nth-child(n + 3) .scr-wdopt-meta {
   margin-top: var(--spacing-16);
+}
+
+/* ---- CTA -------------------------------------------------------------- */
+/* flex:none or the 44px button gets shrunk by the fixed-height column. */
+.scr-chgcur-cta {
+  flex: none;
+  margin-top: var(--spacing-24);
+  gap: var(--spacing-4);
 }
