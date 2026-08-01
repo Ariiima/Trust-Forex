@@ -24,10 +24,10 @@ export function ReferralBenefits({ className }: { className?: string }): ReactNo
       {BENEFITS.map((b) => (
         <li key={b.icon} className="scr-referral-benefit">
           <span className="scr-referral-benefit-badge">
-            <Icon name={b.icon} size={32} />
+            <Icon name={b.icon} size={24} strokeWidth={2} />
           </span>
           <span className="scr-referral-benefit-text">
-            <span className="scr-referral-benefit-title type-text-sm-semibold">{b.title}</span>
+            <span className="scr-referral-benefit-title type-text-sm">{b.title}</span>
             <span className="scr-referral-benefit-sub type-text-xs">{b.sub}</span>
           </span>
         </li>

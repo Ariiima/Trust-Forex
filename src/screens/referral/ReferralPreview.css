@@ -1,7 +1,8 @@
 /* =====================================================================
-   Referral — preview state (1333:8306). All values are exact px from the
-   frame XML: card 16,92 -> 328x496 (56/32 padding), headline block 210
-   wide centred, benefit rows 264 wide on a 24px rhythm, CTA 16,792.
+   Referral — preview state (1333:8306). Values measured off the 1:1 frame
+   render (app coords = frame y - 76 chrome): card 16,16 -> 328x568, art
+   168x120, headline 2 x 44, benefit rows 264 wide on a 76px pitch, CTA
+   328x44 sitting 16 above the bottom of the 776-tall content area.
    ===================================================================== */
 
 .scr-referral-preview {
@@ -16,17 +17,26 @@
   padding: var(--spacing-16);
 }
 
-/* ---- card (1341:5185) ------------------------------------------------- */
+/* ---- card (1341:5185) -------------------------------------------------
+   328x568: 44 top / 32 side / 56 bottom padding, 16 radius (no token — the
+   scale jumps 12 -> 20). */
 .scr-referral-preview-card {
-  padding: 56px var(--spacing-32);
-  border-radius: var(--radius-large);
+  padding: 44px var(--spacing-32) 56px;
+  border-radius: 16px;
   background: var(--bg-colors-container-p);
 }
 
-/* headline 1341:5186 — 210 wide, centred, 3 lines x 44 = 132 tall */
+/* 3D illustration, 168x120, centred in the 264 content column */
+.scr-referral-preview-art {
+  display: block;
+  width: 168px;
+  height: 120px;
+  margin: 0 auto var(--spacing-16);
+}
+
+/* headline 1341:5186 — full 264 column, centred, 2 lines x 44 = 88 tall */
 .scr-referral-preview-title {
-  max-width: 210px;
-  margin: 0 auto;
+  margin: 0;
   text-align: center;
   color: var(--typography-colors-main-text);
 }
@@ -37,7 +47,7 @@
 
 /* benefit rows come from ReferralBenefits.css; only the top gap is local */
 .scr-referral-preview-benefits {
-  margin-top: var(--spacing-48);
+  margin-top: var(--spacing-40);
 }
 
 /* ---- pinned CTA (1333:8340) ------------------------------------------- */

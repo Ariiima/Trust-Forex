@@ -15,7 +15,8 @@
   gap: var(--spacing-16);
 }
 
-/* 48x48 badge, nudged 2px down so the 52-tall row centres on the text */
+/* 48x48 badge, nudged 2px down so the 52-tall row centres on the text.
+   The glyph inside is 24px on a 2px stroke (measured off the frame render). */
 .scr-referral-benefit-badge {
   flex: 0 0 48px;
   display: grid;

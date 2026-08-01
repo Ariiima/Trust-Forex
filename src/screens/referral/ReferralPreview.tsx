@@ -2,16 +2,17 @@ import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Button } from '../../design-system/components';
 import { ReferralBenefits } from './ReferralBenefits';
+import introArt from '../../assets/referral/referral-intro.png';
 import './ReferralBenefits.css';
 import './ReferralPreview.css';
 
 /* ---------------------------------------------------------------------------
  * Referral — preview (empty) state — route /referral
  * Frame 1333:8306 (360x852). Shown ONCE to a new user: a single white card
- * (16,92 -> 328x496) with a centred 3-line headline and three benefit rows,
- * plus a pinned CTA (16,792 -> 328x44). The CTA is disabled for a 5s
- * countdown and counts down in its own label — the frame captures it at
- * "(3)", i.e. 3 seconds left.
+ * (16,16 -> 328x568 in app coords) holding a 168x120 illustration, a centred
+ * 2-line headline and three benefit rows, plus a pinned CTA (16 from the
+ * bottom -> 328x44). The CTA is disabled for a 5s countdown and counts down in
+ * its own label — the frame captures it at "(3)", i.e. 3 seconds left.
  * ------------------------------------------------------------------------- */
 
 
@@ -34,6 +35,8 @@ export function ReferralPreview({ countdownSeconds = 5, onStartInviting }: Refer
     <div className="scr-referral-preview">
       <main className="scr-referral-preview-main">
         <section className="scr-referral-preview-card">
+          <img className="scr-referral-preview-art" src={introArt} alt="" width={168} height={120} />
+
           <h1 className="scr-referral-preview-title type-text-2xl-bold">
             Turn your network into referral <span className="scr-referral-preview-accent">income</span>
           </h1>

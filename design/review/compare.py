@@ -1,8 +1,19 @@
 """Compare a build screenshot against a Figma frame render.
 
 The frame includes iOS status bar (32px) + Telegram header (44px) which the app
-deliberately does not draw, so the build is offset by CHROME px. Reports a
-per-row difference profile so drift is easy to localise.
+deliberately does not draw, so the build is offset by CHROME px.
+
+IMPORTANT — capture the build at (frame height - 76), not the frame height.
+Bottom-anchored elements (sticky CTAs, floating nav) only land where the design
+puts them when the viewport equals the real Telegram content height. Capturing a
+852-tall frame at 852 leaves the CTA 76px low and inflates the score with a
+difference that is a harness artifact, not a build defect.
+
+    frame 852  -> shoot at 360x776
+    frame 1266 -> shoot at 360x1190
+    frame 1044 -> shoot at 360x968
+
+Reports a per-row difference profile so drift is easy to localise.
 """
 import sys
 from PIL import Image, ImageChops
