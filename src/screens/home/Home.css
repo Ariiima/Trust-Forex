@@ -325,7 +325,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 14px;
+  bottom: 8px; /* frame puts the dot row 6px lower than 14 */
   z-index: 1;
   display: flex;
   justify-content: center;
@@ -338,7 +338,8 @@
   background: rgba(255, 255, 255, 0.4);
 }
 .scr-home-dot--on {
-  width: 20px;
+  /* 10px in the frame (ref-main dot run x170..179), not a long 20px pill */
+  width: 10px;
   background: #fff;
 }
 

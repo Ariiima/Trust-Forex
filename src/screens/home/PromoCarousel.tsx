@@ -23,7 +23,7 @@ interface Promo {
 // Fixed order left→right in the source: Summer, Invite, Complete.
 export const PROMOS: readonly Promo[] = [
   { id: 'summer', bg: '#7A9DFE', tag: 'Special offer', title: 'Summer discount', subtitle: 'Get 20% OFF on 12 month plan', art: promoGiftArt, artRight: -26, artTop: -24 },
-  { id: 'invite', bg: '#68CB64', tag: 'Invite & earn', title: 'Invite friends', subtitle: 'Get 10% from thier deposits', art: promoInviteArt, artRight: -40, artTop: -24 },
+  { id: 'invite', bg: '#68CB64', tag: 'Invite & Earn', title: 'invite friends', subtitle: 'get 10% from thier deposits', art: promoInviteArt, artRight: -40, artTop: -24 },
   { id: 'tasks', bg: '#FFA202', tag: 'Stay active', title: 'Complete tasks', subtitle: 'Win rewards & get amazing prizes', art: promoTrophyArt, artRight: -40, artTop: -31 },
 ];
 
