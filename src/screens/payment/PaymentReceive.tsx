@@ -1,4 +1,8 @@
-/* DEPRECATED — superseded by the order-status flow in src/screens/payment/status/ (pending QR → waiting → confirmed/error, driven by src/api/client.ts). Keep unrouted; do not extend. */
+/* NOTE: a prior pass left a `status/` (QrPanel/StatusSheet/useOrderPoll)
+ * order-polling rebuild of this screen half-finished — it's never imported
+ * anywhere and App.tsx still routes '/payment/receive' straight to this
+ * component. This file (not `status/`) is what actually renders in the app;
+ * treat `status/` as unfinished scaffolding, not a replacement. */
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { Button, BottomSheet, Icon, ProgressBar } from '../../design-system/components';
@@ -47,7 +51,7 @@ type CopyField = 'amount' | 'address' | 'memo' | null;
 const CURRENCY_NETWORK = 'BNB(BEP-20)';
 const SEND_AMOUNT = '0.00350773';
 const SEND_UNIT = 'BNB';
-const WALLET_ADDRESS = 'rhgrtg8184..........1vdrg485d';
+const WALLET_ADDRESS = '0X1C42......48Hf7f8';
 const MEMO = '28442536';
 
 const AMOUNT_DUE = '2.00';
@@ -108,7 +112,7 @@ export default function PaymentReceive({
   return (
     <div className="scr-receive">
       <main className="scr-receive-body">
-        <ProgressBar current="make-payment" />
+        <ProgressBar current="make-payment" className="scr-receive-progress" />
 
         <section className="scr-receive-card">
           <div className="scr-receive-warning">
@@ -139,7 +143,9 @@ export default function PaymentReceive({
                 </button>
               </div>
 
-              <img className="scr-receive-qr" src={qrPlaceholder} alt="Payment QR code" width={148} height={148} />
+              <div className="scr-receive-qr-frame">
+                <img className="scr-receive-qr" src={qrPlaceholder} alt="Payment QR code" width={148} height={148} />
+              </div>
 
               <div className="scr-receive-rows">
                 <div className="scr-receive-row">

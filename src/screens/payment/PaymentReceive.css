@@ -26,6 +26,26 @@
   padding: var(--spacing-16);
 }
 
+/* ---- Progress bar reskin (1102:9734) — this screen's captured state shows
+   all three nodes as the ring+dot "current" mark, not the DS default (solid
+   fill + white check) for completed steps. Overridden via the className
+   extension point, same pattern as the BottomSheet reskins below, since
+   design-system/components is off-limits. */
+.scr-receive-progress .ds-progress-dot-done {
+  background: transparent;
+}
+.scr-receive-progress .ds-progress-dot-done svg {
+  display: none;
+}
+.scr-receive-progress .ds-progress-dot-done::after {
+  content: '';
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-infinity);
+  background: var(--state-colors-success);
+}
+
 .scr-receive-card {
   display: flex;
   flex-direction: column;
@@ -56,6 +76,10 @@
   font-size: 12px;
   line-height: 24px;
   font-weight: var(--font-weight-regular);
+  /* Sora's browser metrics run ~10% wider per glyph than the Figma export at
+     this size, tipping the line wrap from 2 lines to 3 right at "exact" —
+     nudge tracking so the wrap matches the reference (1206:4618). */
+  letter-spacing: -0.7px;
   color: var(--typography-colors-main-text);
 }
 
@@ -101,9 +125,20 @@
   color: var(--base-color-white);
 }
 
+/* The QR pattern itself measures 148x148 (1102:10747), but the reference
+   frame carries an 8px quiet zone around it — an unstyled placeholder PNG
+   has none, so it's added here rather than baked into the asset. */
+.scr-receive-qr-frame {
+  display: flex;
+  margin: 0 auto;
+  width: 164px;
+  height: 164px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
 .scr-receive-qr {
   display: block;
-  margin: 0 auto;
   width: 148px;
   height: 148px;
 }
