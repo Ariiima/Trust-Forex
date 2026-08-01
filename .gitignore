@@ -39,3 +39,7 @@ tweaks.md
 # review scratch renders
 design/review/out/
 *-v[0-9].png
+
+# playwright-mcp session artifacts
+.playwright-mcp/page-*.yml
+.playwright-mcp/console-*.log
