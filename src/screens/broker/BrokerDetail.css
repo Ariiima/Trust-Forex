@@ -77,6 +77,33 @@
   font-weight: var(--font-weight-regular);
 }
 
+/* "Verification in progres" strip — same 40px/icon-20/gap-10/pad-8x12 box
+   model as DS Notification (ref banner measures exactly 40px tall), but a
+   neutral state the DS component doesn't have a variant for: measured bg
+   #F1F1F1 (== page bg, not a tint) and near-black icon/text (#040404 / #212121). */
+.scr-broker-pending-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-small);
+  background: var(--bg-colors-container-s);
+}
+
+.scr-broker-pending-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--base-color-black);
+}
+
+.scr-broker-pending-title {
+  font-size: 12px;
+  line-height: 24px;
+  color: var(--typography-colors-main-text);
+}
+
 /* ---- Blue onboarding hero (328×248) ---------------------------------- */
 .scr-broker-hero {
   margin-top: var(--spacing-24);
@@ -342,50 +369,31 @@
 }
 
 /* =====================================================================
-   DS ProgressBar re-skin for the on-blue stepper.
-   The DS ProgressBar ships as a white card with green dots + a white
-   check for "done" (built for the payment flow). The broker design sits
-   the stepper directly on the blue hero as white radio dots (ring + inner
-   dot), empty rings for upcoming steps, white connectors. These overrides
-   are screen-scoped (no DS files touched).
+   DS ProgressBar on the blue hero.
+   Previously this block re-skinned every dot state to white, guessing the
+   stepper should look like white radio buttons on the blue card. Measured
+   against design/review/ref/broker.png (accountStatus='submitted' → step 1
+   "current"): the dot is a *solid green* 24px circle — RGB (72,212,138),
+   an exact match for --state-colors-success (#48D48A) — i.e. the DS
+   component's own default "current"/"done" colors, un-reskinned. Only the
+   *empty* (todo) ring and the not-yet-filled connector line are actually
+   translucent-white-over-blue: measured ring stroke (58,105,213) and line
+   (39,91,209) on the (20,76,205) hero bg solve to ≈16% and ≈8% white alpha
+   respectively — nowhere near the old 0.35 guess. So: keep the container
+   transparent, dial in the two measured translucencies, and drop every
+   override that fought the default green (current/done/inner/line-filled).
    ===================================================================== */
 .ds-progress.scr-broker-stepper {
   background: transparent;
   padding: 0;
 }
 .scr-broker-stepper .ds-progress-line {
-  background: rgba(255, 255, 255, 0.35);
-}
-.scr-broker-stepper .ds-progress-line-filled {
-  background: var(--base-color-white);
+  background: rgba(255, 255, 255, 0.08); /* measured (39,91,209) on #144CCD */
 }
 .scr-broker-stepper .ds-progress-dot {
-  border-color: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.16); /* measured (58,105,213) on #144CCD */
   background: transparent;
-}
-.scr-broker-stepper .ds-progress-inner {
-  background: var(--base-color-white);
 }
 .scr-broker-stepper .ds-progress-dot-todo .ds-progress-inner {
   display: none;
-}
-.scr-broker-stepper .ds-progress-dot-current {
-  border-color: var(--base-color-white);
-}
-.scr-broker-stepper .ds-progress-dot-current .ds-progress-inner {
-  background: var(--base-color-white);
-}
-.scr-broker-stepper .ds-progress-dot-done {
-  border-color: var(--base-color-white);
-  background: transparent;
-}
-.scr-broker-stepper .ds-progress-dot-done svg {
-  display: none;
-}
-.scr-broker-stepper .ds-progress-dot-done::before {
-  content: '';
-  width: 12px;
-  height: 12px;
-  border-radius: var(--radius-infinity);
-  background: var(--base-color-white);
 }

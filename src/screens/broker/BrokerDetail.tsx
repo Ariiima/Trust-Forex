@@ -61,7 +61,8 @@ type GlyphName =
   | 'activity'
   | 'maximize'
   | 'cash2'
-  | 'zap';
+  | 'zap'
+  | 'loader';
 
 const GLYPHS: Record<GlyphName, readonly string[]> = {
   external: ['M4 6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z', 'M9 15l6 -6', 'M11 9h4v4'],
@@ -77,15 +78,18 @@ const GLYPHS: Record<GlyphName, readonly string[]> = {
     'M7.5 8a2.5 2.5 0 0 1 0 -5a4.8 8 0 0 1 4.5 5a4.8 8 0 0 1 4.5 -5a2.5 2.5 0 0 1 0 5',
   ],
   activity: ['M3 12h4l3 8l4 -16l3 8h4'],
-  /* placeholder icon */
-  maximize: ['M4 8v-2a2 2 0 0 1 2 -2h2', 'M4 16v2a2 2 0 0 0 2 2h2', 'M16 4h2a2 2 0 0 1 2 2v2', 'M16 20h2a2 2 0 0 0 2 -2v-2'],
-  /* placeholder icon */
+  // Fixed: ref/broker.png shows a double-headed diagonal resize arrow here, not
+  // the 4 corner-brackets this used to be (measured at the "Leverage" row icon).
+  maximize: ['M6 18l12 -12', 'M12 6l6 0l0 6', 'M6 12l0 6l6 0'],
   cash2: [
     'M7 9m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z',
     'M14 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0',
     'M17 9v-2a2 2 0 0 0 -2 -2h-10a2 2 0 0 0 -2 2v6a2 2 0 0 0 2 2h2',
   ],
   zap: ['M13 3l0 7l6 0l-8 11l0 -7l-6 0l8 -11'],
+  // "Verification in progres" banner icon (ref/broker.png, ~40x40 strip under
+  // the broker card): a static 3/4-ring spinner glyph, near-black stroke.
+  loader: ['M12 3a9 9 0 1 0 9 9'],
 };
 
 interface GlyphProps extends Omit<SVGProps<SVGSVGElement>, 'name'> {
@@ -181,6 +185,10 @@ interface Banner {
   key: string;
   variant: DSNotificationProps['variant'];
   title: string;
+  /** Renders the neutral "verification in progres" strip instead of a tinted
+   * Notification — ref/broker.png shows a plain #F1F1F1 bg + black spinner +
+   * black text, which matches none of the DS Notification variant colors. */
+  pending?: boolean;
 }
 
 export interface BrokerDetailProps {
@@ -194,6 +202,11 @@ export interface BrokerDetailProps {
 
 export default function BrokerDetail({
   onBack,
+  // design/review/ref/broker.png captures the pending state (the "Verification
+  // in progres" banner, a green *current* progress dot, a disabled footer CTA)
+  // = accountStatus 'submitted'. That is a REVIEW state, not the route's
+  // default: a first-time visitor has submitted nothing, so this stays 'none'
+  // and the reference state is reached via ?account=submitted.
   initialAccountStatus = 'none',
   initialDepositStatus = 'none',
 }: BrokerDetailProps): ReactNode {
@@ -261,7 +274,9 @@ export default function BrokerDetail({
   // is confirmed copy. All banners are dismissible (S2-sheet frame shows zero).
   const banners: Banner[] = [];
   if (accountStatus === 'submitted') {
-    banners.push({ key: 'account-review', variant: 'info', title: 'Account under review' });
+    // Copy measured verbatim from design/review/ref/broker.png: the text is
+    // visually cut off at "progres" (no ellipsis) in the reference itself.
+    banners.push({ key: 'account-review', variant: 'info', title: 'Verification in progres', pending: true });
   }
   if (accountStatus === 'failed') {
     banners.push({ key: 'account-failed', variant: 'error', title: 'Account verification failed' });
@@ -277,7 +292,7 @@ export default function BrokerDetail({
 
   const cta =
     depositStatus === 'none'
-      ? { label: 'submit account', modal: 'submit-account' as const }
+      ? { label: 'Submit account', modal: 'submit-account' as const } // ref: capital S
       : depositStatus === 'awaiting'
         ? { label: 'i made a deposit', modal: 'made-deposit' as const }
         : null;
@@ -317,16 +332,25 @@ export default function BrokerDetail({
               <img className="scr-broker-logo" src={xmLogoUrl} alt="XM" width={32} height={32} />
               <span className="scr-broker-name">XM</span>
             </div>
-            <span className="scr-broker-popular">popular</span>
+            <span className="scr-broker-popular">Popular</span>
           </div>
-          {visibleBanners.map((b) => (
-            <Notification
-              key={b.key}
-              variant={b.variant}
-              title={b.title}
-              onClose={() => setDismissed((d) => [...d, b.key])}
-            />
-          ))}
+          {visibleBanners.map((b) =>
+            b.pending ? (
+              <div key={b.key} className="scr-broker-pending-banner" role="status">
+                <span className="scr-broker-pending-icon">
+                  <Glyph name="loader" size={20} strokeWidth={2} />
+                </span>
+                <span className="scr-broker-pending-title">{b.title}</span>
+              </div>
+            ) : (
+              <Notification
+                key={b.key}
+                variant={b.variant}
+                title={b.title}
+                onClose={() => setDismissed((d) => [...d, b.key])}
+              />
+            ),
+          )}
         </section>
 
         {/* Blue onboarding hero */}
@@ -379,6 +403,10 @@ export default function BrokerDetail({
             variant="primary"
             size="medium"
             fullWidth
+            // ref: while accountStatus='submitted' the CTA renders in the DS
+            // disabled style (grey #E4E4E4 bg / #7C7C7C text) — can't resubmit
+            // an account that's already under review.
+            disabled={accountStatus === 'submitted'}
             iconRight={<Icon name="chevron-right" size={20} strokeWidth={1.6} />}
             onClick={() => setModal(cta.modal)}
           >

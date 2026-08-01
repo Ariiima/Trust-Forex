@@ -53,7 +53,15 @@ function CashbackRoute() {
 function BrokerRoute() {
   const nav = useNavigate()
   const { brokerId } = useParams()
-  return <BrokerDetail brokerId={brokerId} onBack={() => nav(-1)} />
+  const [q] = useSearchParams()
+  return (
+    <BrokerDetail
+      brokerId={brokerId}
+      onBack={() => nav(-1)}
+      initialAccountStatus={(q.get('account') as never) ?? undefined}
+      initialDepositStatus={(q.get('deposit') as never) ?? undefined}
+    />
+  )
 }
 
 /* ---------------------------------------------------------------------------
