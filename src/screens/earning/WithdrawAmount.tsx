@@ -35,6 +35,15 @@ import './WithdrawAmount.css';
  * ------------------------------------------------------------------------- */
 
 const money = (n: number) => `$${n.toFixed(2)}`;
+/* The amount field carries its own currency formatting: 1402:6771 renders the
+   filled field as "$245.00", not a bare 245. Typing stays raw — only the values
+   the screen supplies itself (the deep link and the Max chip) come pre-formatted
+   — so the number is read back through this. */
+const parseMoney = (s: string) => Number(s.replace(/[^\d.]/g, ''));
+
+/* 1402:6771 shows the wallet field in its invalid state. BEP20/ERC20 take an
+   EVM address, TRC20 a base58 one; anything else non-empty is rejected. */
+const WALLET_RE = /^(0x[\da-f]{40}|T[1-9A-HJ-NP-Za-km-z]{33})$/i;
 
 export interface WithdrawAmountProps {
   optionId?: string;
@@ -62,13 +71,13 @@ export function WithdrawAmount({
   const [currencyId, setCurrencyId] = useState(optionId);
   const [changeOpen, setChangeOpen] = useState(initialSheet === 'change');
   const option = WITHDRAW_OPTIONS.find((o) => o.id === currencyId) ?? WITHDRAW_OPTIONS[0];
-  const [amount, setAmount] = useState(initialAmount);
+  const [amount, setAmount] = useState(initialAmount ? money(parseMoney(initialAmount)) : '');
   const [wallet, setWallet] = useState(initialWallet);
   const [summary, setSummary] = useState<'closed' | 'confirm' | 'submitted'>(
     initialSheet === 'summary' ? 'confirm' : initialSheet === 'submitted' ? 'submitted' : 'closed',
   );
 
-  const numeric = Number(amount);
+  const numeric = parseMoney(amount);
   /* 2-1 shows the notice with the field still empty, so it is not gated on a
      touched flag — anything under the minimum (including nothing) shows it. */
   const belowMinimum = !Number.isFinite(numeric) || numeric < option.minimum;
@@ -77,6 +86,13 @@ export function WithdrawAmount({
     ? 'Amount is below the minimum.'
     : overBalance
       ? 'Amount exceeds your available balance.'
+      : undefined;
+
+  /* 1402:6771 leaves the CTA enabled while the wallet notice is showing, so the
+     address only drives its own field's state, not the gate. */
+  const walletError =
+    wallet.trim() !== '' && !WALLET_RE.test(wallet.trim())
+      ? 'Please enter a valid wallet address.'
       : undefined;
 
   const ready = !amountError && Number.isFinite(numeric) && numeric >= option.minimum && wallet.trim() !== '';
@@ -107,11 +123,12 @@ export function WithdrawAmount({
               value={amount}
               onChange={setAmount}
               placeholder="Enter amount"
+              className={amount === '' ? 'scr-wdamt-blank' : undefined}
               rightSlot={
                 <button
                   type="button"
                   className="scr-wdamt-max"
-                  onClick={() => setAmount(String(availableBalance))}
+                  onClick={() => setAmount(money(availableBalance))}
                 >
                   Max
                 </button>
@@ -129,13 +146,25 @@ export function WithdrawAmount({
             ) : null}
           </div>
 
-          <Input
-            label="Wallet address"
-            value={wallet}
-            onChange={setWallet}
-            placeholder="Enter wallet address"
-            rightSlot={<Icon name="scan" size={16} strokeWidth={1.75} className="scr-wdamt-scan" />}
-          />
+          <div className="scr-wdamt-wallet">
+            <Input
+              label="Wallet address"
+              value={wallet}
+              onChange={setWallet}
+              placeholder="Enter wallet address"
+              className={[wallet === '' ? 'scr-wdamt-blank' : '', walletError ? 'scr-wdamt-invalid' : '']
+                .filter(Boolean)
+                .join(' ') || undefined}
+              rightSlot={<Icon name="scan" size={16} strokeWidth={1.75} className="scr-wdamt-scan" />}
+            />
+            {walletError ? (
+              <p className="scr-wdamt-error scr-wdamt-error-field" role="alert">
+                {/* same info glyph as the amount notice, not the DS alert-circle */}
+                <Icon name="info" size={16} strokeWidth={1.6} />
+                {walletError}
+              </p>
+            ) : null}
+          </div>
         </section>
       </main>
 

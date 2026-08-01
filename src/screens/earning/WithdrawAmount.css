@@ -108,6 +108,12 @@
   flex: 0 0 auto;
 }
 
+/* the wallet notice hangs off the field itself, so it takes the DS Input's own
+   4px field->message gap rather than the amount block's 7. */
+.scr-wdamt-error-field {
+  margin-top: var(--spacing-4);
+}
+
 .scr-wdamt-max {
   padding: 0;
   border: none;
@@ -124,11 +130,16 @@
   color: var(--primary-colors-900);
 }
 
-/* ---- DS Input, filled variant ----------------------------------------
-   The frame's field is the 44px filled style (no stroke, #F1F1F1, 16 pad)
-   with a 14/28 main-text label — the shared component still ships the 48px
-   outlined style with a 12/24 sub-text label, so it is overridden here.
-   See the report: this belongs in Input.css.
+/* ---- DS Input, 44px variant ------------------------------------------
+   The frame's field is 44 tall with 16 pad and a 14/28 main-text label —
+   the shared component still ships the 48px box with a 12/24 sub-text
+   label, so it is overridden here. See the report: this belongs in
+   Input.css.
+
+   The *fill* is state-dependent, sampled off both frames: while the field
+   is empty (1402:7310) it is a flat #F1F1F1 chip with no stroke; once it
+   holds a value (1402:6771) it flips to the DS default — #FFFFFF over a
+   1px #E4E4E4 stroke — so only the empty look is overridden below.
    --------------------------------------------------------------------- */
 .scr-wdamt .ds-input-label {
   font-size: 14px;
@@ -136,14 +147,24 @@
   color: var(--typography-colors-main-text);
 }
 
-/* the stroke stays in the box (transparent until :focus-within, which the DS
-   colours) so focusing the field never nudges the text by a pixel. */
 .scr-wdamt .ds-input-field {
   height: 44px;
   padding: 0 15px;
-  border-color: transparent;
   border-radius: var(--radius-small);
+}
+
+/* the stroke stays in the box (transparent until :focus-within, which the DS
+   colours) so focusing the field never nudges the text by a pixel. */
+.scr-wdamt .scr-wdamt-blank .ds-input-field {
+  border-color: transparent;
   background: var(--bg-colors-container-s);
+}
+
+/* invalid wallet: red stroke only — the notice below is a sibling, because the
+   frame leads it with the info glyph rather than the DS alert-circle. */
+.scr-wdamt .scr-wdamt-invalid .ds-input-field,
+.scr-wdamt .scr-wdamt-invalid .ds-input-field:focus-within {
+  border-color: var(--state-colors-eror);
 }
 
 /* the field's own text is 12/24, one step under the label (1402:7341) */
