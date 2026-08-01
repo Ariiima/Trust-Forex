@@ -1,7 +1,11 @@
 .ds-sheet-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  /* #212121 at 16%, derived from the frame renders: solving out = a*c + b over
+     white (255->219), the page grey (241->208) AND a saturated pixel
+     (247,147,26 -> 213,129,27) pins it. Two neutral samples alone do not —
+     they admit a whole family of (tint, alpha) pairs. */
+  background: rgba(33, 33, 33, 0.16);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -11,7 +15,7 @@
 
 /* Sheets rise from the bottom edge; the scrim dims the page behind them. */
 @keyframes ds-sheet-scrim {
-  from { background: rgba(0, 0, 0, 0); }
+  from { background: rgba(33, 33, 33, 0); }
 }
 
 @keyframes ds-sheet-rise {

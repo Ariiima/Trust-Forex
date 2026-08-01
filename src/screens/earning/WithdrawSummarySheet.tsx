@@ -5,9 +5,10 @@ import './WithdrawSummarySheet.css';
 
 /* ---------------------------------------------------------------------------
  * "Withdrawal summary" sheet — frames 1402:7573 (confirm, 364 tall) and
- * 1404:7924 (submitted, 408 tall, with the clock banner). Same 328-wide row
- * stack either way: label left, value right-aligned, rows 28 tall on a 12 gap,
- * with network fee + final amount grouped under a rule.
+ * 1404:7924 (submitted, with the clock banner). Same 328-wide row stack either
+ * way: label left, value right-aligned, five rows 28 tall on a 12 gap running
+ * at an unbroken 40px pitch. Everything is Sora regular — the values are
+ * distinguished from the labels by colour (#212121 vs #7C7C7C), not weight.
  * ------------------------------------------------------------------------- */
 
 const money = (n: number) => `$${n.toFixed(2)}`;
@@ -45,16 +46,20 @@ export function WithdrawSummarySheet({
     { label: 'Currency', value: `${currency} (${network})` },
     { label: 'Wallet address', value: shorten(wallet) },
     { label: 'Withdrawal amount', value: money(amount) },
+    { label: 'Network fee', value: money(networkFee) },
+    { label: 'Final amount', value: money(Math.max(0, amount - networkFee)) },
   ];
 
   return (
     <BottomSheet open={open} onClose={onClose} className="scr-wdsum-sheet">
       <div className="scr-wdsum-head">
-        <h2 className="scr-wdsum-title type-text-lg-semibold">Withdrawal summary</h2>
+        <h2 className="scr-wdsum-title type-text-base">Withdrawal summary</h2>
         <button type="button" className="scr-wdsum-close" onClick={onClose} aria-label="Close">
           <Icon name="close" size={24} strokeWidth={1.6} />
         </button>
       </div>
+
+      <div className="scr-wdsum-rule" />
 
       {state === 'submitted' ? (
         <div className="scr-wdsum-banner">
@@ -69,20 +74,9 @@ export function WithdrawSummarySheet({
         {rows.map((r) => (
           <div key={r.label} className="scr-wdsum-row">
             <dt className="scr-wdsum-label type-text-sm">{r.label}</dt>
-            <dd className="scr-wdsum-value type-text-sm-semibold">{r.value}</dd>
+            <dd className="scr-wdsum-value type-text-sm">{r.value}</dd>
           </div>
         ))}
-
-        <div className="scr-wdsum-group">
-          <div className="scr-wdsum-row">
-            <dt className="scr-wdsum-label type-text-sm">Network fee</dt>
-            <dd className="scr-wdsum-value type-text-sm-semibold">{money(networkFee)}</dd>
-          </div>
-          <div className="scr-wdsum-row">
-            <dt className="scr-wdsum-label type-text-sm">Final amount</dt>
-            <dd className="scr-wdsum-value type-text-sm-semibold">{money(Math.max(0, amount - networkFee))}</dd>
-          </div>
-        </div>
       </dl>
 
       {state === 'confirm' ? (

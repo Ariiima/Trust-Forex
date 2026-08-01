@@ -1,41 +1,79 @@
-/* "Withdrawal summary" sheet (1402:7573 / 1404:7924). Header 328x44 with a
-   dashed rule under it, rows 28 tall on a 12 gap, fee+final grouped. */
+/* "Withdrawal summary" sheet — frames 1402:7573 (confirm) and 1404:7924
+   (submitted). Measured 1:1 off the 360x852 frame render.
+
+   The sheet is 364 tall with 16px top corners and 16px side padding, so the
+   content column is 328 wide (x 16..344). Vertical rhythm, measured from the
+   sheet's own top edge:
+
+       0   sheet top (radius 16)
+       20  header top     — 24 tall: 16/400 title + a 24px close icon
+       44  header bottom
+       59  rule           — 2px of #F1F1F1, dashes 4 on / 4 off, phase -2
+       76  rows top       — 5 rows of 28 on a 12 gap = 188
+       264 rows bottom
+       296 CTA top        — 44 tall
+       340 CTA bottom
+       364 sheet bottom   (= 24 bottom padding)
+
+   Two notes on the rule: the frame has ONE rule (under the header) — there is
+   no second rule above "Network fee", the five rows run on an unbroken 40px
+   pitch. And it renders as two rows of #F1F1F1 rather than one of #E4E4E4
+   because Figma centres a 1px stroke on the y=472 grid line and smears it
+   across both pixels at 50%. 2px of #F1F1F1 reproduces that exactly. */
 
 .ds-sheet.scr-wdsum-sheet {
-  padding: var(--spacing-16) var(--spacing-16) var(--spacing-24);
-  border-radius: var(--radius-large) var(--radius-large) 0 0;
+  padding: 20px var(--spacing-16) var(--spacing-24);
+  border-radius: 16px 16px 0 0;
 }
 
 .scr-wdsum-sheet .ds-sheet-handle {
   display: none;
 }
 
+/* ---- header ------------------------------------------------------------ */
 .scr-wdsum-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-8);
-  padding-bottom: var(--spacing-12);
-  border-bottom: 1px dashed var(--stroke-colors-default);
+  height: 24px;
 }
 
 .scr-wdsum-title {
+  /* type-text-base (16/400). The frame packs the line box to 24 so the header
+     is exactly as tall as the close icon. */
   margin: 0;
+  line-height: 24px;
   color: var(--typography-colors-main-text);
 }
 
 .scr-wdsum-close {
   display: grid;
   place-items: center;
+  flex: 0 0 24px;
+  height: 24px;
   padding: 0;
-  color: var(--typography-colors-main-text);
+  /* the X is base-black (#040404), not main-text (#212121) */
+  color: var(--base-color-black);
+}
+
+/* ---- rule -------------------------------------------------------------- */
+.scr-wdsum-rule {
+  height: 2px;
+  margin: 15px 0;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--bg-colors-container-s) 0 4px,
+    transparent 4px 8px
+  );
+  background-position: -2px 0;
 }
 
 /* ---- under-review banner (1404:8028) ---------------------------------- */
 .scr-wdsum-banner {
   display: flex;
   gap: 10px;
-  margin-top: var(--spacing-16);
+  margin-bottom: var(--spacing-16);
   padding: var(--spacing-12);
   border-radius: var(--radius-medium);
   background: var(--state-colors-danger-bg);
@@ -56,7 +94,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-12);
-  margin: var(--spacing-16) 0 0;
+  margin: 0;
 }
 
 .scr-wdsum-row {
@@ -64,6 +102,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-16);
+  height: 28px;
 }
 
 .scr-wdsum-label {
@@ -76,15 +115,8 @@
   text-align: right;
 }
 
-/* fee + final sit together under their own rule */
-.scr-wdsum-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-12);
-  padding-top: var(--spacing-12);
-  border-top: 1px dashed var(--stroke-colors-default);
-}
-
 .scr-wdsum-cta {
-  margin-top: var(--spacing-24);
+  margin-top: var(--spacing-32);
+  /* the frame sets 4 between the label and the chevron; .ds-button ships 8 */
+  gap: var(--spacing-4);
 }
