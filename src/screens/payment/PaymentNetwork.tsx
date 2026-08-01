@@ -31,7 +31,7 @@ export interface PaymentNetworkProps {
 
 export default function PaymentNetwork({
   initialCurrencyId = 'btc',
-  initialNetworkId = 'bnb-smart-chain',
+  initialNetworkId,
   onBack,
   onCurrencyChange,
   onContinue,
@@ -39,7 +39,8 @@ export default function PaymentNetwork({
   // No in-app header: Telegram draws the bar, so back lives on its BackButton.
   useBackButton(onBack);
   const [currencyId, setCurrencyId] = useState(initialCurrencyId);
-  const [selected, setSelected] = useState(initialNetworkId);
+  // The frame shows nothing chosen and the CTA disabled — no default.
+  const [selected, setSelected] = useState<string | undefined>(initialNetworkId);
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [draft, setDraft] = useState(initialCurrencyId);
@@ -135,7 +136,8 @@ export default function PaymentNetwork({
           size="medium"
           fullWidth
           iconRight={<Icon name="chevron-right" size={20} />}
-          onClick={() => onContinue?.(selected)}
+          disabled={!selected}
+          onClick={() => selected && onContinue?.(selected)}
         >
           Continue
         </Button>

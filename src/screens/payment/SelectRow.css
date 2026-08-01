@@ -41,7 +41,7 @@
 
 .scr-select-row-primary {
   font-size: 12px;
-  line-height: 24px;
+  line-height: 20px;
   font-weight: var(--font-weight-regular);
   color: var(--typography-colors-main-text);
 }
@@ -54,7 +54,7 @@
 
 .scr-select-row-secondary {
   font-size: 10px;
-  line-height: 20px;
+  line-height: 18px;
   font-weight: var(--font-weight-regular);
   color: var(--typography-colors-sub-text);
 }
