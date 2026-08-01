@@ -1,51 +1,93 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { NavigationBar } from '../../design-system/components';
 import './HomeSkeleton.css';
 
 /* ---------------------------------------------------------------------------
- * Home loading skeleton — frame 551:3097 (360x1806).
- * Every block is a plain shimmer rectangle at the exact geometry of the card
- * it stands in for: hero 328x396 @16,90 (copy lines + CTA inside), promo
- * 328x110 @16,512, signal card 328x504 @16,646, plans card 328x520 @16,1174.
+ * Home loading skeleton — frame 551:3097 (360x1806, chrome-less height 1730).
+ *
+ * The whole screen is flat rectangles, so every value below is measured off the
+ * Figma render rather than derived from tokens:
+ *   page        #F1F1F1, 16px side inset, 14px above the first card
+ *   card surface#E4E4E4, 328 wide, radius 16 (the promo strip is radius 12)
+ *   placeholder #F1F1F1 rectangles, absolutely placed inside their card
+ * Card heights and the gaps between them (26 / 24 / 24) come from the frame.
  * ------------------------------------------------------------------------- */
 
-/** One shimmer rectangle. `w`/`h` are px, matching the frame. */
-function Block({ w, h, style }: { w?: number | string; h: number; style?: CSSProperties }): ReactNode {
-  return <span className="scr-skel-block" style={{ width: w ?? '100%', height: h, ...style }} />;
+interface Rect {
+  /** left/top relative to the card box */
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  r: number;
+}
+
+/** One shimmer rectangle, absolutely placed inside its card. */
+function Block({ x, y, w, h, r }: Rect): ReactNode {
+  return (
+    <span
+      className="scr-skel-block"
+      style={{ left: x, top: y, width: w, height: h, borderRadius: r }}
+    />
+  );
+}
+
+const HERO: Rect[] = [
+  { x: 91, y: 199, w: 146, h: 22, r: 11 }, // title
+  { x: 41, y: 239, w: 246, h: 14, r: 7 }, // copy line 1
+  { x: 41, y: 263, w: 246, h: 14, r: 7 }, // copy line 2
+  { x: 16, y: 336, w: 296, h: 44, r: 8 }, // CTA
+];
+
+const SIGNAL: Rect[] = [
+  { x: 17, y: 17, w: 181, h: 22, r: 11 }, // section title
+  { x: 17, y: 57, w: 294, h: 58, r: 11 },
+  { x: 17, y: 133, w: 294, h: 78, r: 11 },
+  { x: 17, y: 449, w: 294, h: 38, r: 7 },
+];
+
+const PLANS: Rect[] = [
+  { x: 17, y: 17, w: 181, h: 22, r: 11 }, // section title
+  { x: 17, y: 61, w: 294, h: 74, r: 11 },
+  { x: 16, y: 148, w: 296, h: 268, r: 12 },
+  { x: 17, y: 429, w: 294, h: 74, r: 11 },
+];
+
+function Card({ h, mt, children }: { h: number; mt?: number; children?: ReactNode }): ReactNode {
+  return (
+    <div className="scr-skel-card" style={{ height: h, marginTop: mt }}>
+      {children}
+    </div>
+  );
 }
 
 export function HomeSkeleton(): ReactNode {
   return (
     <div className="scr-skel" aria-busy="true" aria-label="Loading">
-      {/* hero 328x396 */}
-      <section className="scr-skel-card" style={{ height: 396 }}>
-        <div className="scr-skel-hero-copy">
-          <Block w={148} h={24} style={{ margin: '0 auto' }} />
-          <div className="scr-skel-hero-lines">
-            <Block h={16} />
-            <Block h={16} />
-          </div>
-        </div>
-        <Block h={44} style={{ borderRadius: 8 }} />
-      </section>
+      <Card h={396}>
+        {HERO.map((b) => (
+          <Block key={`${b.x}-${b.y}`} {...b} />
+        ))}
+      </Card>
 
-      {/* promo 328x110 */}
-      <Block h={110} style={{ borderRadius: 16 }} />
+      {/* promo strip — a bare surface, no placeholders inside */}
+      <div className="scr-skel-card scr-skel-card--promo" style={{ height: 110, marginTop: 26 }} />
 
-      {/* signal card 328x504 */}
-      <section className="scr-skel-card" style={{ height: 504 }}>
-        <Block w={183} h={24} />
-        <Block h={60} style={{ marginTop: 16 }} />
-        <Block h={80} style={{ marginTop: 16 }} />
-        <Block h={40} style={{ marginTop: 236 }} />
-      </section>
+      <Card h={504} mt={24}>
+        {SIGNAL.map((b) => (
+          <Block key={`${b.x}-${b.y}`} {...b} />
+        ))}
+      </Card>
 
-      {/* plans card 328x520 */}
-      <section className="scr-skel-card" style={{ height: 520 }}>
-        <Block w={183} h={24} />
-        <Block h={76} style={{ marginTop: 20 }} />
-        <Block h={268} style={{ marginTop: 12 }} />
-        <Block h={76} style={{ marginTop: 12 }} />
-      </section>
+      <Card h={520} mt={24}>
+        {PLANS.map((b) => (
+          <Block key={`${b.x}-${b.y}`} {...b} />
+        ))}
+      </Card>
+
+      <div className="scr-skel-navbar">
+        <NavigationBar active="home" />
+      </div>
     </div>
   );
 }
