@@ -7,17 +7,25 @@ import './EarningMain.css';
 
 /* ---------------------------------------------------------------------------
  * Earning — main page — route /earning
- * Frame 1367:5166 (360x1045). Blue balance card (16,92 -> 328x396) with the
- * referral/cashback split bar and the two withdraw CTAs, then the "Earnings
- * analysis" card (16,513 -> 328x420): a 296x164 plot on a 6-line $0..$500
- * grid, a draggable crosshair, and a brush strip that pans the window.
+ * Frame 1367:5166 (360x1044, minus the 76px status-bar + Telegram header the
+ * app does not draw). Every offset below was sampled off the 1:1 frame render:
+ *   blue card      16,16   328x396  (radius 16, #144CCD)
+ *   analysis card  16,436  328x420  (radius 16, #FFF)
+ *   grid           6 lines 32px apart, first at y567, each 2px of #F8F8F8
+ *   plot           x32..328, $500 -> y568, $0 -> y728
+ *   tooltip        102,544  196x73
+ *   brush          32,752   296x48
  * ------------------------------------------------------------------------- */
 
-const PLOT_W = 296;
-const PLOT_H = 164;
+const PLOT_W = 296; // x32..328 — the card's content width
+const PLOT_H = 160; // $500 grid line (y568) .. $0 grid line (y728)
 const GRID = ['$500', '$400', '$300', '$200', '$100', '$0'];
-const WEEKS = 24; // Aug 2026 W1 .. Sep 2026 W1 across the full series
-const WINDOW = 12; // weeks visible at once; the brush pans this window
+const WEEKS = 20; // Jul 2026 W6 .. Sep 2026 W1 across the full series
+const WINDOW = 13; // weeks visible at once; the brush pans this window
+/** The frame shows the newest window selected — brush mask 36% / window 64%. */
+const OFFSET_0 = WEEKS - WINDOW;
+/** Crosshair, as a fraction of the plot width. 168/296 — where the frame puts it. */
+const CURSOR_0 = 168 / PLOT_W;
 
 const REFERRAL_COLOR = '#48D48A';
 const CASHBACK_COLOR = '#FFC300';
@@ -36,9 +44,23 @@ function makeSeries(seed: number, base: number, amp: number): number[] {
   });
 }
 
+/** Scale a mock series so the initially-selected week reports `target` — what
+    the frame's tooltip shows — then squash it so nothing clips the $0..$500
+    axis. Affine, so the curve keeps its shape. */
+function pinTo(series: number[], index: number, target: number): number[] {
+  const base = series[index];
+  const k = target / base;
+  const scaled = series.map((v) => target + (v - base) * k);
+  const max = Math.max(...scaled);
+  const squash = max > 470 ? (470 - target) / (max - target) : 1;
+  return scaled.map((v) => Math.max(12, target + (v - target) * squash));
+}
+
+/** 12 weeks to a month; week OFFSET_0 of the series is Aug 2026 W1. */
+const MONTHS = ['Jul', 'Aug', 'Sep', 'Oct'];
 function weekLabel(i: number): string {
-  const month = i < 12 ? 'Aug 2026' : 'Sep 2026';
-  return `${month} · W${(i % 12) + 1}`;
+  const k = i - OFFSET_0;
+  return `${MONTHS[Math.floor(k / 12) + 1]} 2026 · W${(((k % 12) + 12) % 12) + 1}`;
 }
 
 export interface EarningMainProps {
@@ -66,63 +88,64 @@ export function EarningMain({
   const referralPct = Math.round((referralEarnings / (referralEarnings + cashbackEarnings)) * 100);
   const cashbackPct = 100 - referralPct;
 
-  // Kept inside the $0..$500 axis so neither line clips the plot.
-  const referral = useMemo(() => makeSeries(7, 240, 120), []);
-  const cashback = useMemo(() => makeSeries(13, 150, 90), []);
-
   const [historyOpen, setHistoryOpen] = useState(initialSheet === 'history');
-  const [offset, setOffset] = useState(0); // first visible week
-  const [cursor, setCursor] = useState(6); // selected week, relative to window
+  const [offset, setOffset] = useState(OFFSET_0); // first visible week
+  const [cursor, setCursor] = useState(CURSOR_0); // 0..1 across the visible window
   const plotRef = useRef<HTMLDivElement>(null);
 
+  const pinned = OFFSET_0 + Math.round(CURSOR_0 * (WINDOW - 1));
+  const referral = useMemo(() => pinTo(makeSeries(7, 240, 120), pinned, referralEarnings), [pinned, referralEarnings]);
+  const cashback = useMemo(() => pinTo(makeSeries(13, 150, 90), pinned, cashbackEarnings), [pinned, cashbackEarnings]);
+
   const view = (s: number[]) => s.slice(offset, offset + WINDOW);
-  const toPath = (s: number[]) =>
-    view(s)
+  const path = (s: number[], w: number, h: number, n: number, all = false) =>
+    (all ? s : view(s))
       .map((v, i) => {
-        const x = (i / (WINDOW - 1)) * PLOT_W;
-        const y = PLOT_H - (Math.min(v, 500) / 500) * PLOT_H;
+        const x = (i / (n - 1)) * w;
+        const y = h - (Math.min(v, 500) / 500) * h;
         return `${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`;
       })
       .join(' ');
 
-  const cursorX = (cursor / (WINDOW - 1)) * PLOT_W;
-  const absWeek = offset + cursor;
+  const absWeek = offset + Math.round(cursor * (WINDOW - 1));
 
   const track = (e: React.PointerEvent<HTMLDivElement>) => {
     const rect = plotRef.current?.getBoundingClientRect();
     if (!rect) return;
-    const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    setCursor(Math.round(ratio * (WINDOW - 1)));
+    setCursor(Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)));
   };
 
   const pan = (dir: -1 | 1) => setOffset((o) => Math.max(0, Math.min(WEEKS - WINDOW, o + dir * 3)));
+
+  /* The series is plotted point-to-edge, so the brush window spans the same
+     fractions of the strip that its first and last points sit at. */
+  const windowLeft = (offset / (WEEKS - 1)) * 100;
+  const windowWidth = ((WINDOW - 1) / (WEEKS - 1)) * 100;
 
   return (
     <div className="scr-earn">
       {/* ---- balance card ---------------------------------------------- */}
       <section className="scr-earn-card">
-        <div className="scr-earn-balance">
-          <h1 className="scr-earn-balance-label type-text-base">Available balance</h1>
+        <div className="scr-earn-summary">
+          <h1 className="scr-earn-balance-label">Available balance</h1>
           <div className="scr-earn-balance-row">
-            <span className="scr-earn-balance-value type-text-2xl-bold">{money(availableBalance)}</span>
+            <span className="scr-earn-balance-value">{money(availableBalance)}</span>
             <span className="scr-earn-total">
-              <span className="scr-earn-total-value type-text-base">{money(totalEarnings)}</span>
-              <span className="scr-earn-total-label type-text-xs-10">Total earnings</span>
+              <span className="scr-earn-total-value">{money(totalEarnings)}</span>
+              <span className="scr-earn-total-label">Total earnings</span>
             </span>
           </div>
-        </div>
 
-        <hr className="scr-earn-rule" />
+          <hr className="scr-earn-rule" />
 
-        <div className="scr-earn-breakdown">
-          <h2 className="scr-earn-breakdown-title type-text-base">Earnings breakdown</h2>
+          <h2 className="scr-earn-breakdown-title">Earnings breakdown</h2>
 
           <div className="scr-earn-bar" role="img" aria-label={`Referral ${referralPct}%, cashback ${cashbackPct}%`}>
             <span className="scr-earn-bar-seg scr-earn-bar-seg--referral" style={{ width: `${referralPct}%` }}>
-              <span className="type-text-xs-10">{referralPct}%</span>
+              <span>{referralPct}%</span>
             </span>
             <span className="scr-earn-bar-seg scr-earn-bar-seg--cashback" style={{ width: `${cashbackPct}%` }}>
-              <span className="type-text-xs-10">{cashbackPct}%</span>
+              <span>{cashbackPct}%</span>
             </span>
           </div>
 
@@ -134,12 +157,12 @@ export function EarningMain({
               <li key={l.label} className="scr-earn-legend-row">
                 <span className="scr-earn-legend-left">
                   <span className={`scr-earn-dot scr-earn-dot--${l.mod}`} />
-                  <span className="type-text-xs">{l.label}</span>
+                  <span className="scr-earn-legend-label">{l.label}</span>
                 </span>
                 <span className="scr-earn-legend-right">
-                  <span className="type-text-base">{money(l.value)}</span>
+                  <span className="scr-earn-legend-value">{money(l.value)}</span>
                   <span className="scr-earn-legend-sep" />
-                  <span className="type-text-base">{l.pct}%</span>
+                  <span className="scr-earn-legend-value">{l.pct}%</span>
                 </span>
               </li>
             ))}
@@ -157,7 +180,11 @@ export function EarningMain({
           >
             Withdraw earnings
           </Button>
-          <button type="button" className="scr-earn-ghost type-text-sm-semibold" onClick={onHistory ?? (() => setHistoryOpen(true))}>
+          <button
+            type="button"
+            className="scr-earn-ghost"
+            onClick={onHistory ?? (() => setHistoryOpen(true))}
+          >
             Withdraw history
           </button>
         </div>
@@ -165,17 +192,19 @@ export function EarningMain({
 
       {/* ---- earnings analysis ----------------------------------------- */}
       <section className="scr-earn-analysis">
-        <h2 className="scr-earn-analysis-title type-text-base-semibold">Earnings analysis</h2>
+        <h2 className="scr-earn-analysis-title">Earnings analysis</h2>
 
-        <p className="scr-earn-range type-text-xs">
-          {weekLabel(offset)} – {weekLabel(offset + WINDOW - 1)}
+        <p className="scr-earn-range">
+          {weekLabel(offset)}
+          <span className="scr-earn-range-sep">–</span>
+          {weekLabel(offset + WINDOW - 1)}
         </p>
 
         <div className="scr-earn-plot-wrap">
           <div className="scr-earn-grid">
             {GRID.map((g) => (
               <div key={g} className="scr-earn-grid-row">
-                <span className="scr-earn-grid-label type-text-xs-10">{g}</span>
+                <span className="scr-earn-grid-label">{g}</span>
               </div>
             ))}
           </div>
@@ -192,76 +221,74 @@ export function EarningMain({
             }}
           >
             <svg viewBox={`0 0 ${PLOT_W} ${PLOT_H}`} fill="none" preserveAspectRatio="none">
-              <path d={toPath(referral)} stroke={REFERRAL_COLOR} strokeWidth={1.5} strokeLinejoin="round" />
-              <path d={toPath(cashback)} stroke={CASHBACK_COLOR} strokeWidth={1.5} strokeLinejoin="round" />
+              <path d={path(referral, PLOT_W, PLOT_H, WINDOW)} stroke={REFERRAL_COLOR} strokeWidth={2} strokeLinejoin="round" />
+              <path d={path(cashback, PLOT_W, PLOT_H, WINDOW)} stroke={CASHBACK_COLOR} strokeWidth={2} strokeLinejoin="round" />
             </svg>
-            <span className="scr-earn-crosshair" style={{ left: `${(cursorX / PLOT_W) * 100}%` }} />
           </div>
 
-          <div className="scr-earn-tooltip" style={{ left: `${(cursorX / PLOT_W) * 100}%` }}>
-            <span className="scr-earn-tooltip-date type-text-xs-10">{weekLabel(absWeek)}</span>
+          <span className="scr-earn-crosshair" style={{ left: `${cursor * PLOT_W}px` }} />
+
+          <div className="scr-earn-tooltip" style={{ left: `${cursor * PLOT_W}px` }}>
+            <span className="scr-earn-tooltip-date">{weekLabel(absWeek)}</span>
             <span className="scr-earn-tooltip-row">
               <span className="scr-earn-legend-left">
                 <span className="scr-earn-dot scr-earn-dot--referral" />
-                <span className="type-text-xs-10">Referral earnings</span>
+                <span className="scr-earn-tooltip-label">Referral earnings</span>
               </span>
-              <span className="type-text-xs-10">{money(referral[absWeek] ?? 0)}</span>
+              <span className="scr-earn-tooltip-value">{money(referral[absWeek] ?? 0)}</span>
             </span>
             <span className="scr-earn-tooltip-row">
               <span className="scr-earn-legend-left">
                 <span className="scr-earn-dot scr-earn-dot--cashback" />
-                <span className="type-text-xs-10">Cashback earnings</span>
+                <span className="scr-earn-tooltip-label">Cashback earnings</span>
               </span>
-              <span className="type-text-xs-10">{money(cashback[absWeek] ?? 0)}</span>
+              <span className="scr-earn-tooltip-value">{money(cashback[absWeek] ?? 0)}</span>
             </span>
           </div>
         </div>
 
-        {/* brush — pans the visible window (the frame's < > handles) */}
+        {/* brush — pans the visible window (the frame's ‹ › handles) */}
         <div className="scr-earn-brush">
+          <span className="scr-earn-brush-mask" style={{ width: `${windowLeft}%` }} />
+          <span className="scr-earn-brush-window" style={{ left: `${windowLeft}%`, width: `${windowWidth}%` }} />
+          <svg className="scr-earn-brush-chart" viewBox={`0 0 ${PLOT_W} 32`} fill="none" preserveAspectRatio="none">
+            <path d={path(referral, PLOT_W, 32, WEEKS, true)} stroke={REFERRAL_COLOR} strokeWidth={2} strokeLinejoin="round" />
+            <path d={path(cashback, PLOT_W, 32, WEEKS, true)} stroke={CASHBACK_COLOR} strokeWidth={2} strokeLinejoin="round" />
+          </svg>
           <button
             type="button"
             className="scr-earn-brush-handle"
+            style={{ left: `${windowLeft}%` }}
             onClick={() => pan(-1)}
             disabled={offset === 0}
             aria-label="Earlier weeks"
           >
-            ‹
-          </button>
-          <div className="scr-earn-brush-track">
-            <svg viewBox={`0 0 ${PLOT_W} 40`} fill="none" preserveAspectRatio="none">
-              <path
-                d={referral
-                  .map((v, i) => `${i === 0 ? 'M' : 'L'} ${(i / (WEEKS - 1)) * PLOT_W} ${40 - (v / 500) * 40}`)
-                  .join(' ')}
-                stroke={REFERRAL_COLOR}
-                strokeWidth={1}
-              />
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M7.5 2 L3.5 6 L7.5 10" fill="none" stroke="currentColor" strokeWidth="1" />
             </svg>
-            <span
-              className="scr-earn-brush-window"
-              style={{ left: `${(offset / WEEKS) * 100}%`, width: `${(WINDOW / WEEKS) * 100}%` }}
-            />
-          </div>
+          </button>
           <button
             type="button"
             className="scr-earn-brush-handle"
+            style={{ left: `${windowLeft + windowWidth}%`, marginLeft: '-12px' }}
             onClick={() => pan(1)}
             disabled={offset >= WEEKS - WINDOW}
             aria-label="Later weeks"
           >
-            ›
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M4.5 2 L8.5 6 L4.5 10" fill="none" stroke="currentColor" strokeWidth="1" />
+            </svg>
           </button>
         </div>
 
         <ul className="scr-earn-foot-legend">
           <li>
             <span className="scr-earn-dot scr-earn-dot--referral" />
-            <span className="type-text-xs">Referral earnings</span>
+            <span>Referral earnings</span>
           </li>
           <li>
             <span className="scr-earn-dot scr-earn-dot--cashback" />
-            <span className="type-text-xs">Cashback earnings</span>
+            <span>Cashback earnings</span>
           </li>
         </ul>
       </section>

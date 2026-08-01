@@ -1,35 +1,67 @@
 /* =====================================================================
-   Earning — main page (1367:5166). Blue card 328x396 @16,92 (16 padding,
-   296 column); analysis card 328x420 @16,513 with a 296x164 plot on a
-   6-row $0..$500 grid (rows 24 tall, 32 apart).
+   Earning — main page (1367:5166).
+
+   Every number here is sampled off the 1:1 Figma render (design/review/ref/
+   earn-main.png), in page coordinates = frame y - 76:
+
+     blue card      16,16   328x396   analysis card  16,436  328x420
+     dashed rule    y115 (2px)        split bar      y164 (24px, pill)
+     legend rows    y195 / y227 (28 tall, 32 apart)
+     CTAs           y296 / y352 (44 tall, 12 apart)
+     title          line box y452     range          line box y500
+     grid           y543..y729 — 6 rows of 26 (2px rule) 6px apart
+     plot           y568..y728        tooltip        102,544 196x73
+     brush          y752 48 tall      foot legend    y816 24 tall
+
+   Line heights are set explicitly rather than via the type-scale utilities
+   because the frame stacks text tighter than the 2x scale allows.
    ===================================================================== */
 
 .scr-earn {
   display: flex;
   flex-direction: column;
-  gap: 25px; /* card bottoms 488 -> 513 */
+  gap: 24px; /* card bottom 412 -> analysis top 436 */
   min-height: 100%;
+  box-sizing: border-box;
   padding: var(--spacing-16) var(--spacing-16) 104px;
   background: var(--bg-colors-container-s);
+  font-family: var(--font-family-base);
 }
 
 /* ---- balance card ----------------------------------------------------- */
 .scr-earn-card {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: 396px;
   padding: var(--spacing-16);
   border-radius: 16px;
   background: var(--primary-colors-900);
   color: var(--base-color-white);
+  /* the frame's secondary copy on the blue card is white at 72% (#BECDF1
+     over #144CCD) — there is no token for it */
+  --scr-earn-label: rgba(255, 255, 255, 0.72);
 }
 
 .scr-earn-balance-label {
   margin: 0;
+  font-size: 14px;
+  line-height: 28px;
   font-weight: var(--font-weight-regular);
+  color: var(--scr-earn-label);
 }
 
 .scr-earn-balance-row {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
+  height: 44px;
+}
+
+.scr-earn-balance-value {
+  font-size: 24px;
+  line-height: 44px;
+  font-weight: var(--font-weight-semibold);
 }
 
 .scr-earn-total {
@@ -38,27 +70,43 @@
   align-items: flex-end;
 }
 
-.scr-earn-total-label {
-  opacity: 0.75;
+.scr-earn-total-value {
+  font-size: 14px;
+  line-height: 20px;
 }
 
-/* the frame draws this rule dashed */
+.scr-earn-total-label {
+  font-size: 10px;
+  line-height: 20px;
+  color: var(--scr-earn-label);
+}
+
+/* 2px dashed rule, 4px dash / 4px gap, phase offset so a dash is cut at x32 */
 .scr-earn-rule {
-  height: 0;
-  margin: var(--spacing-12) 0 var(--spacing-16);
+  height: 2px;
+  margin: 11px 0 0;
   border: 0;
-  border-top: 1px dashed rgba(255, 255, 255, 0.32);
+  background-image: repeating-linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.08) 0 4px,
+    transparent 4px 8px
+  );
+  background-position: -2px 0;
 }
 
 .scr-earn-breakdown-title {
-  margin: 0 0 var(--spacing-8);
+  margin: 11px 0 0;
+  font-size: 14px;
+  line-height: 28px;
   font-weight: var(--font-weight-regular);
+  color: var(--scr-earn-label);
 }
 
 /* ---- split bar -------------------------------------------------------- */
 .scr-earn-bar {
   display: flex;
   height: 24px;
+  margin-top: var(--spacing-8);
   overflow: hidden;
   border-radius: var(--radius-infinity);
 }
@@ -67,6 +115,8 @@
   display: grid;
   place-items: center;
   color: var(--base-color-white);
+  font-size: 10px;
+  line-height: 20px;
 }
 
 .scr-earn-bar-seg--referral {
@@ -82,7 +132,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-4);
-  margin: var(--spacing-8) 0 0;
+  margin: 8px 0 0;
   padding: 0;
   list-style: none;
 }
@@ -100,14 +150,27 @@
   gap: var(--spacing-4);
 }
 
+.scr-earn-legend-label {
+  font-size: 12px;
+  line-height: 24px;
+  color: var(--scr-earn-label);
+}
+
 .scr-earn-legend-right {
   display: inline-flex;
   align-items: center;
-  gap: var(--spacing-8);
+  gap: 3px;
+}
+
+.scr-earn-legend-value {
+  font-size: 14px;
+  line-height: 26px;
 }
 
 /* 12x6 pill in the legend, 6x6 dot as the value separator */
 .scr-earn-dot {
+  position: relative;
+  flex: none;
   width: 12px;
   height: 6px;
   border-radius: var(--radius-infinity);
@@ -125,8 +188,8 @@
   width: 6px;
   height: 6px;
   border-radius: var(--radius-infinity);
-  background: currentColor;
-  opacity: 0.5;
+  /* sampled #4C77D9 on #144CCD = white @ 24% */
+  background: rgba(255, 255, 255, 0.24);
 }
 
 /* ---- CTAs ------------------------------------------------------------- */
@@ -134,11 +197,12 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-12);
-  margin-top: var(--spacing-20);
+  margin-top: auto;
 }
 
-/* white-on-blue primary (Figma "Primary-1") */
+/* white-on-blue primary (Figma "Primary-1" inverted for the blue card) */
 .ds-button.scr-earn-cta {
+  gap: var(--spacing-4);
   background: var(--base-color-white);
   color: var(--primary-colors-900);
 }
@@ -150,14 +214,22 @@
   height: 44px;
   border-radius: var(--radius-small);
   border: 1px solid rgba(255, 255, 255, 0.24);
+  background: transparent;
   color: var(--base-color-white);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 28px;
+  font-weight: var(--font-weight-regular);
+  cursor: pointer;
 }
 .scr-earn-ghost:active {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 /* ---- analysis card ---------------------------------------------------- */
 .scr-earn-analysis {
+  box-sizing: border-box;
+  height: 420px;
   padding: var(--spacing-16);
   border-radius: 16px;
   background: var(--bg-colors-container-p);
@@ -165,81 +237,110 @@
 
 .scr-earn-analysis-title {
   margin: 0;
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: var(--font-weight-regular);
   color: var(--typography-colors-main-text);
 }
 
 .scr-earn-range {
   margin: var(--spacing-16) 0 0;
+  font-size: 14px;
+  line-height: 28px;
   color: var(--typography-colors-sub-text);
   text-align: center;
 }
 
-/* ---- plot ------------------------------------------------------------- */
+/* ---- grid + plot ------------------------------------------------------ */
 .scr-earn-plot-wrap {
   position: relative;
-  margin-top: var(--spacing-16);
-  height: 184px;
+  margin-top: 15px;
+  height: 186px;
 }
 
 .scr-earn-grid {
-  position: absolute;
-  inset: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 6px;
 }
 
+/* label line box 22 tall at the top, then the 2px rule.
+   The line-height has to sit on the row: the block strut, not the inline
+   span, is what sets the line box. */
 .scr-earn-grid-row {
-  position: relative;
-  height: 24px;
-  border-bottom: 1px solid var(--stroke-colors-default);
+  box-sizing: border-box;
+  height: 26px;
+  border-bottom: 2px solid #f8f8f8; /* sampled; no token matches */
+  font-size: 10px;
+  line-height: 22px;
 }
 
 .scr-earn-grid-label {
-  color: var(--typography-colors-sub-text);
+  /* sampled #BEBEBE — sub-text at half strength; no token matches */
+  color: #bebebe;
 }
 
 .scr-earn-plot {
   position: absolute;
   left: 0;
-  bottom: 0;
+  top: 25px; /* $500 line, y568 */
   width: 100%;
-  height: 164px;
+  height: 160px; /* .. $0 line, y728 */
   cursor: ew-resize;
   touch-action: pan-y;
 }
 
 .scr-earn-plot svg {
+  display: block;
   width: 100%;
   height: 100%;
+  overflow: visible;
 }
 
+/* 2px dashed hairline that fades out towards the axis */
 .scr-earn-crosshair {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  border-left: 1px dashed var(--typography-colors-sub-text);
+  top: 75px;
+  /* the frame's dashes straddle half pixels: 1px ramps at each end of the
+     mask stop reproduce the 50%-covered boundary rows exactly */
+  height: 113px;
+  width: 2px;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(124, 124, 124, 0.95),
+    rgba(124, 124, 124, 0)
+  );
+  -webkit-mask-image: repeating-linear-gradient(
+    to bottom, #000 0 2px, transparent 3px 7px, #000 8px 10px
+  );
+  mask-image: repeating-linear-gradient(
+    to bottom, #000 0 2px, transparent 3px 7px, #000 8px 10px
+  );
 }
 
 /* ---- tooltip ---------------------------------------------------------- */
 .scr-earn-tooltip {
   position: absolute;
-  top: 0;
+  top: 1px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 1px;
   width: 196px;
+  height: 73px;
   padding: var(--spacing-8);
-  border-radius: var(--radius-small);
-  border: 1px solid var(--stroke-colors-default);
+  border-radius: 4px;
   background: var(--bg-colors-container-p);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transform: translateX(-50%);
   pointer-events: none;
 }
 
 .scr-earn-tooltip-date {
-  color: var(--typography-colors-main-text);
+  font-size: 10px;
+  line-height: 12px;
   text-align: center;
+  color: var(--typography-colors-main-text);
 }
 
 .scr-earn-tooltip-row {
@@ -247,77 +348,115 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-8);
+  margin-top: 8px;
+  font-size: 10px;
+  line-height: 20px;
+}
+
+.scr-earn-tooltip-row + .scr-earn-tooltip-row {
+  margin-top: 1px;
+}
+
+.scr-earn-tooltip-row .scr-earn-legend-left {
+  gap: var(--spacing-8);
+}
+
+.scr-earn-tooltip-label {
   color: var(--typography-colors-sub-text);
+}
+
+.scr-earn-tooltip-value {
+  color: var(--typography-colors-main-text);
 }
 
 /* ---- brush ------------------------------------------------------------ */
 .scr-earn-brush {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-4);
-  margin-top: var(--spacing-16);
-}
-
-.scr-earn-brush-handle {
-  width: 20px;
-  height: 40px;
-  border-radius: var(--radius-small);
-  background: var(--bg-colors-container-s);
-  color: var(--typography-colors-main-text);
-  font-size: 16px;
-  line-height: 1;
-}
-
-.scr-earn-brush-handle:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-.scr-earn-brush-track {
   position: relative;
-  flex: 1;
-  height: 40px;
+  height: 48px;
+  margin-top: 23px;
   overflow: hidden;
   border-radius: var(--radius-small);
   background: var(--bg-colors-container-s);
 }
 
-.scr-earn-brush-track svg {
-  width: 100%;
-  height: 100%;
+/* the weeks that fall outside the visible window */
+.scr-earn-brush-mask {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: #d7d7d7; /* sampled; no token matches */
 }
 
 .scr-earn-brush-window {
   position: absolute;
   top: 0;
   bottom: 0;
-  border: 1px solid var(--stroke-colors-default);
-  border-radius: var(--radius-small);
   background: var(--bg-colors-container-p);
-  opacity: 0.55;
 }
 
+.scr-earn-brush-chart {
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 100%;
+  height: 32px;
+}
+
+.scr-earn-brush-handle {
+  position: absolute;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 12px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-small);
+  background: var(--bg-colors-container-s);
+  color: var(--typography-colors-main-text);
+  cursor: pointer;
+}
+
+.scr-earn-brush-handle:disabled {
+  cursor: default;
+}
+
+/* ---- foot legend ------------------------------------------------------ */
 .scr-earn-foot-legend {
   display: flex;
   justify-content: space-between;
-  margin: var(--spacing-16) 0 0;
+  margin: 17px 0 0;
   padding: 0;
   list-style: none;
-  color: var(--typography-colors-sub-text);
+  font-size: 12px;
+  line-height: 24px;
+  /* sampled #5F5F5F = main text at 72%, same treatment as the blue card */
+  color: rgba(33, 33, 33, 0.72);
 }
 
 .scr-earn-foot-legend li {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-4);
+  height: 24px;
+}
+
+.scr-earn-foot-legend .scr-earn-dot {
+  top: -1px;
+}
+
+/* the frame sets the range's dash wider than a plain word space */
+.scr-earn-range-sep {
+  padding: 0 7px;
 }
 
 /* ---- floating nav ----------------------------------------------------- */
+/* .ds-navbar carries its own 16px side margins, so pin left/right to 0 and
+   let the margins place the 328px pill — centring it here would double them. */
 .scr-earn-nav {
   position: fixed;
-  left: 50%;
+  left: 0;
+  right: 0;
   bottom: var(--spacing-16);
-  transform: translateX(-50%);
-  width: calc(100% - var(--spacing-32));
-  max-width: 328px;
 }
