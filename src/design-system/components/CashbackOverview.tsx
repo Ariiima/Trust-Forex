@@ -65,8 +65,8 @@ export interface CashbackOverviewProps {
 
 export function CashbackOverview({
   plan = 'gold',
-  total = '$1.245.80',
-  totalCaption = 'all brokers',
+  total = '$1,245.80',
+  totalCaption = 'Across all brokers',
   delta = '+$45.00',
   planName,
   planDuration,
@@ -88,7 +88,7 @@ export function CashbackOverview({
         {/* total cashback */}
         <div className="ds-cashback-summary">
           <div className="ds-cashback-row">
-            <span className="ds-cashback-label">total cashback</span>
+            <span className="ds-cashback-label">Total cashback</span>
             <span className="ds-cashback-info">
               <Icon name="info" size={24} strokeWidth={1.8} />
             </span>

@@ -1,14 +1,78 @@
 /* =====================================================================
-   Cashback history sheet (1292:4273, empty: 1233:6263). Shares the
-   .scr-cashback-sheet-* header from AboutCashbackSheet.css. The sheet
-   body IS the list container — rows + decorative rail sit directly on
-   the sheet's white bg, rail on the right.
+   Cashback history sheet (1292:4273, empty: 1233:6263). Own header (below;
+   bigger title + dashed rule, NOT the shared .scr-cashback-sheet-* one from
+   AboutCashbackSheet.css — measured sizes differ). The sheet body IS the
+   list container — rows + decorative rail sit directly on the sheet's
+   white bg, rail on the right.
    ===================================================================== */
 
 .ds-sheet.scr-history-sheet {
   display: flex;
   flex-direction: column;
-  max-height: min(684px, 80vh);
+  /* 684px is right (measured: viewport-776 minus sheet-top-92). The 80vh
+     fallback isn't: this app never renders the 852px Figma frame's OS/
+     Telegram chrome, so its own viewport IS the cropped 776px, and
+     80vh=620.8 was wrongly winning the min() and shrinking the sheet.
+     90vh=698 clears 684px so the fallback only bites on genuinely short
+     viewports. */
+  max-height: min(684px, 90vh);
+  /* This sheet has its own head (below), not the shared drag-handle +
+     8px-top of BottomSheet's default — measured on cashback-history.png the
+     title's ink starts 35px under the sheet's white top edge, with no
+     handle pill visible above it. */
+  padding-top: 0;
+  /* BottomSheet's default 24px bottom padding is too small here: the ref's
+     row list is clipped (its last row's avatar cuts off mid-circle at
+     y742, not at the sheet's true bottom edge y776) — the frame's list
+     viewport ends 34px above the sheet bottom, not 24. */
+  padding-bottom: 34px;
+}
+.scr-history-sheet .ds-sheet-handle {
+  display: none;
+}
+
+/* ---- own head: bigger title (18/32) + close + dashed rule ------------- */
+.scr-history-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* measured: title ink center y134 vs sheet-top y92, with a 16px/32
+     title line-box centered in the padding -> padding-top 26 (was 16,
+     first pass measured 10px too high). */
+  padding-top: 26px;
+}
+
+.scr-history-sheet-headtitle {
+  /* measured by text-width ratio against the 24px close glyph row: build
+     at 18px was ~1.14x the reference's width -> 16px is the right size,
+     not the shared sheet header's 16/32 by coincidence of number only. */
+  font-size: 16px;
+  line-height: 32px;
+  /* measured: ref ink density (dark-px/box) 0.26 vs semibold's 0.33 here —
+     regular weight matches the reference's stroke thickness. */
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-history-sheet-headclose {
+  display: inline-flex;
+  flex: none;
+  color: var(--base-color-black);
+}
+
+.scr-history-sheet-headdivider {
+  margin-top: var(--spacing-12); /* measured: title-box-bottom y150 -> divider y161.5 */
+  height: 1px;
+  /* Figma draws this rule dashed (4px on / 4px off, stroke-colors-default) —
+     border-style:dashed can't be pinned to an exact dash length, so it's a
+     repeating gradient instead. */
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--stroke-colors-default) 0,
+    var(--stroke-colors-default) 4px,
+    transparent 4px,
+    transparent 8px
+  );
 }
 
 /* ---- filled list ------------------------------------------------------ */
@@ -17,7 +81,7 @@
   min-height: 0;
   display: flex;
   gap: var(--spacing-8);
-  margin-top: var(--spacing-24);
+  margin-top: 15px; /* measured: divider y162 -> first row top border y178 (16 landed 1px low) */
 }
 
 .scr-history-sheet-list {
@@ -64,10 +128,14 @@
 
 .scr-history-sheet-row {
   flex: none;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--spacing-8) var(--spacing-12);
+  /* Figma: 12px padding, 1px stroke drawn inside — border-box needs 11px so
+     the stroke doesn't add to the inset. Measured: avatar top y190 minus row
+     border y178 = 11px on every side (row height 56 = 1+11+32+11+1). */
+  padding: 11px;
   border: 1px solid var(--stroke-colors-default);
   border-radius: var(--radius-medium);
 }
@@ -95,7 +163,11 @@
 
 .scr-history-sheet-row-name {
   font-size: 12px;
-  line-height: 24px;
+  /* was the type-text-xs token's 24px; row height (56, avatar-driven, see
+     .scr-history-sheet-row above) only works if name+date fit in 32px —
+     measured name-ink-to-date-ink gap says line-height must be tighter
+     than the token. First pass at 18px, tuned against the render. */
+  line-height: 18px;
   color: var(--typography-colors-main-text);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -104,8 +176,10 @@
 
 .scr-history-sheet-row-date {
   font-size: 10px;
-  line-height: 20px;
+  line-height: 14px; /* was 20px token; see row-name comment on the 32px budget */
   color: var(--typography-colors-sub-text);
+  /* data is lowercase ("may20,2026"); ref renders "May20,2026". */
+  text-transform: capitalize;
 }
 
 .scr-history-sheet-row-nums {
@@ -117,13 +191,13 @@
 
 .scr-history-sheet-row-rate {
   font-size: 10px;
-  line-height: 20px;
+  line-height: 18px; /* mirrors row-name — ink lines up with it in the ref */
   color: var(--typography-colors-main-text);
 }
 
 .scr-history-sheet-row-amount {
   font-size: 10px;
-  line-height: 20px;
+  line-height: 14px; /* mirrors row-date */
   color: var(--state-colors-success);
 }
 

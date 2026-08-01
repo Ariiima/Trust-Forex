@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { BottomSheet, Button } from '../../design-system/components';
-import { SheetHeader } from './AboutCashbackSheet';
+import { Glyph } from './Glyph';
 import { BROKER_INFO, HISTORY_ROWS, type HistoryRow } from './brokers-data';
 import './CashbackHistorySheet.css';
 
@@ -29,7 +29,17 @@ export function CashbackHistorySheet({
 }: CashbackHistorySheetProps): ReactNode {
   return (
     <BottomSheet open={open} onClose={onClose} className="scr-history-sheet">
-      <SheetHeader title="Cashback history" onClose={onClose} />
+      {/* Own header, not the shared AboutCashbackSheet SheetHeader: measured
+          off cashback-history.png this title sits lower (26px top padding,
+          not 8) and the rule under it is dashed, not solid — the two
+          sheets only look alike at a glance. */}
+      <div className="scr-history-sheet-head">
+        <span className="scr-history-sheet-headtitle">Cashback history</span>
+        <button type="button" className="scr-history-sheet-headclose" onClick={onClose} aria-label="Close">
+          <Glyph name="close" size={24} strokeWidth={1.8} />
+        </button>
+      </div>
+      <div className="scr-history-sheet-headdivider" aria-hidden="true" />
 
       {rows.length === 0 ? (
         <div className="scr-history-sheet-empty">
