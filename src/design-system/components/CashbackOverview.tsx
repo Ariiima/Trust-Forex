@@ -16,25 +16,41 @@ const BADGES: Record<CashbackPlan, string> = {
   diamond: badgeDiamondUrl,
 };
 
-// Tier stepper badges. In Figma these are small raster image chips (image
-// fills, unexportable here); the rendered design shows them as circular
-// outline glyphs — a person, a shield, a crown and a diamond — so they are
-// reproduced with inline stroke icons (currentColor, sized by CSS).
+/* Tier stepper badges. In Figma these are small raster image chips (image
+ * fills, unexportable here), so they are redrawn — but SOLID, not outlined.
+ * Measured over the ring's interior on 850:2053, the reference glyphs carry an
+ * ink fill-ratio of 0.29 / 0.50 / 0.41 / 0.44 (standard→diamond); the stroke
+ * versions these replace carried 0.13-0.23, which is what made them read as
+ * spindly next to the design. At a 12px render weight is the only thing that
+ * survives, so weight is what is matched.
+ *
+ * Holes (the shield's rosette, the gem's facets) are subpaths under
+ * fill-rule="evenodd" rather than a background-coloured shape on top, so the
+ * badge stays correct on any surface.
+ *
+ * These are approximations of unexportable raster chips, not traced vectors —
+ * a 13px source has no recoverable outline. An SVG export of the four would
+ * make them exact. */
 const TIER_ICONS: Record<CashbackPlan, ReactNode> = {
   standard: (
-    <>
-      <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-      <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-    </>
+    <path
+      fillRule="evenodd"
+      d="M12 4.4a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2zM12 13.2c4 0 7.2 2.9 7.2 6.4H4.8c0-3.5 3.2-6.4 7.2-6.4z"
+    />
   ),
   silver: (
-    <>
-      <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" />
-      <path d="M12 8.5l1.1 2.25 2.4 .35 -1.75 1.7 .42 2.4 -2.17 -1.14 -2.17 1.14 .42 -2.4 -1.75 -1.7 2.4 -.35z" />
-    </>
+    <path
+      fillRule="evenodd"
+      d="M12 2.2 20.6 5.7v6.4c0 4.7-3.5 8-8.6 9.7-5.1-1.7-8.6-5-8.6-9.7V5.7zM12 8.4a3.3 3.3 0 1 0 0 6.6 3.3 3.3 0 0 0 0-6.6z"
+    />
   ),
-  gold: <path d="M12 6l4 6l5 -4l-2 10h-14l-2 -10l5 4z" />,
-  diamond: <path d="M6 5h12l3 5l-8.5 9.5a0.7 .7 0 0 1 -1 0l-8.5 -9.5z" />,
+  gold: <path d="M2.8 7.6 8 11.4 12 4.2l4 7.2 5.2-3.8-1.9 11.2H4.7z" />,
+  diamond: (
+    <path
+      fillRule="evenodd"
+      d="M5.6 3.8h12.8l3.2 5.4-9.6 11-9.6-11zM9.5 9.9h5l-2.5 6.6z"
+    />
+  ),
 };
 
 const TIERS: readonly { key: CashbackPlan; label: string }[] = [
@@ -148,14 +164,7 @@ export function CashbackOverview({
           <div className="ds-cashback-tier-group" key={tier.key}>
             <div className={`ds-cashback-tier${i > activeIndex ? ' ds-cashback-tier-dim' : ''}`}>
               <span className="ds-cashback-tier-badge" aria-hidden="true">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.8}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
                   {TIER_ICONS[tier.key]}
                 </svg>
               </span>

@@ -1,7 +1,7 @@
 /* ProgressBar — 3-node horizontal stepper (Figma "Progress bar", 1102:9734).
    White card (r12, padding 12/16). Nodes are 24px circles:
    done = solid green + white check; current = green ring + 16px green dot;
-   todo = grey ring + 16px grey dot. Connector fills green after a done step. */
+   todo = grey ring, hollow. Connector fills green after a done step. */
 .ds-progress {
   box-sizing: border-box;
   width: 100%;
@@ -43,20 +43,19 @@
   transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
+/* Only the current step has an inner dot. Steps still to come are bare rings —
+   the header comment used to claim "todo = grey ring + 16px grey dot", but the
+   frames disagree: 552:3115 draws them hollow. */
 .ds-progress-inner {
   width: 16px;
   height: 16px;
   border-radius: var(--radius-infinity);
-  background: var(--stroke-colors-default);
-  transition: background-color 0.25s ease;
+  background: var(--state-colors-success);
 }
 
 /* current — green ring + green inner dot */
 .ds-progress-dot-current {
   border-color: var(--state-colors-success);
-}
-.ds-progress-dot-current .ds-progress-inner {
-  background: var(--state-colors-success);
 }
 
 /* done — solid green + white check */

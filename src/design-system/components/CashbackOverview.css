@@ -139,9 +139,13 @@
    own bevel and shadow, so both the mask and the fills come off. */
 
 /* tier progression stepper */
+/* The row keeps its 38px height even though the tier column is now 32
+   (18 badge + 4 gap + 10 label), so nothing below it shifts. The reference
+   centres that column in the row: badge top 238 inside a row starting at 235. */
 .ds-cashback-tiers {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  min-height: 38px;
 }
 
 .ds-cashback-tier-group {
@@ -164,20 +168,24 @@
   opacity: 0.4;
 }
 
+/* 18, not 24. Measured on all four tiers of 850:2053: the ring runs x47..64 /
+   y238..255 against the build's x44..67 / y235..258 — same centre, a third too
+   big. That size error is most of why these glyphs "look wrong"; the artwork
+   inside is close to the right size already. */
 .ds-cashback-tier-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.4);
   color: var(--base-color-white);
 }
 .ds-cashback-tier-badge svg {
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
   display: block;
 }
 

@@ -6,6 +6,7 @@ import { Glyph } from './Glyph';
 import type { ReferralGlyphName } from './Glyph';
 import { PromoCarousel } from '../home/PromoCarousel';
 import { AboutReferralSheet } from './AboutReferralSheet';
+import { EarningsGlyph } from './EarningsGlyph';
 import shareCoin from '../../assets/referral/referral-share-coin.png';
 import './ReferralMain.css';
 
@@ -27,7 +28,8 @@ export interface Referral {
 }
 
 interface Stat {
-  icon: ReferralGlyphName;
+  /** A pack icon, or one of the two composites the pack has no equivalent for. */
+  icon: ReferralGlyphName | { earnings: 'plan' | 'cashback' };
   label: string;
   value: string;
   delta?: string;
@@ -86,8 +88,8 @@ export function ReferralMain({
   const stats: readonly Stat[] = [
     { icon: 'user-receive', label: 'Invited users', value: String(invitedUsers), delta: `+${invitedDelta}` },
     { icon: 'user-check', label: 'Active users', value: String(activeUsers) },
-    { icon: 'shopping-bag', label: 'Plan earnings', value: money(planEarnings) },
-    { icon: 'cash', label: 'Cashback earnings', value: money(cashbackEarnings) },
+    { icon: { earnings: 'plan' }, label: 'Plan earnings', value: money(planEarnings) },
+    { icon: { earnings: 'cashback' }, label: 'Cashback earnings', value: money(cashbackEarnings) },
   ];
 
   const total = (r: Referral) => r.plan + r.cashback;
@@ -129,7 +131,11 @@ export function ReferralMain({
           {stats.map((s) => (
             <li key={s.label} className="scr-refmain-stat">
               <span className="scr-refmain-stat-badge">
-                <Glyph name={s.icon} size={20} />
+                {typeof s.icon === 'string' ? (
+                  <Glyph name={s.icon} size={18} />
+                ) : (
+                  <EarningsGlyph kind={s.icon.earnings} size={18} />
+                )}
               </span>
               <span className="scr-refmain-stat-text">
                 <span className="scr-refmain-stat-label type-text-xs-10">{s.label}</span>

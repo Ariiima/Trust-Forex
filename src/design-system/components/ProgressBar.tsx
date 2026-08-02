@@ -26,11 +26,8 @@ export function ProgressBar({ current, className }: ProgressBarProps): ReactNode
           return (
             <Fragment key={step}>
               <span className={`ds-progress-dot ds-progress-dot-${status}`}>
-                {status === 'done' ? (
-                  <Icon name="check" size={16} />
-                ) : (
-                  <span className="ds-progress-inner" />
-                )}
+                {status === 'done' ? <Icon name="check" size={16} /> : null}
+                {status === 'current' ? <span className="ds-progress-inner" /> : null}
               </span>
               {i < last ? (
                 <span

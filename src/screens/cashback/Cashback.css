@@ -94,9 +94,12 @@
   height: 110px;
 }
 
+/* Centred in the card, not left-aligned: the reference cluster runs x160..199
+   inside a 16..344 card, i.e. dead centre. */
 .scr-cashback-promo-dots {
   position: absolute;
-  left: var(--spacing-16);
+  left: 50%;
+  transform: translateX(-50%);
   bottom: var(--spacing-12);
   z-index: 1;
   display: inline-flex;
@@ -136,16 +139,26 @@
   display: none;
 }
 .scr-cashback-hero .ds-cashback-divider {
-  /* The Standard-user variant has no rule between the summary and the plan
-     panel. Scanning the frame for the divider's own colour (24% white over
-     #144CCD = (76,119,217)) finds it nowhere in the card — only the two button
-     borders lower down. */
-  display: none;
+  /* The earlier pass concluded this rule was absent, having scanned the frame
+     for a continuous run of the divider's colour. It is DASHED, so no such run
+     exists — that scan could not have found it. Measured off 850:2053: rows
+     y115-116 (2px), x32..328 (the card's content width), 4px dashes on an 8px
+     pitch, both rows identical at (39,90,209). Solving out = a·255 + (1-a)·bg
+     against the #144CCD card gives a = 0.081/0.078/0.080 across R/G/B — white
+     at 8%. */
+  height: 2px;
+  background: repeating-linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.08) 0 4px,
+    transparent 4px 8px
+  );
+  /* The gaps either side are not equal, so one of them is carried here: the
+     summary block ends on 108, and 108 + 7 puts the rule on 115; its bottom
+     (117) + 8 + the 7px gap puts the panel's top edge back on 132. */
+  margin-bottom: var(--spacing-8);
 }
 .scr-cashback-hero .ds-cashback-top {
-  /* 24 with the divider gone: the summary block ends on 107 and the panel's
-     top edge is on 132. */
-  gap: var(--spacing-24);
+  gap: 7px;
 }
 .scr-cashback-hero .ds-cashback-current > .ds-cashback-row:first-child {
   display: none;
@@ -160,11 +173,14 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  /* 20, not the DS 24. The reference "10%" is 39px wide with a 16px cap; the
+     24px build renders it 47px / 19px. Both ratios land on 20. */
+  font-size: 20px;
 }
 .scr-cashback-hero .ds-cashback-rate::after {
   content: 'Cashback rate';
   margin-top: -12px; /* 44 (value line-height) + 24 (caption) - 12 = 56, matching the plan-text column's own height */
-  font-size: 12px;
+  font-size: 10px;
   line-height: 24px;
   font-weight: var(--font-weight-regular);
   color: rgba(255, 255, 255, 0.72);
@@ -175,6 +191,13 @@
      cropped reference) with 56px of content (badge height) => 12px top +
      12px bottom, symmetric now that the label row is gone. */
   padding: var(--spacing-12) var(--spacing-16);
+}
+/* Both captions in this panel are 10px, not the DS 14/12. Measured by width,
+   which tracks font-size far more reliably than cap height: "Base access" is
+   57px in the frame against 84px at 14px, and "Cashback rate" 72px against
+   86px at 12px — 9.5 and 10.1 respectively. */
+.scr-cashback-hero .ds-cashback-plan-text .ds-cashback-muted {
+  font-size: 10px;
 }
 .scr-cashback-hero .ds-cashback-actions {
   flex-direction: column;
