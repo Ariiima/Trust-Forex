@@ -40,8 +40,7 @@ tweaks.md
 design/review/out/
 *-v[0-9].png
 
-# playwright-mcp per-session snapshots only — NOT the reference screenshots
-# that live alongside them.
-.playwright-mcp/page-*.yml
-.playwright-mcp/console-*.log
+# playwright-mcp scratch. Used to keep the reference screenshots here; the real
+# 1:1 frames live in design/review/ref/ now, so the whole directory is scratch.
+.playwright-mcp/
 __pycache__/
