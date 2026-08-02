@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Trust Forex — pick the right icon</title>
+<style>
+  :root { --ink:#212121; --sub:#7c7c7c; --line:#e4e4e4; --bg:#f6f7f9; --blue:#144ccd; --ok:#48a068; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+         color:var(--ink); background:var(--bg); }
+  header { position:sticky; top:0; z-index:10; display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+           padding:12px 20px; background:#fff; border-bottom:1px solid var(--line); }
+  header h1 { margin:0; font-size:15px; }
+  .spacer { flex:1; }
+  button { font:inherit; padding:6px 12px; border:1px solid var(--line); border-radius:8px; background:#fff; cursor:pointer; }
+  button.primary { background:var(--blue); border-color:var(--blue); color:#fff; }
+  .hint { color:var(--sub); font-size:12px; }
+
+  .slot { padding:20px; border-bottom:1px solid var(--line); }
+  .slot h2 { margin:0 0 2px; font-size:15px; }
+  .slot .meta { margin:0 0 12px; color:var(--sub); font-size:12px; }
+  .slot .meta code { background:#fff; padding:1px 5px; border-radius:4px; border:1px solid var(--line); }
+
+  .row { display:flex; gap:22px; align-items:flex-start; flex-wrap:wrap; }
+  .box { display:flex; flex-direction:column; gap:6px; align-items:center; }
+  .box .cap { font-size:11px; color:var(--sub); }
+  /* the design's own pixels, blown up */
+  .ref { image-rendering:pixelated; border:1px solid var(--line); border-radius:8px; background:#fff; }
+  .cur { width:96px; height:96px; border:1px solid var(--line); border-radius:8px; background:#fff;
+         display:grid; place-items:center; }
+  .cur.chosen { border-color:var(--ok); box-shadow:0 0 0 2px rgba(72,160,104,.25); }
+
+  .picker { flex:1; min-width:320px; }
+  .picker input { font:inherit; width:100%; max-width:320px; padding:7px 10px; border:1px solid var(--line); border-radius:8px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, 46px); gap:4px; margin-top:10px;
+          max-height:270px; overflow-y:auto; padding:6px; background:#fff; border:1px solid var(--line); border-radius:10px; }
+  .grid button { width:46px; height:46px; padding:0; display:grid; place-items:center; border-color:transparent; }
+  .grid button:hover { border-color:var(--line); background:#fafafa; }
+  .grid button.on { border-color:var(--ok); background:#f2fbf5; }
+  .grid button svg { pointer-events:none; }
+
+  .confirmed { padding:20px; }
+  .confirmed ul { columns:3; margin:8px 0 0; padding-left:18px; font-size:13px; color:var(--sub); }
+  .confirmed code { color:var(--ink); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Pick the right icon</h1>
+  <span class="hint">Left is the design's own pixels. Click a candidate to choose it.</span>
+  <span class="spacer"></span>
+  <button class="primary" id="copy">Copy choices</button>
+</header>
+
+<main id="list"></main>
+
+<section class="confirmed">
+  <h2 style="font-size:15px;margin:0">Already confirmed</h2>
+  <p class="hint" style="margin:4px 0 0">
+    These pack names come from the <code>name=</code> attributes the frames actually instantiate
+    (harvested from <code>design/figma-meta</code>), so they are evidence, not guesses.
+    Shout if any still looks wrong.
+  </p>
+  <ul id="confirmed"></ul>
+</section>
+
+<script>
+/* Slots the design metadata does NOT name, so the pack icon behind them was a
+   judgement call. `ref` is where that glyph appears in a reference frame; the
+   76px of Telegram/iOS chrome is added here because the PNGs include it. */
+const CHROME = 76;
+const SLOTS = [
+  { id:'wallet', title:'Nav — Earnings', note:'Reported wrong. Not in the pack under any wallet* name.',
+    ref:{ png:'ref/ref-main.png', x:294, y:1130, w:24, h:24 }, current:'wallet1' },
+  { id:'home', title:'Nav — Home',
+    ref:{ png:'ref/ref-main.png', x:47, y:1130, w:24, h:24 }, current:'home' },
+  { id:'scan', title:'Withdraw amount — scan wallet address',
+    ref:{ png:'ref/wd-amt.png', x:293, y:333, w:22, h:22 }, current:'scan' },
+  { id:'loader', title:'Broker — verification in progress',
+    note:'Was the starburst `loader`; the frame draws a 3/4 arc, so it is now loader-2.',
+    ref:{ png:'ref/broker.png', x:42, y:82, w:24, h:24 }, current:'loader-2' },
+  { id:'external', title:'Broker — open broker site',
+    ref:{ png:'ref/broker.png', x:228, y:852, w:26, h:24 }, current:'external-link' },
+  { id:'alert-circle', title:'Input — error state', note:'No reference frame captures this state.',
+    ref:null, current:'alert-circle' },
+];
+
+const CONFIRMED = {
+  'alert-triangle':'alert-triangle', 'arrow-up':'arrow-up', award:'award', cash:'cash2', check:'check',
+  'check-circle':'check-circle', back:'chevron-left', 'chevron-right':'chevron-right',
+  'clock-hour-5':'clock-hour-5', close:'close', copy:'copy-2', 'currency-dollar':'currency-dollar1',
+  calendar:'date-range', globe:'globe', info:'info', 'loader-2':'loader-2', mail:'mail',
+  maximize:'maximize', report:'report', send:'send-1', shield:'shield', 'shopping-bag':'shopping-bag3',
+  'swap-vertical':'swap-verticle', 'trending-up':'trending-up', user:'user-2', 'user-check':'user-check',
+  'user-receive':'user-receive', users:'users',
+};
+
+const key = (id) => 'tf-icon:' + id;
+let PACK = {};
+
+const svgFor = (name, px) => {
+  const g = PACK[name];
+  if (!g) return '';
+  const paint = g.fill ? 'fill="currentColor" fill-rule="evenodd"' : '';
+  return `<svg width="${px}" height="${px}" viewBox="16 16 24 24" fill="none"
+    stroke="${g.fill ? 'none' : 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    ${g.d.map((d) => `<path d="${d}" ${paint}/>`).join('')}</svg>`;
+};
+
+fetch('icon-pack.json').then((r) => r.json()).then((pack) => {
+  PACK = pack;
+  const names = Object.keys(PACK).sort();
+  const list = document.getElementById('list');
+
+  for (const s of SLOTS) {
+    const chosen = localStorage.getItem(key(s.id)) || s.current;
+    const sec = document.createElement('section');
+    sec.className = 'slot';
+    const scale = 5;
+    const refBox = s.ref
+      ? `<div class="box">
+           <div class="ref" style="width:${s.ref.w * scale}px;height:${s.ref.h * scale}px;
+             background-image:url(${s.ref.png});
+             background-position:-${s.ref.x * scale}px -${(s.ref.y + CHROME) * scale}px;
+             background-size:${360 * scale}px auto"></div>
+           <span class="cap">design</span>
+         </div>`
+      : `<div class="box"><div class="cur" style="color:#c8c8c8">n/a</div><span class="cap">no reference</span></div>`;
+
+    sec.innerHTML = `
+      <h2>${s.title}</h2>
+      <p class="meta">app name <code>${s.id}</code>${s.note ? ' &nbsp;·&nbsp; ' + s.note : ''}</p>
+      <div class="row">
+        ${refBox}
+        <div class="box">
+          <div class="cur chosen" id="cur-${s.id}">${svgFor(chosen, 64)}</div>
+          <span class="cap" id="curname-${s.id}">${chosen}</span>
+        </div>
+        <div class="picker">
+          <input placeholder="search ${names.length} icons…" id="q-${s.id}">
+          <div class="grid" id="g-${s.id}"></div>
+        </div>
+      </div>`;
+    list.appendChild(sec);
+
+    const grid = sec.querySelector('#g-' + s.id);
+    const input = sec.querySelector('#q-' + s.id);
+    const render = (filter) => {
+      const f = filter.trim().toLowerCase();
+      const show = f ? names.filter((n) => n.includes(f)) : names;
+      grid.innerHTML = show
+        .slice(0, 400)
+        .map((n) => `<button data-n="${n}" title="${n}" class="${n === (localStorage.getItem(key(s.id)) || s.current) ? 'on' : ''}">${svgFor(n, 24)}</button>`)
+        .join('');
+    };
+    const seed = s.id === 'wallet' ? '' : s.current;  // no wallet* matches, so start unfiltered
+    render(seed);
+    input.value = seed;
+    input.addEventListener('input', () => render(input.value));
+    grid.addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-n]');
+      if (!b) return;
+      const n = b.dataset.n;
+      localStorage.setItem(key(s.id), n);
+      sec.querySelector('#cur-' + s.id).innerHTML = svgFor(n, 64);
+      sec.querySelector('#curname-' + s.id).textContent = n;
+      grid.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x.dataset.n === n));
+    });
+  }
+
+  document.getElementById('confirmed').innerHTML = Object.entries(CONFIRMED)
+    .map(([app, pk]) => `<li>${app} → <code>${pk}</code></li>`)
+    .join('');
+});
+
+document.getElementById('copy').addEventListener('click', async (e) => {
+  const out = SLOTS.map((s) => `${s.id}: ${localStorage.getItem(key(s.id)) || s.current}`).join('\n');
+  try {
+    await navigator.clipboard.writeText(out);
+    e.target.textContent = 'Copied!';
+  } catch {
+    e.target.textContent = 'see console';
+    console.log(out);
+  }
+  setTimeout(() => (e.target.textContent = 'Copy choices'), 1500);
+});
+</script>
+</body>
+</html>

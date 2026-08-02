@@ -20,7 +20,7 @@ MAP = {
  'alert-triangle':'alert-triangle','close':'close','report':'report','wallet':'wallet1','scan':'scan',
  'back':'chevron-left','shield':'shield','calendar':'date-range','trending-up':'trending-up',
  'chevron-down':'chevron-down','dots-vertical':'more-vertical','copy':'copy-2','check-circle':'check-circle',
- 'clock-hour-5':'clock-hour-5','loader':'loader','loader-2':'loader-2','user-receive':'user-receive',
+ 'clock-hour-5':'clock-hour-5','loader':'loader-2','loader-2':'loader-2','user-receive':'user-receive',
  'user-check':'user-check','shopping-bag':'shopping-bag3','cash':'cash2','send':'send-1','globe':'globe',
  'user':'user-2','swap-vertical':'swap-verticle','mail':'mail','external':'external-link',
 }
