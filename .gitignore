@@ -44,3 +44,4 @@ design/review/out/
 # that live alongside them.
 .playwright-mcp/page-*.yml
 .playwright-mcp/console-*.log
+__pycache__/
