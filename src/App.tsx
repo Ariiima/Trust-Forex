@@ -115,6 +115,9 @@ function WithdrawAmountQ() {
       initialAmount={q.get('amount') ?? undefined}
       initialWallet={q.get('wallet') ?? undefined}
       initialSheet={sheet === 'change' || sheet === 'summary' || sheet === 'submitted' ? sheet : undefined}
+      /* Not nav(-1): the withdraw flow is two screens deep by now, so going
+         back one lands on the amount step again. This ends the flow. */
+      onDone={() => nav('/earning')}
       onBack={() => nav(-1)}
     />
   )

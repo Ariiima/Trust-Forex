@@ -55,6 +55,8 @@ export interface WithdrawAmountProps {
   onBack?: () => void;
   onChangeCurrency?: () => void;
   onContinue?: (amount: number, wallet: string) => void;
+  /** "Back to Earnings" on the submitted sheet — leaves the withdraw flow. */
+  onDone?: () => void;
 }
 
 export function WithdrawAmount({
@@ -66,6 +68,7 @@ export function WithdrawAmount({
   onBack,
   onChangeCurrency,
   onContinue,
+  onDone,
 }: WithdrawAmountProps): ReactNode {
   useBackButton(onBack);
   const [currencyId, setCurrencyId] = useState(optionId);
@@ -204,6 +207,7 @@ export function WithdrawAmount({
         networkFee={option.networkFee}
         onClose={() => setSummary('closed')}
         onConfirm={() => setSummary('submitted')}
+        onDone={onDone}
       />
     </div>
   );

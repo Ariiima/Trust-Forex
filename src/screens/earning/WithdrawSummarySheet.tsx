@@ -28,6 +28,9 @@ export interface WithdrawSummarySheetProps {
   networkFee?: number;
   onClose?: () => void;
   onConfirm?: () => void;
+  /** submitted only — "Back to Earnings". Distinct from onClose: dismissing the
+   *  sheet leaves you on the withdraw screen, this leaves the flow entirely. */
+  onDone?: () => void;
 }
 
 /** 0X1C42......48Hf7f8 — the frames elide the middle of the address. */
@@ -45,6 +48,7 @@ export function WithdrawSummarySheet({
   networkFee = 1,
   onClose,
   onConfirm,
+  onDone,
 }: WithdrawSummarySheetProps): ReactNode {
   const rows = [
     { label: 'Currency', value: `${currency} (${dashNetwork(network)})` },
@@ -96,7 +100,13 @@ export function WithdrawSummarySheet({
       </dl>
 
       {submitted ? (
-        <Button variant="outline" size="medium" fullWidth className="scr-wdsum-cta" onClick={onClose}>
+        <Button
+          variant="outline"
+          size="medium"
+          fullWidth
+          className="scr-wdsum-cta"
+          onClick={onDone ?? onClose}
+        >
           Back to Earnings
         </Button>
       ) : (
