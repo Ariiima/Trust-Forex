@@ -29,11 +29,10 @@ dist-ssr
 !.env.example
 server/data.sqlite
 
-# Local artifacts
-*-scroll*.png
-*-viewport.png
-referral-preview.png
-referral-fixed.png
+# Local artifacts. Scratch captures land at the repo root while working a
+# screen; 59 of them had accumulated there. The frames the sweep actually
+# diffs against live in design/review/ref/, which this does not touch.
+/*.png
 tweaks.md
 
 # review scratch renders
