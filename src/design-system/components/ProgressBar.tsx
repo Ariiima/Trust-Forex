@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import './ProgressBar.css';
 
@@ -12,9 +12,26 @@ export interface ProgressBarProps {
   className?: string;
 }
 
+/* Highest step this session has already played the advance for. Module scope,
+   because the bar unmounts and remounts on every route: two different screens
+   share step 2 (`/payment/currency` and `/payment/network` are both "payment
+   details"), so without this the green re-ran the same segment on the second
+   of them. Only a step reached for the first time, moving forward, animates —
+   revisiting or going back leaves the bar where it is. */
+let highestReached = -1;
+
 export function ProgressBar({ current, className }: ProgressBarProps): ReactNode {
   const activeIndex = STEP_ORDER.indexOf(current);
-  const classes = ['ds-progress', className ?? ''].filter(Boolean).join(' ');
+
+  // Read on mount, commit in an effect: an initialiser that also wrote would
+  // double-fire under StrictMode and mark the step seen before it had played.
+  const [advancing] = useState(() => activeIndex > highestReached);
+  useEffect(() => {
+    highestReached = Math.max(highestReached, activeIndex);
+  }, [activeIndex]);
+  const classes = ['ds-progress', advancing ? 'ds-progress-advancing' : '', className ?? '']
+    .filter(Boolean)
+    .join(' ');
   const last = STEP_ORDER.length - 1;
 
   /* Each step of the flow is its own route, so the bar remounts every time and

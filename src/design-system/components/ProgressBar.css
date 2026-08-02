@@ -80,7 +80,7 @@
    move from. Only the segment INTO the current step animates — the ones behind
    it are already green and should stay put. */
 @media (prefers-reduced-motion: no-preference) {
-  .ds-progress-line-advancing::after {
+  .ds-progress-advancing .ds-progress-line-advancing::after {
     animation: ds-progress-advance 0.5s cubic-bezier(0.32, 0.72, 0, 1) 0.05s backwards;
   }
 
@@ -92,14 +92,14 @@
      completed on an earlier screen — popping them again on every page made the
      whole row fire at once and read as a reset rather than as progress. They
      render static. */
-  .ds-progress-dot-current .ds-progress-inner {
+  .ds-progress-advancing .ds-progress-dot-current .ds-progress-inner {
     animation: ds-progress-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
     animation-delay: var(--ds-progress-dot-delay, 0.06s);
   }
 
   /* Matches the delay above so the ring turns green as the dot lands, not as
      the line sets off. */
-  .ds-progress-dot-current {
+  .ds-progress-advancing .ds-progress-dot-current {
     transition: border-color 0.25s ease var(--ds-progress-dot-delay, 0.06s);
   }
 }
