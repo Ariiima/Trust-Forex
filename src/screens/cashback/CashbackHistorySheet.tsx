@@ -36,7 +36,7 @@ export function CashbackHistorySheet({
       <div className="scr-history-sheet-head">
         <span className="scr-history-sheet-headtitle">Cashback history</span>
         <button type="button" className="scr-history-sheet-headclose" onClick={onClose} aria-label="Close">
-          <Glyph name="close" size={24} strokeWidth={1.8} />
+          <Glyph name="close" size={24} />
         </button>
       </div>
       <div className="scr-history-sheet-headdivider" aria-hidden="true" />

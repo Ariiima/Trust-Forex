@@ -52,7 +52,7 @@ export function WithdrawCurrency({ initialSelected, onBack, onContinue }: Withdr
           size="medium"
           fullWidth
           disabled={!selected}
-          iconRight={<Icon name="chevron-right" size={20} strokeWidth={1.6} />}
+          iconRight={<Icon name="chevron-right" size={20} />}
           onClick={() => selected && onContinue?.(selected)}
         >
           Continue

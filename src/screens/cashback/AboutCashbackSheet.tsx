@@ -22,7 +22,7 @@ export function SheetHeader({ title, onClose }: SheetHeaderProps): ReactNode {
       <div className="scr-cashback-sheet-titlerow">
         <span className="scr-cashback-sheet-title">{title}</span>
         <button type="button" className="scr-cashback-sheet-close" onClick={onClose} aria-label="Close">
-          <Glyph name="close" size={24} strokeWidth={1.8} />
+          <Glyph name="close" size={24} />
         </button>
       </div>
       <div className="scr-cashback-sheet-divider" aria-hidden="true" />
@@ -57,7 +57,7 @@ export function AboutCashbackSheet({ open, onClose }: AboutCashbackSheetProps): 
           {STEPS.map((step) => (
             <div className="scr-about-sheet-step" key={step.glyph}>
               <span className="scr-about-sheet-step-icon">
-                <Glyph name={step.glyph} size={24} strokeWidth={2} />
+                <Glyph name={step.glyph} size={24} />
               </span>
               <span className="scr-about-sheet-step-text">
                 <span className="scr-about-sheet-step-title">{step.title}</span>

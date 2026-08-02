@@ -57,7 +57,7 @@ export function StatusSheet({
         {variant === 'waiting' ? (
           <div className="scr-status-sheet-content">
             <div className="scr-status-sheet-banner scr-status-sheet-banner-warn">
-              <Glyph name="clock-hour-5" size={24} strokeWidth={1.6} className="scr-status-sheet-banner-icon" />
+              <Glyph name="clock-hour-5" size={24} className="scr-status-sheet-banner-icon" />
               <p className="scr-status-sheet-banner-text">
                 Your payment is currently under review. Confirmation may take a few moments.
               </p>
@@ -68,7 +68,7 @@ export function StatusSheet({
                 <span>USD</span>
               </Row>
               <Row label="You paid">
-                <Glyph name="loader-2" size={20} strokeWidth={1.6} className="scr-status-sheet-spinner" />
+                <Glyph name="loader-2" size={20} className="scr-status-sheet-spinner" />
               </Row>
             </div>
           </div>
@@ -78,7 +78,7 @@ export function StatusSheet({
           <>
             <div className="scr-status-sheet-content">
               <div className="scr-status-sheet-banner scr-status-sheet-banner-warn">
-                <Icon name="info" size={24} strokeWidth={1.6} className="scr-status-sheet-banner-icon" />
+                <Icon name="info" size={24} className="scr-status-sheet-banner-icon" />
                 <p className="scr-status-sheet-banner-text">
                   Your payment is incomplete. You must pay the remaining amount to continue.
                 </p>
@@ -112,7 +112,7 @@ export function StatusSheet({
           <>
             <div className="scr-status-sheet-content">
               <div className="scr-status-sheet-banner scr-status-sheet-banner-success">
-                <Glyph name="check-circle" size={24} strokeWidth={1.6} className="scr-status-sheet-banner-icon" />
+                <Glyph name="check-circle" size={24} className="scr-status-sheet-banner-icon" />
                 <p className="scr-status-sheet-banner-text">
                   Your payment has been confirmed. View your updated subscription status now.
                 </p>

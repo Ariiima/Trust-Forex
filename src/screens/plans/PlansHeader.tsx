@@ -19,7 +19,7 @@ export function PlansHeader({ title, onBack }: PlansHeaderProps): ReactNode {
   return (
     <header className="scr-plans-header">
       <button className="scr-plans-back" type="button" onClick={onBack} aria-label="Back">
-        <Glyph name="back" size={20} strokeWidth={1.5} />
+        <Glyph name="back" size={20} />
       </button>
       <span className="scr-plans-headtitle">{title}</span>
     </header>

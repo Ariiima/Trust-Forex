@@ -107,7 +107,7 @@ export function ReferralMain({
             onClick={onAbout ?? (() => setAboutOpen(true))}
             aria-label="About referral"
           >
-            <Icon name="info" size={24} strokeWidth={1.33} />
+            <Icon name="info" size={24} />
           </button>
         </div>
 
@@ -129,7 +129,7 @@ export function ReferralMain({
           {stats.map((s) => (
             <li key={s.label} className="scr-refmain-stat">
               <span className="scr-refmain-stat-badge">
-                <Glyph name={s.icon} size={20} strokeWidth={1.35} />
+                <Glyph name={s.icon} size={20} />
               </span>
               <span className="scr-refmain-stat-text">
                 <span className="scr-refmain-stat-label type-text-xs-10">{s.label}</span>
@@ -137,7 +137,7 @@ export function ReferralMain({
                   <span className="scr-refmain-stat-value type-text-sm-semibold">{s.value}</span>
                   {s.delta ? (
                     <span className="scr-refmain-stat-delta type-text-xs">
-                      <Icon name="arrow-up" size={16} strokeWidth={1.7} />
+                      <Icon name="arrow-up" size={16} />
                       {s.delta}
                     </span>
                   ) : null}
@@ -156,7 +156,7 @@ export function ReferralMain({
               onClick={onAbout ?? (() => setAboutOpen(true))}
               aria-label="About referral links"
             >
-              <Icon name="info" size={20} strokeWidth={1.4} />
+              <Icon name="info" size={20} />
             </button>
           </div>
 
@@ -173,7 +173,7 @@ export function ReferralMain({
               </span>
               <button type="button" className="scr-refmain-copy" onClick={() => copy(l.key, l.value)}>
                 <span className="type-text-xs">{copied === l.key ? 'Copied' : 'Copy'}</span>
-                <Glyph name="copy" size={16} strokeWidth={1.59} />
+                <Glyph name="copy" size={16} />
               </button>
             </div>
           ))}
@@ -191,7 +191,7 @@ export function ReferralMain({
               nothing to order, so the head row is title-only. */}
           {referrals.length > 0 ? (
             <button type="button" className="scr-refmain-sort" onClick={() => setSortDesc((v) => v === false)}>
-              <Glyph name="swap-vertical" size={16} strokeWidth={1.42} />
+              <Glyph name="swap-vertical" size={16} />
               <span className="type-text-xs">{sortDesc === false ? 'Lowest earnings' : 'Highest earnings'}</span>
             </button>
           ) : null}
@@ -210,7 +210,7 @@ export function ReferralMain({
                 <li key={r.id} className="scr-refmain-referral">
                   <div className="scr-refmain-referral-top">
                     <span className="scr-refmain-referral-id">
-                      <Glyph name="user" size={16} strokeWidth={1.13} />
+                      <Glyph name="user" size={16} />
                       <span className="type-text-xs">{r.id}</span>
                     </span>
                     <span className="scr-refmain-referral-joined type-text-xs-10">Joined {r.joined}</span>

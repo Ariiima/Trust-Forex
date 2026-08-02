@@ -80,24 +80,24 @@ export function PlanCard({ plan, variant, selected, onSelect, onContinue }: Plan
       <ul className="scr-plans-features">
         {FEATURE_LABELS.map((label) => (
           <li className="scr-plans-feature" key={label}>
-            <Icon name="check" size={16} strokeWidth={2} />
+            <Icon name="check" size={16} />
             <span className="scr-plans-feature-label">{label}</span>
           </li>
         ))}
         <li className="scr-plans-feature">
-          <Icon name="check" size={16} strokeWidth={2} />
+          <Icon name="check" size={16} />
           <span className="scr-plans-feature-label">Broker cashback boost</span>
           <span className="scr-plans-feature-value">
             {plan.boost}
-            <Glyph name="trending-up" size={16} strokeWidth={1.8} />
+            <Glyph name="trending-up" size={16} />
           </span>
         </li>
         <li className="scr-plans-feature">
-          <Icon name="check" size={16} strokeWidth={2} />
+          <Icon name="check" size={16} />
           <span className="scr-plans-feature-label">Referral share boost</span>
           <span className="scr-plans-feature-value">
             {plan.boost}
-            <Glyph name="trending-up" size={16} strokeWidth={1.8} />
+            <Glyph name="trending-up" size={16} />
           </span>
         </li>
       </ul>

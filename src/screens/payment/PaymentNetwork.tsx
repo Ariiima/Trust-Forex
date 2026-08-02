@@ -96,7 +96,7 @@ export default function PaymentNetwork({
                 aria-label="Network info"
                 aria-expanded={tooltipOpen}
               >
-                <Icon name="info" size={24} strokeWidth={1.5} />
+                <Icon name="info" size={24} />
               </button>
 
               {tooltipOpen ? (
@@ -155,7 +155,7 @@ export default function PaymentNetwork({
                   onClick={() => setSheetOpen(false)}
                   aria-label="Close"
                 >
-                  <Glyph name="close" size={24} strokeWidth={1.5} />
+                  <Glyph name="close" size={24} />
                 </button>
               </div>
               <hr className="scr-payment-network-sheet-divider" />

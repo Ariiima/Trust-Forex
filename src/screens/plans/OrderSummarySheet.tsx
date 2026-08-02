@@ -41,7 +41,7 @@ export function OrderSummarySheet({
         <div className="scr-ordersum-titlerow">
           <h2 className="scr-ordersum-title">Order summary</h2>
           <button type="button" className="scr-ordersum-close" aria-label="Close" onClick={onClose}>
-            <Glyph name="close" size={24} strokeWidth={1.5} />
+            <Glyph name="close" size={24} />
           </button>
         </div>
         <div className="scr-ordersum-divider" aria-hidden="true" />
@@ -84,7 +84,7 @@ export function OrderSummarySheet({
           size="medium"
           fullWidth
           className="scr-ordersum-confirm"
-          iconRight={<Icon name="chevron-right" size={20} strokeWidth={1.6} />}
+          iconRight={<Icon name="chevron-right" size={20} />}
           onClick={onConfirm}
         >
           Confirm order

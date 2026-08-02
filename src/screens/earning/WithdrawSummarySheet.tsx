@@ -67,7 +67,6 @@ export function WithdrawSummarySheet({
           <Glyph
             name="clock-hour-5"
             size={24}
-            strokeWidth={1.45}
             className="scr-wdsum-banner-icon"
           />
           <p className="scr-wdsum-banner-text type-text-xs">
@@ -79,7 +78,7 @@ export function WithdrawSummarySheet({
           <div className="scr-wdsum-head">
             <h2 className="scr-wdsum-title type-text-base">Withdrawal summary</h2>
             <button type="button" className="scr-wdsum-close" onClick={onClose} aria-label="Close">
-              <Icon name="close" size={24} strokeWidth={1.6} />
+              <Icon name="close" size={24} />
             </button>
           </div>
 
@@ -106,7 +105,7 @@ export function WithdrawSummarySheet({
           size="medium"
           fullWidth
           className="scr-wdsum-cta"
-          iconRight={<Icon name="chevron-right" size={20} strokeWidth={1.6} />}
+          iconRight={<Icon name="chevron-right" size={20} />}
           onClick={onConfirm}
         >
           Request withdrawal

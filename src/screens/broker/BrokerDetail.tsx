@@ -338,7 +338,7 @@ export default function BrokerDetail({
             b.pending ? (
               <div key={b.key} className="scr-broker-pending-banner" role="status">
                 <span className="scr-broker-pending-icon">
-                  <Glyph name="loader" size={20} strokeWidth={2} />
+                  <Glyph name="loader" size={20} />
                 </span>
                 <span className="scr-broker-pending-title">{b.title}</span>
               </div>
@@ -376,7 +376,7 @@ export default function BrokerDetail({
             </div>
             <button className="scr-broker-linkbtn" type="button">
               <span className="scr-broker-linkbtn-label">{hero.actionLabel}</span>
-              <Glyph name="external" size={24} strokeWidth={1.5} />
+              <Glyph name="external" size={24} />
             </button>
           </div>
         </section>
@@ -387,7 +387,7 @@ export default function BrokerDetail({
           {XM_SPECS.map((s) => (
             <div className="scr-broker-spec" key={s.label}>
               <span className="scr-broker-spec-left">
-                <Glyph name={s.icon} size={20} strokeWidth={1.6} />
+                <Glyph name={s.icon} size={20} />
                 <span className="scr-broker-spec-label">{s.label}</span>
               </span>
               <span className="scr-broker-spec-value">{s.value}</span>
@@ -407,7 +407,7 @@ export default function BrokerDetail({
             // disabled style (grey #E4E4E4 bg / #7C7C7C text) — can't resubmit
             // an account that's already under review.
             disabled={accountStatus === 'submitted'}
-            iconRight={<Icon name="chevron-right" size={20} strokeWidth={1.6} />}
+            iconRight={<Icon name="chevron-right" size={20} />}
             onClick={() => setModal(cta.modal)}
           >
             {cta.label}
@@ -424,7 +424,7 @@ export default function BrokerDetail({
                 <div className="scr-broker-sheet-titlerow">
                   <h2 className="scr-broker-sheet-title">Submit account details</h2>
                   <button className="scr-broker-sheet-close" type="button" onClick={() => setModal(null)} aria-label="Close">
-                    <Glyph name="close" size={24} strokeWidth={1.5} />
+                    <Glyph name="close" size={24} />
                   </button>
                 </div>
                 <p className="scr-broker-sheet-desc">please send us the email you used to register with your broker</p>
@@ -454,7 +454,7 @@ export default function BrokerDetail({
             variant="primary"
             size="medium"
             fullWidth
-            iconRight={<Icon name="chevron-right" size={20} strokeWidth={1.6} />}
+            iconRight={<Icon name="chevron-right" size={20} />}
             onClick={submitAccount}
           >
             submit account
@@ -471,7 +471,7 @@ export default function BrokerDetail({
                 <div className="scr-broker-sheet-titlerow">
                   <h2 className="scr-broker-sheet-title">Confirm your deposit</h2>
                   <button className="scr-broker-sheet-close" type="button" onClick={() => setModal(null)} aria-label="Close">
-                    <Glyph name="close" size={24} strokeWidth={1.5} />
+                    <Glyph name="close" size={24} />
                   </button>
                 </div>
                 <p className="scr-broker-sheet-desc">great! please confirm your deposit so we can review your account</p>
@@ -481,14 +481,14 @@ export default function BrokerDetail({
 
             <div className="scr-broker-readcard">
               <div className="scr-broker-readrow">
-                <Glyph name="mail" size={20} strokeWidth={1.6} />
+                <Glyph name="mail" size={20} />
                 <div className="scr-broker-readrow-text">
                   <span className="scr-broker-readrow-label">Email address</span>
                   <span className="scr-broker-readrow-value">{displayEmail}</span>
                 </div>
               </div>
               <div className="scr-broker-readrow">
-                <Glyph name="user" size={20} strokeWidth={1.6} />
+                <Glyph name="user" size={20} />
                 <div className="scr-broker-readrow-text">
                   <span className="scr-broker-readrow-label">User ID</span>
                   <span className="scr-broker-readrow-value">{displayUserId}</span>
@@ -501,7 +501,7 @@ export default function BrokerDetail({
             variant="primary"
             size="medium"
             fullWidth
-            iconRight={<Icon name="chevron-right" size={20} strokeWidth={1.6} />}
+            iconRight={<Icon name="chevron-right" size={20} />}
             onClick={confirmDeposit}
           >
             i made a deposit

@@ -152,7 +152,7 @@ function HeroActive({ onNavigate }: { onNavigate?: (r: string) => void }): React
           <div className="scr-home-statusrow">
             <span className="scr-home-status-label">Subscription status</span>
             <span className="scr-home-pill">
-              <Icon name="check" size={16} strokeWidth={1.75} />
+              <Icon name="check" size={16} />
               Active
             </span>
           </div>
@@ -382,7 +382,7 @@ function ChoosePlanSection({
           aria-label="Plan info"
           onClick={() => setTipOpen((v) => !v)}
         >
-          <Icon name="info" size={20} strokeWidth={1.5} />
+          <Icon name="info" size={20} />
         </button>
       </div>
 

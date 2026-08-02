@@ -115,7 +115,7 @@ export default function Checkout({ initialPlan = 'silver', onReviewOrder }: Chec
                     setDiscountInput('');
                   }}
                 >
-                  <Glyph name="close" size={16} strokeWidth={1.5} />
+                  <Glyph name="close" size={16} />
                 </button>
               </div>
             </div>
@@ -161,7 +161,7 @@ export default function Checkout({ initialPlan = 'silver', onReviewOrder }: Chec
           variant="primary"
           size="medium"
           fullWidth
-          iconRight={<Icon name="chevron-right" size={20} strokeWidth={1.6} />}
+          iconRight={<Icon name="chevron-right" size={20} />}
           onClick={() => setOrderSummaryOpen(true)}
         >
           Review order
@@ -178,7 +178,7 @@ export default function Checkout({ initialPlan = 'silver', onReviewOrder }: Chec
               aria-label="Close"
               onClick={() => setChangePlanOpen(false)}
             >
-              <Glyph name="close" size={24} strokeWidth={1.5} />
+              <Glyph name="close" size={24} />
             </button>
           </div>
           <div className="scr-checkout-sheet-divider" aria-hidden="true" />
@@ -200,7 +200,7 @@ export default function Checkout({ initialPlan = 'silver', onReviewOrder }: Chec
             size="medium"
             fullWidth
             className="scr-checkout-sheet-confirm"
-            iconRight={<Icon name="chevron-right" size={20} strokeWidth={1.6} />}
+            iconRight={<Icon name="chevron-right" size={20} />}
             onClick={confirmChangePlan}
           >
             Confirm plan

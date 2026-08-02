@@ -224,7 +224,7 @@ export function EarningMain({
             size="medium"
             fullWidth
             className="scr-earn-cta"
-            iconRight={<Icon name="chevron-right" size={20} strokeWidth={1.6} />}
+            iconRight={<Icon name="chevron-right" size={20} />}
             onClick={onWithdraw}
           >
             Withdraw earnings

@@ -140,7 +140,7 @@ export function WithdrawAmount({
             {amountError ? (
               <p className="scr-wdamt-error" role="alert">
                 {/* the frame leads with the info glyph (dot over stem), tinted red */}
-                <Icon name="info" size={16} strokeWidth={1.6} />
+                <Icon name="info" size={16} />
                 {amountError}
               </p>
             ) : null}
@@ -155,12 +155,12 @@ export function WithdrawAmount({
               className={[wallet === '' ? 'scr-wdamt-blank' : '', walletError ? 'scr-wdamt-invalid' : '']
                 .filter(Boolean)
                 .join(' ') || undefined}
-              rightSlot={<Icon name="scan" size={16} strokeWidth={1.75} className="scr-wdamt-scan" />}
+              rightSlot={<Icon name="scan" size={16} className="scr-wdamt-scan" />}
             />
             {walletError ? (
               <p className="scr-wdamt-error scr-wdamt-error-field" role="alert">
                 {/* same info glyph as the amount notice, not the DS alert-circle */}
-                <Icon name="info" size={16} strokeWidth={1.6} />
+                <Icon name="info" size={16} />
                 {walletError}
               </p>
             ) : null}
@@ -174,7 +174,7 @@ export function WithdrawAmount({
           size="medium"
           fullWidth
           disabled={!ready}
-          iconRight={<Icon name="chevron-right" size={20} strokeWidth={1.75} />}
+          iconRight={<Icon name="chevron-right" size={20} />}
           onClick={() => {
             setSummary('confirm');
             onContinue?.(numeric, wallet);

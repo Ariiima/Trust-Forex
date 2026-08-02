@@ -102,9 +102,9 @@ export default function PaymentReceive({
       aria-label={copiedField === field ? `${label} copied` : `Copy ${label}`}
     >
       {copiedField === field ? (
-        <Icon name="check" size={16} strokeWidth={2} />
+        <Icon name="check" size={16} />
       ) : (
-        <Glyph name="copy" size={16} strokeWidth={1.6} />
+        <Glyph name="copy" size={16} />
       )}
     </button>
   );
@@ -116,7 +116,7 @@ export default function PaymentReceive({
 
         <section className="scr-receive-card">
           <div className="scr-receive-warning">
-            <Glyph name="alert-triangle" size={20} strokeWidth={1.6} />
+            <Glyph name="alert-triangle" size={20} />
             <p className="scr-receive-warning-text">
               Verify the network, wallet address, and exact amount before making the payment
             </p>
@@ -200,7 +200,7 @@ export default function PaymentReceive({
         <div className="scr-receive-sheet-inner">
           <div className="scr-receive-sheet-content">
             <div className="scr-receive-sheet-banner scr-receive-sheet-banner-warn">
-              <Icon name="info" size={24} strokeWidth={1.6} className="scr-receive-sheet-banner-icon" />
+              <Icon name="info" size={24} className="scr-receive-sheet-banner-icon" />
               <p className="scr-receive-sheet-banner-text">
                 Your payment is incomplete. You must pay the remaining amount to continue.
               </p>
@@ -243,7 +243,7 @@ export default function PaymentReceive({
         <div className="scr-receive-sheet-inner">
           <div className="scr-receive-sheet-content">
             <div className="scr-receive-sheet-banner scr-receive-sheet-banner-success">
-              <Glyph name="check-circle" size={24} strokeWidth={1.6} className="scr-receive-sheet-banner-icon" />
+              <Glyph name="check-circle" size={24} className="scr-receive-sheet-banner-icon" />
               <p className="scr-receive-sheet-banner-text">
                 Your payment has been confirmed. View your updated subscription status now.
               </p>

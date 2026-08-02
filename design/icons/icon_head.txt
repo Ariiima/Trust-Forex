@@ -1,0 +1,17 @@
+import type { ReactNode, SVGProps } from 'react';
+
+/**
+ * Icon — inline SVG primitive for the mini-app design system.
+ *
+ * Path data is exported verbatim from the Figma "Global icons" pack (the file's
+ * style guide: "تمامی آیکون ها از پک Global icons گرفته شده اند" — all icons are
+ * taken from the Global icons pack), Style=Stroke variant. Every export stacks
+ * the four style variants vertically and the Stroke one is a 24x24 symbol at
+ * (16,16), so the coordinates below are in that frame and the svg's viewBox is
+ * offset to it rather than the paths being rewritten — keeping them unedited
+ * means a re-export diffs cleanly against this file.
+ *
+ * The pack draws every glyph at stroke-width 2 on a 24 grid, and strokeWidth is
+ * in viewBox units, so it scales with `size` — 2 is correct at every size.
+ */
+

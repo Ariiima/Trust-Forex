@@ -33,7 +33,7 @@ export function ChangeCurrencySheet({ open, selectedId, onClose, onChoose }: Cha
       <div className="scr-chgcur-head">
         <h2 className="scr-chgcur-title type-text-base">Change currency</h2>
         <button type="button" className="scr-chgcur-close" onClick={onClose} aria-label="Close">
-          <Icon name="close" size={24} strokeWidth={1.6} />
+          <Icon name="close" size={24} />
         </button>
       </div>
 
@@ -52,7 +52,7 @@ export function ChangeCurrencySheet({ open, selectedId, onClose, onChoose }: Cha
         size="medium"
         fullWidth
         className="scr-chgcur-cta"
-        iconRight={<Icon name="chevron-right" size={20} strokeWidth={1.6} />}
+        iconRight={<Icon name="chevron-right" size={20} />}
         onClick={() => onChoose?.(draft)}
       >
         Choose currency

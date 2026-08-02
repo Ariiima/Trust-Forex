@@ -21,8 +21,8 @@ function PendingGlyph(): ReactNode {
 }
 
 const BANNER_ICON: Record<BrokerBanner['variant'], ReactNode> = {
-  error: <Icon name="close" size={16} strokeWidth={2.5} />,
-  success: <Icon name="check" size={16} strokeWidth={1.8} />,
+  error: <Icon name="close" size={16} />,
+  success: <Icon name="check" size={16} />,
   pending: <PendingGlyph />,
 };
 
@@ -133,7 +133,7 @@ export default function Cashback({
           <div className="scr-cashback-brokers-head">
             <span className="scr-cashback-brokers-title">Partner brokers</span>
             <span className="scr-cashback-brokers-info">
-              <Icon name="info" size={24} strokeWidth={1.8} />
+              <Icon name="info" size={24} />
             </span>
           </div>
 
@@ -154,7 +154,7 @@ export default function Cashback({
                     </span>
                     <span className="scr-cashback-broker-right">
                       {broker.popular ? <span className="scr-cashback-broker-popular">Popular</span> : null}
-                      <Icon name="chevron-right" size={16} strokeWidth={1.5} />
+                      <Icon name="chevron-right" size={16} />
                     </span>
                   </span>
 
@@ -210,7 +210,7 @@ function CashbackIntro({ onStartEarning }: CashbackIntroProps): ReactNode {
         <div className="scr-cashback-intro-steps">
           <div className="scr-cashback-intro-step">
             <span className="scr-cashback-intro-step-icon">
-              <Glyph name="shield" size={24} strokeWidth={2} />
+              <Glyph name="shield" size={24} />
             </span>
             <span className="scr-cashback-intro-step-text">
               <span className="scr-cashback-intro-step-title">Open trading accounts</span>
@@ -220,7 +220,7 @@ function CashbackIntro({ onStartEarning }: CashbackIntroProps): ReactNode {
 
           <div className="scr-cashback-intro-step">
             <span className="scr-cashback-intro-step-icon">
-              <Glyph name="calendar" size={24} strokeWidth={2} />
+              <Glyph name="calendar" size={24} />
             </span>
             <span className="scr-cashback-intro-step-text">
               <span className="scr-cashback-intro-step-title">Receive weekly cashback</span>
@@ -230,7 +230,7 @@ function CashbackIntro({ onStartEarning }: CashbackIntroProps): ReactNode {
 
           <div className="scr-cashback-intro-step">
             <span className="scr-cashback-intro-step-icon">
-              <Glyph name="trending-up" size={24} strokeWidth={2} />
+              <Glyph name="trending-up" size={24} />
             </span>
             <span className="scr-cashback-intro-step-text">
               <span className="scr-cashback-intro-step-title">upgrade your plan</span>

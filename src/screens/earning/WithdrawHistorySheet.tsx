@@ -78,7 +78,7 @@ export function WithdrawHistorySheet({
       <div className="scr-wdhist-head">
         <h2 className="scr-wdhist-title type-text-base">Withdraw history</h2>
         <button type="button" className="scr-wdhist-close" onClick={onClose} aria-label="Close">
-          <Icon name="close" size={24} strokeWidth={1.6} />
+          <Icon name="close" size={24} />
         </button>
       </div>
 

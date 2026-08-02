@@ -19,7 +19,7 @@ export function AboutReferralSheet({ open, onClose }: { open: boolean; onClose?:
       <div className="scr-about-ref-head">
         <h2 className="scr-about-ref-title type-text-base">About referral</h2>
         <button type="button" className="scr-about-ref-close" onClick={onClose} aria-label="Close">
-          <Icon name="close" size={24} strokeWidth={1.6} />
+          <Icon name="close" size={24} />
         </button>
       </div>
 

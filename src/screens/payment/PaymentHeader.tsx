@@ -15,7 +15,7 @@ export function PaymentHeader({ title = 'Payment', onBack }: PaymentHeaderProps)
     <header className="scr-payment-header">
       <span className="scr-payment-header-left">
         <button className="scr-payment-header-back" type="button" onClick={onBack} aria-label="Back">
-          <Glyph name="back" size={20} strokeWidth={1.5} />
+          <Glyph name="back" size={20} />
         </button>
         <span className="scr-payment-header-title">{title}</span>
       </span>

@@ -102,7 +102,7 @@ export function CashbackOverview({
           <div className="ds-cashback-row">
             <span className="ds-cashback-label">Total cashback</span>
             <span className="ds-cashback-info">
-              <Icon name="info" size={24} strokeWidth={1.8} />
+              <Icon name="info" size={24} />
             </span>
           </div>
           <div className="ds-cashback-row ds-cashback-total-row">
@@ -112,7 +112,7 @@ export function CashbackOverview({
             </div>
             <div className="ds-cashback-delta">
               <span className="ds-cashback-delta-icon">
-                <Icon name="arrow-up" size={16} strokeWidth={2} />
+                <Icon name="arrow-up" size={16} />
               </span>
               <span className="ds-cashback-muted">{delta}</span>
             </div>
