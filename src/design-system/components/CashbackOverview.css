@@ -130,15 +130,13 @@
 /* hexagon plan badges (placeholders for raster artwork) */
 .ds-cashback-badge {
   flex: none;
-  display: inline-block;
+  display: inline-flex;
   width: 56px;
   height: 56px;
-  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
 }
-.ds-cashback-badge-standard { background: linear-gradient(160deg, #b7bcc4, #7b828c); }
-.ds-cashback-badge-silver   { background: linear-gradient(160deg, #eceef1, #aab0b8); }
-.ds-cashback-badge-gold     { background: linear-gradient(160deg, #f7cd5a, #d89613); }
-.ds-cashback-badge-diamond  { background: linear-gradient(160deg, #ad92db, #6f58ae); }
+/* Was a clip-path hexagon over a per-tier gradient, standing in for artwork
+   that had not been exported. The real badges are transparent PNGs with their
+   own bevel and shadow, so both the mask and the fills come off. */
 
 /* tier progression stepper */
 .ds-cashback-tiers {

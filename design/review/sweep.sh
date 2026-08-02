@@ -7,11 +7,15 @@
 #   sh design/review/sweep.sh pay        # only names containing "pay"
 set -e
 ONLY="$1"
+SCORES=/tmp/fig/scores.txt
+: > "$SCORES"
 run() { # name ref route height
   case "$1" in *"$ONLY"*) ;; *) return 0 ;; esac
   node design/review/shoot.mjs "$3" /tmp/fig/sw-$1.png 360 "$4" 1400 >/dev/null 2>&1
   printf "%-16s " "$1"
-  python3 design/review/compare.py design/review/ref/$2.png /tmp/fig/sw-$1.png /tmp/fig/swd-$1.png 2>/dev/null | head -1
+  out=$(python3 design/review/compare.py design/review/ref/$2.png /tmp/fig/sw-$1.png /tmp/fig/swd-$1.png 2>/dev/null | head -1)
+  echo "$out"
+  echo "$2 $(echo "$out" | sed 's/.*mean=//;s/ .*//')" >> "$SCORES"
 }
 B=http://localhost:5199
 run splash        splash        "$B/splash" 776
@@ -41,3 +45,15 @@ run pay-receive   pay-receive   "$B/payment/receive" 776
 run cashback      cashback      "$B/cashback" 1598
 run cb-history    cashback-history "$B/cashback/history" 776
 run broker        broker        "$B/cashback/broker/xm?account=submitted" 902
+
+# index.html shows these next to each screen; a full sweep rewrites every entry,
+# a filtered one merges in only the names it ran.
+python3 - "$SCORES" <<'EOF'
+import json, os, sys
+out = 'design/review/scores.json'
+have = json.load(open(out)) if os.path.exists(out) else {}
+for line in open(sys.argv[1]):
+    k, v = line.split()
+    have[k] = float(v)
+json.dump(have, open(out, 'w'), indent=1, sort_keys=True)
+EOF

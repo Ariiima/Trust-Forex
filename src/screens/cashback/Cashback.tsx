@@ -26,26 +26,6 @@ const BANNER_ICON: Record<BrokerBanner['variant'], ReactNode> = {
   pending: <PendingGlyph />,
 };
 
-/* Standard-tier hero badge (982:1427, "State=Standard user"). No raster
- * export exists for it in this repo (only the Gold badge was ever
- * exported — see report), so it's reconstructed as an inline SVG: an
- * inset hexagon "face" (leaving the outer ds-cashback-badge-standard
- * gradient showing as a bevel ring) plus a person glyph, both colours
- * sampled from the reference (face #e2a06c → #7a4a28, glyph #f2c896). */
-const STANDARD_BADGE: ReactNode = (
-  <svg width={56} height={56} viewBox="0 0 56 56" aria-hidden="true">
-    <defs>
-      <linearGradient id="scr-cashback-std-badge-face" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stopColor="#f0b47e" />
-        <stop offset="0.45" stopColor="#976232" />
-        <stop offset="1" stopColor="#6b3f22" />
-      </linearGradient>
-    </defs>
-    <polygon points="28,4.2 48.4,16.1 48.4,39.9 28,51.8 7.6,39.9 7.6,16.1" fill="url(#scr-cashback-std-badge-face)" />
-    <circle cx="28" cy="24" r="6" fill="#f2c896" />
-    <path d="M17 40a11 11 0 0 1 22 0z" fill="#f2c896" />
-  </svg>
-);
 
 /* ---------------------------------------------------------------------------
  * Cashback hub — route `/cashback` (bottom-nav tab 2).
@@ -123,7 +103,6 @@ export default function Cashback({
         <CashbackOverview
           className="scr-cashback-hero"
           {...OVERVIEW}
-          badge={STANDARD_BADGE}
           onCashbackHistory={onCashbackHistory}
           onUpgrade={onUpgradePlan}
         />

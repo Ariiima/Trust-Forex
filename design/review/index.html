@@ -64,7 +64,8 @@
     border-radius: 10px;
     overflow: hidden;
   }
-  .frame iframe { display: block; width: 100%; border: 0; }
+  .frame iframe, .frame img { display: block; width: 100%; border: 0; }
+  .pane > .cap a { color: var(--sub); }
 
   /* overlay mode: stack the build on top of the design at 50% */
   .screen.overlay .cols { position: relative; }
@@ -91,6 +92,10 @@
   }
   textarea:focus { outline: 2px solid var(--blue); outline-offset: -1px; }
   .saved { font-size: 11px; color: #48a068; height: 14px; }
+  .score { margin-left: 8px; padding: 1px 7px; border-radius: 999px; color: #fff; }
+  .score[data-band='ok']   { background: #48a068; }
+  .score[data-band='near'] { background: #d89613; }
+  .score[data-band='off']  { background: #d64545; }
 </style>
 </head>
 <body>
@@ -107,7 +112,10 @@
 <main id="list"></main>
 
 <script>
-/* Left = the Figma frame via prototype embed (renders 1:1, no canvas chrome).
+/* Left = the committed 1:1 reference PNG in ref/ — the exact image sweep.sh
+   scores against, so what you see here is what the numbers describe. (It used
+   to be a live Figma embed, which needed you logged in and reloaded 24 iframes;
+   the frame is still one click away per screen.)
    Right = the built screen, deep-linked to the same state.
    Comments autosave to localStorage; "Copy all comments" puts them on the
    clipboard as markdown so they can be pasted straight back into the chat. */
@@ -134,7 +142,24 @@ const SCREENS = [
   { id: 'wd-change',     title: 'Withdraw — change currency',  node: '1402-7191',  h: 852,  route: '/earning/withdraw/amount?sheet=change' },
   { id: 'wd-summary',    title: 'Withdraw — summary',          node: '1402-7573',  h: 852,  route: '/earning/withdraw/amount?sheet=summary&amount=245&wallet=0X1C4212345678948Hf7f8' },
   { id: 'wd-submitted',  title: 'Withdraw — submitted',        node: '1404-7924',  h: 852,  route: '/earning/withdraw/amount?sheet=submitted&amount=245&wallet=0X1C4212345678948Hf7f8' },
+
+  // Screens that predate the Figma resync. ?tip / ?account are review states
+  // the frames capture; they are query params so the live defaults stay honest.
+  { id: 'home-active',      title: 'Home — active subscription', node: '552-3106',   h: 1614, route: '/?tip' },
+  { id: 'plans',            title: 'Choose plan',                node: '552-3126',   h: 1060, route: '/plans' },
+  { id: 'checkout',         title: 'Checkout',                   node: '552-3115',   h: 852,  route: '/checkout' },
+  { id: 'pay-currency',     title: 'Payment — pick currency',    node: '1284-3883',  h: 852,  route: '/payment/currency' },
+  { id: 'pay-network',      title: 'Payment — pick network',     node: '1292-4030',  h: 852,  route: '/payment/network' },
+  { id: 'pay-receive',      title: 'Payment — receive / QR',     node: '1102-10506', h: 852,  route: '/payment/receive' },
+  { id: 'cashback',         title: 'Cashback — dashboard',       node: '850-2053',   h: 1674, route: '/cashback' },
+  { id: 'cashback-history', title: 'Cashback — history sheet',   node: '1292-4273',  h: 852,  route: '/cashback/history' },
+  { id: 'broker',           title: 'Broker detail — pending',    node: '1292-5199',  h: 978,  route: '/cashback/broker/xm?account=submitted' },
 ];
+
+/* The 76px of Telegram/iOS chrome (32 status bar + 44 header) that every frame
+   includes and the webview does not render. The reference PNGs are pulled up by
+   it so the two panes line up row for row. */
+const CHROME = 76;
 
 const figmaSrc = (node) =>
   `https://embed.figma.com/proto/${FIGMA_KEY}/Trust-Forex?node-id=${node}`
@@ -155,16 +180,19 @@ for (const s of SCREENS) {
     <p class="meta">
       Figma <code>${s.node}</code>
       &nbsp;·&nbsp; build <code>${s.route}</code>
-      &nbsp;·&nbsp; frame height ${s.h}px
+      &nbsp;·&nbsp; frame ${s.h}px, capture ${s.h - CHROME}px
+      <span class="score" data-for="${s.id}"></span>
     </p>
     <div class="cols">
       <div class="pane pane--design">
-        <span class="cap">Design</span>
-        <div class="frame"><iframe loading="lazy" src="${figmaSrc(s.node)}" height="${s.h}"></iframe></div>
+        <span class="cap">Design <a href="${figmaSrc(s.node)}" target="_blank" rel="noreferrer">open in Figma</a></span>
+        <div class="frame" style="height:${s.h - CHROME}px">
+          <img loading="lazy" src="ref/${s.id}.png" alt="" style="margin-top:-${CHROME}px">
+        </div>
       </div>
       <div class="pane pane--build">
         <span class="cap">Build</span>
-        <div class="frame"><iframe loading="lazy" src="${appSrc(s.route)}" height="${s.h}"></iframe></div>
+        <div class="frame" style="height:${s.h - CHROME}px"><iframe loading="lazy" src="${appSrc(s.route)}" height="${s.h - CHROME}"></iframe></div>
       </div>
       <div class="notes">
         <label for="n-${s.id}">Differences / issues — ${s.title}</label>
@@ -210,6 +238,20 @@ document.getElementById('copyAll').addEventListener('click', async (e) => {
   }
   setTimeout(() => (e.target.textContent = 'Copy all comments'), 1500);
 });
+
+/* Written by sweep.sh. Absent, or stale for screens it did not run, is fine —
+   the badge just does not render. */
+fetch('scores.json')
+  .then((r) => (r.ok ? r.json() : {}))
+  .then((scores) => {
+    for (const el of document.querySelectorAll('.score')) {
+      const v = scores[el.dataset.for];
+      if (v === undefined) continue;
+      el.textContent = 'diff ' + v.toFixed(2);
+      el.dataset.band = v < 3 ? 'ok' : v < 6 ? 'near' : 'off';
+    }
+  })
+  .catch(() => {});
 
 document.getElementById('clearAll').addEventListener('click', () => {
   if (!confirm('Clear all comments?')) return;

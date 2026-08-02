@@ -195,15 +195,6 @@
      38-tall tier stepper. */
   gap: 23px;
 }
-.scr-cashback-hero .ds-cashback-badge-standard {
-  /* Grey DS placeholder swapped for the warm copper tone sampled from the
-     reference badge — a bright rim highlight (~#f6b982, x49-51 y172 of the
-     cropped reference) fading to a dark edge (~#5e3219, x52-53) — showing
-     through around the inset face polygon (STANDARD_BADGE, Cashback.tsx)
-     as a bevel ring. No raster asset for the Standard-tier badge exists in
-     this repo (see report). */
-  background: linear-gradient(160deg, #f6b982, #5e3219);
-}
 
 /* ---- "Partner brokers" card -------------------------------------------- */
 .scr-cashback-brokers {

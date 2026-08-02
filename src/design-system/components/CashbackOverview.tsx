@@ -1,8 +1,20 @@
 import type { ReactNode } from 'react';
 import { Icon } from './Icon';
+import badgeStandardUrl from '../../assets/plans/badge-standard.png';
+import badgeSilverUrl from '../../assets/plans/badge-silver.png';
+import badgeGoldUrl from '../../assets/plans/badge-gold.png';
+import badgeDiamondUrl from '../../assets/plans/badge-diamond.png';
 import './CashbackOverview.css';
 
 export type CashbackPlan = 'standard' | 'silver' | 'gold' | 'diamond';
+
+/** The real tier artwork, all four exported from the same badge sheet. */
+const BADGES: Record<CashbackPlan, string> = {
+  standard: badgeStandardUrl,
+  silver: badgeSilverUrl,
+  gold: badgeGoldUrl,
+  diamond: badgeDiamondUrl,
+};
 
 // Tier stepper badges. In Figma these are small raster image chips (image
 // fills, unexportable here); the rendered design shows them as circular
@@ -56,7 +68,7 @@ export interface CashbackOverviewProps {
   planName?: string;
   planDuration?: string;
   rate?: string;
-  /** Optional real badge artwork for the current plan (defaults to a placeholder). */
+  /** Overrides the tier artwork; defaults to the badge for `plan`. */
   badge?: ReactNode;
   onCashbackHistory?: () => void;
   onUpgrade?: () => void;
@@ -117,8 +129,8 @@ export function CashbackOverview({
           </div>
           <div className="ds-cashback-row ds-cashback-current-body">
             <div className="ds-cashback-plan">
-              <span className={`ds-cashback-badge ds-cashback-badge-${plan}`} aria-hidden="true">
-                {badge}
+              <span className="ds-cashback-badge" aria-hidden="true">
+                {badge ?? <img src={BADGES[plan]} alt="" width={56} height={56} />}
               </span>
               <div className="ds-cashback-plan-text">
                 <span className="ds-cashback-plan-name">{planName ?? def.name}</span>
