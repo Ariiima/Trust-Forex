@@ -26,25 +26,12 @@
   padding: var(--spacing-16);
 }
 
-/* ---- Progress bar reskin (1102:9734) — this screen's captured state shows
-   all three nodes as the ring+dot "current" mark, not the DS default (solid
-   fill + white check) for completed steps. Overridden via the className
-   extension point, same pattern as the BottomSheet reskins below, since
-   design-system/components is off-limits. */
-.scr-receive-progress .ds-progress-dot-done {
-  background: transparent;
-}
-.scr-receive-progress .ds-progress-dot-done svg {
-  display: none;
-}
-.scr-receive-progress .ds-progress-dot-done::after {
-  content: '';
-  display: block;
-  width: 16px;
-  height: 16px;
-  border-radius: var(--radius-infinity);
-  background: var(--state-colors-success);
-}
+/* This screen's progress bar needed no reskin in the end. It showed all three
+   nodes as the ring+dot mark while the DS drew a check on completed steps, so
+   it carried a scoped override; the frames never draw that check anywhere, so
+   ring+dot is the DS default now and the override is deleted. The
+   .scr-receive-progress className is kept on the element as an extension point.
+   ------------------------------------------------------------------------ */
 
 .scr-receive-card {
   display: flex;

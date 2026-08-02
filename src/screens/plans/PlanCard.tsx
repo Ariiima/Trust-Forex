@@ -21,13 +21,15 @@ export interface PlanCardProps {
   onSelect?: () => void;
   /** full only — Continue button click. */
   onContinue?: () => void;
+  /** full only — extra class on the card root (Home uses it for the expand). */
+  className?: string;
 }
 
 function PlanTag({ tag }: { tag: NonNullable<Plan['tag']> }): ReactNode {
   return <span className={`scr-plans-tag scr-plans-tag--${tag.variant}`}>{tag.label}</span>;
 }
 
-export function PlanCard({ plan, variant, selected, onSelect, onContinue }: PlanCardProps): ReactNode {
+export function PlanCard({ plan, variant, selected, onSelect, onContinue, className }: PlanCardProps): ReactNode {
   const highlighted = variant === 'full' ? plan.highlighted : selected;
 
   if (variant === 'compact') {
@@ -57,7 +59,11 @@ export function PlanCard({ plan, variant, selected, onSelect, onContinue }: Plan
   }
 
   return (
-    <article className={'scr-plans-card' + (highlighted ? ' scr-plans-card--highlight' : '')}>
+    <article
+      className={
+        'scr-plans-card' + (highlighted ? ' scr-plans-card--highlight' : '') + (className ? ' ' + className : '')
+      }
+    >
       <div className="scr-plans-headerblock">
         <img className="scr-plans-badge" src={plan.badge} alt="" width={56} height={56} />
         <div className="scr-plans-text">

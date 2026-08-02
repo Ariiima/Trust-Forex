@@ -7,6 +7,7 @@ import type { ReferralGlyphName } from './Glyph';
 import { PromoCarousel } from '../home/PromoCarousel';
 import { AboutReferralSheet } from './AboutReferralSheet';
 import { EarningsGlyph } from './EarningsGlyph';
+import { useCountUp, useSeenValue } from '../../design-system/useCountUp';
 import shareCoin from '../../assets/referral/referral-share-coin.png';
 import './ReferralMain.css';
 
@@ -69,6 +70,19 @@ export function ReferralMain({
   onNavigate,
   onAbout,
 }: ReferralMainProps): ReactNode {
+  /* Headline figures roll up on arrival. "Invited users" rolls from whatever
+     this device last saw and surfaces the increment once — the `invitedDelta`
+     prop is the fallback for the very first visit, when there is no baseline
+     to difference against. */
+  const invited = useSeenValue('referral.invited', invitedUsers);
+  const shownEarnings = useCountUp(totalEarnings);
+  const shownActive = useCountUp(activeUsers);
+  /* On a first visit there is no baseline to difference against, so the chip
+     falls back to the server's own figure — which is also what frame 1333:8366
+     renders. After that it is the real "since you last looked" increment, and
+     it disappears once seen. */
+  const invitedDeltaShown = invited.firstVisit ? invitedDelta : invited.delta;
+
   const [copied, setCopied] = useState<'telegram' | 'website' | null>(null);
   const [aboutOpen, setAboutOpen] = useState(initialSheet === 'about');
   // null = as-delivered order, which is what frame 1333:8366 shows even though
@@ -86,8 +100,13 @@ export function ReferralMain({
   };
 
   const stats: readonly Stat[] = [
-    { icon: 'user-receive', label: 'Invited users', value: String(invitedUsers), delta: `+${invitedDelta}` },
-    { icon: 'user-check', label: 'Active users', value: String(activeUsers) },
+    {
+      icon: 'user-receive',
+      label: 'Invited users',
+      value: String(Math.round(invited.shown)),
+      delta: invitedDeltaShown > 0 ? `+${invitedDeltaShown}` : undefined,
+    },
+    { icon: 'user-check', label: 'Active users', value: String(Math.round(shownActive)) },
     { icon: { earnings: 'plan' }, label: 'Plan earnings', value: money(planEarnings) },
     { icon: { earnings: 'cashback' }, label: 'Cashback earnings', value: money(cashbackEarnings) },
   ];
@@ -114,7 +133,7 @@ export function ReferralMain({
         </div>
 
         <div className="scr-refmain-amount-row">
-          <span className="scr-refmain-amount type-text-2xl-semibold">{money(totalEarnings)}</span>
+          <span className="scr-refmain-amount type-text-2xl-semibold">{money(shownEarnings)}</span>
           <div className="scr-refmain-share">
             <div className="scr-refmain-share-top">
               {/* 1429:14241 is a raster badge in Figma — cropped 1:1 out of the frame. */}

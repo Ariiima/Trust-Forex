@@ -1,6 +1,5 @@
 import { Fragment } from 'react';
 import type { ReactNode } from 'react';
-import { Icon } from './Icon';
 import './ProgressBar.css';
 
 export type ProgressStep = 'order-created' | 'payment-details' | 'make-payment';
@@ -26,8 +25,7 @@ export function ProgressBar({ current, className }: ProgressBarProps): ReactNode
           return (
             <Fragment key={step}>
               <span className={`ds-progress-dot ds-progress-dot-${status}`}>
-                {status === 'done' ? <Icon name="check" size={16} /> : null}
-                {status === 'current' ? <span className="ds-progress-inner" /> : null}
+                {status === 'todo' ? null : <span className="ds-progress-inner" />}
               </span>
               {i < last ? (
                 <span

@@ -122,9 +122,14 @@
 
 const FIGMA_KEY = 'wRpTrsYbng1DgKVYjDTgkp';
 
-// Flip to the deployed build if the dev server isn't running.
+// Which build the right-hand pane shows. `?app=` always wins — that is how you
+// point this at a dev server (?app=http://localhost:5199). Failing that, when
+// this page is served as .../review/ it uses the app sitting next to it, so a
+// deployed copy needs no query string. Otherwise: the public build.
 const APP = new URLSearchParams(location.search).get('app')
-  || 'https://ariiima.github.io/Trust-Forex';
+  || (/\/review\/[^/]*$/.test(location.pathname)
+      ? new URL('..', location.href).href.replace(/\/+$/, '')
+      : 'https://ariiima.github.io/Trust-Forex');
 
 const SCREENS = [
   { id: 'splash',        title: 'Splash',                      node: '548-3095',   h: 852,  route: '/splash' },

@@ -53,11 +53,14 @@ const PROMO_START: Record<Subscription, number> = { active: 1, expired: 2, none:
 // ~31%/40% width, crosshair x=155, trough at ~76%, late rebound bump at ~82%.
 const CHART_LINE =
   // Traced off design/review/ref/home-active.png: the topmost stroke pixel per
-  // column of the 296x164 plot (+0.75 for the 1.5px stroke's centreline),
-  // Douglas-Peucker'd at 0.6px. The 44 columns hidden behind the readout
-  // tooltip are bridged with an arc that stays above the chord, so they keep
-  // sitting behind the same box.
-  'M 0 103.8 L 3 101.8 L 6 101.8 L 12 106.8 L 18 102.8 L 22 102.8 L 25 104.8 L 27 103.8 L 32 97.8 L 34 97.8 L 40 105.8 L 42 105.8 L 45 102.8 L 54 103.8 L 58 98.8 L 62 96.8 L 67 96.8 L 73 88.8 L 75 88.8 L 78 90.8 L 81 90.8 L 83 88.8 L 85 83.8 L 93 77.8 L 97 67.8 L 100 62.8 L 102 62.8 L 104 64.8 L 109 77.8 L 113 80.8 L 120 83.8 L 122 80.8 L 126 67.8 L 129 64.8 L 134 64.8 L 138 53.8 L 141 49.4 L 151 41.1 L 160 38.3 L 167 39.2 L 174 42.8 L 182 50.3 L 187 57.8 L 190 58.8 L 193 56.8 L 195 56.8 L 201 59.8 L 209 69.8 L 215 68.8 L 220 79.8 L 221 80.8 L 225 80.8 L 227 81.8 L 231 85.8 L 233 90.8 L 235 92.8 L 242 92.8 L 248 101.8 L 250 101.8 L 251 100.8 L 256 90.8 L 260 76.8 L 262 73.8 L 265 74.8 L 270 82.8 L 275 80.8 L 278 82.8 L 282 88.8 L 286 86.8 L 290 86.8 L 295 92.8';
+  // column of the 296x164 plot (+0.75 for the 1.5px stroke's centreline). The
+  // 44 columns hidden behind the readout tooltip are bridged with an arc that
+  // stays above the chord, so they keep sitting behind the same box.
+  //
+  // Douglas-Peucker'd to 30 vertices (eps 2.7px, max deviation 5px from the
+  // full 71-point trace) — a weekly series would not carry 71 samples, and the
+  // curve keeps its peaks because DP preserves extremes.
+  'M 0 103.8 L 25 104.8 L 32 97.8 L 40 105.8 L 54 103.8 L 73 88.8 L 81 90.8 L 100 62.8 L 109 77.8 L 120 83.8 L 126 67.8 L 134 64.8 L 141 49.4 L 160 38.3 L 174 42.8 L 187 57.8 L 195 56.8 L 209 69.8 L 215 68.8 L 220 79.8 L 227 81.8 L 235 92.8 L 242 92.8 L 248 101.8 L 262 73.8 L 270 82.8 L 275 80.8 L 282 88.8 L 290 86.8 L 295 92.8';
 const CHART_AREA = `${CHART_LINE} L 296 164 L 0 164 Z`;
 const CHART_PEAK_X = 155; // px within the 296-wide plot (XML crosshair x)
 const CHART_W = 296; // svg is a fixed 296x164 box, so viewBox units are px
@@ -123,12 +126,17 @@ function CountdownRing({ days }: { days: number }): ReactNode {
           strokeWidth={16}
           strokeLinecap="round"
         />
+        {/* The green sweeps round on arrival. dashoffset animates from the
+            segment's own length (fully hidden) to 0, so the arc grows from the
+            9 o'clock start rather than fading in place. */}
         <path
+          className="scr-home-ring-fill"
           d={ARC}
           stroke="#48D48A"
           strokeWidth={16}
           strokeLinecap="round"
           strokeDasharray={`${green} ${len}`}
+          style={{ ['--ring-len' as string]: green.toFixed(2) }}
         />
       </svg>
       <div className="scr-home-ring-center">
@@ -372,6 +380,14 @@ function ChoosePlanSection({
     () => import.meta.env.DEV && new URLSearchParams(window.location.search).has('tip'),
   );
 
+  /* Picking a plan expands it in place rather than navigating: the row becomes
+     the full card, and only its Continue button leaves the screen. The
+     no-subscription frame opens with Gold already expanded, which is now just
+     the initial selection rather than a special case in the render. */
+  const [selected, setSelected] = useState<string | null>(
+    subscription === 'none' ? 'gold' : null,
+  );
+
   return (
     <section className="scr-home-card scr-home-plans">
       <div className="scr-home-plans-head">
@@ -393,10 +409,16 @@ function ChoosePlanSection({
       ) : null}
 
       {PLANS.map((plan) =>
-        subscription === 'none' && plan.id === 'gold' ? (
-          <PlanCard key={plan.id} plan={plan} variant="full" onContinue={() => onNavigate?.('checkout')} />
+        selected === plan.id ? (
+          <PlanCard
+            key={plan.id}
+            plan={plan}
+            variant="full"
+            className="scr-home-plan-expanded"
+            onContinue={() => onNavigate?.('checkout')}
+          />
         ) : (
-          <PlanRow key={plan.id} plan={plan} onClick={() => onNavigate?.('plans')} />
+          <PlanRow key={plan.id} plan={plan} onClick={() => setSelected(plan.id)} />
         ),
       )}
     </section>

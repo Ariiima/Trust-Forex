@@ -1,7 +1,13 @@
 /* ProgressBar — 3-node horizontal stepper (Figma "Progress bar", 1102:9734).
    White card (r12, padding 12/16). Nodes are 24px circles:
-   done = solid green + white check; current = green ring + 16px green dot;
-   todo = grey ring, hollow. Connector fills green after a done step. */
+   done and current = green ring + 16px green dot; todo = grey ring, hollow.
+   Connector fills green after a done step.
+
+   No tick on a completed step: the frames never draw one. 1102:9734's own
+   variants and every screen that renders a finished step (pay-receive, where
+   two of three are done) show the same ring-plus-dot as the current step, which
+   is why PaymentReceive.css used to carry a scoped override hiding the check
+   glyph. That override is gone; this is the default now. */
 .ds-progress {
   box-sizing: border-box;
   width: 100%;
@@ -15,19 +21,30 @@
   align-items: center;
 }
 
-/* Steps advance in place (the broker and payment flows move the stepper without
-   remounting), so colour changes are worth easing — the green washes along
-   instead of snapping. */
+/* The connector's own colour is #F1F1F1, not the #E4E4E4 stroke default —
+   measured on 552:3115. The green that covers it is the success token at 50%:
+   the frame's filled connector is (163,233,196), and solving
+   out = a·success + (1-a)·white gives a = 0.503 / 0.512 / 0.504 across R/G/B. */
 .ds-progress-line {
+  position: relative;
   flex: 1 1 auto;
   height: 1px;
   margin: 0 var(--spacing-8); /* 8px clear gap dot↔line (Figma 1242-7555) */
-  background: var(--stroke-colors-default);
-  transition: background-color 0.35s ease;
+  background: var(--bg-colors-container-s);
 }
 
-.ds-progress-line-filled {
+.ds-progress-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
   background: var(--state-colors-success);
+  opacity: 0.5;
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.ds-progress-line-filled::after {
+  transform: scaleX(1);
 }
 
 .ds-progress-dot {
@@ -40,12 +57,9 @@
   height: 24px;
   border-radius: var(--radius-infinity);
   border: 1px solid var(--stroke-colors-default);
-  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
-/* Only the current step has an inner dot. Steps still to come are bare rings —
-   the header comment used to claim "todo = grey ring + 16px grey dot", but the
-   frames disagree: 552:3115 draws them hollow. */
+/* Only reached steps have an inner dot. Steps still to come are bare rings. */
 .ds-progress-inner {
   width: 16px;
   height: 16px;
@@ -53,14 +67,32 @@
   background: var(--state-colors-success);
 }
 
-/* current — green ring + green inner dot */
-.ds-progress-dot-current {
+.ds-progress-dot-current,
+.ds-progress-dot-done {
   border-color: var(--state-colors-success);
 }
 
-/* done — solid green + white check */
-.ds-progress-dot-done {
-  background: var(--state-colors-success);
-  border-color: var(--state-colors-success);
-  color: var(--base-color-white);
+/* Advancing a step sweeps the connector green left-to-right and pops the dot
+   in behind it, so the stepper reads as movement rather than a repaint. The
+   ring's own colour change is eased over the same window. */
+@media (prefers-reduced-motion: no-preference) {
+  .ds-progress-line::after {
+    transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .ds-progress-dot {
+    transition: border-color 0.25s ease 0.2s;
+  }
+
+  .ds-progress-inner {
+    animation: ds-progress-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    animation-delay: 0.25s;
+  }
+}
+
+@keyframes ds-progress-pop {
+  from {
+    transform: scale(0.2);
+    opacity: 0;
+  }
 }

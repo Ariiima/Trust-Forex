@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { Button, Icon, NavigationBar } from '../../design-system/components';
 import type { NavigationTab } from '../../design-system/components';
 import { WithdrawHistorySheet } from './WithdrawHistorySheet';
+import { haptic, useCountUp } from '../../design-system/useCountUp';
 import './EarningMain.css';
 
 /* ---------------------------------------------------------------------------
@@ -89,6 +90,10 @@ export function EarningMain({
   const referralPct = Math.round((referralEarnings / (referralEarnings + cashbackEarnings)) * 100);
   const cashbackPct = 100 - referralPct;
 
+  /* The two headline figures roll up once on arrival. */
+  const shownBalance = useCountUp(availableBalance);
+  const shownTotal = useCountUp(totalEarnings);
+
   const [historyOpen, setHistoryOpen] = useState(initialSheet === 'history');
   const [cursor, setCursor] = useState(CURSOR_0); // 0..1 across the visible window
   const plotRef = useRef<HTMLDivElement>(null);
@@ -96,22 +101,6 @@ export function EarningMain({
   const pinned = OFFSET_0 + Math.round(CURSOR_0 * (WINDOW - 1));
   const referral = useMemo(() => pinTo(makeSeries(7, 240, 120), pinned, referralEarnings), [pinned, referralEarnings]);
   const cashback = useMemo(() => pinTo(makeSeries(13, 150, 90), pinned, cashbackEarnings), [pinned, cashbackEarnings]);
-
-  const view = (s: number[]) => s.slice(offset, offset + WINDOW);
-  const path = (s: number[], w: number, h: number, n: number, all = false) =>
-    (all ? s : view(s))
-      .map((v, i) => {
-        const x = (i / (n - 1)) * w;
-        const y = h - (Math.min(v, 500) / 500) * h;
-        return `${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`;
-      })
-      .join(' ');
-
-  const track = (e: React.PointerEvent<HTMLDivElement>) => {
-    const rect = plotRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    setCursor(Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)));
-  };
 
   /* The brush is a real range control: drag either handle to resize the window,
      drag the window itself to pan. Both edges are week indices into the series;
@@ -122,6 +111,45 @@ export function EarningMain({
 
   const offset = range.from;
   const span = range.to - range.from + 1;
+
+  /* The visible slice is the brush's range, not a fixed width. It used to be
+     `slice(offset, offset + WINDOW)` plotted over `WINDOW` points, so panning
+     worked but resizing did nothing at all: squeezing the handles moved the
+     window's edges while the plot kept drawing the same 13 weeks. Both the
+     slice and the divisor come off `span` now, so narrowing the brush really
+     does zoom into that portion, and widening it to the full strip shows
+     everything. */
+  const view = (s: number[]) => s.slice(range.from, range.to + 1);
+
+  /** y is always scaled against a fixed $0..$500 axis so the grid labels stay
+      honest — a taller week clamps rather than rescaling the axis. */
+  const yAt = (v: number, h: number) => h - (Math.min(Math.max(v, 0), 500) / 500) * h;
+
+  const path = (s: number[], w: number, h: number, all = false) => {
+    const pts = all ? s : view(s);
+    // No data: a flat line along the zero baseline rather than nothing at all.
+    if (pts.length === 0) return `M 0 ${h.toFixed(1)} L ${w.toFixed(1)} ${h.toFixed(1)}`;
+    if (pts.length === 1) return `M 0 ${yAt(pts[0], h).toFixed(1)} L ${w.toFixed(1)} ${yAt(pts[0], h).toFixed(1)}`;
+    return pts
+      .map((v, i) => `${i === 0 ? 'M' : 'L'} ${((i / (pts.length - 1)) * w).toFixed(1)} ${yAt(v, h).toFixed(1)}`)
+      .join(' ');
+  };
+
+  /* One haptic tick per data point crossed — keyed on the week the crosshair
+     has snapped to, not on the pointer event, or a single swipe would fire
+     dozens of times and buzz continuously instead of ticking. */
+  const lastWeek = useRef(-1);
+  const track = (e: React.PointerEvent<HTMLDivElement>) => {
+    const rect = plotRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const next = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    setCursor(next);
+    const week = range.from + Math.round(next * (span - 1));
+    if (week !== lastWeek.current) {
+      lastWeek.current = week;
+      haptic('selection');
+    }
+  };
 
   /** Pointer x -> fractional week index across the whole strip. */
   const weekAt = (clientX: number) => {
@@ -178,9 +206,9 @@ export function EarningMain({
         <div className="scr-earn-summary">
           <h1 className="scr-earn-balance-label">Available balance</h1>
           <div className="scr-earn-balance-row">
-            <span className="scr-earn-balance-value">{money(availableBalance)}</span>
+            <span className="scr-earn-balance-value">{money(shownBalance)}</span>
             <span className="scr-earn-total">
-              <span className="scr-earn-total-value">{money(totalEarnings)}</span>
+              <span className="scr-earn-total-value">{money(shownTotal)}</span>
               <span className="scr-earn-total-label">Total earnings</span>
             </span>
           </div>
@@ -270,8 +298,8 @@ export function EarningMain({
             }}
           >
             <svg viewBox={`0 0 ${PLOT_W} ${PLOT_H}`} fill="none" preserveAspectRatio="none">
-              <path d={path(referral, PLOT_W, PLOT_H, WINDOW)} stroke={REFERRAL_COLOR} strokeWidth={2} strokeLinejoin="round" />
-              <path d={path(cashback, PLOT_W, PLOT_H, WINDOW)} stroke={CASHBACK_COLOR} strokeWidth={2} strokeLinejoin="round" />
+              <path d={path(referral, PLOT_W, PLOT_H)} stroke={REFERRAL_COLOR} strokeWidth={2} strokeLinejoin="round" />
+              <path d={path(cashback, PLOT_W, PLOT_H)} stroke={CASHBACK_COLOR} strokeWidth={2} strokeLinejoin="round" />
             </svg>
           </div>
 
@@ -311,8 +339,8 @@ export function EarningMain({
             onPointerDown={onBrushDown('pan')}
           />
           <svg className="scr-earn-brush-chart" viewBox={`0 0 ${PLOT_W} 32`} fill="none" preserveAspectRatio="none">
-            <path d={path(referral, PLOT_W, 32, WEEKS, true)} stroke={REFERRAL_COLOR} strokeWidth={2} strokeLinejoin="round" />
-            <path d={path(cashback, PLOT_W, 32, WEEKS, true)} stroke={CASHBACK_COLOR} strokeWidth={2} strokeLinejoin="round" />
+            <path d={path(referral, PLOT_W, 32, true)} stroke={REFERRAL_COLOR} strokeWidth={2} strokeLinejoin="round" />
+            <path d={path(cashback, PLOT_W, 32, true)} stroke={CASHBACK_COLOR} strokeWidth={2} strokeLinejoin="round" />
           </svg>
           <button
             type="button"

@@ -156,7 +156,11 @@ function AppRoutes() {
       <Route path="/payment/currency" element={<PaymentCurrency onBack={() => nav(-1)} onContinue={() => nav('/payment/network')} />} />
       <Route
         path="/payment/network"
-        element={<PaymentNetwork onBack={() => nav(-1)} onCurrencyChange={() => nav('/payment/currency')} onContinue={() => nav('/payment/receive')} />}
+        /* No onCurrencyChange: the sheet already commits the new currency into
+           this step (PaymentNetwork.handleChoose), so routing back to the
+           currency screen on top of that threw the user out of the step they
+           had just finished. The prop stays on the component for assembly. */
+        element={<PaymentNetwork onBack={() => nav(-1)} onContinue={() => nav('/payment/receive')} />}
       />
       <Route path="/payment/receive" element={<PaymentReceive onBack={() => nav(-1)} onDone={() => nav('/')} />} />
       <Route path="/splash" element={<Splash />} />
