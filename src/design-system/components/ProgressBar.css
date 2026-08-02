@@ -88,9 +88,19 @@
     transition: border-color 0.25s ease;
   }
 
-  .ds-progress-inner {
+  /* Only the dot the green just arrived at. Steps already behind the line were
+     completed on an earlier screen — popping them again on every page made the
+     whole row fire at once and read as a reset rather than as progress. They
+     render static. */
+  .ds-progress-dot-current .ds-progress-inner {
     animation: ds-progress-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
     animation-delay: var(--ds-progress-dot-delay, 0.06s);
+  }
+
+  /* Matches the delay above so the ring turns green as the dot lands, not as
+     the line sets off. */
+  .ds-progress-dot-current {
+    transition: border-color 0.25s ease var(--ds-progress-dot-delay, 0.06s);
   }
 }
 
