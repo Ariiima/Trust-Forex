@@ -7,7 +7,7 @@ import { PLANS } from '../plans/plans-data';
 import type { Plan } from '../plans/plans-data';
 import { PromoCarousel } from './PromoCarousel';
 import heroExpiredArt from '../../assets/home/hero-expired.png';
-import heroWalletArt from '../../assets/home/hero-wallet.png';
+import heroNoSubArt from '../../assets/home/hero-nosub.png';
 import './Home.css';
 
 /* ---------------------------------------------------------------------------
@@ -437,7 +437,7 @@ export default function Home({ initialSubscription = 'active', onNavigate, onTab
         />
       ) : (
         <HeroMessage
-          art={heroWalletArt}
+          art={heroNoSubArt}
           title="No active subscription"
           subtitle="Choose a plan to join the VIP signal channel and unlock additional member benefits"
           ctaLabel="View plans"
