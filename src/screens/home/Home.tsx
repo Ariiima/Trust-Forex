@@ -439,9 +439,7 @@ export default function Home({ initialSubscription = 'active', onNavigate, onTab
 
       <ChoosePlanSection subscription={subscription} onNavigate={onNavigate} />
 
-      <div className="scr-home-navbar">
-        <NavigationBar active="home" onChange={onTabChange} />
-      </div>
+      <NavigationBar active="home" onChange={onTabChange} className="ds-navbar-floating" />
     </div>
   );
 }

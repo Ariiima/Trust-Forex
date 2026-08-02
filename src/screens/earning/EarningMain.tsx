@@ -352,7 +352,7 @@ export function EarningMain({
 
       <WithdrawHistorySheet open={historyOpen} onClose={() => setHistoryOpen(false)} />
 
-      <NavigationBar active="earning" onChange={onNavigate} className="scr-earn-nav" />
+      <NavigationBar active="earning" onChange={onNavigate} className="ds-navbar-floating" />
     </div>
   );
 }

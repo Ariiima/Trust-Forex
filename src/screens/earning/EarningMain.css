@@ -462,12 +462,3 @@
   padding: 0 7px;
 }
 
-/* ---- floating nav ----------------------------------------------------- */
-/* .ds-navbar carries its own 16px side margins, so pin left/right to 0 and
-   let the margins place the 328px pill — centring it here would double them. */
-.scr-earn-nav {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: var(--spacing-16);
-}

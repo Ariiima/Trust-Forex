@@ -247,7 +247,7 @@ export function ReferralMain({
 
       <AboutReferralSheet open={aboutOpen} onClose={() => setAboutOpen(false)} />
 
-      <NavigationBar active="referral" onChange={onNavigate} className="scr-refmain-nav" />
+      <NavigationBar active="referral" onChange={onNavigate} className="ds-navbar-floating" />
     </div>
   );
 }

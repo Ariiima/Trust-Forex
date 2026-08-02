@@ -393,14 +393,3 @@
   color: var(--state-colors-success);
 }
 
-/* ---- floating nav ----------------------------------------------------- */
-/* Two classes deep so it beats .ds-navbar's own `margin: 0 16px`, which would
-   otherwise push the fixed bar 16px off-centre. */
-.scr-refmain .scr-refmain-nav {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: var(--spacing-16);
-  width: min(328px, calc(100% - var(--spacing-32)));
-  margin: 0 auto;
-}

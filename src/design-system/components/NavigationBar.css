@@ -16,3 +16,18 @@
   border-radius: var(--radius-infinity);
   box-shadow: 0 1px 10px rgba(228, 228, 228, 0.64);
 }
+
+/* Every tab screen floats this bar over its content at the same place, so the
+   placement lives here rather than five times over. `margin: 0 auto` beats the
+   pill's own side margins (same specificity, later in the file) and the width
+   cap is what keeps it a 328 pill instead of stretching the full viewport on
+   anything wider than the 360 frame. */
+.ds-navbar-floating {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: var(--spacing-16);
+  z-index: 20;
+  width: min(328px, calc(100% - var(--spacing-32)));
+  margin: 0 auto;
+}

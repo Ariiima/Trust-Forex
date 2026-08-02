@@ -211,9 +211,7 @@ export default function Cashback({
         </section>
       </main>
 
-      <div className="scr-cashback-navwrap">
-        <NavigationBar active="cashback" onChange={onNavigate} />
-      </div>
+      <NavigationBar active="cashback" onChange={onNavigate} className="ds-navbar-floating" />
     </div>
   );
 }

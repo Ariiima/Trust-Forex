@@ -85,9 +85,7 @@ export function HomeSkeleton(): ReactNode {
         ))}
       </Card>
 
-      <div className="scr-skel-navbar">
-        <NavigationBar active="home" />
-      </div>
+      <NavigationBar active="home" className="ds-navbar-floating" />
     </div>
   );
 }
