@@ -48,7 +48,7 @@
 
 <header>
   <h1>Pick the right icon</h1>
-  <span class="hint">Left is the design's own pixels. Click a candidate to choose it.</span>
+  <span class="hint">All six are settled. Left is the design's own pixels — reopen this if anything else looks off.</span>
   <span class="spacer"></span>
   <button class="primary" id="copy">Copy choices</button>
 </header>
@@ -71,8 +71,8 @@
    76px of Telegram/iOS chrome is added here because the PNGs include it. */
 const CHROME = 76;
 const SLOTS = [
-  { id:'wallet', title:'Nav — Earnings', note:'Reported wrong. Not in the pack under any wallet* name.',
-    ref:{ png:'ref/ref-main.png', x:294, y:1130, w:24, h:24 }, current:'wallet1' },
+  { id:'wallet', title:'Nav — Earnings', note:'Settled: not in the pack at all, so it uses the designer\'s own 20-grid export (see OVERRIDES in design/icons/extract.py).',
+    ref:{ png:'ref/ref-main.png', x:294, y:1130, w:24, h:24 }, current:'wallet' },
   { id:'home', title:'Nav — Home',
     ref:{ png:'ref/ref-main.png', x:47, y:1130, w:24, h:24 }, current:'home' },
   { id:'scan', title:'Withdraw amount — scan wallet address',
@@ -80,8 +80,8 @@ const SLOTS = [
   { id:'loader', title:'Broker — verification in progress',
     note:'Was the starburst `loader`; the frame draws a 3/4 arc, so it is now loader-2.',
     ref:{ png:'ref/broker.png', x:42, y:82, w:24, h:24 }, current:'loader-2' },
-  { id:'external', title:'Broker — open broker site',
-    ref:{ png:'ref/broker.png', x:228, y:852, w:26, h:24 }, current:'external-link' },
+  { id:'external', title:'Broker — open broker site', note:'Settled: chevron-right.',
+    ref:{ png:'ref/broker.png', x:228, y:852, w:26, h:24 }, current:'chevron-right' },
   { id:'alert-circle', title:'Input — error state', note:'No reference frame captures this state.',
     ref:null, current:'alert-circle' },
 ];
