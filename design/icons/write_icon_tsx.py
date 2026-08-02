@@ -9,12 +9,19 @@ L.append('interface Glyph {\n  readonly d: readonly string[];\n'
          '  /** A few icons ship their stroke variant as outlined fills. */\n'
          '  readonly fill?: true;\n'
          "  /** Non-pack icons carry their own grid; defaults to the pack's. */\n"
-         '  readonly box?: string;\n}\n')
+         '  readonly box?: string;\n'
+         '  /** Non-pack raster, painted through a mask so it still recolours. */\n'
+         '  readonly img?: string;\n'
+         '  /** Ink size of `img` on the 24 grid. */\n'
+         '  readonly ink?: number;\n}\n')
 L.append("/** The pack draws on a 24 grid, its first style variant offset to (16,16). */\nconst PACK_BOX = '16 16 24 24';\n")
 L.append('const ICONS: Record<IconName, Glyph> = {')
 for n in names:
     key = n if '-' not in n else f"'{n}'"
     g = d[n]
+    if g.get('img'):
+        L.append(f"  {key}: {{ d: [], img: '{g['img']}', ink: {g['ink']} }},")
+        continue
     ds = ', '.join(f"'{x}'" for x in g['d'])
     extra = ', fill: true' if g.get('fill') else ''
     extra += f", box: '{g['box']}'" if g.get('box') else ''
@@ -30,6 +37,28 @@ L.append('''export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'na
 
 export function Icon({ name, size = 24, strokeWidth = 2, ...rest }: IconProps): ReactNode {
   const g = ICONS[name];
+  if (g.img) {
+    const pct = `${((g.ink ?? 24) / 24) * 100}%`;
+    return (
+      <span
+        aria-hidden="true"
+        style={{
+          display: 'inline-block',
+          width: size,
+          height: size,
+          background: 'currentColor',
+          maskImage: `url(${g.img})`,
+          maskSize: pct,
+          maskPosition: 'center',
+          maskRepeat: 'no-repeat',
+          WebkitMaskImage: `url(${g.img})`,
+          WebkitMaskSize: pct,
+          WebkitMaskPosition: 'center',
+          WebkitMaskRepeat: 'no-repeat',
+        }}
+      />
+    );
+  }
   return (
     <svg
       width={size}
