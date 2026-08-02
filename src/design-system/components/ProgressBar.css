@@ -15,11 +15,15 @@
   align-items: center;
 }
 
+/* Steps advance in place (the broker and payment flows move the stepper without
+   remounting), so colour changes are worth easing — the green washes along
+   instead of snapping. */
 .ds-progress-line {
   flex: 1 1 auto;
   height: 1px;
   margin: 0 var(--spacing-8); /* 8px clear gap dot↔line (Figma 1242-7555) */
   background: var(--stroke-colors-default);
+  transition: background-color 0.35s ease;
 }
 
 .ds-progress-line-filled {
@@ -36,6 +40,7 @@
   height: 24px;
   border-radius: var(--radius-infinity);
   border: 1px solid var(--stroke-colors-default);
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .ds-progress-inner {
@@ -43,6 +48,7 @@
   height: 16px;
   border-radius: var(--radius-infinity);
   background: var(--stroke-colors-default);
+  transition: background-color 0.25s ease;
 }
 
 /* current — green ring + green inner dot */

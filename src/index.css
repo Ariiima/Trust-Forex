@@ -33,6 +33,23 @@ button {
   cursor: pointer;
 }
 
+/* Press feedback, once, for the whole app: every tap target here is a <button>
+   — cards, rows, chips and icon buttons included — so this beats twenty
+   per-component rules. `transform` at rest stays `none`, so no button gains a
+   stacking context it did not already have.
+
+   Behind the motion query because the reduced-motion capture path must see a
+   completely static stylesheet. */
+@media (prefers-reduced-motion: no-preference) {
+  button {
+    transition: transform 0.12s ease;
+  }
+
+  button:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}
+
 a {
   color: inherit;
   text-decoration: none;

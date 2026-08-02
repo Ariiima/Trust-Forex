@@ -2,6 +2,7 @@
    (Figma "navigation items", state=default/Active). Height 48 in every state.
    Active = black pill with white icon + 14px label; default = grey icon only. */
 .ds-navitem {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -19,12 +20,26 @@
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
+/* The active pill, as a layer behind the content instead of the button's own
+   background — same 999px radius and same box (inset 0), so it paints
+   identically at rest and can be animated on its own. */
+.ds-navitem-pill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--base-color-black);
+}
+
 .ds-navitem-icon {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   flex: none;
 }
 
 .ds-navitem-label {
+  position: relative;
+  z-index: 1;
   display: inline-block;
 }
 
@@ -40,11 +55,11 @@
   background: var(--bg-colors-container-s);
 }
 
-/* active — black pill, white content; hugs its label (Figma 99px) */
+/* active — black pill, white content; hugs its label (Figma 99px).
+   The fill itself is .ds-navitem-pill above. */
 .ds-navitem-active {
   flex: none;
   gap: 6px;
   padding: 0 var(--spacing-16) 0 var(--spacing-12);
-  background: var(--base-color-black);
   color: var(--base-color-white);
 }

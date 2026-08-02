@@ -32,6 +32,21 @@
   transform: translate(-50%, -50%);
 }
 
+/* The dot only exists while checked, so it springs in rather than transitions.
+   Slight overshoot — a radio is a commit, and it should feel like one. */
+@media (prefers-reduced-motion: no-preference) {
+  .ds-radio-checked::after {
+    animation: ds-radio-pop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+}
+
+@keyframes ds-radio-pop {
+  from {
+    transform: translate(-50%, -50%) scale(0.2);
+    opacity: 0;
+  }
+}
+
 .ds-radio:disabled {
   opacity: 0.4;
   cursor: not-allowed;

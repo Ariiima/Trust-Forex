@@ -10,24 +10,11 @@
   align-items: flex-end;
   justify-content: center;
   z-index: 100;
-  animation: ds-sheet-scrim 0.2s ease-out;
 }
 
-/* Sheets rise from the bottom edge; the scrim dims the page behind them. */
-@keyframes ds-sheet-scrim {
-  from { background: rgba(33, 33, 33, 0); }
-}
-
-@keyframes ds-sheet-rise {
-  from { transform: translateY(100%); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ds-sheet-overlay,
-  .ds-sheet {
-    animation: none;
-  }
-}
+/* The rise and the scrim fade are driven from BottomSheet.tsx (motion) so the
+   sheet can animate on exit as well as entry; keyframes here would fight the
+   transform motion writes inline. */
 
 .ds-sheet {
   width: 100%;
@@ -38,7 +25,6 @@
      sheets before that — five screens were overriding the 20 default. */
   border-radius: 16px 16px 0 0;
   padding: 8px 16px 24px;
-  animation: ds-sheet-rise 0.25s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .ds-sheet-handle {

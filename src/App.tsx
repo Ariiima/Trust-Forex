@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { LazyMotion, MotionConfig, domAnimation } from 'motion/react'
 import type { NavigationTab } from './design-system/components'
 import Home from './screens/home/Home'
 import ChoosePlan from './screens/plans/ChoosePlan'
@@ -121,12 +122,30 @@ function WithdrawAmountQ() {
 
 function App() {
   return (
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
-      <AppRoutes />
-    </BrowserRouter>
+    /* reducedMotion="user" is more than an accessibility courtesy here: the
+       screenshot harness (design/review/shoot.mjs) captures with
+       reducedMotion:'reduce', so this is what keeps the Figma pixel diff
+       deterministic. Anything animated must degrade through this switch. */
+    <MotionConfig reducedMotion="user">
+      {/* Nothing here drags or does layout projection, so the app only needs
+          motion's animation feature set — `strict` makes the build fail loudly
+          if a `motion.*` component (which would pull in everything) sneaks in. */}
+      <LazyMotion features={domAnimation} strict>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
+          <AppRoutes />
+        </BrowserRouter>
+      </LazyMotion>
+    </MotionConfig>
   )
 }
 
+/* No route-level transition. A fade here has nothing to cross-fade *with*:
+   react-router swaps the screens in one commit, so the incoming page starting
+   at opacity 0 just exposes the page background for the length of the fade —
+   which reads as a white flash on every navigation. Overlapping the two pages
+   would mean positioning them absolutely, and the floating nav bar and the
+   sticky CTAs depend on normal flow. Motion belongs to the elements here, not
+   to the screen swap. */
 function AppRoutes() {
   const nav = useNavigate()
   return (

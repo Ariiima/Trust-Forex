@@ -14,6 +14,21 @@
   font-weight: var(--font-weight-regular);
 }
 
+/* These appear in response to something the user just did (submitted an
+   account, missed a deposit), so they drop in rather than materialise. */
+@media (prefers-reduced-motion: no-preference) {
+  .ds-notification {
+    animation: ds-notification-in 0.24s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+}
+
+@keyframes ds-notification-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
 .ds-notification-icon {
   display: inline-flex;
   flex: none;
