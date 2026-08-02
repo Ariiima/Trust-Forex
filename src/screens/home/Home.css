@@ -86,10 +86,12 @@
 /* ---- countdown ring box (bordered translucent panel) ------------------ */
 .scr-home-ringbox {
   display: flex;
-  justify-content: center;
-  /* 24/32 less the 1px inside stroke. Frame: box 32-191 (160 tall), arc ink
-     56-167, so the content box is exactly the ring's 232x112. */
-  padding: 23px 31px;
+  /* 24/28 less the 1px inside stroke. The ring is NOT centred in the panel:
+     the frame's arc inks x64-287, and only a 27px left pad with the 232-wide
+     ring sitting flush against it lands there (centring it in the 240 content
+     box would put it on 68-291). Vertically 23 makes the content exactly the
+     ring's 112. */
+  padding: 23px 27px;
   border-radius: var(--radius-medium);
   border: 1px solid rgba(255, 255, 255, 0.16);
 }

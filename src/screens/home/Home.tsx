@@ -92,27 +92,39 @@ function chartReadout(x: number) {
 }
 
 /* ===========================================================================
- * Countdown ring — SVG semicircle gauge, green arc via stroke-dasharray.
- * The exact filled-crescent geometry isn't derivable, so the green fraction is
- * tuned to the render: the frame's green ends at 84.9 degrees from the 9
- * o'clock start, less the 8px round cap's ~4.4 degrees = 0.42 of the arc.
+ * Countdown ring — SVG arc gauge, green portion via stroke-dasharray.
+ *
+ * Geometry measured off the frame: the track's outer edge spans x64..287 and
+ * y56..167 inside a ring box whose content starts at (64,56), so the centre
+ * line has r=103.5 about (115.5, 111.5) with the 16px stroke reaching exactly
+ * the box's top edge. It is NOT a half circle: the ends stop 8 above the
+ * centre line (the frame's stroke tapers away over rows 160-167 rather than
+ * ending full-width), so the round caps close flush on the bottom edge.
+ *
+ * This used r=104 about (116,104), which put the outer edge of the apex 8px
+ * ABOVE the viewBox and clipped the top of the arc flat.
  * ========================================================================= */
+const R = 103.5;
+const CY = 111.5;
+const CAP = 8; // half the 16px stroke
+const END_Y = CY - CAP;
+const END_DX = Math.sqrt(R * R - CAP * CAP);
+const ARC = `M ${(116 - END_DX).toFixed(2)} ${END_Y} A ${R} ${R} 0 0 1 ${(116 + END_DX).toFixed(2)} ${END_Y}`;
+
 function CountdownRing({ days }: { days: number }): ReactNode {
-  // Arc vector is 224×112 in a 232×112 box (x4..228 incl the 16px stroke)
-  // → path radius 104 centred at (116,104); round caps close flush at y112.
-  const len = Math.PI * 104; // arc length of the semicircle
-  const green = len * 0.42;
+  const len = R * 2 * Math.asin(END_DX / R); // swept angle x radius
+  const green = len * 0.41; // frame: green cap reaches x=156, 78.4 deg from the 9 o'clock start
   return (
     <div className="scr-home-ring">
       <svg viewBox="0 0 232 112" fill="none">
         <path
-          d="M 12 104 A 104 104 0 0 1 220 104"
+          d={ARC}
           stroke="rgba(255,255,255,0.12)"
           strokeWidth={16}
           strokeLinecap="round"
         />
         <path
-          d="M 12 104 A 104 104 0 0 1 220 104"
+          d={ARC}
           stroke="#48D48A"
           strokeWidth={16}
           strokeLinecap="round"
