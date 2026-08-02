@@ -393,3 +393,30 @@
   color: var(--state-colors-success);
 }
 
+
+/* The increment is the only new information on this card, so it is the only
+   thing that animates: the arrow rises into place and the chip settles behind
+   it. The figures themselves render at their real value immediately — counting
+   them up from zero made the whole card read as "loading" on every visit. */
+@media (prefers-reduced-motion: no-preference) {
+  .scr-refmain-stat-delta {
+    animation: scr-refmain-delta 0.42s cubic-bezier(0.34, 1.4, 0.64, 1) 0.25s backwards;
+  }
+
+  .scr-refmain-stat-delta svg {
+    animation: scr-refmain-arrow 0.5s cubic-bezier(0.34, 1.4, 0.64, 1) 0.3s backwards;
+  }
+}
+
+@keyframes scr-refmain-delta {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.8);
+  }
+}
+
+@keyframes scr-refmain-arrow {
+  from {
+    transform: translateY(6px);
+  }
+}

@@ -24,7 +24,7 @@ run ref-preview   ref-preview   "$B/referral?state=preview" 776
 run ref-main      ref-main      "$B/referral?state=main" 1190
 run ref-empty     ref-empty     "$B/referral?state=empty" 902
 run ref-about     ref-about     "$B/referral?state=main&sheet=about" 776
-run earn-main     earn-main     "$B/earning" 968
+run earn-main     earn-main     "$B/earning?tip" 968
 run earn-history  earn-history  "$B/earning?sheet=history" 776
 run wd-cur        wd-cur        "$B/earning/withdraw" 924
 run wd-cur-sel    wd-cur-sel    "$B/earning/withdraw?selected=usdt-bep20" 924

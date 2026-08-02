@@ -7,7 +7,7 @@ import type { ReferralGlyphName } from './Glyph';
 import { PromoCarousel } from '../home/PromoCarousel';
 import { AboutReferralSheet } from './AboutReferralSheet';
 import { EarningsGlyph } from './EarningsGlyph';
-import { useCountUp, useSeenValue } from '../../design-system/useCountUp';
+import { useSeenValue } from '../../design-system/useCountUp';
 import shareCoin from '../../assets/referral/referral-share-coin.png';
 import './ReferralMain.css';
 
@@ -37,6 +37,25 @@ interface Stat {
 }
 
 const money = (n: number) => `$${n.toFixed(2)}`;
+
+/** Clipboard for non-secure contexts. Returns whether the copy actually took. */
+function legacyCopy(value: string): boolean {
+  const ta = document.createElement('textarea');
+  ta.value = value;
+  ta.setAttribute('readonly', '');
+  // Off-screen but still focusable — display:none would not be selectable.
+  ta.style.cssText = 'position:fixed;top:0;left:-9999px;opacity:0';
+  document.body.appendChild(ta);
+  ta.select();
+  let ok = false;
+  try {
+    ok = document.execCommand('copy');
+  } catch {
+    ok = false;
+  }
+  document.body.removeChild(ta);
+  return ok;
+}
 
 export interface ReferralMainProps {
   totalEarnings?: number;
@@ -70,17 +89,16 @@ export function ReferralMain({
   onNavigate,
   onAbout,
 }: ReferralMainProps): ReactNode {
-  /* Headline figures roll up on arrival. "Invited users" rolls from whatever
-     this device last saw and surfaces the increment once — the `invitedDelta`
-     prop is the fallback for the very first visit, when there is no baseline
-     to difference against. */
-  const invited = useSeenValue('referral.invited', invitedUsers);
-  const shownEarnings = useCountUp(totalEarnings);
-  const shownActive = useCountUp(activeUsers);
-  /* On a first visit there is no baseline to difference against, so the chip
+  /* Figures render at their real value straight away — rolling them up from
+     zero made the card read as "loading" every single visit for information
+     that is not new. What animates is only the change: the green +N chip, which
+     is the part the user has not seen before.
+
+     On a first visit there is no baseline to difference against, so the chip
      falls back to the server's own figure — which is also what frame 1333:8366
      renders. After that it is the real "since you last looked" increment, and
      it disappears once seen. */
+  const invited = useSeenValue('referral.invited', invitedUsers);
   const invitedDeltaShown = invited.firstVisit ? invitedDelta : invited.delta;
 
   const [copied, setCopied] = useState<'telegram' | 'website' | null>(null);
@@ -89,24 +107,32 @@ export function ReferralMain({
   // the control is labelled "Highest earnings". Sorting starts on first tap.
   const [sortDesc, setSortDesc] = useState<boolean | null>(null);
 
+  /* navigator.clipboard exists only in a secure context. This was served over
+     plain http for a while, where it throws — and the old catch swallowed that,
+     so the button never acknowledged the tap. The site is on https now, so this
+     path is the one that runs; the execCommand fallback stays because it is the
+     only thing that works if it is ever served over http again. */
   const copy = async (which: 'telegram' | 'website', value: string) => {
+    let ok = false;
     try {
       await navigator.clipboard.writeText(value);
-      setCopied(which);
-      setTimeout(() => setCopied(null), 1500);
+      ok = true;
     } catch {
-      /* clipboard blocked (non-secure context) — the link stays selectable */
+      ok = legacyCopy(value);
     }
+    if (!ok) return;
+    setCopied(which);
+    setTimeout(() => setCopied(null), 1500);
   };
 
   const stats: readonly Stat[] = [
     {
       icon: 'user-receive',
       label: 'Invited users',
-      value: String(Math.round(invited.shown)),
+      value: String(invitedUsers),
       delta: invitedDeltaShown > 0 ? `+${invitedDeltaShown}` : undefined,
     },
-    { icon: 'user-check', label: 'Active users', value: String(Math.round(shownActive)) },
+    { icon: 'user-check', label: 'Active users', value: String(activeUsers) },
     { icon: { earnings: 'plan' }, label: 'Plan earnings', value: money(planEarnings) },
     { icon: { earnings: 'cashback' }, label: 'Cashback earnings', value: money(cashbackEarnings) },
   ];
@@ -133,7 +159,7 @@ export function ReferralMain({
         </div>
 
         <div className="scr-refmain-amount-row">
-          <span className="scr-refmain-amount type-text-2xl-semibold">{money(shownEarnings)}</span>
+          <span className="scr-refmain-amount type-text-2xl-semibold">{money(totalEarnings)}</span>
           <div className="scr-refmain-share">
             <div className="scr-refmain-share-top">
               {/* 1429:14241 is a raster badge in Figma — cropped 1:1 out of the frame. */}

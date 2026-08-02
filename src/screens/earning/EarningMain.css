@@ -462,3 +462,42 @@
   padding: 0 7px;
 }
 
+
+/* Increment since this device last looked — the only figure on the card that
+   is new, so the only one that animates. Mirrors the referral stat chip. */
+.scr-earn-balance-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: var(--spacing-8);
+  font-size: 12px;
+  line-height: 24px;
+  color: var(--state-colors-success);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .scr-earn-balance-delta {
+    animation: scr-earn-delta 0.42s cubic-bezier(0.34, 1.4, 0.64, 1) 0.25s backwards;
+  }
+
+  /* The readout appears under a finger, so it grows from the touch point
+     rather than fading in from nowhere. */
+  .scr-earn-tooltip {
+    animation: scr-earn-readout 0.16s cubic-bezier(0.34, 1.4, 0.64, 1);
+    transform-origin: center bottom;
+  }
+}
+
+@keyframes scr-earn-delta {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.8);
+  }
+}
+
+@keyframes scr-earn-readout {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}

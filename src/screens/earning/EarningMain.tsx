@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { Button, Icon, NavigationBar } from '../../design-system/components';
 import type { NavigationTab } from '../../design-system/components';
 import { WithdrawHistorySheet } from './WithdrawHistorySheet';
-import { haptic, useCountUp } from '../../design-system/useCountUp';
+import { haptic, useSeenValue } from '../../design-system/useCountUp';
 import './EarningMain.css';
 
 /* ---------------------------------------------------------------------------
@@ -90,11 +90,19 @@ export function EarningMain({
   const referralPct = Math.round((referralEarnings / (referralEarnings + cashbackEarnings)) * 100);
   const cashbackPct = 100 - referralPct;
 
-  /* The two headline figures roll up once on arrival. */
-  const shownBalance = useCountUp(availableBalance);
-  const shownTotal = useCountUp(totalEarnings);
+  /* The figures render at their real value; only the change animates — a green
+     +N chip for whatever came in since this device last looked. Same treatment
+     as the referral card. There is no chip on a first visit (no baseline to
+     difference against), which is also what frame 1367:5166 shows. */
+  const balance = useSeenValue('earning.balance', availableBalance);
 
   const [historyOpen, setHistoryOpen] = useState(initialSheet === 'history');
+  /* The readout follows the finger, so it only exists while there is one. `?tip`
+     pins it open for the pixel harness — frame 1367:5166 captures it mid-drag,
+     which is a review state, not the resting one. */
+  const [reading, setReading] = useState(
+    () => import.meta.env.DEV && new URLSearchParams(window.location.search).has('tip'),
+  );
   const [cursor, setCursor] = useState(CURSOR_0); // 0..1 across the visible window
   const plotRef = useRef<HTMLDivElement>(null);
 
@@ -206,9 +214,15 @@ export function EarningMain({
         <div className="scr-earn-summary">
           <h1 className="scr-earn-balance-label">Available balance</h1>
           <div className="scr-earn-balance-row">
-            <span className="scr-earn-balance-value">{money(shownBalance)}</span>
+            <span className="scr-earn-balance-value">{money(availableBalance)}</span>
+            {balance.delta > 0 ? (
+              <span className="scr-earn-balance-delta">
+                <Icon name="arrow-up" size={16} />
+                {money(balance.delta)}
+              </span>
+            ) : null}
             <span className="scr-earn-total">
-              <span className="scr-earn-total-value">{money(shownTotal)}</span>
+              <span className="scr-earn-total-value">{money(totalEarnings)}</span>
               <span className="scr-earn-total-label">Total earnings</span>
             </span>
           </div>
@@ -291,11 +305,14 @@ export function EarningMain({
             ref={plotRef}
             onPointerDown={(e) => {
               e.currentTarget.setPointerCapture(e.pointerId);
+              setReading(true);
               track(e);
             }}
             onPointerMove={(e) => {
               if (e.currentTarget.hasPointerCapture(e.pointerId)) track(e);
             }}
+            onPointerUp={() => setReading(false)}
+            onPointerCancel={() => setReading(false)}
           >
             <svg viewBox={`0 0 ${PLOT_W} ${PLOT_H}`} fill="none" preserveAspectRatio="none">
               <path d={path(referral, PLOT_W, PLOT_H)} stroke={REFERRAL_COLOR} strokeWidth={2} strokeLinejoin="round" />
@@ -303,9 +320,14 @@ export function EarningMain({
             </svg>
           </div>
 
-          <span className="scr-earn-crosshair" style={{ left: `${cursor * PLOT_W}px` }} />
+          {reading ? (
+            <span className="scr-earn-crosshair" style={{ left: `${cursor * PLOT_W}px` }} />
+          ) : null}
 
-          <div className="scr-earn-tooltip" style={{ left: `${cursor * PLOT_W}px` }}>
+          <div
+            className="scr-earn-tooltip"
+            style={{ left: `${cursor * PLOT_W}px`, display: reading ? undefined : 'none' }}
+          >
             <span className="scr-earn-tooltip-date">{weekLabel(absWeek)}</span>
             <span className="scr-earn-tooltip-row">
               <span className="scr-earn-legend-left">

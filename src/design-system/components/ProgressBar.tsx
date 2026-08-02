@@ -17,8 +17,19 @@ export function ProgressBar({ current, className }: ProgressBarProps): ReactNode
   const classes = ['ds-progress', className ?? ''].filter(Boolean).join(' ');
   const last = STEP_ORDER.length - 1;
 
+  /* Each step of the flow is its own route, so the bar remounts every time and
+     a CSS transition would never fire — the connector would simply render
+     already green. The segment leading into the current step is therefore
+     marked and animated on mount, so arriving on a page shows the green travel
+     to the circle you just reached. Segments before it are static.
+
+     The current dot waits for that segment to arrive; on the first step there
+     is nothing to wait for, so it pops almost immediately. */
   return (
-    <div className={classes}>
+    <div
+      className={classes}
+      style={{ ['--ds-progress-dot-delay' as string]: activeIndex > 0 ? '0.34s' : '0.06s' }}
+    >
       <div className="ds-progress-track">
         {STEP_ORDER.map((step, i) => {
           const status = i < activeIndex ? 'done' : i === activeIndex ? 'current' : 'todo';
@@ -29,7 +40,11 @@ export function ProgressBar({ current, className }: ProgressBarProps): ReactNode
               </span>
               {i < last ? (
                 <span
-                  className={`ds-progress-line${i < activeIndex ? ' ds-progress-line-filled' : ''}`}
+                  className={
+                    'ds-progress-line' +
+                    (i < activeIndex ? ' ds-progress-line-filled' : '') +
+                    (i === activeIndex - 1 ? ' ds-progress-line-advancing' : '')
+                  }
                 />
               ) : null}
             </Fragment>

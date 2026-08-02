@@ -72,21 +72,31 @@
   border-color: var(--state-colors-success);
 }
 
-/* Advancing a step sweeps the connector green left-to-right and pops the dot
-   in behind it, so the stepper reads as movement rather than a repaint. The
-   ring's own colour change is eased over the same window. */
+/* Advancing sweeps the connector green left-to-right and pops the dot in behind
+   it, so the stepper reads as movement rather than a repaint.
+
+   An animation, not a transition: every step of the payment flow is its own
+   route, so the bar remounts and a transition would have no previous value to
+   move from. Only the segment INTO the current step animates — the ones behind
+   it are already green and should stay put. */
 @media (prefers-reduced-motion: no-preference) {
-  .ds-progress-line::after {
-    transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1);
+  .ds-progress-line-advancing::after {
+    animation: ds-progress-advance 0.5s cubic-bezier(0.32, 0.72, 0, 1) 0.05s backwards;
   }
 
   .ds-progress-dot {
-    transition: border-color 0.25s ease 0.2s;
+    transition: border-color 0.25s ease;
   }
 
   .ds-progress-inner {
     animation: ds-progress-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
-    animation-delay: 0.25s;
+    animation-delay: var(--ds-progress-dot-delay, 0.06s);
+  }
+}
+
+@keyframes ds-progress-advance {
+  from {
+    transform: scaleX(0);
   }
 }
 
