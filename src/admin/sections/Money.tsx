@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { api, type PaymentRow, type WithdrawalRow } from '../data';
 import { useAsync } from '../useAsync';
 import {
-  Card, Cell2, Chip, EmptyState, Money as Amount, Readings, Reading, SearchInput,
+  Button, Card, Cell2, Chip, EmptyState, Money as Amount, Readings, Reading, SearchInput,
   Skeleton, StatusChip, Tabs, fmtNum, type TabItem,
 } from '../ui';
 import { DataTable, type Column } from '../ui/DataTable';
@@ -66,52 +66,91 @@ const PAYMENT_COLUMNS: Column<PaymentRow>[] = [
   },
 ];
 
-const WITHDRAWAL_COLUMNS: Column<WithdrawalRow>[] = [
-  {
-    id: 'user',
-    header: 'User',
-    width: 220,
-    render: (w) => <Cell2 top={w.name ?? w.userId} bottom={w.userId} />,
-  },
-  {
-    id: 'at',
-    header: 'Requested',
-    width: 170,
-    render: (w) => <Cell2 top={w.at.split(' · ')[0]} bottom={w.at.split(' · ')[1]} />,
-  },
-  { id: 'detail', header: 'Destination', render: (w) => w.detail },
-  {
-    id: 'amount',
-    header: 'Amount',
-    align: 'right',
-    width: 130,
-    sort: (w: WithdrawalRow) => w.amount,
-    render: (w) => <Amount value={w.amount} />,
-  },
-];
-
 export default function MoneySection() {
   const [tab, setTab] = useState<Tab>('in');
   const [search, setSearch] = useState('');
   const loadedPayments = useAsync(api.payments);
   const loadedWithdrawals = useAsync(api.withdrawals);
   const payments = loadedPayments ?? [];
-  const withdrawals = loadedWithdrawals ?? [];
+  // No hot wallet is configured yet, so every withdrawal lands here for a
+  // human to pay by hand — this overlay is the only way the table (and the
+  // "Withdrawn to date" reading below) learns about it without a reload.
+  const [sentOverride, setSentOverride] = useState<Record<string, WithdrawalRow>>({});
+  const [markingSent, setMarkingSent] = useState<string | null>(null);
+  const withdrawals = (loadedWithdrawals ?? []).map((w) => sentOverride[w.id] ?? w);
   // Both ledgers feed every reading below, so the strip waits on both —
   // showing income before withdrawals have landed would read as final.
   const loading = loadedPayments === undefined || loadedWithdrawals === undefined;
 
   const confirmed = payments.filter((p) => p.status === 'confirmed');
   const income = confirmed.reduce((s, p) => s + p.amountUsd, 0);
-  const owed = withdrawals.reduce((s, w) => s + w.amount, 0);
+  // Only count money that has actually left — a queued/manual row is a
+  // liability, not yet a payment made.
+  const owed = withdrawals.filter((w) => w.status === 'sent').reduce((s, w) => s + w.amount, 0);
   const unbooked = confirmed.filter((p) => !p.booked).length;
+
+  const markSent = async (w: WithdrawalRow) => {
+    const txid = window.prompt(`Mark ${w.currency} ${w.network} $${w.amount.toFixed(2)} to ${w.address} as sent.\n\nTransaction ID (optional):`);
+    if (txid === null) return; // cancelled
+    setMarkingSent(w.id);
+    try {
+      const { withdrawal } = await api.markWithdrawalSent(w.id, txid.trim());
+      setSentOverride((o) => ({ ...o, [w.id]: withdrawal }));
+    } catch {
+      window.alert('Could not mark this withdrawal as sent — try again.');
+    } finally {
+      setMarkingSent(null);
+    }
+  };
+
+  const WITHDRAWAL_COLUMNS: Column<WithdrawalRow>[] = [
+    {
+      id: 'user',
+      header: 'User',
+      width: 200,
+      render: (w) => <Cell2 top={w.name ?? w.userId} bottom={w.userId} />,
+    },
+    {
+      id: 'at',
+      header: 'Requested',
+      width: 150,
+      render: (w) => <Cell2 top={w.at.split(' · ')[0]} bottom={w.at.split(' · ')[1]} />,
+    },
+    {
+      id: 'destination',
+      header: 'Destination',
+      render: (w) => <Cell2 top={`${w.currency} · ${w.network}`} bottom={w.address} />,
+    },
+    {
+      id: 'amount',
+      header: 'Amount',
+      align: 'right',
+      width: 110,
+      sort: (w: WithdrawalRow) => w.amount,
+      render: (w) => <Amount value={w.amount} />,
+    },
+    { id: 'status', header: 'Status', width: 110, render: (w) => <StatusChip status={w.status} /> },
+    {
+      id: 'actions',
+      header: 'Actions',
+      align: 'right',
+      width: 160,
+      render: (w) => (w.status === 'sent' ? (
+        <span className="at-muted">{w.txid ?? '—'}</span>
+      ) : (
+        <Button size="sm" variant="success" disabled={markingSent === w.id} onClick={() => markSent(w)}>
+          {markingSent === w.id ? 'Marking…' : 'Mark as sent'}
+        </Button>
+      )),
+    },
+  ];
 
   const q = search.trim().toLowerCase();
   const shownPayments = q
     ? payments.filter((p) => `${p.id} ${p.username ?? ''} ${p.planId} ${p.txid ?? ''}`.toLowerCase().includes(q))
     : payments;
   const shownWithdrawals = q
-    ? withdrawals.filter((w) => `${w.name ?? ''} ${w.userId} ${w.detail}`.toLowerCase().includes(q))
+    ? withdrawals.filter((w) => `${w.name ?? ''} ${w.userId} ${w.currency} ${w.network} ${w.address}`.toLowerCase().includes(q))
     : withdrawals;
 
   return (
@@ -120,7 +159,8 @@ export default function MoneySection() {
         <div>
           <h1 className="a-pagehead__title">Money</h1>
           <p className="a-pagehead__sub">
-            Confirmed subscription payments in, and the payout worklist out. Both read the ledger.
+            Confirmed subscription payments in, and the payout worklist out. No hot wallet is
+            configured yet, so every withdrawal is paid by hand — mark it sent once it's done.
           </p>
         </div>
       </header>

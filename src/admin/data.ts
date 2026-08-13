@@ -84,14 +84,20 @@ export interface Broker {
   updatedAt: string;
 }
 
-/** Money leaving the platform — the payout worklist. */
+/** Money leaving the platform — the payout worklist. Reads payouts.mjs's own
+ *  `withdrawals` table, so `status` is the real state, not a ledger echo. */
 export interface WithdrawalRow {
   id: string;
   userId: string;
   name: string | null;
   at: string;
   amount: number;
-  detail: string;
+  fee: number;
+  currency: string;
+  network: string;
+  address: string;
+  status: 'queued' | 'sending' | 'manual' | 'sent';
+  txid?: string;
 }
 
 /** Money arriving. Straight off the `orders` table the watcher confirms. */
@@ -479,6 +485,10 @@ export const api = {
     ),
 
   withdrawals: () => get<WithdrawalRow[]>('/withdrawals'),
+  /** Record a `manual`/`queued` row as paid by hand — there's no hot wallet
+   *  configured yet, so this is the only path any withdrawal completes through. */
+  markWithdrawalSent: (id: string, txid: string) =>
+    write<{ withdrawal: WithdrawalRow }>('POST', `/withdrawals/${id}/mark-sent`, { txid }),
   payments: () => get<PaymentRow[]>('/payments'),
 
   cashbackCycles: () => get<CashbackCycle[]>('/cashback-cycles'),

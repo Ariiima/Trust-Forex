@@ -43,14 +43,13 @@ CREATE TABLE IF NOT EXISTS withdrawals (
 
 /** Server-side mirror of src/screens/earning/withdraw-data.ts — fees and
  *  minimums must be enforced here, or the client could skip them. Stablecoins
- *  only, so USD converts 1:1 to token units. */
+ *  only, so USD converts 1:1 to token units. Only two rails for now; neither
+ *  TF_TRON_HOT_KEY nor TF_EVM_HOT_KEY is set in prod, so every withdrawal
+ *  parks as manual (see `park` below) until dedicated payout wallets exist —
+ *  ponytail: that's the whole "manual for now", no separate on/off switch. */
 export const WITHDRAW_RULES = {
-  'USDT|TRC20': { fee: 1, min: 10, chain: 'tron', contract: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t', decimals: 6 },
+  'USDT|TRC20': { fee: 3, min: 10, chain: 'tron', contract: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t', decimals: 6 },
   'USDT|BEP20': { fee: 1, min: 10, chain: 'evm', rpc: 'https://bsc-rpc.publicnode.com', contract: '0x55d398326f99059fF775485246999027B3197955', decimals: 18 },
-  'USDT|ERC20': { fee: 1, min: 10, chain: 'evm', rpc: 'https://cloudflare-eth.com', contract: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6 },
-  'USDC|TRC20': { fee: 1, min: 10, chain: 'tron', contract: 'TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8', decimals: 6 },
-  'USDC|BEP20': { fee: 1, min: 10, chain: 'evm', rpc: 'https://bsc-rpc.publicnode.com', contract: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d', decimals: 18 },
-  'USDC|ERC20': { fee: 1, min: 10, chain: 'evm', rpc: 'https://cloudflare-eth.com', contract: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', decimals: 6 },
 };
 
 const ADDR_RE = {

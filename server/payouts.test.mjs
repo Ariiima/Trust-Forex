@@ -60,8 +60,8 @@ test('happy path: enqueue reserves, worker sends, fee is held back', async () =>
   const row = statusOf(r.withdrawal.id);
   assert.equal(row.status, 'sent');
   assert.equal(row.txid, 'txABC');
-  // $20 minus the $1 fee, in 6-decimal units.
-  assert.deepEqual(sends, [{ units: usdToUnits(19, 6), address: TRON_ADDR }]);
+  // $20 minus the $3 TRC20 fee, in 6-decimal units.
+  assert.deepEqual(sends, [{ units: usdToUnits(17, 6), address: TRON_ADDR }]);
 
   const list = listWithdrawals(db, 'u1');
   assert.equal(list[0].status, 'completed');

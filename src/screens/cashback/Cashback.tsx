@@ -333,9 +333,11 @@ export default function Cashback({
             ))}
           </div>
 
-          <p className="scr-cashback-brokers-note">
-            This list includes every verified broker available in your region.
-          </p>
+          {cards.length > 0 ? (
+            <p className="scr-cashback-brokers-note">
+              This list includes every verified broker available in your region.
+            </p>
+          ) : null}
         </section>
       </main>
 

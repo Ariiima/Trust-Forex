@@ -62,7 +62,7 @@ can deep-link every designed state. No param = normal default state.
     db.mjs           orders + user_flags. PAYMENT_SCHEMA, rowToOrder (snake→camel).
     orders.mjs       /api/orders*: pricing, unique-amount dithering, gateway select.
     watcher.mjs      polls chains every 20s, matches by exact base-unit amount,
-                     promotes to confirmed. chains/{evm,btc,sol,tron}.mjs do the RPC.
+                     promotes to confirmed. chains/{evm,btc,sol,tron,ton}.mjs do the RPC.
     notify.mjs       what runs the moment a payment confirms (credit, message, refund).
     ledger.mjs       the money spine — balances, tiers (TIER_PCT), plan days.
     payouts.mjs      withdrawals leaving: reserve → send → confirm, with caps.

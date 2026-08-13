@@ -190,6 +190,21 @@ const ROUTES = [
 
   /* ---- money out ---- */
   ['GET', /^\/withdrawals$/, (req, res) => ok(res, store.withdrawals())],
+  /* Admin paid a manual withdrawal by hand (there is no hot wallet configured
+     yet — every row lands here, not just RPC failures) and records it as
+     sent. Same user-facing copy the automated path would have sent. */
+  ['POST', /^\/withdrawals\/([\w-]+)\/mark-sent$/, (req, res, p, body) => {
+    const row = store.markWithdrawalSent(p[1], typeof body.txid === 'string' ? body.txid.trim() : '');
+    if (!row) return missing(res);
+    const { tgUserId, ...withdrawal } = row;
+    if (tgUserId) {
+      void sendMessage(tgUserId, renderTemplate(store.messageTemplate('withdrawal_sent'), {
+        amount: `$${(withdrawal.amount - withdrawal.fee).toFixed(2)}`, currency: withdrawal.currency, network: withdrawal.network,
+        txid: withdrawal.txid || '—',
+      }));
+    }
+    return ok(res, { withdrawal });
+  }],
   /* Confirmed on-chain payments, which the dashboard previously had no window
      into at all — the orders table lives in the same file. */
   ['GET', /^\/payments$/, (req, res) => ok(res, store.payments())],

@@ -264,10 +264,10 @@ export function Chip({ tone = 'neutral', children }: { tone?: ChipTone; children
   return <span className={`a-chip a-chip--${tone}`}>{children}</span>;
 }
 
-/** Status vocabulary shared by users, brokers, campaigns and cycles. */
+/** Status vocabulary shared by users, brokers, campaigns, cycles and withdrawals. */
 const STATUS_TONE: Record<string, ChipTone> = {
-  active: 'success', approved: 'success', published: 'success', public: 'success', live: 'success',
-  pending: 'warn', paused: 'warn', draft: 'purple', waiting: 'warn',
+  active: 'success', approved: 'success', published: 'success', public: 'success', live: 'success', sent: 'success',
+  pending: 'warn', paused: 'warn', draft: 'purple', waiting: 'warn', manual: 'warn', queued: 'info', sending: 'info',
   rejected: 'danger', expired: 'danger', stopped: 'danger', ended: 'danger', failed: 'danger',
   private: 'purple', inactive: 'neutral',
 };

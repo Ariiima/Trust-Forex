@@ -415,8 +415,23 @@ function aggregate(name, rows, grain) {
  * Store
  * ------------------------------------------------------------------- */
 
+/** payouts.mjs `withdrawals` row -> the shape the dashboard's Money screen
+ *  reads, shared by the list and the mark-sent mutation so a click never has
+ *  to reconcile two different row shapes for the same table. */
+function toWithdrawalRow(r) {
+  return {
+    id: r.id, userId: r.user_id, name: r.name ?? null,
+    at: new Date(r.created_at).toISOString().slice(0, 16).replace('T', ' · '),
+    amount: r.amount_usd, fee: r.fee_usd, currency: r.currency, network: r.network,
+    address: r.address, status: r.status, txid: r.txid ?? undefined,
+  };
+}
+
 export function openAdminDb(path) {
   const db = connect(path);
+  // Lazy: prepared on first real call, not here — see the `withdrawals` /
+  // `markWithdrawalSent` comment below for why.
+  let withdrawalRequestsStmt, markWithdrawalSentStmt, readWithdrawalStmt;
   db.exec(SCHEMA);
   // `orders` may not exist yet — this module can load before openDb() runs, and
   // the ledger reconciles against it. Both schemas are CREATE IF NOT EXISTS.
@@ -1082,12 +1097,38 @@ export function openAdminDb(path) {
       return { key, body, updatedAt };
     },
 
-    /** Money leaving the platform, newest first — the payout worklist. */
-    withdrawals: () => q.withdrawals.all().map((r) => ({
-      id: `l${r.id}`, userId: r.user_id, name: r.name,
-      at: new Date(r.at).toISOString().slice(0, 16).replace('T', ' · '),
-      amount: Math.abs(r.amount), detail: r.detail,
-    })),
+    /**
+     * Money leaving the platform, newest first — the payout worklist. Reads
+     * payouts.mjs's own `withdrawals` table (queued/sending/manual/sent), not
+     * the ledger — the ledger only knows a reservation was made, not whether
+     * it was ever actually paid out. Statements are prepared lazily, on first
+     * call rather than up in `q`: payouts.mjs's schema is exec'd from
+     * index.mjs, and this module's factory can run before that line does
+     * (admin-routes.mjs opens its own store at import time) — by the time an
+     * HTTP request reaches here the server has finished booting either way.
+     */
+    withdrawals: () => {
+      withdrawalRequestsStmt ??= db.prepare(`SELECT w.*, u.name FROM withdrawals w
+        LEFT JOIN users u ON u.id = w.user_id ORDER BY w.created_at DESC LIMIT 500`);
+      return withdrawalRequestsStmt.all().map(toWithdrawalRow);
+    },
+
+    /** Admin has paid a `manual`/`queued` row by hand — record it as sent and
+     *  tell the user, the same as the automated path in payouts.mjs would.
+     *  Returns the same shape `withdrawals()` rows have (plus `tgUserId`, for
+     *  the caller to notify), or null if it was already resolved — no
+     *  double-notify on a second click. */
+    markWithdrawalSent(id, txid) {
+      markWithdrawalSentStmt ??= db.prepare(
+        `UPDATE withdrawals SET status='sent', txid=?, error=NULL, updated_at=?
+         WHERE id=? AND status IN ('queued','sending','manual')`,
+      );
+      readWithdrawalStmt ??= db.prepare('SELECT * FROM withdrawals WHERE id = ?');
+      const res = markWithdrawalSentStmt.run(txid || null, nowMs(), id);
+      if (res.changes === 0) return null;
+      const row = readWithdrawalStmt.get(id);
+      return { ...toWithdrawalRow(row), tgUserId: row.tg_user_id };
+    },
 
     /** Money arriving. Reads `orders` directly — one file, so no bridge. */
     payments: () => q.payments.all().map((r) => ({

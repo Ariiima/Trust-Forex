@@ -34,6 +34,7 @@ const NETWORK_META: Record<string, { label: string; icon: string }> = {
   Bitcoin: { label: 'Bitcoin', icon: btc },
   TRON: { label: 'Tron', icon: tron },
   Solana: { label: 'Solana (SOL)', icon: solana },
+  TON: { label: 'TON', icon: ton },
 };
 
 export interface CurrencyOption {
