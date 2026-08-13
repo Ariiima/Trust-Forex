@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Button, BottomSheet, Icon, ProgressBar } from '../../design-system/components';
+import type { Gateway } from '../../api/client';
 import { useBackButton } from '../../telegram';
 import { Glyph } from './Glyph';
 import { SelectRow } from './SelectRow';
 import { CURRENCIES } from './currencyData';
 import { NETWORKS } from './networkData';
+import { currencyOptions, networkOptions } from './gatewayDisplay';
 import './PaymentNetwork.css';
 
 /* ---------------------------------------------------------------------------
@@ -24,28 +26,53 @@ import './PaymentNetwork.css';
 export interface PaymentNetworkProps {
   initialCurrencyId?: string;
   initialNetworkId?: string;
+  /** Live options from GET /api/gateways. Omitted = static demo lists (the
+   *  design-review harness hits this route with no order in flight). */
+  gateways?: Gateway[];
+  /** Continue is in flight (POST /orders/:id/select) — disables the CTA. */
+  busy?: boolean;
+  /** Select failed, e.g. live rate unavailable. Shown above the CTA. */
+  error?: string;
   onBack?: () => void;
   onCurrencyChange?: (currencyId: string) => void;
-  onContinue?: (networkId: string) => void;
+  onContinue?: (networkId: string, currencyId: string) => void;
 }
 
 export default function PaymentNetwork({
-  initialCurrencyId = 'btc',
+  initialCurrencyId,
   initialNetworkId,
+  gateways,
+  busy,
+  error,
   onBack,
   onCurrencyChange,
   onContinue,
 }: PaymentNetworkProps): ReactNode {
   // No in-app header: Telegram draws the bar, so back lives on its BackButton.
   useBackButton(onBack);
-  const [currencyId, setCurrencyId] = useState(initialCurrencyId);
+  const currencies = gateways ? currencyOptions(gateways) : CURRENCIES;
+  const fallbackCurrencyId = initialCurrencyId ?? currencies[0]?.id ?? 'btc';
+  const [currencyId, setCurrencyId] = useState(fallbackCurrencyId);
   // The frame shows nothing chosen and the CTA disabled — no default.
   const [selected, setSelected] = useState<string | undefined>(initialNetworkId);
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [draft, setDraft] = useState(initialCurrencyId);
+  const [draft, setDraft] = useState(fallbackCurrencyId);
 
-  const currency = CURRENCIES.find((c) => c.id === currencyId) ?? CURRENCIES[0];
+  const currency = currencies.find((c) => c.id === currencyId) ?? currencies[0];
+  // Live mode narrows the list to the chosen currency's networks; a currency
+  // switch invalidates a network selection that no longer exists.
+  const networks = gateways
+    ? networkOptions(gateways, currencyId).map((n) => ({ id: n.id, label: n.label, icon: n.icon }))
+    : NETWORKS;
+
+  // Clicks elsewhere are caught by the backdrop below; scrolling isn't.
+  useEffect(() => {
+    if (!tooltipOpen) return;
+    const close = (): void => setTooltipOpen(false);
+    document.addEventListener('scroll', close, true);
+    return () => document.removeEventListener('scroll', close, true);
+  }, [tooltipOpen]);
 
   const openSheet = (): void => {
     setDraft(currencyId);
@@ -54,6 +81,10 @@ export default function PaymentNetwork({
 
   const handleChoose = (): void => {
     setCurrencyId(draft);
+    // Live lists differ per currency — drop a network pick the new currency lacks.
+    if (gateways && selected && !networkOptions(gateways, draft).some((n) => n.id === selected)) {
+      setSelected(undefined);
+    }
     setSheetOpen(false);
     onCurrencyChange?.(draft);
   };
@@ -70,14 +101,14 @@ export default function PaymentNetwork({
               <span className="scr-payment-network-selected-info">
                 <img
                   className="scr-payment-network-selected-icon"
-                  src={currency.icon}
+                  src={currency?.icon}
                   alt=""
                   width={32}
                   height={32}
                 />
                 <span className="scr-payment-network-selected-text">
-                  <span className="scr-payment-network-selected-symbol">{currency.symbol}</span>
-                  <span className="scr-payment-network-selected-name">{currency.name}</span>
+                  <span className="scr-payment-network-selected-symbol">{currency?.symbol}</span>
+                  <span className="scr-payment-network-selected-name">{currency?.name}</span>
                 </span>
               </span>
               <button type="button" className="scr-payment-network-change-btn" onClick={openSheet}>
@@ -91,12 +122,12 @@ export default function PaymentNetwork({
               <h2 className="scr-payment-network-select-title">Select network</h2>
               <button
                 type="button"
-                className="scr-payment-network-info-btn"
+                className="ds-info-btn"
                 onClick={() => setTooltipOpen((open) => !open)}
                 aria-label="Network info"
                 aria-expanded={tooltipOpen}
               >
-                <Icon name="info" size={24} />
+                <Icon name="info" size={20} />
               </button>
 
               {tooltipOpen ? (
@@ -116,7 +147,7 @@ export default function PaymentNetwork({
             </div>
 
             <div className="scr-payment-network-list">
-              {NETWORKS.map((n) => (
+              {networks.map((n) => (
                 <SelectRow
                   key={n.id}
                   icon={n.icon}
@@ -131,15 +162,16 @@ export default function PaymentNetwork({
       </main>
 
       <footer className="scr-payment-network-footer">
+        {error ? <p className="scr-payment-network-error">{error}</p> : null}
         <Button
           variant="primary"
           size="medium"
           fullWidth
           iconRight={<Icon name="chevron-right" size={20} />}
-          disabled={!selected}
-          onClick={() => selected && onContinue?.(selected)}
+          disabled={!selected || busy}
+          onClick={() => selected && onContinue?.(selected, currencyId)}
         >
-          Continue
+          {busy ? 'Preparing…' : 'Continue'}
         </Button>
       </footer>
 
@@ -162,7 +194,7 @@ export default function PaymentNetwork({
             </div>
 
             <div className="scr-payment-network-sheet-list">
-              {CURRENCIES.map((c) => (
+              {currencies.map((c) => (
                 <SelectRow
                   key={c.id}
                   icon={c.icon}

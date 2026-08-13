@@ -1,0 +1,21 @@
+/* The outer element is what every call site sizes via its own className
+   (width/height/margin — see e.g. Home.css .scr-home-hero-art), exactly as
+   when this was a single div. `position: relative` only affects descendants
+   (the skeleton overlay below), so it does not change that box. */
+.ds-emoji {
+  position: relative;
+}
+
+/* lottie sizes its SVG to this element, so it has to inherit the outer box's
+   footprint rather than carry a footprint of its own. */
+.ds-emoji-stage {
+  width: 100%;
+  height: 100%;
+}
+
+/* Covers the exact same box the loaded art will occupy, so nothing shifts
+   when the skeleton is removed — it does not need its own width/height. */
+.ds-emoji-skeleton {
+  position: absolute;
+  inset: 0;
+}

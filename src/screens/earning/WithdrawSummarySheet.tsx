@@ -28,6 +28,10 @@ export interface WithdrawSummarySheetProps {
   networkFee?: number;
   onClose?: () => void;
   onConfirm?: () => void;
+  /** In flight — the confirm button must not fire a second withdrawal. */
+  confirmDisabled?: boolean;
+  /** Server-side rejection, shown above the CTA instead of silently closing. */
+  error?: string;
   /** submitted only — "Back to Earnings". Distinct from onClose: dismissing the
    *  sheet leaves you on the withdraw screen, this leaves the flow entirely. */
   onDone?: () => void;
@@ -48,6 +52,8 @@ export function WithdrawSummarySheet({
   networkFee = 1,
   onClose,
   onConfirm,
+  confirmDisabled = false,
+  error = '',
   onDone,
 }: WithdrawSummarySheetProps): ReactNode {
   const rows = [
@@ -110,16 +116,20 @@ export function WithdrawSummarySheet({
           Back to Earnings
         </Button>
       ) : (
-        <Button
-          variant="primary"
-          size="medium"
-          fullWidth
-          className="scr-wdsum-cta"
-          iconRight={<Icon name="chevron-right" size={20} />}
-          onClick={onConfirm}
-        >
-          Request withdrawal
-        </Button>
+        <>
+          {error && <p className="scr-wdsum-error" role="alert">{error}</p>}
+          <Button
+            variant="primary"
+            size="medium"
+            fullWidth
+            className="scr-wdsum-cta"
+            disabled={confirmDisabled}
+            iconRight={<Icon name="chevron-right" size={20} />}
+            onClick={onConfirm}
+          >
+            {confirmDisabled ? 'Submitting…' : 'Request withdrawal'}
+          </Button>
+        </>
       )}
     </BottomSheet>
   );

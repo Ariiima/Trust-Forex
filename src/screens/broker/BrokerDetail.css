@@ -10,10 +10,18 @@
    stepper (see notes at the bottom).
    ===================================================================== */
 
+/* Exactly the viewport, and the scroller. `overflow-x: hidden` silently
+   forces overflow-y to `auto`, so this element was already a scroll container
+   — but at `min-height: 100vh` it grew with its content (896px against an
+   844px screen), and the sticky footer therefore stuck to a bottom edge that
+   sat below the fold. Pinning the height to the viewport puts that edge back
+   on the screen, so the footer floats over the content instead of waiting at
+   the end of it. `dvh` so mobile browser chrome collapsing does not strand it. */
 .scr-broker {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
   overflow-x: hidden;
   background: var(--bg-colors-container-s); /* #F1F1F1 */
   font-family: var(--font-family-base);
@@ -22,8 +30,18 @@
 
 /* ---- Scrollable body ------------------------------------------------- */
 .scr-broker-body {
-  flex: 1 1 auto;
+  /* flex-grow:1 (the old value) stretched this box to fill whatever room
+     was left in the 100dvh column on any screen taller than the content —
+     on a tall phone with short content (e.g. no banners) that dumped 200px+
+     of dead air right above the sticky footer. This box should only ever be
+     as tall as its own content + the clearance padding below; 0 growth. */
+  flex: 0 1 auto;
   padding: var(--spacing-16);
+  /* The footer below is sticky-pinned to the viewport floor (see
+     .scr-broker-footer), so on anything short of a full screen of content
+     this padding is what actually shows as the gap above it — not a
+     clearance reserve for scrolled-past content. */
+  padding-bottom: var(--spacing-32);
 }
 
 /* ---- Broker card: name row + 0..2 notification banners ---------------- */
@@ -96,6 +114,19 @@
   display: inline-flex;
   flex: none;
   color: var(--base-color-black);
+  animation: scr-broker-spin 0.8s linear infinite;
+}
+
+@keyframes scr-broker-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scr-broker-pending-icon {
+    animation: none;
+  }
 }
 
 .scr-broker-pending-title {
@@ -228,12 +259,22 @@
   color: var(--typography-colors-main-text);
 }
 
-/* ---- Sticky bottom CTA (h=60: 44 button + 16 safe area) --------------- */
+/* ---- Sticky bottom CTA -------------------------------------------------
+   h=60 at rest (44 button + 16 base pad); on a notched iPhone the bottom pad
+   grows to the home-indicator inset instead, so the CTA never sits under it.
+   Sticky, not fixed: this is the last child of the page's own flex column
+   (.scr-broker), so it reserves its own layout space rather than needing a
+   hand-rolled height constant elsewhere — same technique as WithdrawAmount.css
+   .scr-wdamt-footer and Checkout.css .scr-checkout-footer, both already sticky.
+   Always visible without scrolling, by design — on short content that means
+   a gap above it (.scr-broker-body's 32px padding-bottom): the CTA sits at
+   the viewport floor, .scr-broker-body's own bottom padding is what's visible
+   above it, not a clearance reserve. */
 .scr-broker-footer {
   position: sticky;
   bottom: 0;
   z-index: 10;
-  padding: 0 var(--spacing-16) var(--spacing-16);
+  padding: 0 var(--spacing-16) max(var(--spacing-16), env(safe-area-inset-bottom));
   background: var(--bg-colors-container-s);
 }
 
@@ -259,9 +300,6 @@
 .scr-broker-sheet::-webkit-scrollbar-thumb {
   border-radius: var(--radius-infinity);
   background: var(--stroke-colors-default);
-}
-.scr-broker-sheet .ds-sheet-handle {
-  display: none;
 }
 
 .scr-broker-sheet-inner {
@@ -318,6 +356,19 @@
   border: none;
   border-top: 1px dashed var(--stroke-colors-default);
   margin: 0;
+}
+
+/* Same floating treatment as the page CTA above, scoped to the sheet's own
+   scroller: .ds-sheet.scr-broker-sheet is what sets overflow-y, not the
+   page, so "sticky" here pins to the sheet's bottom rather than the
+   viewport's. This is the case the keyboard-open clamp (--scr-broker-vvh)
+   used to leave broken — a short visual viewport pushed the button below
+   the fold with no way to scroll to a floating target that wasn't floating. */
+.scr-broker-sheet-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  background: var(--base-color-white);
 }
 
 /* DS Input instances, 12px apart (submit-account sheet) */

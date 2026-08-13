@@ -172,6 +172,47 @@
   color: var(--state-colors-info);
 }
 
+/* Copy/check cross-fade — same technique as ReferralMain's copy buttons: both
+   glyphs stay mounted in a 16x16 box and swap opacity + a small scale, so the
+   confirmation reads as a transition rather than the icon just snapping. */
+.scr-receive-copy-icon {
+  position: relative;
+  width: 16px;
+  height: 16px;
+}
+.scr-receive-copy-icon-copy,
+.scr-receive-copy-icon-check {
+  position: absolute;
+  inset: 0;
+}
+.scr-receive-copy-icon-check {
+  opacity: 0;
+}
+.scr-receive-copy--done .scr-receive-copy-icon-copy {
+  opacity: 0;
+}
+.scr-receive-copy--done .scr-receive-copy-icon-check {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .scr-receive-copy-icon-copy,
+  .scr-receive-copy-icon-check {
+    transition: opacity 0.16s ease, transform 0.16s ease;
+  }
+  .scr-receive-copy-icon-copy {
+    transform: scale(1);
+  }
+  .scr-receive-copy-icon-check {
+    transform: scale(0.7);
+  }
+  .scr-receive-copy--done .scr-receive-copy-icon-copy {
+    transform: scale(0.7);
+  }
+  .scr-receive-copy--done .scr-receive-copy-icon-check {
+    transform: scale(1);
+  }
+}
+
 /* ---- Memo-required box (1145:1345) ------------------------------------- */
 .scr-receive-memo {
   display: flex;
@@ -248,9 +289,6 @@
 .ds-sheet.scr-receive-sheet {
   padding: var(--spacing-16) var(--spacing-16) var(--spacing-24);
   border-radius: 16px 16px 0 0;
-}
-.scr-receive-sheet .ds-sheet-handle {
-  display: none;
 }
 
 .scr-receive-sheet-inner {
@@ -338,6 +376,22 @@
   color: var(--state-colors-danger);
 }
 
+/* Overpayment on the confirmed sheet: money coming BACK to the user, so it
+   reads green like the success banner above it, not amber like a shortfall. */
+.scr-receive-sheet-row-credit {
+  border-color: var(--state-colors-success);
+}
+.scr-receive-sheet-row-credit .scr-receive-sheet-row-value-highlight {
+  color: var(--state-colors-success);
+}
+
+.scr-receive-sheet-note {
+  margin: var(--spacing-12) 0 0;
+  color: var(--typography-colors-sub-text);
+  font-size: 12px;
+  line-height: 18px;
+}
+
 /* "Pay remaining amount" CTA — amber, not a DS Button variant; overridden
    via the className extension point (same pattern as the sheet reskins). */
 .ds-button.scr-receive-pay-btn {
@@ -346,4 +400,35 @@
 }
 .ds-button.scr-receive-pay-btn:active {
   opacity: 0.85;
+}
+
+/* Live mode renders the wallet tiles as deep-link anchors. */
+a.scr-receive-wallet-btn {
+  text-decoration: none;
+}
+
+/* Under-review sheet: neutral banner + spinner (Image 1 / clock variant). */
+.scr-receive-sheet-banner-review {
+  background: var(--bg-colors-container-s);
+  color: var(--typography-colors-main-text);
+}
+
+.scr-receive-spin {
+  display: inline-block;
+  animation: scr-receive-spin 0.9s linear infinite;
+}
+
+@keyframes scr-receive-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scr-receive-spin { animation: none; }
+}
+
+/* Confirmed sheet: primary CTA + "Join VIP channel" outline, stacked. */
+.scr-receive-sheet-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }

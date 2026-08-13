@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
-import { BottomSheet } from '../../design-system/components';
-import { Glyph, type GlyphName } from './Glyph';
+import { AnimatedEmoji, BottomSheet } from '../../design-system/components';
+import { Glyph } from './Glyph';
+import { CashbackSteps } from './CashbackSteps';
+import introArt from '../../assets/emoji/cashback.json?url';
 import './AboutCashbackSheet.css';
 
 /* ---------------------------------------------------------------------------
@@ -30,14 +32,6 @@ export function SheetHeader({ title, onClose }: SheetHeaderProps): ReactNode {
   );
 }
 
-// Same three steps as the intro splash (850:1913) but this frame's copy is
-// sentence case — deliberately its own strings, do not share with the intro.
-const STEPS: readonly { glyph: GlyphName; title: string; sub: string }[] = [
-  { glyph: 'shield', title: 'Open trading accounts', sub: 'With verified broker partners' },
-  { glyph: 'calendar', title: 'Receive weekly cashback', sub: 'From every trade you make' },
-  { glyph: 'trending-up', title: 'Upgrade your plan', sub: 'For a higher cashback rate' },
-];
-
 export interface AboutCashbackSheetProps {
   open: boolean;
   onClose: () => void;
@@ -49,23 +43,13 @@ export function AboutCashbackSheet({ open, onClose }: AboutCashbackSheetProps): 
       <SheetHeader title="About cashback" onClose={onClose} />
 
       <div className="scr-about-sheet-body">
+        <AnimatedEmoji className="scr-about-cashback-art" src={introArt} />
+
         <h2 className="scr-about-sheet-headline">
           Make every trade more rewarding with <span className="scr-about-sheet-accent">cashback</span>
         </h2>
 
-        <div className="scr-about-sheet-steps">
-          {STEPS.map((step) => (
-            <div className="scr-about-sheet-step" key={step.glyph}>
-              <span className="scr-about-sheet-step-icon">
-                <Glyph name={step.glyph} size={24} />
-              </span>
-              <span className="scr-about-sheet-step-text">
-                <span className="scr-about-sheet-step-title">{step.title}</span>
-                <span className="scr-about-sheet-step-sub">{step.sub}</span>
-              </span>
-            </div>
-          ))}
-        </div>
+        <CashbackSteps />
       </div>
     </BottomSheet>
   );

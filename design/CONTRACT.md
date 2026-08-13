@@ -56,7 +56,10 @@ Watcher loop: every 20s gather awaiting orders (pending|submitted, not expired),
 Tests (server/watcher.test.mjs, node:test or asserts, MUST pass): stub-adapter tests for match/confirm/dither-uniqueness/expiry/double-credit; plus a live read-only smoke test per adapter against a known busy address (Binance hot wallets etc.) that SKIPS with a warning on network failure instead of failing.
 
 ## Frontend API client (owner: payment-status cluster) — src/api/client.ts
-Typed fns: getGateways(), createOrder(), selectGateway(), submitOrder(), getOrder(). Base '/api'. Sends Authorization header from Telegram initData when present. `VITE_MOCK=1` → canned in-memory responses (pending→submitted→confirmed on a timer) so the UI runs without a server.
+Typed fns: getGateways(), createOrder(), selectGateway(), submitOrder(), getOrder(). Base '/api'. Sends Authorization header from Telegram initData when present.
+
+## Broker account verification (server/admin.mjs review_queue + server/index.mjs)
+POST /api/me/brokers/:id/submit {email, brokerAccountId} → review_queue row (last_status 'No account'; a rejected row re-enters as 'Registration rejected'). POST /api/me/brokers/:id/deposit → re-enters as 'Deposit required' / 'Deposit rejected'. Both return {brokers} (refreshed MeBrokerLink[]). States: pending → waiting-for-deposit → deposit-review → cashback-active, rejected on account rejection; a rejected deposit maps back to waiting-for-deposit. Admin decision (approved|waiting|rejected) DMs the broker's flow message (key resolved from decision + deposit phase). client.ts: submitBrokerAccount(), confirmBrokerDeposit(); BrokerDetail polls getMe() every 15s while a review is open.
 
 ## Telegram Mini App module (owner: backend+telegram cluster) — src/telegram/
 `initTelegram()` (ready+expand+theme params→CSS vars on :root), `getTg()`, `getInitData()`, `useBackButton(cb)`, `useMainButton(opts)`, haptic helpers. Guidelines: layouts start below Telegram native header; keyboard-open state must keep content scrollable (see frames/564-1922.xml). Existing `src/telegram.d.ts` has WebApp typings — extend there.

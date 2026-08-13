@@ -14,10 +14,6 @@
   border-radius: 16px 16px 0 0;
 }
 
-.scr-wdhist-sheet .ds-sheet-handle {
-  display: none;
-}
-
 /* ---- header ------------------------------------------------------------ */
 .scr-wdhist-head {
   display: flex;
@@ -96,7 +92,6 @@
   padding: 0 10px 0 0; /* 8px gutter + the 2px rail */
   list-style: none;
   overflow-y: auto;
-  overscroll-behavior: contain;
   /* 2px rail pinned to the right edge of the viewport. Painted as a background
      so it stays put while the rows scroll under it. */
   background: linear-gradient(var(--bg-colors-container-s), var(--bg-colors-container-s))
@@ -212,4 +207,14 @@
    apart in the reference, not on the 4px gap the date/time pair uses. */
 .scr-wdhist-to {
   white-space: nowrap;
+}
+
+/* Fetched-and-empty (or a filter with no matches). While the fetch is still
+   in flight the list simply stays blank — no placeholder rows. */
+.scr-wdhist-empty {
+  display: grid;
+  place-items: center;
+  flex: 1 1 auto;
+  text-align: center;
+  color: var(--typography-colors-sub-text);
 }

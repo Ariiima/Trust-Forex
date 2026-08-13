@@ -8,14 +8,20 @@
     "server": "node server/index.mjs",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "admin:seed": "node server/seed.mjs",
+    "deploy": "sh scripts/deploy.sh"
   },
   "dependencies": {
+    "ethers": "^6.17.0",
+    "lottie-web": "^5.13.0",
     "motion": "^12.43.0",
     "qrcode": "^1.5.4",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "react-router-dom": "^7.18.1"
+    "react-router-dom": "^7.18.1",
+    "recharts": "^3.10.1",
+    "tronweb": "^6.4.0"
   },
   "devDependencies": {
     "@types/node": "^24.13.2",

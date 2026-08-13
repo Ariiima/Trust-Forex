@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { Button, Icon, ProgressBar } from '../../design-system/components';
+import type { Gateway } from '../../api/client';
 import { useBackButton } from '../../telegram';
 import { SelectRow } from './SelectRow';
 import { CURRENCIES } from './currencyData';
+import { currencyOptions } from './gatewayDisplay';
 import './PaymentCurrency.css';
 
 /* ---------------------------------------------------------------------------
@@ -19,18 +21,23 @@ import './PaymentCurrency.css';
 
 export interface PaymentCurrencyProps {
   initialCurrencyId?: string;
+  /** Live options from GET /api/gateways. Omitted = static demo list (the
+   *  design-review harness hits this route with no order in flight). */
+  gateways?: Gateway[];
   onBack?: () => void;
   onContinue?: (currencyId: string) => void;
 }
 
 export default function PaymentCurrency({
   initialCurrencyId,
+  gateways,
   onBack,
   onContinue,
 }: PaymentCurrencyProps): ReactNode {
   // No in-app header: Telegram draws the bar, so back lives on its BackButton.
   useBackButton(onBack);
   const [selected, setSelected] = useState<string | null>(initialCurrencyId ?? null);
+  const currencies = gateways ? currencyOptions(gateways) : CURRENCIES;
 
   return (
     <div className="scr-payment-currency">
@@ -40,16 +47,22 @@ export default function PaymentCurrency({
         <section className="scr-payment-currency-card">
           <h2 className="scr-payment-currency-heading">Select currency</h2>
           <div className="scr-payment-currency-list">
-            {CURRENCIES.map((c) => (
-              <SelectRow
-                key={c.id}
-                icon={c.icon}
-                primary={c.symbol}
-                secondary={c.name}
-                selected={c.id === selected}
-                onClick={() => setSelected(c.id)}
-              />
-            ))}
+            {gateways && currencies.length === 0 ? (
+              <p className="scr-payment-currency-empty">
+                Payments are temporarily unavailable. Please try again later.
+              </p>
+            ) : (
+              currencies.map((c) => (
+                <SelectRow
+                  key={c.id}
+                  icon={c.icon}
+                  primary={c.symbol}
+                  secondary={c.name}
+                  selected={c.id === selected}
+                  onClick={() => setSelected(c.id)}
+                />
+              ))
+            )}
           </div>
         </section>
       </main>

@@ -1,13 +1,18 @@
-import { Fragment, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { Icon, NavigationBar } from '../../design-system/components';
+import { AnimatedEmoji, Icon, NavigationBar } from '../../design-system/components';
 import type { NavigationTab } from '../../design-system/components';
 import { PlanCard } from '../plans/PlanCard';
 import { PLANS } from '../plans/plans-data';
 import type { Plan } from '../plans/plans-data';
 import { PromoCarousel } from './PromoCarousel';
-import heroExpiredArt from '../../assets/home/hero-expired.png';
-import heroNoSubArt from '../../assets/home/hero-nosub.png';
+import { bucketsFor, PERIODS, OVERVIEW } from './signal-buckets';
+import type { Period } from './signal-buckets';
+import { haptic } from '../../design-system/useCountUp';
+import { getTg } from '../../telegram';
+import { cachedMe, cachedSignals, getMe, getSignals, joinGroup, type MeSubscription, type SignalResult } from '../../api/client';
+import heroExpiredArt from '../../assets/emoji/home-expired.json?url';
+import heroNoSubArt from '../../assets/emoji/home.json?url';
 import './Home.css';
 
 /* ---------------------------------------------------------------------------
@@ -20,7 +25,6 @@ import './Home.css';
  * ------------------------------------------------------------------------- */
 
 export type Subscription = 'active' | 'expired' | 'none';
-type Period = 'Weekly' | 'Monthly' | 'Yearly';
 
 export interface HomeProps {
   /** Which subscription state to show first. Defaults to `active`. */
@@ -31,6 +35,21 @@ export interface HomeProps {
   onTabChange?: (tab: NavigationTab) => void;
 }
 
+/**
+ * Ask the server for a one-person invite to the VIP group and open it.
+ *
+ * Not a fixed t.me link: a shared link is a free subscription. The server
+ * issues a single-use invite that expires with the subscription, and refuses
+ * outright if the subscription is not live.
+ */
+async function openVipChannel(): Promise<void> {
+  const { link } = await joinGroup().catch(() => ({ link: undefined }));
+  if (!link) return;
+  const tg = getTg();
+  if (tg?.openTelegramLink) tg.openTelegramLink(link);
+  else window.open(link, '_blank');
+}
+
 /* ---- static data ---------------------------------------------------------- */
 const TP_TABS = [
   { id: 'TP1', rr: 'RR 1:0.5' },
@@ -39,60 +58,28 @@ const TP_TABS = [
   { id: 'TP4', rr: 'RR 1:3' },
 ] as const;
 
-const PERIODS: Record<Period, { overview: string; date: string }> = {
-  Weekly: { overview: 'Last 4 weeks overview', date: 'August · Week 1' },
-  Monthly: { overview: 'Last 3 months overview', date: 'September 2026' },
-  Yearly: { overview: 'Last 12 months overview', date: 'Q1 2026' },
-};
 
 const PROMO_START: Record<Subscription, number> = { active: 1, expired: 2, none: 0 };
 
 
-// Signal-performance area chart — synthesised to match the render's silhouette
-// (exact vector not exported from Figma): high mid baseline, twin peaks at
-// ~31%/40% width, crosshair x=155, trough at ~76%, late rebound bump at ~82%.
-const CHART_LINE =
-  // Traced off design/review/ref/home-active.png: the topmost stroke pixel per
-  // column of the 296x164 plot (+0.75 for the 1.5px stroke's centreline). The
-  // 44 columns hidden behind the readout tooltip are bridged with an arc that
-  // stays above the chord, so they keep sitting behind the same box.
-  //
-  // Douglas-Peucker'd to 30 vertices (eps 2.7px, max deviation 5px from the
-  // full 71-point trace) — a weekly series would not carry 71 samples, and the
-  // curve keeps its peaks because DP preserves extremes.
-  'M 0 103.8 L 25 104.8 L 32 97.8 L 40 105.8 L 54 103.8 L 73 88.8 L 81 90.8 L 100 62.8 L 109 77.8 L 120 83.8 L 126 67.8 L 134 64.8 L 141 49.4 L 160 38.3 L 174 42.8 L 187 57.8 L 195 56.8 L 209 69.8 L 215 68.8 L 220 79.8 L 227 81.8 L 235 92.8 L 242 92.8 L 248 101.8 L 262 73.8 L 270 82.8 L 275 80.8 L 282 88.8 L 290 86.8 L 295 92.8';
-const CHART_AREA = `${CHART_LINE} L 296 164 L 0 164 Z`;
-const CHART_PEAK_X = 155; // px within the 296-wide plot (XML crosshair x)
+const CHART_PEAK_X = 155; // px within the 296-wide plot — default crosshair position
 const CHART_W = 296; // svg is a fixed 296x164 box, so viewBox units are px
 const CHART_TOP = 40; // .scr-home-chart is 204 tall, svg (164) sits flush to the bottom
+const TIP_GAP = 8;
+const TIP_W = 124; // .scr-home-tooltip
 
-// "M 0 100 L 8 96 ..." -> [[0,100],[8,96],...]; the drawn curve IS the dataset.
-const CHART_POINTS: readonly (readonly [number, number])[] = (CHART_LINE.match(/[\d.]+ [\d.]+/g) ?? []).map(
-  (p) => p.split(' ').map(Number) as [number, number],
-);
+/** x of point i of n — point-to-edge across the plot. */
+const chartXAt = (i: number, n: number) => (n > 1 ? (i / (n - 1)) * CHART_W : CHART_W / 2);
 
-/** Height of the curve at plot x, linearly interpolated between vertices. */
-function chartYAt(x: number): number {
-  const pts = CHART_POINTS;
-  if (x <= pts[0][0]) return pts[0][1];
-  for (let i = 1; i < pts.length; i++) {
-    const [x0, y0] = pts[i - 1];
-    const [x1, y1] = pts[i];
-    if (x <= x1) return y0 + ((y1 - y0) * (x - x0)) / (x1 - x0 || 1);
-  }
-  return pts[pts.length - 1][1];
-}
-
-/* ponytail: no real time-series behind the chart, so the readout is derived
-   from the curve itself — y is inverted (lower pixel = better). Swap this for
-   the API series once /api/signals exists; the drag handling stays as-is. */
-function chartReadout(x: number) {
-  const y = chartYAt(x);
-  const strength = Math.max(0, Math.min(1, (164 - y) / 140));
-  const signals = Math.round(18 + strength * 34);
-  const rate = 38 + strength * 44;
-  return { signals, tp1: Math.round((signals * rate) / 100), rate: rate.toFixed(1) };
-}
+const CHART_H = 164;
+/* Hit rate -> plot height, on a fixed 0..100% axis with room for the marker's
+   radius at either end. Fixed, not fitted to the visible range: the three tiles
+   directly above the chart report these same percentages, and an axis that
+   restretched per tab would draw the same 62% week as a peak in one and a
+   trough in the next. */
+const CHART_PAD = 12;
+const yForRate = (rate: number) =>
+  CHART_H - CHART_PAD - (Math.max(0, Math.min(100, rate)) / 100) * (CHART_H - 2 * CHART_PAD);
 
 /* ===========================================================================
  * Countdown ring — SVG arc gauge, green portion via stroke-dasharray.
@@ -114,9 +101,12 @@ const END_Y = CY - CAP;
 const END_DX = Math.sqrt(R * R - CAP * CAP);
 const ARC = `M ${(116 - END_DX).toFixed(2)} ${END_Y} A ${R} ${R} 0 0 1 ${(116 + END_DX).toFixed(2)} ${END_Y}`;
 
-function CountdownRing({ days }: { days: number }): ReactNode {
+function CountdownRing({ days, totalDays }: { days: number; totalDays: number }): ReactNode {
   const len = R * 2 * Math.asin(END_DX / R); // swept angle x radius
-  const green = len * 0.41; // frame: green cap reaches x=156, 78.4 deg from the 9 o'clock start
+  /* The arc is what is LEFT of the term that was bought — full on day one,
+     draining to nothing at expiry. The frame's fixed 0.41 was one sample
+     state (green cap at x=156), not a constant. */
+  const green = len * Math.min(1, Math.max(0, days / Math.max(1, totalDays)));
   return (
     <div className="scr-home-ring">
       <svg viewBox="0 0 232 112" fill="none">
@@ -148,12 +138,36 @@ function CountdownRing({ days }: { days: number }): ReactNode {
 }
 
 /* ---- hero: active --------------------------------------------------------- */
-function HeroActive({ onNavigate }: { onNavigate?: (r: string) => void }): ReactNode {
+/** "1 Month" / "3 Months" — the purchased term, rounded to whole months. */
+function termLabel(totalDays: number): string {
+  const months = Math.max(1, Math.round(totalDays / 30));
+  return `${months} Month${months > 1 ? 's' : ''}`;
+}
+
+/** "Aug 24,2026" — the frame's format, no separator space. */
+function dateLabel(epochMs: number): string {
+  const d = new Date(epochMs);
+  return `${d.toLocaleString('en-US', { month: 'short' })} ${d.getDate()},${d.getFullYear()}`;
+}
+
+function HeroActive({
+  onNavigate,
+  subscription,
+}: {
+  onNavigate?: (r: string) => void;
+  subscription: MeSubscription | null;
+}): ReactNode {
+  // subscription is null only for the beat before /api/me answers — show a
+  // quiet loading state rather than numbers that look like a real account.
+  const loading = !subscription;
+  const days = subscription?.daysLeft ?? 0;
+  const totalDays = subscription?.totalDays ?? Math.max(days, 1);
+  const plan = subscription?.plan ?? '';
   return (
     <section className="scr-home-hero scr-home-hero--active">
       <div className="scr-home-hero-top">
         <div className="scr-home-ringbox">
-          <CountdownRing days={22} />
+          <CountdownRing days={days} totalDays={totalDays} />
         </div>
 
         <div className="scr-home-status">
@@ -167,19 +181,23 @@ function HeroActive({ onNavigate }: { onNavigate?: (r: string) => void }): React
           <div className="scr-home-statusrow">
             <span className="scr-home-status-label">Current plan</span>
             <span className="scr-home-status-plan">
-              <b>Silver</b>
-              <span>/ 1 Month</span>
+              <b>{loading ? '—' : plan[0].toUpperCase() + plan.slice(1)}</b>
+              {/* The term actually bought — the frame's "1 Month" was the
+                  Silver sample, and read as a lie on a 3-month Gold. */}
+              {loading ? null : <span>/ {termLabel(totalDays)}</span>}
             </span>
           </div>
           <div className="scr-home-statusrow">
             <span className="scr-home-status-label">Expires on</span>
-            <span className="scr-home-status-value">Aug 24,2026</span>
+            <span className="scr-home-status-value">
+              {subscription?.expiresAt ? dateLabel(subscription.expiresAt) : '—'}
+            </span>
           </div>
         </div>
       </div>
 
       <div className="scr-home-hero-buttons">
-        <button type="button" className="scr-home-herobtn scr-home-herobtn--solid" onClick={() => onNavigate?.('vip-channel')}>
+        <button type="button" className="scr-home-herobtn scr-home-herobtn--solid" onClick={() => { void openVipChannel(); }}>
           Join VIP channel
         </button>
         <button type="button" className="scr-home-herobtn scr-home-herobtn--ghost" onClick={() => onNavigate?.('plans')}>
@@ -209,7 +227,7 @@ function HeroMessage({
   return (
     <section className="scr-home-hero scr-home-hero--message">
       <div className="scr-home-hero-message-top">
-        <img className="scr-home-hero-art" src={art} alt="" width={140} height={140} />
+        <AnimatedEmoji className="scr-home-hero-art" src={art} />
         <div className="scr-home-hero-copy">
           <span className="scr-home-hero-title">{title}</span>
           <span className="scr-home-hero-subtitle">{subtitle}</span>
@@ -229,18 +247,91 @@ function HeroMessage({
 function SignalCard(): ReactNode {
   const [tp, setTp] = useState<string>('TP1');
   const [period, setPeriod] = useState<Period>('Monthly');
-  const cfg = PERIODS[period];
+  const [results, setResults] = useState<SignalResult[]>(() => cachedSignals() ?? []);
+  useEffect(() => {
+    if (cachedSignals()) return;
+    let live = true;
+    void getSignals().then((r) => live && setResults(r));
+    return () => {
+      live = false;
+    };
+  }, []);
 
-  // Draggable crosshair (tweaks.md: "charts work via dragging the handle").
-  const [chartX, setChartX] = useState(CHART_PEAK_X);
+  /* One point per week / month / quarter. The tiles above the chart are NOT
+     the plotted buckets summed — they summarise a fixed recent window (4 weeks
+     / 3 months / 12 months, OVERVIEW) regardless of how many points the chart
+     draws. No published results yet (fresh deploy, or still loading) means an
+     empty chart, not a fabricated one. */
+  const buckets = results.length ? bucketsFor(results, period, tp) : [];
+  const ov = OVERVIEW[period];
+  const ovBuckets = (ov.fold === period ? buckets : bucketsFor(results, ov.fold, tp)).slice(-ov.n);
+  const totals = ovBuckets.reduce((a, b) => ({ total: a.total + b.total, reached: a.reached + b.reached }), {
+    total: 0,
+    reached: 0,
+  });
+  const stats = {
+    total: totals.total,
+    reached: totals.reached,
+    rate: totals.total ? ((totals.reached / totals.total) * 100).toFixed(1) : '0.0',
+  };
+  const overview = ov.label;
+
+  /* Draggable crosshair (tweaks.md: "charts work via dragging the handle"), but
+     it lands on points, never between them — the readout has nothing to say
+     about the gaps. State is the point's index, not its x. */
+  const points = buckets.map((b) => b.y ?? yForRate(b.rate));
+  const [picked, setPicked] = useState(() => Math.round((CHART_PEAK_X / CHART_W) * 11));
+  const idx = Math.max(0, Math.min(picked, points.length - 1)); // a shorter period can outrun it
+  /* Same rule as the earnings chart: the readout follows the finger, so it only
+     exists while there is one. `?tip` pins it open for the pixel harness —
+     design/review/ref/home-active.png captures it mid-drag. */
+  const [reading, setReading] = useState(
+    () => import.meta.env.DEV && new URLSearchParams(window.location.search).has('tip'),
+  );
   const plotRef = useRef<HTMLDivElement>(null);
-  const readout = chartReadout(chartX);
 
+  /* The readout survives the finger lifting — it is a reading, not a hover —
+     and is dismissed by scrolling or touching anywhere outside the plot, the
+     same rule the info callout below uses. */
+  useEffect(() => {
+    if (!reading) return;
+    const close = (e: Event): void => {
+      if (plotRef.current?.contains(e.target as Node)) return;
+      // Page scrolls only — same carousel problem as the info callout below.
+      if (e.type === 'scroll' && !(e.target as Node | null)?.contains?.(plotRef.current)) return;
+      setReading(false);
+    };
+    document.addEventListener('pointerdown', close, true);
+    document.addEventListener('scroll', close, true);
+    return () => {
+      document.removeEventListener('pointerdown', close, true);
+      document.removeEventListener('scroll', close, true);
+    };
+  }, [reading]);
+  const readout = buckets[idx];
+
+  const line = points
+    .map((y, i) => `${i === 0 ? 'M' : 'L'} ${chartXAt(i, points.length).toFixed(1)} ${y.toFixed(1)}`)
+    .join(' ');
+  const chartX = chartXAt(idx, points.length);
+  /* The readout never covers the point it is reporting: it takes whichever side
+     of the point it fits on. TIP_W <= (CHART_W - 2 x TIP_GAP) / 2, so one of
+     the two always fits. */
+  const tipLeft = chartX + TIP_GAP + TIP_W <= CHART_W ? chartX + TIP_GAP : chartX - TIP_GAP - TIP_W;
+
+  /* One haptic tick per point crossed, keyed on the point rather than the
+     pointer event — otherwise a single swipe buzzes continuously. */
+  const lastVertex = useRef(-1);
   const trackPointer = (e: React.PointerEvent<HTMLDivElement>) => {
     const rect = plotRef.current?.getBoundingClientRect();
     if (!rect) return;
-    const x = ((e.clientX - rect.left) / rect.width) * CHART_W;
-    setChartX(Math.max(0, Math.min(CHART_W, x)));
+    const t = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    const i = Math.round(t * (points.length - 1));
+    setPicked(i);
+    if (i !== lastVertex.current) {
+      lastVertex.current = i;
+      haptic('light');
+    }
   };
 
   return (
@@ -267,20 +358,20 @@ function SignalCard(): ReactNode {
       <div className="scr-home-overview">
         <span className="scr-home-overview-title">
           <span className="scr-home-overview-bullet">•</span>
-          {cfg.overview}
+          {overview}
         </span>
         <div className="scr-home-overview-stats">
           <div className="scr-home-stat">
             <span className="scr-home-stat-label">Total signals</span>
-            <span className="scr-home-stat-value">80</span>
+            <span className="scr-home-stat-value">{stats.total}</span>
           </div>
           <div className="scr-home-stat">
-            <span className="scr-home-stat-label">TP1 reached</span>
-            <span className="scr-home-stat-value">50</span>
+            <span className="scr-home-stat-label">{tp} reached</span>
+            <span className="scr-home-stat-value">{stats.reached}</span>
           </div>
           <div className="scr-home-stat">
-            <span className="scr-home-stat-label">TP1 hit rate</span>
-            <span className="scr-home-stat-value scr-home-stat-value--success">62.0%</span>
+            <span className="scr-home-stat-label">{tp} hit rate</span>
+            <span className="scr-home-stat-value scr-home-stat-value--success">{stats.rate}%</span>
           </div>
         </div>
       </div>
@@ -289,13 +380,18 @@ function SignalCard(): ReactNode {
         className="scr-home-chart"
         ref={plotRef}
         onPointerDown={(e) => {
+          if (!buckets.length) return;
           e.currentTarget.setPointerCapture(e.pointerId);
+          setReading(true);
           trackPointer(e);
         }}
         onPointerMove={(e) => {
           if (e.currentTarget.hasPointerCapture(e.pointerId)) trackPointer(e);
         }}
       >
+        {!buckets.length && (
+          <span className="scr-home-chart-empty">No published results yet</span>
+        )}
         <svg className="scr-home-chart-svg" viewBox="0 0 296 164" fill="none" preserveAspectRatio="none">
           <defs>
             <linearGradient id="scr-home-chart-fill" x1="0" y1="0" x2="0" y2="1">
@@ -303,33 +399,43 @@ function SignalCard(): ReactNode {
               <stop offset="1" stopColor="#144CCD" stopOpacity="0" />
             </linearGradient>
           </defs>
-          <path d={CHART_AREA} fill="url(#scr-home-chart-fill)" />
-          <path d={CHART_LINE} stroke="#144CCD" strokeWidth={1.5} strokeLinejoin="round" strokeLinecap="round" />
+          <path d={`${line} L ${CHART_W} 164 L 0 164 Z`} fill="url(#scr-home-chart-fill)" />
+          <path d={line} stroke="#144CCD" strokeWidth={1.5} strokeLinejoin="round" strokeLinecap="round" />
+          {/* No dot per point: same rule as the earnings chart — a dot on every
+              bucket competed with the crosshair for "you are here" and left the
+              line beaded. The point being read carries the only marker, and it
+              is .scr-home-chart-marker below. */}
         </svg>
-        <span className="scr-home-chart-crosshair" style={{ left: `${chartX}px` }} />
-        <span
-          className="scr-home-chart-marker"
-          style={{ left: `${chartX}px`, top: CHART_TOP + chartYAt(chartX) }}
-        />
-        <div className="scr-home-tooltip" style={{ left: `${chartX}px` }}>
-          <span className="scr-home-tooltip-date">{cfg.date}</span>
+        {reading ? (
+          <>
+            <span className="scr-home-chart-crosshair" style={{ left: `${chartX}px` }} />
+            <span
+              className="scr-home-chart-marker"
+              style={{ left: `${chartX}px`, top: CHART_TOP + points[idx] }}
+            />
+          </>
+        ) : null}
+        <div className="scr-home-tooltip" style={{ left: `${tipLeft}px`, display: reading ? undefined : 'none' }}>
+          <span className="scr-home-tooltip-date">{readout?.label}</span>
           <div className="scr-home-tooltip-row">
             <span>Signals</span>
-            <span>{readout.signals}</span>
+            <span>{readout?.total ?? 0}</span>
           </div>
+          {/* The rows name the selected level. They said TP1 whichever tab was
+              on, while reporting that tab's counts. */}
           <div className="scr-home-tooltip-row">
-            <span>TP1 reached</span>
-            <span>{readout.tp1}</span>
+            <span>{tp} reached</span>
+            <span>{readout?.reached ?? 0}</span>
           </div>
           <div className="scr-home-tooltip-row scr-home-tooltip-row--success">
-            <span>TP1 hit rate</span>
-            <span>{readout.rate}%</span>
+            <span>{tp} hit rate</span>
+            <span>{(readout?.rate ?? 0).toFixed(1)}%</span>
           </div>
         </div>
       </div>
 
       <div className="scr-home-period">
-        {(Object.keys(PERIODS) as Period[]).map((p) => (
+        {PERIODS.map((p) => (
           <button
             key={p}
             type="button"
@@ -388,13 +494,40 @@ function ChoosePlanSection({
     subscription === 'none' ? 'gold' : null,
   );
 
+  // Any scroll or tap outside the info button dismisses the callout. Capture
+  // phase because the scroll happens on an inner element, not on document.
+  const infoRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!tipOpen) return;
+    const close = (e: Event): void => {
+      if (infoRef.current?.contains(e.target as Node)) return;
+      /* Only a scroll of the PAGE dismisses. `scroll` does not bubble, but a
+         capture-phase listener on document still sees every inner scroller —
+         and the promo carousel below auto-advances on a dwell timer, so its
+         horizontal scrollTo was closing this callout ~2s after it opened with
+         nobody having touched anything. */
+      if (e.type === 'scroll' && !(e.target as Node | null)?.contains?.(infoRef.current)) return;
+      setTipOpen(false);
+    };
+    document.addEventListener('pointerdown', close, true);
+    // Armed a beat late: inserting the callout shifts the page, and that shift
+    // fires a scroll of its own that would close it again on the spot.
+    const arm = setTimeout(() => document.addEventListener('scroll', close, true), 150);
+    return () => {
+      clearTimeout(arm);
+      document.removeEventListener('pointerdown', close, true);
+      document.removeEventListener('scroll', close, true);
+    };
+  }, [tipOpen]);
+
   return (
     <section className="scr-home-card scr-home-plans">
       <div className="scr-home-plans-head">
         <h2 className="scr-home-card-title">Choose your plan</h2>
         <button
           type="button"
-          className="scr-home-info"
+          ref={infoRef}
+          className="ds-info-btn"
           aria-label="Plan info"
           onClick={() => setTipOpen((v) => !v)}
         >
@@ -414,8 +547,12 @@ function ChoosePlanSection({
             key={plan.id}
             plan={plan}
             variant="full"
+            /* It is expanded because it is the picked one, so it carries the
+               blue border — any tier, not just whichever one plans-data
+               happens to flag as highlighted. */
+            selected
             className="scr-home-plan-expanded"
-            onContinue={() => onNavigate?.('checkout')}
+            onContinue={() => onNavigate?.(`checkout?plan=${plan.id}`)}
           />
         ) : (
           <PlanRow key={plan.id} plan={plan} onClick={() => setSelected(plan.id)} />
@@ -430,6 +567,24 @@ function ChoosePlanSection({
  * ========================================================================= */
 export default function Home({ initialSubscription = 'active', onNavigate, onTabChange }: HomeProps): ReactNode {
   const [subscription, setSubscription] = useState<Subscription>(initialSubscription);
+
+  /* Which hero shows is the server's answer, not a prop — `initialSubscription`
+     stays as the fallback (and as what the review harness pins). Same pattern as
+     PromoCarousel: render the static state now, correct it when /api/me lands. */
+  const [me, setMe] = useState(cachedMe);
+  useEffect(() => {
+    if (cachedMe()) return;
+    let live = true;
+    void getMe().then((m) => live && setMe(m));
+    return () => {
+      live = false;
+    };
+  }, []);
+  useEffect(() => {
+    const status = me?.subscription?.status;
+    if (status === 'active' || status === 'expired') setSubscription(status);
+    else if (me && !me.subscription) setSubscription('none');
+  }, [me]);
 
   return (
     <div className="scr-home">
@@ -447,14 +602,14 @@ export default function Home({ initialSubscription = 'active', onNavigate, onTab
       )}
 
       {subscription === 'active' ? (
-        <HeroActive onNavigate={onNavigate} />
+        <HeroActive onNavigate={onNavigate} subscription={me?.subscription ?? null} />
       ) : subscription === 'expired' ? (
         <HeroMessage
           art={heroExpiredArt}
           title="Your subscription has expired"
           subtitle="Regain VIP signal access and enjoy your member benefits again."
           ctaLabel="Renew subscription"
-          note="Expired on Aug 24, 2025"
+          note={me?.subscription?.expiresAt ? `Expired on ${dateLabel(me.subscription.expiresAt)}` : undefined}
           onCta={() => onNavigate?.('plans')}
         />
       ) : (
@@ -467,7 +622,7 @@ export default function Home({ initialSubscription = 'active', onNavigate, onTab
         />
       )}
 
-      <PromoCarousel start={PROMO_START[subscription]} />
+      <PromoCarousel start={PROMO_START[subscription]} section="subscription" />
 
       <SignalCard />
 

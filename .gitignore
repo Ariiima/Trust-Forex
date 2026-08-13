@@ -43,3 +43,16 @@ design/review/out/
 # 1:1 frames live in design/review/ref/ now, so the whole directory is scratch.
 .playwright-mcp/
 __pycache__/
+
+# Admin dashboard database
+server/*.sqlite
+server/*.sqlite-*
+
+# Nightly VACUUM INTO snapshots of the live database (server/jobs.mjs). The
+# only copy of every balance, so it is backed up — but not into git.
+server/backups/
+/backups/
+
+# Wallet addresses (server/gateways.json's own comment: "not in git" — deploy.sh
+# already excludes it from the shipped tarball).
+server/gateways.json

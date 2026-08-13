@@ -22,12 +22,10 @@ export interface Plan {
   /** Gold is visually highlighted (blue border + blue "Continue" text). */
   highlighted?: boolean;
   /**
-   * Checkout's "Total payable" base amount. Confirmed from Figma (552:3115)
-   * only for Silver ($49.00 — the checkout mock uses a different figure
-   * than the $200 sticker price on this same plan; not derivable, taken
-   * as-is). Gold/Diamond have no checkout reference screen, so their
-   * checkout base falls back to the catalogue price — an assumption, not a
-   * confirmed Figma value (see report).
+   * Checkout's "Total payable" base amount. Real prices set by the owner
+   * (08-09): 200 / 499 / 1699 — this superseded the $49 Silver figure from
+   * the Figma checkout mock (552:3115). Must stay in sync with PLAN_PRICES
+   * in server/orders.mjs, which is what actually prices an order.
    */
   checkoutPrice: number;
 }
@@ -36,38 +34,33 @@ export const PLANS: readonly Plan[] = [
   {
     id: 'silver',
     name: 'Silver',
-    price: '200.00',
+    price: '2.00', // ponytail: testing price, mirrors server/orders.mjs PLAN_PRICES.silver — revert both together
     duration: '1 month',
     badge: badgeSilverUrl,
     boost: '15%',
-    checkoutPrice: 49.0,
+    checkoutPrice: 2.0,
   },
   {
     id: 'gold',
     name: 'Gold',
-    price: '550.00',
+    price: '499.00',
     duration: '3 months',
     badge: badgeGoldUrl,
     boost: '20%',
     tag: { label: 'Most popular', variant: 'popular' },
     highlighted: true,
-    checkoutPrice: 550.0,
+    checkoutPrice: 499.0,
   },
   {
     id: 'diamond',
     name: 'Diamond',
-    price: '1700.00',
+    price: '1699.00',
     duration: '12 months',
     badge: badgeDiamondUrl,
     boost: '30%',
     tag: { label: 'Best value', variant: 'value' },
-    checkoutPrice: 1700.0,
+    checkoutPrice: 1699.0,
   },
 ];
-
-/** Fixed values confirmed from the checkout reference screens (Silver only). */
-export const EARNING_BALANCE_AVAILABLE = 12.5;
-export const DISCOUNT_CODE = 'SUMMER12';
-export const DISCOUNT_AMOUNT = 4.5;
 
 export const FEATURE_LABELS = ['VIP signal channel access', 'All trading signals included'] as const;

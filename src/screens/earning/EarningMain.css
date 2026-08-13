@@ -111,9 +111,26 @@
   border-radius: var(--radius-infinity);
 }
 
+/* No earnings at all: an outlined pill carrying "No earnings yet" in the
+   card's secondary tone, in place of the two coloured segments. */
+.scr-earn-bar-empty {
+  flex: 1 1 auto;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: var(--radius-infinity);
+  color: var(--scr-earn-label);
+  font-size: 12px;
+  line-height: 22px;
+}
+
 .scr-earn-bar-seg {
   display: grid;
   place-items: center;
+  /* ponytail: floor keeps "100%" readable; the other segment shrinks to pay for it */
+  flex: 0 1 auto;
+  min-width: 36px;
   color: var(--base-color-white);
   font-size: 10px;
   line-height: 20px;
@@ -287,7 +304,9 @@
   width: 100%;
   height: 160px; /* .. $0 line, y728 */
   cursor: ew-resize;
-  touch-action: pan-y;
+  /* Same as the home chart: pan-y let a slightly-diagonal scrub scroll the page
+     out from under the finger. The plot takes the whole gesture. */
+  touch-action: none;
 }
 
 .scr-earn-plot svg {
@@ -326,13 +345,17 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  width: 196px;
+  /* 140, not the frame's 196: `left` is now the box's own edge, and the box
+     takes whichever side of the point it fits on so it never covers the point
+     it reports. A box wider than (296 - 2x8)/2 cannot clear a point in the
+     middle of the plot on either side, so the labels lost their "earnings"
+     (the legend under the chart still spells both out in full). */
+  width: 140px;
   height: 73px;
   padding: var(--spacing-8);
   border-radius: 4px;
   background: var(--bg-colors-container-p);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transform: translateX(-50%);
   pointer-events: none;
 }
 

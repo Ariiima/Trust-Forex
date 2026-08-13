@@ -156,9 +156,13 @@
   align-items: baseline;
   gap: var(--spacing-4);
 }
+/* 14/28, matching the "Expires on <date>" line directly beneath it. At 16/32
+   the plan name sat a step above every other value in this status block and
+   the design review read the pair as mismatched rather than hierarchical;
+   weight still separates it from the label beside it. */
 .scr-home-status-plan b {
-  font-size: 16px;
-  line-height: 32px;
+  font-size: 14px;
+  line-height: 28px;
   font-weight: var(--font-weight-semibold);
   color: #fff;
 }
@@ -267,6 +271,11 @@
 /* =====================================================================
    PROMO CAROUSEL — horizontal scroll-snap, 3 banners, dot indicators
    ===================================================================== */
+/* The dot row is a sibling of the scroller, not a child: an absolute child of
+   a scroll container still scrolls with the content. */
+.scr-home-carousel-wrap {
+  position: relative;
+}
 .scr-home-carousel {
   display: flex;
   overflow-x: auto;
@@ -336,15 +345,60 @@
   gap: var(--spacing-4);
 }
 .scr-home-dot {
+  position: relative;
   width: 6px;
   height: 6px;
+  padding: 0;
   border-radius: var(--radius-infinity);
   background: rgba(255, 255, 255, 0.4);
+  /* The pill grows and shrinks rather than swapping width on the frame the
+     slide changes — the handover is the thing you actually watch. */
+  transition: width 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+}
+/* They are the manual forward/back control, and 6px is not a tap target. The
+   hit area grows, the dot does not. (The active pill clips this via its
+   overflow, which is fine — tapping the slide you are on does nothing.) */
+.scr-home-dot::after {
+  content: '';
+  position: absolute;
+  inset: -12px -5px;
 }
 .scr-home-dot--on {
-  /* 10px in the frame (ref-main dot run x170..179), not a long 20px pill */
+  /* Plain highlight — what reduced-motion users see, and the base state
+     before the pill-stretch below applies. */
   width: 10px;
   background: #fff;
+}
+
+/* Progress pill: the active dot stretches out and a fill sweeps across it
+   over the dwell period, driving the auto-advance (see PromoCarousel).
+   Widths/radius match the reference pill in Cashback.css. Scoped to
+   no-preference so reduced-motion falls back to the plain dot above. */
+@media (prefers-reduced-motion: no-preference) {
+  .scr-home-dot--on {
+    position: relative;
+    width: 20px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.4); /* track colour; fill draws "on" over it */
+  }
+  .scr-home-dot-fill {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-infinity);
+    background: #fff;
+    transform-origin: left;
+    animation-name: scr-home-dot-fill;
+    animation-timing-function: linear;
+    /* duration set inline from PromoCarousel (DWELL_MS) */
+  }
+  @keyframes scr-home-dot-fill {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
 }
 
 /* =====================================================================
@@ -487,10 +541,23 @@
      tooltip is top-anchored, so it does not move. */
   height: 204px;
   cursor: ew-resize;
-  /* Horizontal drags scrub the crosshair; vertical ones still scroll the page. */
-  touch-action: pan-y;
+  /* `none`, not `pan-y`: a scrub is never perfectly horizontal, and pan-y let
+     the browser claim the vertical component mid-drag — the page slid away
+     under the finger while the crosshair was being dragged. The plot owns every
+     gesture that starts on it; it is 204px tall, so scrolling has room either
+     side of it. */
+  touch-action: none;
   user-select: none;
   -webkit-user-select: none;
+}
+.scr-home-chart-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--typography-colors-sub-text);
+  font-size: 13px;
 }
 .scr-home-chart svg.scr-home-chart-svg {
   position: absolute;
@@ -504,9 +571,11 @@
   bottom: 0;
   height: 158px;
   border-left: 1px dashed var(--primary-colors-300);
+  pointer-events: none;
 }
 .scr-home-chart-marker {
   position: absolute;
+  pointer-events: none;
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -523,7 +592,9 @@
   border-radius: var(--radius-small);
   background: #fff;
   box-shadow: 0 4px 16px rgba(20, 34, 68, 0.16);
-  transform: translateX(-50%);
+  /* `left` is the box's own edge: Home picks the side of the point the box fits
+     on, so the readout never covers the point it reports. */
+  pointer-events: none;
 }
 .scr-home-tooltip-date {
   display: block;
@@ -589,15 +660,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-.scr-home-info {
-  display: inline-flex;
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  color: var(--base-color-black);
-  opacity: 0.72;
 }
 .scr-home-infotip {
   position: absolute;
@@ -678,11 +740,12 @@
   line-height: 24px;
   font-weight: var(--font-weight-semibold);
 }
-/* The frame's "$" is type — larger and heavier than the digits beside it —
-   not the stroked currency-dollar icon this used to render. */
+/* The frame's "$" is type, not the stroked currency-dollar icon this used to
+   render. Flush and 16px, matching .scr-plans-currency (PlanCard.css): the
+   18px size and 4px side padding this carried read as a stray space in the
+   collapsed rows, the same defect already fixed on the expanded card. */
 .scr-home-planrow-currency {
-  padding: 0 4px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
 }
 .scr-home-planrow-duration {

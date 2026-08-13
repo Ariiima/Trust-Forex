@@ -7,8 +7,10 @@ import './OrderSummarySheet.css';
  * Order summary BottomSheet — Figma 1206:4219. Opened by Checkout's
  * "Review order" CTA; recaps plan / price breakdown / total and hands off
  * to order creation via `onConfirm`. Also usable standalone.
- * Note this sheet's money format is `$49.00` (no space after $), unlike the
- * checkout card's `$ 49.00` — both taken literally from the Figma layers.
+ * Money format here is `$49.00`, no space after $. The checkout card used
+ * to render `$ 49.00` with a literal space baked into its JSX — read as a
+ * bug in client review, not a Figma-sourced difference — and is now fixed
+ * to match this sheet instead of diverging from it.
  */
 export interface OrderSummarySheetProps {
   open: boolean;

@@ -4,8 +4,23 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <!-- nginx already sends no-store on this document; these are belt-and-
+         suspenders for whatever sits between it and a stale Telegram WebView. -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>Trust Forex</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Splash blue from the first frame. Until the bundle commits, #root is
+         empty and the page paints the app's grey — which reads as a blank home
+         for the second the JS takes on a phone. ponytail: colour only, the real
+         splash arrives with React.
+         Scoped to before the mount (main.tsx adds `booted`): a route that
+         renders nothing for a frame would otherwise flash this blue mid-app. -->
+    <style>body:not(.booted) #root:empty{background:#144CCD}</style>
+    <!-- defer: a render-blocking script here holds the first paint hostage to
+         telegram.org's latency. Deferred classic scripts still run in document
+         order, i.e. before the module below, so window.Telegram is there. -->
+    <script defer src="https://telegram.org/js/telegram-web-app.js"></script>
   </head>
   <body>
     <div id="root"></div>

@@ -15,9 +15,10 @@ import './PlanCard.css';
 export interface PlanCardProps {
   plan: Plan;
   variant: 'full' | 'compact';
-  /** compact only — shows the blue "selected" border. */
+  /** shows the blue "selected" border. */
   selected?: boolean;
-  /** compact only — click anywhere on the row. */
+  /** click anywhere on the card/row. On `full` this also makes the card
+      selectable: the Continue button only appears once it is selected. */
   onSelect?: () => void;
   /** full only — Continue button click. */
   onContinue?: () => void;
@@ -30,7 +31,15 @@ function PlanTag({ tag }: { tag: NonNullable<Plan['tag']> }): ReactNode {
 }
 
 export function PlanCard({ plan, variant, selected, onSelect, onContinue, className }: PlanCardProps): ReactNode {
-  const highlighted = variant === 'full' ? plan.highlighted : selected;
+  // A `full` card with onSelect is a picker card: Continue appears only once
+  // picked. Without it (Home's expanded card) the card is always open.
+  const picker = variant === 'full' && Boolean(onSelect);
+  /* The blue border follows the selection whenever the caller has an opinion
+     about it, whether or not the card is a picker. It used to fall back to
+     `plan.highlighted` for any non-picker card, so Home's expanded card drew
+     the border for Gold — the tier flagged in plans-data — and for nothing
+     else, whichever plan the user had actually picked. */
+  const highlighted = variant === 'full' ? (selected ?? plan.highlighted) : selected;
 
   if (variant === 'compact') {
     return (
@@ -63,6 +72,11 @@ export function PlanCard({ plan, variant, selected, onSelect, onContinue, classN
       className={
         'scr-plans-card' + (highlighted ? ' scr-plans-card--highlight' : '') + (className ? ' ' + className : '')
       }
+      onClick={onSelect}
+      role={picker ? 'button' : undefined}
+      aria-pressed={picker ? Boolean(selected) : undefined}
+      tabIndex={picker ? 0 : undefined}
+      onKeyDown={picker ? (e) => ['Enter', ' '].includes(e.key) && (e.preventDefault(), onSelect?.()) : undefined}
     >
       <div className="scr-plans-headerblock">
         <img className="scr-plans-badge" src={plan.badge} alt="" width={56} height={56} />
@@ -108,15 +122,17 @@ export function PlanCard({ plan, variant, selected, onSelect, onContinue, classN
         </li>
       </ul>
 
-      <Button
-        variant="outline"
-        size="medium"
-        fullWidth
-        className={plan.highlighted ? 'scr-plans-continue--highlight' : ''}
-        onClick={onContinue}
-      >
-        Continue
-      </Button>
+      {picker && !selected ? null : (
+        <Button
+          variant="outline"
+          size="medium"
+          fullWidth
+          className={highlighted ? 'scr-plans-continue--highlight' : ''}
+          onClick={onContinue}
+        >
+          Continue
+        </Button>
+      )}
     </article>
   );
 }

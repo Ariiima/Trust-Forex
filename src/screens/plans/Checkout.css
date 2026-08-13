@@ -255,9 +255,6 @@
   padding: var(--spacing-16) var(--spacing-16) 36px;
   border-radius: var(--radius-medium) var(--radius-medium) 0 0;
 }
-.scr-checkout-sheet .ds-sheet-handle {
-  display: none;
-}
 
 .scr-checkout-sheet-inner {
   display: flex;

@@ -1,8 +1,12 @@
 // Trust Forex payment DB — node:sqlite. Schema is CONTRACT-exact; the watcher
 // cluster codes against it literally. All timestamps are epoch MILLISECONDS.
-import { DatabaseSync } from 'node:sqlite';
+import { connect } from './sqlite.mjs';
+import { toBaseUnits, fromBaseUnits } from './chains/units.mjs';
 
-const SCHEMA = `
+/* Exported because the admin store reads `orders` directly — same file, so the
+   dashboard's payments view and the ledger's order reconciliation are plain
+   queries. Whichever opener runs first creates the tables; both are idempotent. */
+export const PAYMENT_SCHEMA = `
 CREATE TABLE IF NOT EXISTS orders (
   id TEXT PRIMARY KEY, user_id INTEGER, username TEXT, plan_id TEXT NOT NULL, billing TEXT NOT NULL,
   amount_usd REAL NOT NULL, currency TEXT, network TEXT, amount_crypto TEXT, address TEXT, memo TEXT,
@@ -34,13 +38,21 @@ export function findGateway(gateways, currency, network) {
 
 const PATCH_KEYS = [
   'currency', 'network', 'amount_crypto', 'address', 'memo',
-  'status', 'txid', 'confirmations', 'detected_at', 'confirmed_at',
+  'status', 'txid', 'confirmations', 'detected_at', 'confirmed_at', 'paid_units',
 ];
 
-export function openDb(path = process.env.TF_DB || new URL('./data.sqlite', import.meta.url).pathname) {
-  const db = new DatabaseSync(path);
-  db.exec('PRAGMA journal_mode=WAL'); // test process opens the same file concurrently
-  db.exec(SCHEMA);
+export function openDb(path) {
+  const db = connect(path);
+  db.exec(PAYMENT_SCHEMA);
+  // Partial-payment accumulator (base-unit string), added 08-09. CREATE IF NOT
+  // EXISTS won't extend an existing table, so migrate in place.
+  try { db.exec('ALTER TABLE orders ADD COLUMN paid_units TEXT'); } catch { /* already there */ }
+  /* "Use earning balance" at checkout: how much of the plan price this order is
+     paying out of the buyer's wallet. amount_usd is the REMAINDER — what still
+     has to arrive on-chain — so the watcher's arithmetic needs no special case.
+     The money only leaves the wallet when the order confirms (ledger
+     .spendBalance), which is why an expiring order has nothing to give back. */
+  try { db.exec('ALTER TABLE orders ADD COLUMN balance_used REAL'); } catch { /* already there */ }
 
   const stmts = {
     insert: db.prepare(`INSERT INTO orders (id, user_id, username, plan_id, billing, amount_usd, created_at, updated_at)
@@ -55,6 +67,7 @@ export function openDb(path = process.env.TF_DB || new URL('./data.sqlite', impo
     insertSeen: db.prepare('INSERT OR IGNORE INTO seen_txs (txid, order_id) VALUES (?, ?)'),
     expire: db.prepare(`UPDATE orders SET status='expired', updated_at=?
       WHERE status IN ('pending','submitted') AND detected_at IS NULL AND created_at < ?`),
+    setBalanceUsed: db.prepare('UPDATE orders SET balance_used = ? WHERE id = ?'),
     flags: db.prepare('SELECT flag FROM user_flags WHERE user_id = ?'),
     setFlag: db.prepare('INSERT OR IGNORE INTO user_flags (user_id, flag, set_at) VALUES (?, ?, ?)'),
   };
@@ -75,9 +88,10 @@ export function openDb(path = process.env.TF_DB || new URL('./data.sqlite', impo
       stmts.setFlag.run(userId, flag, Date.now());
     },
 
-    createOrder({ id, userId, username, planId, billing, amountUsd }) {
+    createOrder({ id, userId, username, planId, billing, amountUsd, balanceUsed = 0 }) {
       const now = Date.now();
       stmts.insert.run(id, userId, username, planId, billing, amountUsd, now, now);
+      if (balanceUsed > 0) stmts.setBalanceUsed.run(balanceUsed, id);
       return getOrder(id);
     },
 
@@ -126,10 +140,27 @@ export function openDb(path = process.env.TF_DB || new URL('./data.sqlite', impo
       if (row.memo != null) o.memo = row.memo;
       if (row.txid != null) o.txid = row.txid;
       if (row.confirmations != null) o.confirmations = row.confirmations;
+      // What the wallet is covering. amountUsd above is only the crypto leg, so
+      // the checkout summary needs this to add up to the plan's price.
+      if (row.balance_used) o.balanceUsed = row.balance_used;
       const gw = o.currency && o.network ? findGateway(gateways, o.currency, o.network) : undefined;
       if (gw) o.requiredConfirmations = gw.requiredConfirmations;
       if (row.detected_at != null) o.detectedAt = row.detected_at;
       if (row.confirmed_at != null) o.confirmedAt = row.confirmed_at;
+      /* Partial payments: what has arrived vs what is still owed, in both USD
+         (the status sheets) and crypto (the amount the user must still send). */
+      if (row.paid_units != null && gw?.decimals != null && row.amount_crypto != null) {
+        const due = BigInt(toBaseUnits(row.amount_crypto, gw.decimals));
+        const paid = BigInt(row.paid_units);
+        const paidUsd = Math.round(row.amount_usd * Number((paid * 10000n) / due)) / 10000;
+        // Not clamped to what was due: an overpayment is the user's money and
+        // the confirmed sheet has to be able to say so. `overpaidUsd` is what
+        // notify.mjs credits back as earning balance.
+        o.paidUsd = Math.round(paidUsd * 100) / 100;
+        o.remainingUsd = Math.max(0, Math.round((row.amount_usd - o.paidUsd) * 100) / 100);
+        o.overpaidUsd = Math.max(0, Math.round((o.paidUsd - row.amount_usd) * 100) / 100);
+        o.remainingCrypto = paid < due ? fromBaseUnits((due - paid).toString(), gw.decimals) : '0';
+      }
       return o;
     },
 

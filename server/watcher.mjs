@@ -4,8 +4,22 @@
 // Zero top-level sibling imports: index.mjs may start this while db.mjs/notify.mjs
 // are still being built in parallel — only units.mjs is imported statically.
 import { toBaseUnits } from './chains/units.mjs';
+// Pure data + a pure function only, same reasoning as jobs.mjs/payouts.mjs:
+// payment.test.mjs imports `tick` directly against an in-memory db and must
+// never see this module open the real one as a side effect of import.
+import { MESSAGE_TEMPLATES, renderTemplate } from './admin.mjs';
 
 export const EXPIRY_MS = 40 * 60 * 1000;
+
+const DEFAULT_TPL = Object.fromEntries(MESSAGE_TEMPLATES.map((t) => [t.key, t.body]));
+
+/** Underpayment grace: a shortfall this small confirms anyway instead of
+ *  parking as "incomplete". Covers the dither (up to $0.0999, see orders.mjs
+ *  uniqueAmount) plus ordinary wallet/network slop, at business cost of the
+ *  same $0.50 max per order. ponytail: flat USD, not a % of price — fine for
+ *  real plans ($200+, <0.25%), but on a sub-$2 SKU it forgives a big chunk of
+ *  the order; don't ship a plan priced under a few dollars without revisiting. */
+const PAYMENT_TOLERANCE_USD = 0.5;
 
 async function tryImport(path) {
   try {
@@ -16,7 +30,9 @@ async function tryImport(path) {
   }
 }
 
-export function startWatcher({ db, notify, loadGateways, adapters, intervalMs = 20_000 } = {}) {
+// 6s, not 20: with sub-second BSC blocks a payment reaches its confirmation
+// threshold within one tick, so the tick period IS the user-visible latency.
+export function startWatcher({ db, notify, loadGateways, adapters, intervalMs = 6_000, templates } = {}) {
   let timer = null;
   let stopped = false;
   let running = false;
@@ -36,7 +52,7 @@ export function startWatcher({ db, notify, loadGateways, adapters, intervalMs = 
       }
       if (!adapters) {
         adapters = {};
-        for (const chain of ['evm', 'btc', 'tron', 'sol']) {
+        for (const chain of ['evm', 'btc', 'tron', 'sol', 'ton']) {
           const m = await tryImport(`./chains/${chain}.mjs`);
           if (m) adapters[chain] = m;
         }
@@ -46,7 +62,7 @@ export function startWatcher({ db, notify, loadGateways, adapters, intervalMs = 
         if (running) return; // reentrancy guard — a slow tick skips the next beat
         running = true;
         try {
-          await tick({ db, notify, loadGateways, adapters });
+          await tick({ db, notify, loadGateways, adapters, templates });
         } catch (e) {
           console.error('[watcher] tick failed:', e);
         } finally {
@@ -71,13 +87,14 @@ export function startWatcher({ db, notify, loadGateways, adapters, intervalMs = 
 }
 
 // Exported for tests — pure function of its inputs, no timers.
-export async function tick({ db, notify, loadGateways, adapters, now = Date.now() }) {
+export async function tick({ db, notify, loadGateways, adapters, now = Date.now(), refund, templates }) {
   // Liberal shims: sibling export shapes aren't contracted (see manifest assumptions).
   const dbh = db?.prepare ? db : db?.db;
   if (!dbh?.prepare) throw new Error('no usable db handle');
   const notifyFn = typeof notify === 'function'
     ? notify
     : (notify?.notifyOrderConfirmed ?? notify?.orderConfirmed ?? notify?.notify ?? (() => {}));
+  const refundFn = refund ?? notify?.refundPartialOrder ?? (() => {});
   let gws = await loadGateways();
   if (gws && !Array.isArray(gws)) gws = gws.gateways ?? [];
 
@@ -86,11 +103,41 @@ export async function tick({ db, notify, loadGateways, adapters, now = Date.now(
     for (const n of g.networks ?? []) netIndex.set(`${g.currency}|${n.network}`, n);
   }
 
-  // Expire stale orders with no detected tx — an order latched to a txid never expires.
+  // Expire stale orders with no detected activity — an order latched to a txid
+  // never expires; a human outcome is owed for it.
   dbh.prepare(
     `UPDATE orders SET status='expired', updated_at=?
-     WHERE status IN ('pending','submitted') AND txid IS NULL AND created_at < ?`,
+     WHERE status IN ('pending','submitted') AND txid IS NULL AND detected_at IS NULL AND created_at < ?`,
   ).run(now, now - EXPIRY_MS);
+
+  /* A partially-paid order the payer walked away from: 40 min after the LAST
+     payment activity (updated_at moves on every partial), give up — expire it
+     and hand what was paid back as earning balance via the refund hook. */
+  const stalePartials = dbh.prepare(
+    `SELECT * FROM orders WHERE status IN ('pending','submitted')
+       AND paid_units IS NOT NULL AND updated_at < ?`,
+  ).all(now - EXPIRY_MS);
+  for (const row of stalePartials) {
+    const res = dbh.prepare(
+      `UPDATE orders SET status='expired', updated_at=? WHERE id=? AND status IN ('pending','submitted')`,
+    ).run(now, row.id);
+    if (res.changes === 0) continue;
+    let paidUsd = 0;
+    try {
+      const g = netIndex.get(`${row.currency}|${row.network}`);
+      const due = BigInt(toBaseUnits(row.amount_crypto, g?.decimals ?? 6));
+      const paid = BigInt(row.paid_units);
+      paidUsd = Math.min(Math.round(row.amount_usd * Number((paid * 10000n) / due)) / 10000, row.amount_usd);
+      paidUsd = Math.round(paidUsd * 100) / 100;
+    } catch (e) {
+      console.error(`[watcher] refund math failed for ${row.id}:`, e.message);
+    }
+    try {
+      await refundFn(row, paidUsd);
+    } catch (e) {
+      console.error('[watcher] refund failed:', e.message);
+    }
+  }
 
   const rows = dbh.prepare(
     `SELECT * FROM orders
@@ -135,12 +182,12 @@ export async function tick({ db, notify, loadGateways, adapters, now = Date.now(
   // One adapter call per group; a failing group logs and never affects the others.
   await Promise.allSettled(
     [...groups.entries()].map(([key, grp]) =>
-      runGroup(dbh, notifyFn, grp, now).catch((e) => console.error('[watcher]', key, e.message)),
+      runGroup(dbh, notifyFn, grp, now, templates).catch((e) => console.error('[watcher]', key, e.message)),
     ),
   );
 }
 
-async function runGroup(dbh, notifyFn, grp, now) {
+async function runGroup(dbh, notifyFn, grp, now, templates) {
   const { adapter, rpc, address, tokenContract, decimals, requiredConfirmations, orders } = grp;
   const sinceTs = Math.floor(Math.min(...orders.map((o) => o.created_at)) / 1000);
   const transfers = await adapter.listIncoming({ address, tokenContract, decimals, sinceTs, rpc });
@@ -168,6 +215,29 @@ async function runGroup(dbh, notifyFn, grp, now) {
   );
   const readStmt = dbh.prepare('SELECT * FROM orders WHERE id = ?');
 
+  const partialStmt = dbh.prepare(
+    `UPDATE orders SET paid_units=?, txid=?, confirmations=?, detected_at=COALESCE(detected_at, ?), updated_at=?
+     WHERE id=? AND status IN ('pending','submitted')`,
+  );
+  const confirmPartialStmt = dbh.prepare(
+    `UPDATE orders SET status='confirmed', txid=?, confirmations=?, confirmed_at=?, updated_at=?
+     WHERE id=? AND status IN ('pending','submitted')`,
+  );
+
+  /* notify.mjs reads the raw snake_case row (same shape orders.mjs hands it on
+     the balance-settled path) — a camelCase copy silently lost order.user_id,
+     i.e. no booking and no buyer DM. */
+  const confirmAndNotify = async (o, res, overpaidUsd = 0) => {
+    if (res.changes > 0) {
+      try {
+        await notifyFn(readStmt.get(o.id), overpaidUsd);
+      } catch (e) {
+        console.error('[watcher] notify failed:', e.message);
+      }
+    }
+    // changes === 0 -> admin override already finalized it; skip notify.
+  };
+
   for (const t of transfers) {
     let amt;
     try {
@@ -175,6 +245,7 @@ async function runGroup(dbh, notifyFn, grp, now) {
     } catch {
       continue;
     }
+    let consumed = false;
     for (const c of candidates) {
       if (c.done) continue;
       const o = c.row;
@@ -184,6 +255,7 @@ async function runGroup(dbh, notifyFn, grp, now) {
       const seen = seenStmt.get(t.txid);
       if (seen && seen.order_id !== o.id) {
         console.warn(`[watcher] tx ${t.txid} already credited to order ${seen.order_id}; skipping`);
+        consumed = true;
         break; // transfer consumed elsewhere — never credit twice
       }
       // Detection: record txid + confirmations, status unchanged.
@@ -197,45 +269,82 @@ async function runGroup(dbh, notifyFn, grp, now) {
           const existing = seenStmt.get(t.txid);
           if (existing && existing.order_id !== o.id) {
             console.warn(`[watcher] double-credit blocked: tx ${t.txid} -> order ${existing.order_id}`);
+            consumed = true;
             break;
           }
         }
         const res = confirmStmt.run(t.confirmations, now, now, o.id);
         c.done = true; // don't re-match this order later in the tick
-        if (res.changes > 0) {
-          const order = rowToOrder(readStmt.get(o.id), requiredConfirmations);
-          try {
-            await notifyFn(order);
-          } catch (e) {
-            console.error('[watcher] notify failed:', e.message);
-          }
-        }
-        // changes === 0 -> admin override already finalized it; skip notify.
+        await confirmAndNotify(o, res);
       }
+      consumed = true;
       break; // a transfer pays at most one order
+    }
+
+    /* Wrong-amount transfer. When exactly ONE live order is waiting on this
+       address, attribute it as a partial (or over-) payment of that order:
+       sum the arrivals and confirm once the total covers what is due. Only
+       final transfers are summed (a reorged partial must not inflate the
+       total), and only up to 3x the due amount — the receiving wallet also
+       sees unrelated deposits, and a big one must not buy a stranger's order.
+       ponytail: with 2+ live orders attribution is guesswork, so we log and
+       leave it to the admin — revisit if simultaneous orders become common. */
+    if (consumed) continue;
+    if (seenStmt.get(t.txid)) continue; // already counted (for this or another order)
+    const live = candidates.filter((c) => !c.done);
+    if (live.length !== 1) {
+      if (live.length > 1) console.warn(`[watcher] unmatched transfer ${t.txid} (${t.amountRaw}) with ${live.length} live orders; ignoring`);
+      continue;
+    }
+    const c = live[0];
+    const o = c.row;
+    if (t.timestamp * 1000 < o.created_at) continue;
+    if (t.confirmations < requiredConfirmations) continue;
+    if (amt > c.baseUnits * 3n) continue; // unrelated deposit, not a payment attempt
+    insertSeen.run(t.txid, o.id);
+    const paid = BigInt(o.paid_units ?? '0') + amt;
+    o.paid_units = paid.toString();
+    o.txid = t.txid;
+    // Tolerance in this order's own units, via the same amount_crypto/amount_usd
+    // ratio the paidUsd display math already uses — no extra rate lookup.
+    const toleranceUnits = BigInt(
+      toBaseUnits(((Number(o.amount_crypto) * PAYMENT_TOLERANCE_USD) / o.amount_usd).toFixed(grp.decimals), grp.decimals),
+    );
+    const threshold = c.baseUnits > toleranceUnits ? c.baseUnits - toleranceUnits : 0n;
+    if (paid >= threshold) {
+      partialStmt.run(o.paid_units, t.txid, t.confirmations, now, now, o.id);
+      const res = confirmPartialStmt.run(t.txid, t.confirmations, now, now, o.id);
+      c.done = true;
+      /* Overpayment: same amount_crypto/amount_usd ratio the display math uses.
+         The order is paid; the excess belongs to the user, so it goes back as
+         earning balance rather than sitting on our side of the books. */
+      const overUnits = paid > c.baseUnits ? paid - c.baseUnits : 0n;
+      const overpaidUsd = overUnits > 0n
+        ? Math.round((o.amount_usd * Number((overUnits * 10000n) / c.baseUnits)) / 100) / 100
+        : 0;
+      await confirmAndNotify(o, res, overpaidUsd);
+    } else {
+      partialStmt.run(o.paid_units, t.txid, t.confirmations, now, now, o.id);
+      console.log(`[watcher] partial payment on ${o.id}: ${o.paid_units}/${c.baseUnits} base units`);
+      /* The payer has usually closed the page by the time an underpayment is
+         discovered — Telegram is the channel that still reaches them. Once
+         per partial tx (this branch is behind the seen_txs guard). */
+      if (o.user_id) {
+        try {
+          const { fromBaseUnits } = await import('./chains/units.mjs');
+          const { sendMessage, appButton } = await import('./telegram.mjs');
+          const got = fromBaseUnits(o.paid_units, grp.decimals);
+          const left = fromBaseUnits((c.baseUnits - paid).toString(), grp.decimals);
+          const body = renderTemplate(templates?.('payment_incomplete') ?? DEFAULT_TPL.payment_incomplete, {
+            received: got, due: o.amount_crypto, remaining: left, currency: o.currency,
+            network: o.network, address: o.address,
+          });
+          await sendMessage(o.user_id, body, appButton());
+        } catch (e) {
+          console.error('[watcher] partial DM failed:', e.message);
+        }
+      }
     }
   }
 }
 
-function rowToOrder(row, requiredConfirmations) {
-  return {
-    id: row.id,
-    userId: row.user_id,
-    username: row.username,
-    planId: row.plan_id,
-    billing: row.billing,
-    amountUsd: row.amount_usd,
-    currency: row.currency,
-    network: row.network,
-    amountCrypto: row.amount_crypto,
-    address: row.address,
-    memo: row.memo,
-    status: row.status,
-    txid: row.txid,
-    confirmations: row.confirmations,
-    requiredConfirmations, // from gateway config — not a DB column
-    detectedAt: row.detected_at,
-    confirmedAt: row.confirmed_at,
-    createdAt: row.created_at,
-  };
-}

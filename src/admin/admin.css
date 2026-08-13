@@ -1,0 +1,1955 @@
+/* =====================================================================
+   Trust Forex — Admin Dashboard
+   World: THE MINI APP, AT DESK SCALE   ·   see admin.html contract
+   ---------------------------------------------------------------------
+   One company, one surface language. Everything here is the Mini App's
+   own system — Sora, #144CCD, the #E4E4E4 stroke, the 8/12/16 radii, the
+   #48D48A / #FF334C state pairs — read off src/design-system/tokens.css
+   and re-pitched for a 27" monitor an operator sits at all day.
+
+   What carries over unchanged: hue, radius, weight, the soft one-pixel
+   card lift, sentence case everywhere. Blue is action and "here" and
+   nothing else; green and red are outcomes, never decoration.
+
+   What is deliberately re-pitched: DENSITY. The Mini App breathes on a
+   phone at 2x line-height with one card in view. This surface puts ten
+   columns and forty rows in front of someone comparing them, so the type
+   scale keeps the Mini App's sizes and drops its line-heights, and the
+   paddings step down about a third. Same system, closer spacing.
+
+   Two contrast deviations from the Mini App tokens, both deliberate and
+   both because this is an all-day work surface where PRODUCT.md commits
+   to 4.5:1 on text (the Mini App tokens are binding on the Mini App):
+     · secondary text is #6B6B6B, one step down from #7C7C7C (4.2:1)
+     · state colours have a text-safe dark pair; the token values stay as
+       the fills, dots and marks they are used for in the Mini App
+   ===================================================================== */
+
+:root {
+  /* ---- Surfaces ----------------------------------------------------
+     Straight from the Mini App: white cards on the #F1F1F1 field, and
+     that same #F1F1F1 for wells recessed into a card. */
+  --field: var(--bg-colors-container-s);   /* #F1F1F1 */
+  --plate: var(--bg-colors-container-p);   /* #FFFFFF */
+  --plate-sunk: var(--bg-colors-container-s);
+  --ink: var(--typography-colors-main-text);  /* #212121 */
+  --ink-2: #6b6b6b;          /* secondary text — see the contrast note above */
+  --ink-3: #949494;          /* disabled only; never load-bearing text */
+
+  /* ---- Rules -------------------------------------------------------- */
+  --rule: var(--stroke-colors-default);    /* #E4E4E4 */
+  --rule-major: #c4c4c4;     /* control borders that need to read as an edge */
+  --hairline: var(--bg-colors-container-s);   /* divides rows inside one card */
+  --edge: var(--stroke-colors-default);       /* bounds a card against the field */
+
+  /* ---- The rail ------------------------------------------------------
+     The Mini App's dark surface is its brand blue, not black (the Cashback
+     Overview card: #144CCD with a #033AB8 panel sunk into it). The rail is
+     that same object at full height. */
+  --body: var(--primary-colors-900);       /* #144CCD */
+  --body-2: var(--primary-colors-950);     /* #033AB8 */
+  --body-text: rgba(255, 255, 255, 0.74);
+  --body-text-hi: var(--base-color-white);
+  --body-rule: rgba(255, 255, 255, 0.18);
+
+  /* ---- Index and state ------------------------------------------------
+     `--index` is the one "here" colour: primary action, current section,
+     selected row, focused field, hovered chart position. Never decoration.
+     Each state has a text-safe ink and the Mini App's own tint behind it. */
+  --index: var(--primary-colors-900);      /* #144CCD — 7.1:1 on white */
+  --index-soft: var(--primary-colors-50);  /* #E7EDFA */
+  --index-press: var(--primary-colors-pressed);
+
+  --gain: #147a4e;           /* text-safe #48D48A — 5.3:1 on white */
+  --gain-mark: var(--state-colors-success);      /* #48D48A: fills, pips, dots */
+  --gain-soft: var(--state-colors-success-bg);   /* #E9F9F1 */
+  --loss: #c41e32;           /* text-safe #FF334C — 5.9:1 on white */
+  --loss-mark: var(--state-colors-eror);         /* #FF334C */
+  --loss-soft: var(--state-colors-eror-bg);      /* #FFEFF1 */
+  --caution: #96690a;        /* text-safe #FFC300 — 4.9:1 on white */
+  --caution-mark: var(--state-colors-danger);    /* #FFC300 */
+  --caution-soft: var(--state-colors-danger-bg); /* #FFFBEF */
+  --info: #0070c0;           /* text-safe #0099FF — 5.2:1 on white */
+  --info-soft: var(--state-colors-info-bg);      /* #EBF7FF */
+
+  /* ---- Radius — the Mini App scale, cards one step down from its 20 --- */
+  --r-sm: var(--radius-small);    /* 8px  — controls, chips, inputs */
+  --r-md: var(--radius-medium);   /* 12px — wells, popovers, list rows */
+  --r-lg: 16px;                   /* cards and modals */
+
+  /* ---- Depth --------------------------------------------------------
+     The Mini App's own two shadows. Both carry an offset and a real blur;
+     a card lifts by one pixel, an overlay by four. */
+  --lift: 0 1px 10px rgba(228, 228, 228, 0.64);
+  --lift-pop: 0 4px 16px rgba(20, 34, 68, 0.16);
+
+  /* ---- Density ------------------------------------------------------ */
+  --rail-w: 216px;
+  --control-h: 36px;
+  --control-h-sm: 28px;
+
+  /* ---- Motion -------------------------------------------------------
+     150-250ms, and only where something changed state. The operator is
+     mid-task; nothing here is worth waiting to watch. */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --t-fast: 110ms;
+  --t-base: 190ms;
+  --t-sweep: 240ms;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* Reserves the scrollbar's width whether or not it's showing, so locking
+   body scroll for a modal doesn't shift the whole layout — that shift is
+   the "flash" on every open/close. */
+html { scrollbar-gutter: stable; }
+html, body { height: 100%; background: var(--field); }
+
+body {
+  font-family: var(--font-family-base);
+  font-size: 13px;
+  line-height: 19px;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font: inherit; color: inherit; border: none; background: none; cursor: pointer; }
+input, select, textarea { font: inherit; color: inherit; }
+a { color: inherit; text-decoration: none; }
+img, svg { display: block; max-width: 100%; }
+
+:focus-visible {
+  outline: 2px solid var(--index);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* Every figure is read against its neighbours, so figures line up. */
+.a-table td, .a-table th, .a-stat__value, .a-summarybar__value,
+.a-statrow__item b, .a-deflist dd, .a-tooltip, .a-chip, .a-pager,
+.a-reading__value, .at-tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* ---------------------------------------------------------------------
+   Labels — sentence case at normal tracking, the way the Mini App writes.
+   A label is quiet because it is small and grey, not because it has been
+   set in tracked capitals.
+   ------------------------------------------------------------------- */
+.a-legend,
+.a-field__label,
+.a-section__title,
+.a-stat__label,
+.a-summarybar__label,
+.a-pagehead__sub,
+.at-11 {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: var(--font-weight-regular);
+  letter-spacing: 0;
+  color: var(--ink-2);
+}
+
+/* A column head has to survive being scanned across ten columns, so it
+   takes weight rather than the caps the rest of the surface dropped. */
+.a-table th {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0;
+  color: var(--ink-2);
+}
+
+/* Sizes are the Mini App's; the line-heights are not. Its 2x rhythm is
+   built for one card on a phone, and this surface stacks forty rows. */
+.at-12 { font-size: 12px; line-height: 17px; }
+.at-13 { font-size: 13px; line-height: 19px; }
+.at-14 { font-size: 14px; line-height: 20px; }
+.at-16 { font-size: 16px; line-height: 23px; }
+.at-20 { font-size: 20px; line-height: 27px; letter-spacing: -0.01em; }
+.at-24 { font-size: 24px; line-height: 32px; letter-spacing: -0.02em; }
+.at-semibold { font-weight: var(--font-weight-semibold); }
+.at-bold { font-weight: var(--font-weight-bold); }
+.at-muted { color: var(--ink-2); }
+.at-pos { color: var(--gain); }
+.at-neg { color: var(--loss); }
+.at-right { text-align: right; }
+.at-center { text-align: center; }
+.at-nowrap { white-space: nowrap; }
+
+/* ---------------------------------------------------------------------
+   Shell — brand-blue rail at left, work surface at right
+   ------------------------------------------------------------------- */
+.a-shell {
+  display: grid;
+  grid-template-columns: var(--rail-w) minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.a-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 10px;
+  background: var(--body);
+  color: var(--body-text);
+}
+
+.a-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 8px 14px;
+  color: var(--body-text-hi);
+  font-size: 15px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.01em;
+}
+
+.a-sidebar__mark {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-sm);
+  background: var(--base-color-white);
+  color: var(--primary-colors-900);
+  font-size: 11px;
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: 0.02em;
+  flex: none;
+}
+
+.a-navitem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: var(--r-sm);
+  color: var(--body-text);
+  font-size: 13px;
+  font-weight: var(--font-weight-regular);
+  letter-spacing: 0;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+
+.a-navitem:hover { background: rgba(255, 255, 255, 0.1); color: var(--body-text-hi); }
+
+/* The current section is the one filled surface on the rail — the same
+   sunk-panel move the Mini App's overview card makes, at nav scale. */
+.a-navitem--active {
+  color: var(--body-text-hi);
+  background: var(--body-2);
+  font-weight: var(--font-weight-semibold);
+}
+.a-navitem--active:hover { background: var(--body-2); }
+
+.a-navitem__count {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: var(--font-weight-regular);
+  letter-spacing: 0;
+  opacity: 0.65;
+}
+
+.a-sidebar__foot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--body-rule);
+}
+
+.a-sidebar .a-btn--ghost {
+  width: 100%;
+  background: transparent;
+  border-color: var(--body-rule);
+  color: var(--body-text);
+}
+.a-sidebar .a-btn--ghost:hover:not(:disabled) {
+  background: var(--body-2);
+  color: var(--body-text-hi);
+  border-color: var(--body-rule);
+}
+
+.a-main {
+  min-width: 0;
+  padding: 16px 18px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ---------------------------------------------------------------------
+   The one authored moment: a section arriving. It settles rather than
+   slides — a short rise out of an already-visible state, which is what
+   the Mini App's sheets and cards do on entry.
+   ------------------------------------------------------------------- */
+.a-sweep {
+  display: contents;
+  animation: a-sweep var(--t-sweep) var(--ease-out);
+}
+
+@keyframes a-sweep {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* `display: contents` cannot animate, so the children carry it, staggered
+   by one tick each so the page assembles top-down like a scale being read. */
+.a-sweep > * {
+  animation: a-sweep var(--t-sweep) var(--ease-out) backwards;
+}
+.a-sweep > *:nth-child(1) { animation-delay: 0ms; }
+.a-sweep > *:nth-child(2) { animation-delay: 40ms; }
+.a-sweep > *:nth-child(3) { animation-delay: 80ms; }
+.a-sweep > *:nth-child(4) { animation-delay: 110ms; }
+.a-sweep > *:nth-child(n + 5) { animation-delay: 130ms; }
+
+/* A row joining an already-settled list — a new event, a new tally entry, a
+   broker moved to Excluded — gets the same rise, quicker: only the row
+   itself is arriving, nothing around it moved. Existing rows keep the DOM
+   node their key already owns, so this never replays on them; it only ever
+   plays for the row that just mounted. */
+.a-event,
+.a-entryrow,
+.a-excludedrow,
+.a-dragrow {
+  animation: a-sweep var(--t-base) var(--ease-out) backwards;
+}
+
+/* ---------------------------------------------------------------------
+   Page head — the section's readings on a graduated strip
+   ------------------------------------------------------------------- */
+.a-pagehead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-height: 36px;
+}
+
+.a-pagehead__title {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.01em;
+}
+
+.a-pagehead__sub { margin-top: 2px; max-width: 78ch; }
+
+.a-spacer { margin-left: auto; }
+
+/* A row of readings: quiet label over a large figure. The one place on the
+   surface where the figure is allowed to be the biggest thing in view. */
+.a-readings {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  background: var(--plate);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-lg);
+  box-shadow: var(--lift);
+  flex-wrap: wrap;
+  overflow: hidden;
+}
+
+.a-reading {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 12px 18px;
+  min-width: 146px;
+  flex: 1 1 auto;
+  border-right: 1px solid var(--hairline);
+}
+.a-reading:last-child { border-right: none; }
+
+.a-reading__value {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+}
+
+.a-reading--index .a-reading__value { color: var(--index); }
+.a-reading--gain .a-reading__value { color: var(--gain); }
+.a-reading--loss .a-reading__value { color: var(--loss); }
+.a-reading--caution .a-reading__value { color: var(--caution); }
+
+/* ---------------------------------------------------------------------
+   Card — the Mini App's white card, at desk density
+   ------------------------------------------------------------------- */
+.a-card {
+  background: var(--plate);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-lg);
+  box-shadow: var(--lift);
+  position: relative;
+}
+
+.a-card__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--hairline);
+  flex-wrap: wrap;
+}
+
+.a-card__head > .a-row { flex-wrap: nowrap; margin-left: auto; }
+
+.a-card__head input[type='date'].a-input,
+.a-card__head input[type='datetime-local'].a-input,
+.a-card__head .a-selectwrap { width: auto; min-width: 132px; }
+
+.a-card__title {
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0;
+}
+
+.a-card__body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 12px; }
+.a-card__body--flush { padding: 0; display: block; }
+
+.a-grid { display: grid; gap: 12px; }
+
+/* ---------------------------------------------------------------------
+   Controls — the Mini App button, 8px radius, sentence case
+   ------------------------------------------------------------------- */
+.a-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: var(--control-h);
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0;
+  white-space: nowrap;
+  transition:
+    background var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease),
+    transform var(--t-fast) var(--ease);
+}
+
+.a-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.a-btn--sm { height: var(--control-h-sm); padding: 0 10px; font-size: 12px; gap: 5px; }
+.a-btn svg { flex: none; }
+
+/* Every variant gets the same press: a small settle toward the surface, on
+   top of whatever colour change the variant makes. Colour alone read as
+   thin — this is the tactile half of "pressed". */
+.a-btn:active:not(:disabled) { transform: scale(0.97); }
+
+/* Pressed darkens, it does not lighten — the Mini App's own rule. */
+.a-btn--primary { background: var(--index); color: var(--base-color-white); }
+.a-btn--primary:hover:not(:disabled) { background: var(--primary-colors-800); }
+.a-btn--primary:active:not(:disabled) { background: var(--index-press); }
+
+.a-btn--outline { border-color: var(--index); color: var(--index); background: var(--plate); }
+.a-btn--outline:hover:not(:disabled) { background: var(--index-soft); }
+
+.a-btn--ghost { color: var(--ink); border-color: var(--edge); background: var(--plate); }
+.a-btn--ghost:hover:not(:disabled) { background: var(--plate-sunk); }
+
+.a-btn--success { border-color: var(--edge); color: var(--gain); background: var(--plate); }
+.a-btn--success:hover:not(:disabled) { background: var(--gain-soft); border-color: var(--gain-mark); }
+
+.a-btn--warn { border-color: var(--edge); color: var(--caution); background: var(--plate); }
+.a-btn--warn:hover:not(:disabled) { background: var(--caution-soft); border-color: var(--caution-mark); }
+
+.a-btn--danger { border-color: var(--edge); color: var(--loss); background: var(--plate); }
+.a-btn--danger:hover:not(:disabled) { background: var(--loss-soft); border-color: var(--loss-mark); }
+
+.a-btn--plain {
+  color: var(--index);
+  padding: 0 8px;
+  border-color: transparent;
+}
+.a-btn--plain:hover:not(:disabled) { background: var(--index-soft); }
+
+.a-iconbtn {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-sm);
+  color: var(--ink-2);
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.a-iconbtn:hover { background: var(--plate-sunk); color: var(--ink); }
+.a-iconbtn--danger:hover { background: var(--loss-soft); color: var(--loss); }
+
+/* ---------------------------------------------------------------------
+   Tabs — the Mini App's segmented control: a tray with the current
+   segment lifted out of it on a white pill.
+   ------------------------------------------------------------------- */
+.a-tabs {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+  padding: 3px;
+  background: var(--plate-sunk);
+  border-radius: var(--r-md);
+}
+
+.a-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: var(--font-weight-regular);
+  letter-spacing: 0;
+  color: var(--ink-2);
+  /* A segment label is one line. Without this, an equal-width sub-tab row
+     wrapped "Active users 9" onto two lines and the control read as broken. */
+  white-space: nowrap;
+  transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.a-tab:hover { color: var(--ink); }
+
+.a-tab--active {
+  color: var(--index);
+  background: var(--plate);
+  font-weight: var(--font-weight-semibold);
+  box-shadow: var(--lift);
+}
+
+.a-tab__count {
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  color: var(--ink-2);
+}
+.a-tab--active .a-tab__count { color: var(--index); }
+
+/* The sub variant is a full-width toggle, the way the Mini App sets its
+   Weekly / Monthly / Yearly row under a chart. */
+.a-tabs--sub { gap: 2px; background: transparent; border: 1px solid var(--edge); padding: 3px; }
+.a-tabs--sub .a-tab { flex: 1 1 0; }
+.a-tabs--sub .a-tab--active { background: var(--index-soft); box-shadow: none; }
+
+/* ---------------------------------------------------------------------
+   Chips — the Mini App's state pill: tinted ground, no outline
+   ------------------------------------------------------------------- */
+.a-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: var(--radius-infinity);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0;
+  white-space: nowrap;
+  transition: background var(--t-base) var(--ease), color var(--t-base) var(--ease);
+}
+
+.a-chip--success { background: var(--gain-soft); color: var(--gain); }
+.a-chip--danger { background: var(--loss-soft); color: var(--loss); }
+.a-chip--warn { background: var(--caution-soft); color: var(--caution); }
+.a-chip--info { background: var(--info-soft); color: var(--info); }
+.a-chip--primary { background: var(--index-soft); color: var(--index); }
+.a-chip--purple { background: var(--index-soft); color: var(--index); }
+.a-chip--neutral { background: var(--plate-sunk); color: var(--ink-2); }
+
+.a-badge-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 19px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-infinity);
+  background: var(--loss-mark);
+  color: var(--base-color-white);
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------------
+   Stats
+   ------------------------------------------------------------------- */
+.a-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-md);
+  background: var(--plate);
+}
+
+.a-stat__value {
+  font-size: 20px;
+  line-height: 26px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+}
+.a-stat__hint { font-size: 11px; line-height: 15px; color: var(--ink-2); }
+
+.a-statrow { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.a-statrow__item { display: flex; align-items: center; gap: 7px; font-size: 12px; }
+.a-statrow__item b { font-size: 15px; font-weight: var(--font-weight-bold); letter-spacing: -0.01em; }
+
+/* ---------------------------------------------------------------------
+   Fields — the Mini App input: 8px radius, hairline stroke, blue on focus
+   ------------------------------------------------------------------- */
+.a-field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.a-field__label span { color: var(--ink-2); font-weight: var(--font-weight-regular); }
+.a-field__hint {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ink-2);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.a-input, .a-select, .a-textarea {
+  width: 100%;
+  height: var(--control-h);
+  padding: 0 12px;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-sm);
+  background: var(--plate);
+  font-size: 13px;
+  outline: none;
+  transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+}
+
+.a-input[type='number'] { font-variant-numeric: tabular-nums; }
+.a-textarea { height: auto; padding: 8px 12px; line-height: 20px; resize: vertical; }
+
+.a-input:hover:not(:disabled), .a-textarea:hover:not(:disabled) { border-color: var(--rule-major); }
+
+.a-input:focus, .a-select:focus, .a-textarea:focus {
+  border-color: var(--index);
+  box-shadow: 0 0 0 3px var(--index-soft);
+}
+
+/* Placeholders are text an operator has to read, so they take the same
+   4.5:1 secondary ink as everything else rather than a lighter grey. */
+.a-input::placeholder, .a-textarea::placeholder { color: var(--ink-2); }
+.a-input:disabled, .a-select:disabled { color: var(--ink-3); cursor: not-allowed; opacity: 0.7; }
+
+.a-select { appearance: none; padding-right: 28px; cursor: pointer; }
+.a-selectwrap { position: relative; min-width: 0; }
+.a-selectwrap > svg {
+  position: absolute;
+  right: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--ink-2);
+}
+
+.a-inputgroup { position: relative; display: flex; align-items: center; min-width: 0; }
+.a-inputgroup > svg:first-child {
+  position: absolute;
+  left: 10px;
+  color: var(--ink-2);
+  pointer-events: none;
+  transition: color var(--t-fast) var(--ease);
+}
+.a-inputgroup > svg:first-child ~ .a-input { padding-left: 32px; }
+.a-inputgroup:focus-within > svg:first-child { color: var(--index); }
+
+.a-inputgroup__suffix {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: var(--control-h);
+  margin-left: -1px;
+  border: 1px solid var(--edge);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  background: var(--plate-sunk);
+  color: var(--ink-2);
+  font-size: 12px;
+}
+.a-inputgroup__suffix ~ .a-input,
+.a-inputgroup .a-input:has(~ .a-inputgroup__suffix) { border-radius: var(--r-sm) 0 0 var(--r-sm); }
+
+.a-check { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; cursor: pointer; user-select: none; }
+
+.a-check input {
+  appearance: none;
+  flex: none;
+  width: 15px;
+  height: 15px;
+  border: 1px solid var(--rule-major);
+  background: var(--plate);
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+
+.a-check:hover input:not(:checked) { border-color: var(--ink); }
+.a-check input[type='radio'] { border-radius: 50%; }
+
+.a-check input:checked {
+  background: var(--index);
+  border-color: var(--index);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.5 8.5l3 3 6-6' stroke='white' stroke-width='2.6' stroke-linecap='square'/%3E%3C/svg%3E");
+  background-size: 12px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.a-check input[type='radio']:checked { background-image: none; border-width: 4px; }
+
+.a-toggle { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; user-select: none; }
+.a-toggle input { appearance: none; position: absolute; opacity: 0; }
+
+.a-toggle__track {
+  position: relative;
+  width: 34px;
+  height: 18px;
+  background: var(--plate-sunk);
+  box-shadow: inset 0 0 0 1px var(--rule-major);
+  transition: background var(--t-base) var(--ease), box-shadow var(--t-base) var(--ease);
+}
+
+.a-toggle__track::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 12px;
+  height: 12px;
+  background: var(--rule-major);
+  transition: transform var(--t-base) var(--ease-out), background var(--t-base) var(--ease);
+}
+
+.a-toggle input:checked + .a-toggle__track { background: var(--index-soft); box-shadow: inset 0 0 0 1px var(--index); }
+.a-toggle input:checked + .a-toggle__track::after { transform: translateX(16px); background: var(--index); }
+.a-toggle input:focus-visible + .a-toggle__track { outline: 2px solid var(--index); outline-offset: 2px; }
+
+.a-stepper { display: flex; align-items: center; }
+.a-stepper__btns { display: flex; flex-direction: column; margin-left: -1px; }
+.a-stepper__btns button {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 18px;
+  border: 1px solid var(--edge);
+  color: var(--ink-2);
+}
+.a-stepper__btns button:first-child { border-bottom: none; }
+.a-stepper__btns button:hover { background: var(--plate-sunk); color: var(--ink); }
+
+.a-swatches { display: flex; align-items: center; gap: 6px; }
+.a-swatch {
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--edge);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  transition: box-shadow var(--t-fast) var(--ease);
+}
+.a-swatch--active { box-shadow: 0 0 0 2px var(--ink); }
+
+/* ---------------------------------------------------------------------
+   Popovers
+   ------------------------------------------------------------------- */
+.a-pop { position: relative; }
+
+.a-pop__panel {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 3px);
+  min-width: 232px;
+  padding: 10px;
+  background: var(--plate);
+  border: 1px solid var(--ink);
+  transform-origin: top left;
+  animation: a-pop-in var(--t-base) var(--ease-out);
+}
+.a-pop__panel--right { right: 0; transform-origin: top right; }
+
+@keyframes a-pop-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+
+.a-pop__list { display: flex; flex-direction: column; max-height: 252px; overflow-y: auto; margin: 8px 0; }
+
+.a-pop__row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 30px;
+  padding: 0 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--t-fast) var(--ease);
+}
+.a-pop__row:hover { background: var(--plate-sunk); }
+
+.a-pop__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--hairline);
+}
+
+.a-menu {
+  position: absolute;
+  z-index: 30;
+  right: 0;
+  top: calc(100% + 2px);
+  min-width: 160px;
+  padding: 3px;
+  background: var(--plate);
+  border: 1px solid var(--ink);
+  animation: a-pop-in var(--t-fast) var(--ease-out);
+}
+
+.a-menu button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  height: 28px;
+  padding: 0 7px;
+  font-size: 12px;
+  text-align: left;
+  transition: background var(--t-fast) var(--ease);
+}
+.a-menu button:hover { background: var(--plate-sunk); }
+.a-menu button.is-danger { color: var(--loss); }
+
+/* ---------------------------------------------------------------------
+   Table — the reading surface.
+
+   Padding is 12px, not 16: a section like Results puts ten columns plus
+   two row actions in front of the operator, and every column has to be
+   visible without the page scrolling sideways to reach the delete button.
+   ------------------------------------------------------------------- */
+.a-tablewrap { width: 100%; overflow: auto; }
+
+.a-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+
+.a-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 10px 12px;
+  background: var(--plate-sunk);
+  border-bottom: 1px solid var(--edge);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.a-table th.is-sortable { cursor: pointer; user-select: none; transition: color var(--t-fast) var(--ease); }
+.a-table th.is-sortable:hover { color: var(--ink); }
+.a-table th.is-sortable svg { opacity: 0; transition: opacity var(--t-fast) var(--ease); }
+.a-table th.is-sortable:hover svg, .a-table th[aria-sort] svg { opacity: 1; }
+.a-table th[aria-sort] { color: var(--index); }
+
+.a-table th > span { display: inline-flex; align-items: center; gap: 4px; }
+.a-table th[style*='center'] > span { justify-content: center; }
+
+/* ---- Grouped headers -------------------------------------------------
+   A spanning group row used to inherit the head's bottom rule, which drew
+   one continuous line across Referral Activity, Revenue Activity and Share
+   Percentage and read as a single band rather than three blocks. The group
+   row carries no rule of its own; each labelled group is bounded by a
+   vertical divider instead, so the blocks read as independent columns. */
+.a-table thead tr:first-child:not(:last-child) > th {
+  border-bottom: none;
+  padding-bottom: 2px;
+  color: var(--ink-2);
+  font-weight: var(--font-weight-semibold);
+}
+.a-table thead tr:first-child:not(:last-child) > th[colspan] {
+  border-left: 1px solid var(--edge);
+  border-right: 1px solid var(--edge);
+}
+/* The divider continues past the label so a group reads as a column, not a
+   caption sitting over one. */
+.a-table thead tr:last-child > th.is-groupstart { border-left: 1px solid var(--edge); }
+.a-table thead tr:last-child > th.is-groupend { border-right: 1px solid var(--edge); }
+.a-table tbody td.is-groupstart { border-left: 1px solid var(--hairline); }
+.a-table tbody td.is-groupend { border-right: 1px solid var(--hairline); }
+
+.a-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--hairline);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.a-table td.is-wrap { white-space: normal; min-width: 300px; }
+.a-table tbody tr:last-child td { border-bottom: none; }
+.a-table tbody tr { transition: background var(--t-fast) var(--ease); }
+.a-table tbody tr:hover { background: var(--plate-sunk); }
+
+.a-table tbody tr.is-selected { background: var(--index-soft); }
+
+.a-table__num {
+  color: var(--ink-2);
+  width: 40px;
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+}
+
+/* Row actions are always drawn, never revealed on hover: the spec asks for
+   Edit and Delete to be visible, and a control you have to hover to find is
+   a control an operator has to hunt for. */
+.a-rowactions { display: inline-flex; gap: 2px; justify-content: flex-end; }
+
+.a-cell2 { display: flex; flex-direction: column; line-height: 17px; }
+.a-cell2 > span:last-child { font-size: 12px; color: var(--ink-2); }
+
+.a-user { display: flex; align-items: center; gap: 10px; min-width: 0; }
+button.a-user .at-semibold { transition: color var(--t-fast) var(--ease); }
+button.a-user:hover .at-semibold { color: var(--index); }
+
+.a-empty {
+  display: grid;
+  place-items: center;
+  gap: 5px;
+  padding: 44px 16px;
+  color: var(--ink-2);
+  text-align: center;
+}
+.a-empty > svg { color: var(--rule); margin-bottom: 2px; }
+
+.a-skel {
+  display: block;
+  height: 9px;
+  border-radius: var(--radius-infinity);
+  background: linear-gradient(90deg, var(--hairline) 25%, #e9e9e9 50%, var(--hairline) 75%);
+  background-size: 200% 100%;
+  animation: a-shimmer 1.5s linear infinite;
+}
+
+@keyframes a-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+/* ---------------------------------------------------------------------
+   Top bar — the one user search, same corner of every page
+   ------------------------------------------------------------------- */
+.a-topbar { display: flex; justify-content: flex-end; }
+
+.a-usersearch { position: relative; }
+
+.a-usersearch__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--control-h);
+  padding: 0 10px 0 12px;
+  min-width: 260px;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-sm);
+  background: var(--plate);
+  color: var(--ink-2);
+  font-size: 13px;
+  transition: border-color var(--t-fast) var(--ease);
+}
+.a-usersearch__button:hover { border-color: var(--rule-major); }
+.a-usersearch__button > span { flex: 1; text-align: left; }
+.a-usersearch__button kbd {
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: var(--plate-sunk);
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 11px;
+}
+
+.a-usersearch__panel {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 380px;
+  background: var(--plate);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-md);
+  box-shadow: var(--lift-pop);
+  overflow: hidden;
+  animation: a-pop-in var(--t-fast) var(--ease-out);
+}
+
+.a-usersearch__field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  height: 42px;
+  border-bottom: 1px solid var(--hairline);
+  color: var(--ink-2);
+}
+.a-usersearch__field input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: none;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.a-usersearch__list { max-height: 320px; overflow-y: auto; padding: 4px; }
+
+.a-usersearch__hit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 8px;
+  border-radius: var(--r-sm);
+  text-align: left;
+}
+.a-usersearch__hit.is-active { background: var(--index-soft); }
+.a-usersearch__hit .a-cell2 > span:last-child { font-size: 12px; color: var(--ink-2); }
+
+/* ---------------------------------------------------------------------
+   Modal / panel
+   ------------------------------------------------------------------- */
+.a-modal__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(4, 4, 4, 0.44);
+  /* enter/exit is motion-driven (see Modal in ui/index.tsx) so it can
+     animate out on close too, not just in on mount. */
+}
+
+.a-modal {
+  width: min(100%, var(--w, 544px));
+  max-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+  background: var(--plate);
+  border-radius: var(--radius-large);
+  box-shadow: var(--lift-pop);
+  position: relative;
+}
+
+@keyframes a-modal-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.99); }
+  to { opacity: 1; transform: none; }
+}
+
+.a-modal__head { display: flex; align-items: flex-start; gap: 12px; padding: 18px 20px 10px; }
+
+.a-modal__title {
+  font-size: 17px;
+  line-height: 24px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.01em;
+}
+.a-modal__sub {
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--ink-2);
+  letter-spacing: 0;
+}
+.a-modal__body { padding: 0 20px 18px; overflow-y: auto; }
+
+.a-modal__foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--hairline);
+  background: var(--plate-sunk);
+  border-radius: 0 0 var(--radius-large) var(--radius-large);
+}
+
+.a-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  background: var(--plate);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-lg);
+  box-shadow: var(--lift);
+  align-self: start;
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  animation: a-panel-in var(--t-sweep) var(--ease-out);
+}
+
+@keyframes a-panel-in {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+.a-panel__head { display: flex; align-items: center; gap: 8px; }
+
+.a-deflist { display: grid; grid-template-columns: auto 1fr; gap: 5px 14px; font-size: 12px; }
+.a-deflist dt { color: var(--ink-2); }
+.a-deflist dd { text-align: right; font-weight: var(--font-weight-semibold); }
+
+.a-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--hairline);
+}
+
+/* ---------------------------------------------------------------------
+   Rich text
+   ------------------------------------------------------------------- */
+.a-rte { border: 1px solid var(--edge); background: var(--plate); transition: border-color var(--t-fast) var(--ease); }
+.a-rte:focus-within { border-color: var(--index); }
+
+.a-rte__bar {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding: 3px;
+  border-bottom: 1px solid var(--hairline);
+  background: var(--plate-sunk);
+  position: relative;
+}
+
+.a-rte__bar button {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  color: var(--ink-2);
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.a-rte__bar button:hover { background: var(--plate); color: var(--ink); }
+.a-rte__bar button.is-on { background: var(--index-soft); color: var(--index); }
+.a-rte__bar .a-rte__count {
+  margin-left: auto;
+  padding-right: 7px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.a-rte__area { min-height: 98px; padding: 10px; font-size: 13px; line-height: 20px; outline: none; overflow-y: auto; }
+.a-rte__area:empty::before { content: attr(data-placeholder); color: var(--ink-3); }
+
+/* Sticker picker — grouped the way Telegram's own picker groups them. */
+.a-emoji {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 3px);
+  left: 0;
+  width: 268px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 8px;
+  background: var(--plate);
+  border: 1px solid var(--edge);
+  animation: a-pop-in var(--t-fast) var(--ease-out);
+}
+.a-emoji__group + .a-emoji__group { margin-top: 10px; }
+.a-emoji__label { font-size: 12px; color: var(--ink-2); margin-bottom: 4px; }
+.a-emoji__grid { display: grid; grid-template-columns: repeat(6, 1fr); }
+.a-emoji button {
+  height: 34px;
+  border-radius: 6px;
+  font-size: 19px;
+  line-height: 1;
+  transition: background var(--t-fast) var(--ease);
+}
+.a-emoji button:hover { background: var(--plate-sunk); }
+
+/* ---------------------------------------------------------------------
+   Circular crop — the frame is the circle the Mini App renders
+   ------------------------------------------------------------------- */
+.a-crop { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+
+.a-crop__frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--plate-sunk);
+  box-shadow: 0 0 0 1px var(--edge), 0 0 0 8px var(--plate), 0 0 0 9px var(--hairline);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.a-crop__frame--rect { border-radius: var(--r-md); }
+.a-crop__frame:active { cursor: grabbing; }
+.a-crop__frame img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
+  margin: 0;
+  translate: -50% -50%;
+  max-width: none;
+  pointer-events: none;
+}
+
+.a-crop__zoom { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+.a-crop__zoom input { width: 100%; accent-color: var(--index); }
+
+.a-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 84px;
+  padding: 14px;
+  border: 1px dashed var(--rule-major);
+  background: var(--plate-sunk);
+  color: var(--ink-2);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color var(--t-base) var(--ease), background var(--t-base) var(--ease);
+}
+.a-upload:hover { border-color: var(--index); background: var(--index-soft); }
+.a-upload strong {
+  display: block;
+  color: var(--ink);
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------------
+   Drag list
+   ------------------------------------------------------------------- */
+.a-draglist { display: flex; flex-direction: column; }
+
+.a-dragrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 4px;
+  border-bottom: 1px solid var(--hairline);
+  background: var(--plate);
+  transition: opacity var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+}
+.a-dragrow:last-child { border-bottom: none; }
+.a-dragrow.is-dragging { opacity: 0.3; }
+.a-dragrow.is-over { box-shadow: inset 0 2px 0 var(--index); }
+
+.a-grip { display: grid; place-items: center; width: 20px; color: var(--rule); cursor: grab; transition: color var(--t-fast) var(--ease); }
+.a-dragrow:hover .a-grip { color: var(--ink-2); }
+.a-grip:active { cursor: grabbing; }
+.a-grip[aria-disabled='true'] { opacity: 0.3; cursor: not-allowed; }
+
+/* ---------------------------------------------------------------------
+   Charts — the plate's own graduations continue into the plot
+   ------------------------------------------------------------------- */
+.a-chart__legend { display: flex; flex-wrap: wrap; gap: 7px 14px; padding-bottom: 10px; }
+
+.a-legenditem {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  user-select: none;
+  transition: color var(--t-fast) var(--ease);
+}
+
+.a-legenditem__box {
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  border: 1px solid currentColor;
+  color: var(--c);
+  transition: background var(--t-fast) var(--ease);
+}
+.a-legenditem__box--on { background: var(--c); border-color: var(--c); color: #fff; }
+.a-legenditem.is-off { color: var(--ink-3); }
+.a-legenditem.is-off .a-legenditem__box { color: var(--rule); }
+
+.a-chart__axes {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 12px;
+  letter-spacing: 0;
+  color: var(--ink-2);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--hairline);
+  margin-bottom: 8px;
+}
+
+/* A readout, not a control. The brush under the plot owns the range; this
+   only says which one is currently drawn. */
+.a-chart__range {
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--ink-2);
+  margin-bottom: 8px;
+}
+.a-chart__range b { color: var(--ink); font-weight: var(--font-weight-semibold); }
+
+/* ---------------------------------------------------------------------
+   Filter bar — the segmented row above a table
+   ------------------------------------------------------------------- */
+.a-filterbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--hairline);
+}
+.a-filterbar__label {
+  font-size: 12px;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.a-filterbar__group { display: flex; align-items: center; gap: 8px; }
+
+/* Copy-on-click value. The icon only appears on hover so a table of these
+   does not read as a column of buttons. */
+.a-copyvalue {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  padding: 1px 5px;
+  margin: 0 -5px;
+  border-radius: 5px;
+  color: inherit;
+  font: inherit;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.a-copyvalue > span { overflow: hidden; text-overflow: ellipsis; }
+.a-copyvalue > svg { flex: none; opacity: 0; transition: opacity var(--t-fast) var(--ease); }
+.a-copyvalue:hover { background: var(--plate-sunk); }
+.a-copyvalue:hover > svg, .a-copyvalue:focus-visible > svg { opacity: 0.7; }
+.a-copyvalue.is-copied { color: var(--gain); }
+.a-copyvalue.is-copied > svg { opacity: 1; }
+
+.a-chart__plot { transition: opacity var(--t-base) var(--ease); }
+.a-chart__plot.is-loading { opacity: 0.35; pointer-events: none; }
+
+/* The readout, built to the Mini App's: a white card, centred date, then
+   label-left / value-right rows with the rate in success green. An
+   operator checking a week should be reading the customer's own card. */
+.a-tooltip {
+  min-width: 168px;
+  padding: 8px 10px;
+  border-radius: var(--r-sm);
+  background: var(--plate);
+  color: var(--ink);
+  border: none;
+  box-shadow: var(--lift-pop);
+  font-size: 12px;
+}
+
+.a-tooltip__title {
+  font-size: 12px;
+  line-height: 18px;
+  letter-spacing: 0;
+  color: var(--ink);
+  text-align: center;
+  margin-bottom: 4px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.a-tooltip__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 20px;
+  color: var(--ink-2);
+}
+.a-tooltip__dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.a-tooltip__row b { margin-left: auto; font-weight: var(--font-weight-semibold); color: var(--ink); }
+.a-tooltip__row--gain b { color: var(--gain); }
+
+/* ---------------------------------------------------------------------
+   Layout helpers
+   ------------------------------------------------------------------- */
+.a-split { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+.a-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.a-col { display: flex; flex-direction: column; gap: 10px; }
+
+.a-events { display: flex; flex-direction: column; max-height: 400px; overflow-y: auto; }
+
+.a-event {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--hairline);
+  text-align: left;
+  width: 100%;
+  transition: background var(--t-fast) var(--ease);
+}
+.a-event:last-child { border-bottom: none; }
+.a-event:hover { background: var(--plate-sunk); }
+.a-event__icon { display: grid; place-items: center; width: 26px; height: 26px; flex: none; }
+.a-event__title { font-size: 12px; font-weight: var(--font-weight-semibold); }
+.a-event__date { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); }
+
+.a-brokerlogo {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+  flex: none;
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------
+   The payable readout — the instrument body, carrying the run total
+   ------------------------------------------------------------------- */
+.a-summarybar {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  padding: 14px 20px;
+  background: var(--body);
+  color: var(--body-text-hi);
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.a-summarybar__item { display: flex; align-items: center; gap: 10px; }
+.a-summarybar__icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--body-rule);
+  color: var(--body-text);
+}
+.a-summarybar .a-cell2 > span { color: inherit; }
+.a-summarybar__label { color: var(--body-text); }
+.a-summarybar__value { font-size: 17px; font-weight: var(--font-weight-bold); letter-spacing: -0.02em; }
+.a-summarybar .a-btn--ghost { background: var(--index); border-color: var(--index); color: #fff; }
+.a-summarybar .a-btn--ghost:hover:not(:disabled) { background: #a8164f; border-color: #a8164f; }
+.a-summarybar .a-btn--ghost:disabled { background: transparent; border-color: var(--body-rule); color: var(--body-text); opacity: 1; }
+
+/* ---------------------------------------------------------------------
+   Section pieces
+   ------------------------------------------------------------------- */
+.a-chipselect {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 5px 2px 7px;
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  transition: background var(--t-base) var(--ease), color var(--t-base) var(--ease);
+}
+
+.a-chipselect select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.a-review-warn { color: var(--caution); }
+
+.a-brokergrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(258px, 1fr)); gap: 12px; }
+
+.a-brokercard {
+  display: block;
+  padding: 14px;
+  background: var(--plate);
+  border: 1px solid var(--edge);
+  text-align: left;
+  position: relative;
+  transition: border-color var(--t-base) var(--ease), transform var(--t-base) var(--ease-out);
+}
+
+.a-brokercard:hover { border-color: var(--primary-colors-200); box-shadow: var(--lift-pop); }
+
+.a-brokercard__rank {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--edge);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+
+.a-brokercard__stats {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px 14px;
+  margin-top: 12px;
+  padding-top: 11px;
+  border-top: 1px solid var(--hairline);
+  font-size: 12px;
+}
+
+.a-brokercard__stats dt {
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  align-self: center;
+}
+.a-brokercard__stats dd {
+  text-align: right;
+  font-size: 14px;
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.a-planchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--edge);
+  background: var(--plate);
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.a-planchip:hover { border-color: var(--rule-major); }
+.a-planchip--on { border-color: var(--index); background: var(--index-soft); }
+.a-planchip:not(.a-planchip--on) img { filter: saturate(0.1); opacity: 0.5; }
+.a-planchip img { transition: filter var(--t-base) var(--ease), opacity var(--t-base) var(--ease); }
+
+.a-planfilter {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border: 1px solid var(--edge);
+  transition: border-color var(--t-fast) var(--ease);
+}
+.a-planfilter--on { border-color: var(--index); background: var(--index-soft); }
+
+.a-flowrow { display: flex; align-items: flex-start; gap: 20px; padding: 18px 20px; border-bottom: 1px solid var(--hairline); }
+.a-flowrow:last-child { border-bottom: none; }
+.a-flowrow__meta { display: flex; gap: 14px; width: 276px; flex: none; }
+.a-flowrow__mark { display: grid; place-items: center; width: 38px; height: 38px; color: #fff; flex: none; }
+
+.a-audience { display: flex; flex-wrap: wrap; gap: 4px; max-width: 150px; }
+
+.a-stepnum {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+
+.a-optioncard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--edge);
+  background: var(--plate);
+  cursor: pointer;
+  transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.a-optioncard:hover { border-color: var(--rule-major); }
+.a-optioncard--on { border-color: var(--index); background: var(--index-soft); }
+
+.a-usertype { display: flex; flex-direction: column; gap: 10px; padding: 10px; border: 1px solid var(--edge); background: var(--plate-sunk); }
+.a-usertype__item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
+
+.a-triggerrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--hairline);
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease);
+}
+.a-triggerrow:hover { background: var(--plate-sunk); }
+.a-triggerrow__icon { display: grid; place-items: center; width: 24px; height: 24px; color: #fff; flex: none; }
+
+/* ---------------------------------------------------------------------
+   Results — take-profit levels, the week picker, the batch summary
+   ------------------------------------------------------------------- */
+
+/* The level pip. Takes the Mini App's full-strength state colour, because
+   here it is a mark on a white ground, not text. */
+.a-pip {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--base-color-white);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+.a-pip--gain { background: var(--gain-mark); }
+.a-pip--loss { background: var(--loss-mark); }
+
+/* The level tabs from the Mini App's Home card: name over its risk:reward,
+   the current one filled with the tint rather than outlined. */
+.a-tplevels { display: flex; gap: 6px; }
+
+.a-tplevel {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 7px 8px;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-md);
+  background: var(--plate);
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.a-tplevel:hover { background: var(--plate-sunk); }
+.a-tplevel--on, .a-tplevel--on:hover { border-color: var(--index); background: var(--index-soft); }
+
+.a-tplevel__name { font-size: 15px; line-height: 22px; font-weight: var(--font-weight-semibold); }
+.a-tplevel__rr { font-size: 12px; line-height: 16px; color: var(--ink-2); }
+.a-tplevel--on .a-tplevel__name, .a-tplevel--on .a-tplevel__rr { color: var(--index); }
+
+/* The overview well — the Mini App's three tiles, sunk into the card. */
+.a-overview {
+  padding: 10px 14px 12px;
+  border-radius: var(--r-md);
+  background: var(--plate-sunk);
+}
+.a-overview__title { font-size: 12px; line-height: 18px; color: var(--ink-2); }
+.a-overview__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.a-overview__stats > div { display: flex; flex-direction: column; gap: 1px; }
+.a-overview__label { font-size: 12px; line-height: 16px; color: var(--ink-2); }
+.a-overview__value {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.01em;
+}
+
+.a-levelhead { display: inline-flex; align-items: center; gap: 5px; }
+
+/* Count over rate, stacked, so a level column reads as one figure rather
+   than two things competing for the same cell. */
+.a-levelcell { display: inline-flex; flex-direction: column; line-height: 17px; }
+.a-levelcell > b { font-weight: var(--font-weight-semibold); }
+.a-levelcell > span { font-size: 12px; color: var(--gain); }
+
+.a-weeklist {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 8px;
+  max-height: 236px;
+  overflow-y: auto;
+  padding: 4px;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-md);
+}
+
+.a-weekrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  text-align: left;
+  width: 100%;
+  transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.a-weekrow:hover { background: var(--plate-sunk); }
+.a-weekrow--on { border-color: var(--index); background: var(--index-soft); color: var(--index); }
+
+.a-weekrow__tag {
+  margin-left: auto;
+  padding: 1px 8px;
+  border-radius: var(--radius-infinity);
+  background: var(--plate-sunk);
+  color: var(--ink-2);
+  font-size: 12px;
+}
+.a-weekrow--on .a-weekrow__tag { background: var(--base-color-white); }
+/* Same purple the Status column already uses for "Draft" elsewhere. */
+.a-weekrow__tag--draft { background: var(--index-soft); color: var(--index); }
+.a-weekrow__tick { margin-left: auto; color: var(--index); }
+.a-weekrow__tag + .a-weekrow__tick { margin-left: 0; }
+
+.a-entrylist {
+  display: flex;
+  flex-direction: column;
+  max-height: 224px;
+  overflow-y: auto;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-md);
+}
+.a-entryrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--hairline);
+}
+.a-entryrow:last-child { border-bottom: none; }
+.a-entryrow .a-iconbtn { margin-left: auto; }
+
+.a-summaryrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-md);
+}
+.a-summaryrow--total { background: var(--index-soft); border-color: transparent; }
+.a-summaryrow__pct { width: 58px; text-align: right; font-variant-numeric: tabular-nums; }
+
+.a-resultgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+@media (max-width: 900px) {
+  .a-resultgrid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------------------------------------------------------------------
+   Referral
+   ------------------------------------------------------------------- */
+
+/* A campaign name wraps inside its cap rather than widening the column.
+   `break-word`, not `anywhere`: `anywhere` lets the column's min-content
+   shrink to a single character, and the table then squeezed the name into a
+   one-letter-per-line ribbon. `break-word` keeps min-content at the longest
+   word, so the column holds its shape and only over-long words are split. */
+.a-campaignname {
+  display: block;
+  min-width: 128px;
+  max-width: 190px;
+  white-space: normal;
+  overflow-wrap: break-word;
+  line-height: 18px;
+}
+
+/* The excluded side of the broker split. The arrow leads, because it is the
+   way back — the control and the direction of travel are the same object. */
+.a-excludedrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px 7px 4px;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-md);
+  background: var(--plate);
+}
+
+.a-swatches.is-disabled { opacity: 0.45; }
+.a-swatches.is-disabled .a-swatch,
+.a-swatches.is-disabled .a-swatch__hex { cursor: not-allowed; }
+.a-swatch--pick:has(input:disabled) { cursor: not-allowed; }
+
+/* ---------------------------------------------------------------------
+   The authored moment: the rebate handoff
+   ---------------------------------------------------------------------
+   The only place in this product where money actually moves. The row
+   arrives in the ledger against the index, and the payable total shifts
+   by exactly its delta — never a count from zero, because only the
+   change is a new reading.
+   ------------------------------------------------------------------- */
+.a-commit { animation: a-commit-in 460ms var(--ease-out); }
+
+@keyframes a-commit-in {
+  0% { opacity: 0; transform: translateY(-12px); }
+  100% { opacity: 1; transform: none; }
+}
+
+.a-total { display: inline-flex; align-items: baseline; gap: 8px; font-variant-numeric: tabular-nums; }
+
+.a-total__delta {
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.06em;
+  padding: 1px 5px;
+  background: var(--index);
+  color: #fff;
+  animation: a-delta 2.2s var(--ease) forwards;
+}
+
+@keyframes a-delta {
+  0% { opacity: 0; transform: translateY(4px); }
+  10%, 68% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: translateY(-3px); }
+}
+
+/* ---------------------------------------------------------------------
+   Login — the instrument before a reading is taken
+   ------------------------------------------------------------------- */
+.a-login {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 24px;
+  background: var(--body);
+  position: relative;
+}
+
+.a-login__card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: min(100%, 348px);
+  padding: 28px;
+  border-color: transparent;
+  /* The pale card shadow reads as a halo against the blue field; this ground
+     needs the dark overlay shadow instead. */
+  box-shadow: var(--lift-pop);
+  animation: a-modal-in 420ms var(--ease-out);
+}
+
+/* On the rail the mark is white on blue. On the white login card that makes it
+   invisible, so it inverts to blue on white. */
+.a-login__card .a-sidebar__mark {
+  background: var(--index);
+  color: var(--base-color-white);
+}
+
+/* ---------------------------------------------------------------------
+   Reduced motion
+   ------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .a-skel { background: var(--hairline); }
+}
+
+/* =====================================================================
+   Carry-over sweep
+   ---------------------------------------------------------------------
+   The rules above were written for a square-cornered, tracked-capitals
+   surface. Rather than restate two dozen blocks, this is the delta that
+   brings the remaining pieces onto the Mini App's system: 8/12/16 radii,
+   hairline-and-shadow overlays instead of hard ink borders, and sentence
+   case wherever a label was still set in tracked capitals.
+   ===================================================================== */
+
+/* ---- Roundness --------------------------------------------------- */
+.a-check input,
+.a-stepper__btns button,
+.a-swatch,
+.a-pop__row,
+.a-menu button,
+.a-legenditem__box,
+.a-planchip,
+.a-planfilter,
+.a-chipselect,
+.a-swatch__hex { border-radius: var(--r-sm); }
+
+.a-pop__panel,
+.a-menu,
+.a-emoji,
+.a-rte,
+.a-upload,
+.a-summarybar,
+.a-brokercard,
+.a-optioncard,
+.a-usertype,
+.a-event,
+.a-dragrow,
+.a-login__card { border-radius: var(--r-md); }
+
+.a-check input[type='radio'] { border-radius: 50%; }
+.a-toggle__track, .a-toggle__track::after { border-radius: var(--radius-infinity); }
+.a-stepper__btns button:first-child { border-radius: 0 var(--r-sm) 0 0; }
+.a-stepper__btns button:last-child { border-radius: 0 0 var(--r-sm) 0; }
+.a-rte__bar { border-radius: var(--r-md) var(--r-md) 0 0; }
+.a-rte__bar button { border-radius: 6px; }
+.a-total__delta { border-radius: var(--radius-infinity); padding: 1px 8px; }
+.a-swatch--active { box-shadow: 0 0 0 2px var(--index); }
+.a-brokerlogo { background: var(--index); }
+
+/* ---- Overlays lift, they do not get an ink outline ---------------- */
+.a-pop__panel,
+.a-menu,
+.a-emoji {
+  border-color: var(--edge);
+  box-shadow: var(--lift-pop);
+}
+
+/* Rows inside an overlay sit clear of its rounded corner. */
+.a-pop__panel, .a-menu, .a-emoji { padding: 4px; }
+.a-pop__panel { padding: 10px; }
+
+/* ---- Sentence case ------------------------------------------------ */
+.a-upload strong,
+.a-event__date,
+.a-chipselect,
+.a-brokercard__stats dt,
+.a-planchip,
+.a-legenditem,
+.a-rte__count,
+.a-total__delta {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.a-upload strong { font-size: 13px; font-weight: var(--font-weight-semibold); }
+.a-event__date { font-size: 12px; }
+.a-chipselect { font-size: 12px; font-weight: var(--font-weight-semibold); padding: 3px 6px 3px 9px; }
+.a-brokercard__stats dt { font-size: 12px; font-weight: var(--font-weight-regular); }
+.a-planchip { font-size: 12px; }
+.a-legenditem { font-size: 12px; }
+.a-rte__count { font-size: 12px; }
+.a-total__delta { font-size: 12px; }
+
+/* Eyedropper + hex, beside the presets. The native colour input is the picker;
+   the visible square is its handle. */
+.a-swatch--pick { position: relative; cursor: pointer; color: rgba(255, 255, 255, 0.8); }
+.a-swatch--pick input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.a-swatch__hex {
+  width: 88px;
+  height: 26px;
+  padding: 0 7px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  text-transform: uppercase;
+}

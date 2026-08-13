@@ -22,111 +22,6 @@
   padding: var(--spacing-16) var(--spacing-16) 104px; /* clearance for the fixed floating nav, matches Home */
 }
 
-/* ---- Promo carousel (850:2053, 3 slides: Summer discount / Invite
-   friends / Complete tasks — only slide 1 is on-canvas in the reference
-   PNG, slides 2-3 are off-canvas siblings reconstructed from JSON) ------ */
-.scr-cashback-promo {
-  display: flex;
-  gap: 21px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-}
-.scr-cashback-promo::-webkit-scrollbar {
-  display: none;
-}
-
-.scr-cashback-promo-card {
-  position: relative;
-  flex: none;
-  box-sizing: border-box;
-  width: 328px;
-  height: 110px;
-  padding: var(--spacing-16) var(--spacing-16) 12px;
-  border-radius: var(--radius-medium);
-  overflow: hidden;
-  scroll-snap-align: start;
-  color: var(--base-color-white);
-}
-
-.scr-cashback-promo-content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  max-width: 190px;
-}
-
-.scr-cashback-promo-badge {
-  display: inline-flex;
-  align-self: flex-start;
-  margin-bottom: var(--spacing-4);
-  padding: 0 var(--spacing-8);
-  border-radius: var(--radius-infinity);
-  background: rgba(255, 255, 255, 0.08);
-  font-size: 10px;
-  line-height: 24px;
-  font-weight: var(--font-weight-regular);
-}
-
-.scr-cashback-promo-title {
-  margin: 0 0 -4px; /* tight leading, matches the source's -4 autolayout gap */
-  font-size: 16px;
-  line-height: 32px;
-  font-weight: var(--font-weight-semibold);
-}
-
-.scr-cashback-promo-sub {
-  margin: 0;
-  font-size: 12px;
-  line-height: 24px;
-  font-weight: var(--font-weight-regular);
-  color: rgba(255, 255, 255, 0.72);
-}
-
-/* Flush to the card's own top/right edge — the source crop's transparent
-   margin was excluded (see Cashback.tsx comment), so no inset is needed. */
-.scr-cashback-promo-art {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 115px;
-  height: 110px;
-}
-
-/* Centred in the card, not left-aligned: the reference cluster runs x160..199
-   inside a 16..344 card, i.e. dead centre. */
-.scr-cashback-promo-dots {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: var(--spacing-12);
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-4);
-}
-
-.scr-cashback-promo-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: var(--radius-infinity);
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.9), rgba(224, 224, 224, 0.55));
-}
-.scr-cashback-promo-dot--active {
-  position: relative;
-  width: 20px;
-}
-.scr-cashback-promo-dot-fill {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 10px;
-  height: 6px;
-  border-radius: var(--radius-infinity);
-  background: var(--base-color-white);
-}
-
 /* ---- Hero card (CashbackOverview) overrides ---------------------------
    850:2053's Cashback Overview instance is the "State=Standard user"
    variant: no delta chip, no "current state / cashback rate" label row
@@ -169,19 +64,39 @@
    panel). The DS rate span has no caption slot, so it's added as static
    ::after content (this label is fixed copy, not data) rather than piping
    a ReactNode through the `rate` prop, which is typed as `string`. */
+/* A block, not a column flex box. A flex container with align-items:flex-end
+   reports a SYNTHESISED baseline (its bottom edge) to the row above, so the
+   row's baseline alignment was matching an edge against real text and landing
+   "10%" ~1.5px off "Standard". As a block it exposes its first line's real
+   baseline and the two align exactly. */
 .scr-cashback-hero .ds-cashback-rate {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  /* 20, not the DS 24. The reference "10%" is 39px wide with a 16px cap; the
-     24px build renders it 47px / 19px. Both ratios land on 20. */
-  font-size: 20px;
+  display: block;
+  text-align: right;
+  /* 18, matching the plan name opposite it. The frame measures 20 here against
+     the name's 16 (see the width solve in the earlier note), but at that pair
+     the rate visibly outweighs the plan it belongs to; the design review asked
+     for the two to meet. Equal sizes make them read as one statement, which is
+     what the row is for. */
+  font-size: 18px;
 }
+.scr-cashback-hero .ds-cashback-plan-name {
+  font-size: 18px;
+}
+/* The two captions share a baseline, so this one is positioned to land on it.
+   Left column: 32px name box, then a 28px caption pulled up 4 — caption box
+   top at row+28. Right column: 44px value box, so -9 puts its caption box on
+   that same y (44-9 = 35 from a box that starts 7 higher). Same 10px/28px as
+   the left caption, so the same 17px baseline offset inside the box applies.
+   Measured, not derived from the frame: -16 left it 7px high. */
 .scr-cashback-hero .ds-cashback-rate::after {
   content: 'Cashback rate';
-  margin-top: -12px; /* 44 (value line-height) + 24 (caption) - 12 = 56, matching the plan-text column's own height */
+  display: block;
+  /* Pulls this caption's baseline onto "Base access" opposite it. Retuned from
+     -9 when the rate went 20 -> 18: a smaller glyph sits lower in the same
+     44px line box. */
+  margin-top: -10px;
   font-size: 10px;
-  line-height: 24px;
+  line-height: 28px;
   font-weight: var(--font-weight-regular);
   color: rgba(255, 255, 255, 0.72);
 }
@@ -221,6 +136,7 @@
 
 /* ---- "Partner brokers" card -------------------------------------------- */
 .scr-cashback-brokers {
+  position: relative; /* anchors the "i" callout */
   display: flex;
   flex-direction: column;
   gap: var(--spacing-16);
@@ -240,11 +156,6 @@
   line-height: 32px;
   font-weight: var(--font-weight-regular);
   color: var(--typography-colors-main-text);
-}
-
-.scr-cashback-brokers-info {
-  display: inline-flex;
-  color: var(--base-color-black);
 }
 
 .scr-cashback-brokers-list {
@@ -374,6 +285,26 @@
   max-width: calc(100% - 24px);
   height: 2px;
   border-radius: var(--radius-infinity);
+  transform-origin: left center;
+}
+
+/* "Account verified" / "Deposit confirmed" are news, not state: the bar drains
+   over the banner's life so the disappearance is announced rather than sprung.
+   The strip is removed by a JS timer of the same length (StatusBanner), not by
+   animationend — a reduced-motion client never runs this. */
+@media (prefers-reduced-motion: no-preference) {
+  .scr-cashback-broker-banner--success::after {
+    animation: scr-cashback-drain var(--banner-ms, 5000ms) linear forwards;
+  }
+}
+
+@keyframes scr-cashback-drain {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
 }
 
 .scr-cashback-broker-banner--error {
@@ -404,6 +335,29 @@
 .scr-cashback-broker-banner--pending svg {
   color: var(--typography-colors-main-text);
 }
+/* The arc turns so "in progress" looks like it is progressing. Slow enough to
+   read as waiting rather than loading. */
+.scr-cashback-spinner {
+  animation: scr-cashback-spin 1.6s linear infinite;
+  transform-origin: 50% 50%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scr-cashback-spinner {
+    animation: none;
+  }
+}
+@keyframes scr-cashback-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.scr-cashback-brokers-empty {
+  margin: 0;
+  padding: var(--spacing-24) 0;
+  text-align: center;
+  color: var(--typography-colors-sub-text);
+}
 
 /* Footer note under the broker list (1284:3850). Figma's own text box is
    272px (296 frame - 12px each side) and still wraps after "in", not
@@ -424,92 +378,41 @@
   color: var(--typography-colors-sub-text);
 }
 
-
-/* =====================================================================
-   Intro splash (850:1913) — first-run/empty state, no bottom nav.
-   ===================================================================== */
-.scr-cashback-intro {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  padding: var(--spacing-16);
-  background: var(--bg-colors-container-s);
-  font-family: var(--font-family-base);
-  color: var(--typography-colors-main-text);
-}
-
-.scr-cashback-intro-card {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  padding: 56px var(--spacing-24) var(--spacing-16);
-  border-radius: 16px;
-  background: var(--bg-colors-container-p);
-}
-
-.scr-cashback-intro-headline {
-  margin: 0 0 96px;
-  font-size: 24px;
-  line-height: 44px;
-  font-weight: var(--font-weight-bold);
-  text-align: center;
-}
-
-.scr-cashback-intro-accent {
-  color: var(--primary-colors-900);
-}
-
-.scr-cashback-intro-steps {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-24);
-}
-
-.scr-cashback-intro-step {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-16);
-}
-
-.scr-cashback-intro-step-icon {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-infinity);
-  background: var(--primary-colors-50);
-  color: var(--primary-colors-900);
-}
-
-.scr-cashback-intro-step-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.scr-cashback-intro-step-title {
-  font-size: 14px;
-  line-height: 28px;
-  font-weight: var(--font-weight-regular);
-  color: var(--typography-colors-main-text);
-}
-
-.scr-cashback-intro-step-sub {
+/* "i" callout over the partner-brokers card — same box as Home's plan-info
+   callout (black, 264 wide, arrow under its right end pointing at the icon). */
+.scr-cashback-infotip {
+  position: absolute;
+  z-index: 5;
+  bottom: calc(100% - 11px);
+  right: 0;
+  width: 264px;
+  box-sizing: border-box;
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-small);
+  background: var(--base-color-black);
+  color: #fff;
   font-size: 12px;
   line-height: 24px;
-  font-weight: var(--font-weight-regular);
-  color: var(--typography-colors-sub-text);
 }
-
-/* The Figma CTA is a muted grey pill (bg #F1F1F1, text #7C7C7C) — none of
-   the DS Button variants (primary/secondary/outline) match that palette,
-   so the primary variant is reused structurally and reskinned here. */
-.scr-cashback-intro-cta.ds-button {
-  margin-top: auto;
-  background: var(--bg-colors-container-s);
-  color: var(--typography-colors-sub-text);
+.scr-cashback-infotip::after {
+  content: '';
+  position: absolute;
+  bottom: -9px;
+  right: 19px;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 9px solid var(--base-color-black);
+  opacity: 0.24;
 }
-.scr-cashback-intro-cta.ds-button:active {
-  background: var(--stroke-colors-default);
+@media (prefers-reduced-motion: no-preference) {
+  .scr-cashback-infotip {
+    animation: scr-cashback-tip 0.22s cubic-bezier(0.34, 1.4, 0.64, 1);
+    transform-origin: bottom right;
+  }
+}
+@keyframes scr-cashback-tip {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
 }

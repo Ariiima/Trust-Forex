@@ -18,10 +18,6 @@
   border-radius: 16px 16px 0 0;
 }
 
-.scr-about-ref-sheet .ds-sheet-handle {
-  display: none;
-}
-
 /* ---- header ----------------------------------------------------------
    A 32-tall row (the title's own line box) with the rule 11 below it. */
 .scr-about-ref-head {
@@ -34,9 +30,11 @@
 }
 
 /* Figma centres a 1px #E4E4E4 dashed stroke on the pixel boundary under the
-   header, so it rasterises as TWO rows of #F1F1F1, not one of #E4E4E4.
-   Reproduce the raster: 2px tall, 4 on / 4 off, phase -2 so the first dash is
-   clipped to 2px and the last one lands on 342-343. */
+   header, rasterising as two rows of #F1F1F1. That used to be reproduced with
+   a -2px phase so the raster matched exactly, but the phase clipped the rule's
+   first dash to 2px — the client read that short dash as a defect, not a
+   rendering nuance, so even spacing wins here. Same 4-on/4-off, 8px pitch as
+   the cashback hero divider (Cashback.css), with no phase offset. */
 .scr-about-ref-head::after {
   content: '';
   position: absolute;
@@ -44,10 +42,7 @@
   bottom: 0;
   left: 0;
   height: 2px;
-  background-image: linear-gradient(90deg, #f1f1f1 0 50%, transparent 50% 100%);
-  background-repeat: repeat-x;
-  background-size: 8px 2px;
-  background-position: -2px 0;
+  background: repeating-linear-gradient(to right, #f1f1f1 0 4px, transparent 4px 8px);
 }
 
 .scr-about-ref-title {

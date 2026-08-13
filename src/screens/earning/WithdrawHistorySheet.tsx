@@ -51,27 +51,21 @@ const STATUS_LABEL: Record<WithdrawStatus, string> = {
   rejected: 'Rejected',
 };
 
-/** Sample rows from 1404:7767 — layer names are the copy. */
-export const WITHDRAW_HISTORY: readonly WithdrawRecord[] = [
-  { id: '1', symbol: 'USDT', network: 'TRC20', status: 'pending', amount: 100, date: 'Jul 25, 2026', time: '19:56', to: 'dvjdvojv...kvndiv' },
-  { id: '2', symbol: 'USDT', network: 'BEP20', status: 'rejected', amount: 100, date: 'Jul 25, 2026', time: '19:56', to: 'dvjdvojv...kvndiv' },
-  { id: '3', symbol: 'USDT', network: 'ERC20', status: 'completed', amount: 100, date: 'Jul 25, 2026', time: '19:56', to: 'dvjdvojv...kvndiv' },
-  { id: '4', symbol: 'USDT', network: 'USDT', status: 'completed', amount: 100, date: 'Jul 25, 2026', time: '19:56', to: 'dvjdvojv...kvndiv' },
-];
-
 export interface WithdrawHistorySheetProps {
   open: boolean;
+  /** `undefined` = still fetching — the list stays blank rather than showing
+      invented rows for the beat before the real data lands. */
   records?: readonly WithdrawRecord[];
   onClose?: () => void;
 }
 
 export function WithdrawHistorySheet({
   open,
-  records = WITHDRAW_HISTORY,
+  records,
   onClose,
 }: WithdrawHistorySheetProps): ReactNode {
   const [filter, setFilter] = useState<(typeof FILTERS)[number]['key']>('all');
-  const shown = filter === 'all' ? records : records.filter((r) => r.status === filter);
+  const shown = (records ?? []).filter((r) => filter === 'all' || r.status === filter);
 
   return (
     <BottomSheet open={open} onClose={onClose} className="scr-wdhist-sheet">
@@ -100,6 +94,9 @@ export function WithdrawHistorySheet({
       </div>
 
       <ul className="scr-wdhist-list">
+        {records && shown.length === 0 ? (
+          <li className="scr-wdhist-empty type-text-xs">No transactions found for this status.</li>
+        ) : null}
         {shown.map((r) => (
           <li key={r.id} className="scr-wdhist-row">
             <div className="scr-wdhist-pair">

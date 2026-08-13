@@ -1,0 +1,33 @@
+/* Flat placeholder at rest — the sweep below is additive, not the only state,
+   so a reduced-motion capture mid-load still reads as "loading" rather than a
+   plain empty box. Radius/colours off the shared tokens rather than new ones. */
+.ds-skeleton {
+  display: block;
+  border-radius: var(--radius-small);
+  background: var(--bg-colors-container-s); /* #F1F1F1 */
+}
+
+/* The one exception to "no looping animation" in the motion brief: a shimmer
+   signals an ongoing wait, it doesn't decorate a state that already happened.
+   Gated out under reduced motion, same as every other loop in the app. */
+@media (prefers-reduced-motion: no-preference) {
+  .ds-skeleton {
+    background: linear-gradient(
+      100deg,
+      var(--bg-colors-container-s) 40%,
+      var(--stroke-colors-default) 50%,
+      var(--bg-colors-container-s) 60%
+    );
+    background-size: 200% 100%;
+    animation: ds-skeleton-sweep 1.4s ease-in-out infinite;
+  }
+}
+
+@keyframes ds-skeleton-sweep {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}

@@ -11,6 +11,10 @@ interface Window {
       colorScheme: 'light' | 'dark'
       BackButton: { show: () => void; hide: () => void; onClick: (cb: () => void) => void; offClick: (cb: () => void) => void }
       MainButton: { show: () => void; hide: () => void; setText: (t: string) => void; onClick: (cb: () => void) => void; offClick: (cb: () => void) => void }
+      /** Bot API 6.1+ — opens a t.me link inside Telegram instead of a browser. */
+      openTelegramLink?: (url: string) => void
+      /** Bot API 6.1+ — opens an external https link outside the webview. */
+      openLink?: (url: string) => void
       /** Bot API 7.7+ — keeps a vertical drag from minimising the Mini App. */
       disableVerticalSwipes?: () => void
       enableVerticalSwipes?: () => void

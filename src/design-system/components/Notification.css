@@ -3,6 +3,7 @@
    description line. Figma "in progress" is mapped to `warning`; `info` is
    extrapolated (no Figma artwork) — recheck both visually. */
 .ds-notification {
+  position: relative; /* the auto-dismiss bar pins to the bottom edge */
   display: flex;
   align-items: center;
   gap: 10px; /* icon x=12 → text x=42 in the QR warning banner (1102-10506) */
@@ -53,6 +54,38 @@
   color: var(--typography-colors-sub-text);
 }
 
+/* Auto-dismiss countdown: a 2px bar along the bottom edge draining full ->
+   empty over the strip's lifetime, so the disappearance is announced rather
+   than sprung. Duration comes from the `autoDismiss` prop, inline.
+   scaleX from the left, i.e. one compositor-only property. */
+.ds-notification-timer {
+  position: absolute;
+  left: var(--spacing-12);
+  bottom: 0;
+  /* the underline the cashback list's own banners draw (Cashback.css) */
+  width: 148px;
+  max-width: calc(100% - 24px);
+  height: 2px;
+  border-radius: var(--radius-infinity);
+  background: currentColor;
+  transform-origin: left center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ds-notification-timer {
+    animation: ds-notification-drain linear forwards;
+  }
+}
+
+@keyframes ds-notification-drain {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
 .ds-notification-close {
   display: inline-flex;
   flex: none;
@@ -65,13 +98,13 @@
 
 /* variant — tinted bg + accent icon */
 .ds-notification-success { background: var(--state-colors-success-bg); }
-.ds-notification-success .ds-notification-icon { color: var(--state-colors-success); }
+.ds-notification-success :is(.ds-notification-icon, .ds-notification-timer) { color: var(--state-colors-success); }
 
 .ds-notification-error { background: var(--state-colors-eror-bg); }
-.ds-notification-error .ds-notification-icon { color: var(--state-colors-eror); }
+.ds-notification-error :is(.ds-notification-icon, .ds-notification-timer) { color: var(--state-colors-eror); }
 
 .ds-notification-warning { background: var(--state-colors-danger-bg); }
-.ds-notification-warning .ds-notification-icon { color: var(--state-colors-danger); }
+.ds-notification-warning :is(.ds-notification-icon, .ds-notification-timer) { color: var(--state-colors-danger); }
 
 .ds-notification-info { background: var(--state-colors-info-bg); }
-.ds-notification-info .ds-notification-icon { color: var(--state-colors-info); }
+.ds-notification-info :is(.ds-notification-icon, .ds-notification-timer) { color: var(--state-colors-info); }

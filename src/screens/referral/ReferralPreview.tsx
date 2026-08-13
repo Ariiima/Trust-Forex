@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { Button } from '../../design-system/components';
+import { AnimatedEmoji, Button } from '../../design-system/components';
 import { ReferralBenefits } from './ReferralBenefits';
-import introArt from '../../assets/referral/referral-intro.png';
+import introArt from '../../assets/emoji/referral.json?url';
 import './ReferralBenefits.css';
 import './ReferralPreview.css';
 
@@ -35,7 +35,7 @@ export function ReferralPreview({ countdownSeconds = 5, onStartInviting }: Refer
     <div className="scr-referral-preview">
       <main className="scr-referral-preview-main">
         <section className="scr-referral-preview-card">
-          <img className="scr-referral-preview-art" src={introArt} alt="" width={168} height={120} />
+          <AnimatedEmoji className="scr-referral-preview-art" src={introArt} />
 
           <h1 className="scr-referral-preview-title type-text-2xl-bold">
             Turn your network into referral <span className="scr-referral-preview-accent">income</span>

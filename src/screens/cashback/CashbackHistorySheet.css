@@ -27,9 +27,6 @@
      viewport ends 34px above the sheet bottom, not 24. */
   padding-bottom: 34px;
 }
-.scr-history-sheet .ds-sheet-handle {
-  display: none;
-}
 
 /* ---- own head: bigger title (18/32) + close + dashed rule ------------- */
 .scr-history-sheet-head {
@@ -92,22 +89,15 @@
   gap: var(--spacing-12);
   list-style: none;
   overflow-y: auto;
-  /* tweaks.md: the scrollable section needs a visible scrollbar. */
-  scrollbar-width: thin;
-  scrollbar-color: var(--stroke-colors-default) transparent;
-}
-.scr-history-sheet-list::-webkit-scrollbar {
-  width: 4px;
-}
-.scr-history-sheet-list::-webkit-scrollbar-thumb {
-  border-radius: var(--radius-infinity);
-  background: var(--stroke-colors-default);
+  /* tweaks.md wanted a visible scrollbar here; the design's own rail (below)
+     is now live, so the native one would just be a second bar next to it. */
+  scrollbar-width: none;
 }
 .scr-history-sheet-list::-webkit-scrollbar {
   display: none;
 }
 
-/* Decorative scroll rail (static mock, not synced to real scroll position). */
+/* The design's scroll rail — thumb height/offset come from useScrollRail. */
 .scr-history-sheet-rail {
   position: relative;
   flex: none;
@@ -118,10 +108,8 @@
 }
 .scr-history-sheet-rail-thumb {
   position: absolute;
-  top: 0;
   left: 0;
   width: 2px;
-  height: 200px;
   border-radius: var(--radius-infinity);
   background: var(--stroke-colors-default);
 }

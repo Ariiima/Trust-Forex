@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Icon, NavigationBar } from '../../design-system/components';
 import type { NavigationTab } from '../../design-system/components';
@@ -8,6 +8,8 @@ import { PromoCarousel } from '../home/PromoCarousel';
 import { AboutReferralSheet } from './AboutReferralSheet';
 import { EarningsGlyph } from './EarningsGlyph';
 import { useSeenValue } from '../../design-system/useCountUp';
+import { useScrollRail } from '../../design-system/useScrollRail';
+import { cachedMe, getMe } from '../../api/client';
 import shareCoin from '../../assets/referral/referral-share-coin.png';
 import './ReferralMain.css';
 
@@ -75,13 +77,13 @@ export interface ReferralMainProps {
 }
 
 export function ReferralMain({
-  totalEarnings = 245,
-  sharePct = 10,
-  invitedUsers = 42,
-  invitedDelta = 2,
-  activeUsers = 22,
-  planEarnings = 180,
-  cashbackEarnings = 65,
+  totalEarnings: totalEarningsDefault = 0,
+  sharePct: sharePctDefault = 10,
+  invitedUsers: invitedUsersDefault = 0,
+  invitedDelta = 0,
+  activeUsers: activeUsersDefault = 0,
+  planEarnings: planEarningsDefault = 0,
+  cashbackEarnings: cashbackEarningsDefault = 0,
   referrals = [],
   initialSheet,
   telegramLink = '',
@@ -89,6 +91,38 @@ export function ReferralMain({
   onNavigate,
   onAbout,
 }: ReferralMainProps): ReactNode {
+  /* Zeros render immediately; /api/me swaps the real figures in. cachedMe()
+     seeds this synchronously so a tab switch (which remounts the screen)
+     doesn't re-fetch and visibly re-swap the numbers. */
+  const [live, setLive] = useState(() => cachedMe()?.referral ?? null);
+  useEffect(() => {
+    if (cachedMe()) return;
+    let alive = true;
+    void getMe().then((me) => alive && setLive(me?.referral ?? null));
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const invitedUsers = live?.invited ?? invitedUsersDefault;
+  const activeUsers = live?.active ?? activeUsersDefault;
+  /* `earned` is the user's cut; `plan` + `cashback` are what their referrals
+     generated for the platform (they sum to `revenue`, the admin's own
+     "Our Monthly Revenue"). This screen is the user's, so the headline is what
+     they earned and the two tiles split it in the same proportion — quoting the
+     platform's revenue under "Total referral earnings" would overstate what the
+     user is owed by the whole margin. */
+  const generated = (live?.plan ?? 0) + (live?.cashback ?? 0);
+  const totalEarnings = live ? live.earned : totalEarningsDefault;
+  const planEarnings = live
+    ? (generated ? (live.earned * live.plan) / generated : 0)
+    : planEarningsDefault;
+  const cashbackEarnings = live
+    ? (generated ? (live.earned * live.cashback) / generated : 0)
+    : cashbackEarningsDefault;
+  // The commission rate itself is one pair; the badge shows the plan rate.
+  const sharePct = live?.share ? Math.round(live.share.planPct) : sharePctDefault;
+
   /* Figures render at their real value straight away — rolling them up from
      zero made the card read as "loading" every single visit for information
      that is not new. What animates is only the change: the green +N chip, which
@@ -103,9 +137,40 @@ export function ReferralMain({
 
   const [copied, setCopied] = useState<'telegram' | 'website' | null>(null);
   const [aboutOpen, setAboutOpen] = useState(initialSheet === 'about');
-  // null = as-delivered order, which is what frame 1333:8366 shows even though
-  // the control is labelled "Highest earnings". Sorting starts on first tap.
-  const [sortDesc, setSortDesc] = useState<boolean | null>(null);
+  const [sortBy, setSortBy] = useState<'earnings' | 'newest'>('earnings');
+  const [listRef, railThumb] = useScrollRail<HTMLDivElement>();
+
+  /* Client design call, no Figma frame: the second info button (over the
+     copyable links) shows a one-line tooltip instead of opening the About
+     sheet. Dismissal matches Home's "Choose your plan" info callout (see
+     Home.tsx's ChoosePlanSection tipOpen effect) — any scroll or tap outside
+     the button closes it. Hover is layered on top of that, not a replacement
+     for it: this is a touch app, but hover lets the tooltip be reached with a
+     mouse during desktop testing. */
+  const [linkTipTapped, setLinkTipTapped] = useState(false);
+  const [linkTipHovered, setLinkTipHovered] = useState(false);
+  const linkTipShown = linkTipTapped || linkTipHovered;
+  const linkTipRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!linkTipTapped) return;
+    const close = (e: Event): void => {
+      if (linkTipRef.current?.contains(e.target as Node)) return;
+      // Page scrolls only — this screen has the auto-advancing promo carousel
+      // too; see the long note on Home's info callout.
+      if (e.type === 'scroll' && !(e.target as Node | null)?.contains?.(linkTipRef.current)) return;
+      setLinkTipTapped(false);
+    };
+    document.addEventListener('pointerdown', close, true);
+    // Armed a beat late, same guard as Home's callout: an insertion that
+    // nudges the page would otherwise fire a scroll that closes this on the
+    // same tick it opened.
+    const arm = setTimeout(() => document.addEventListener('scroll', close, true), 150);
+    return () => {
+      clearTimeout(arm);
+      document.removeEventListener('pointerdown', close, true);
+      document.removeEventListener('scroll', close, true);
+    };
+  }, [linkTipTapped]);
 
   /* navigator.clipboard exists only in a secure context. This was served over
      plain http for a while, where it throws — and the old catch swallowed that,
@@ -138,10 +203,12 @@ export function ReferralMain({
   ];
 
   const total = (r: Referral) => r.plan + r.cashback;
-  const sorted =
-    sortDesc === null
-      ? referrals
-      : [...referrals].sort((a, b) => (sortDesc ? total(b) - total(a) : total(a) - total(b)));
+  // "Sep 12,2026" — the comma trips strict parsers, so normalise it. Anything
+  // unparseable sorts to the bottom rather than scrambling the list with NaN.
+  const joinedAt = (r: Referral) => Date.parse(r.joined.replace(',', ' ')) || 0;
+  const sorted = [...referrals].sort((a, b) =>
+    sortBy === 'newest' ? joinedAt(b) - joinedAt(a) : total(b) - total(a),
+  );
 
   return (
     <div className="scr-refmain">
@@ -150,11 +217,11 @@ export function ReferralMain({
           <h1 className="scr-refmain-head-title type-text-sm">Total referral earnings</h1>
           <button
             type="button"
-            className="scr-refmain-info"
+            className="ds-info-btn ds-info-btn--on-dark"
             onClick={onAbout ?? (() => setAboutOpen(true))}
             aria-label="About referral"
           >
-            <Icon name="info" size={24} />
+            <Icon name="info" size={20} />
           </button>
         </div>
 
@@ -199,16 +266,24 @@ export function ReferralMain({
         </ul>
 
         <div className="scr-refmain-links">
-          <div className="scr-refmain-head">
+          <div className="scr-refmain-head scr-refmain-links-head">
             <h2 className="scr-refmain-head-title type-text-sm">Copy your referral link</h2>
             <button
               type="button"
-              className="scr-refmain-info scr-refmain-info--sm"
-              onClick={onAbout ?? (() => setAboutOpen(true))}
-              aria-label="About referral links"
+              ref={linkTipRef}
+              className="ds-info-btn ds-info-btn--on-dark"
+              aria-label="Referral link info"
+              onClick={() => setLinkTipTapped((v) => !v)}
+              onMouseEnter={() => setLinkTipHovered(true)}
+              onMouseLeave={() => setLinkTipHovered(false)}
             >
               <Icon name="info" size={20} />
             </button>
+            {linkTipShown ? (
+              <div className="scr-refmain-linktip" role="tooltip">
+                Choose how friends start; both links track referrals.
+              </div>
+            ) : null}
           </div>
 
           {(
@@ -222,16 +297,27 @@ export function ReferralMain({
                 <Glyph name={l.icon} size={20} strokeWidth={l.stroke} className="scr-refmain-link-icon" />
                 <span className="scr-refmain-link-label type-text-sm">{l.label}</span>
               </span>
-              <button type="button" className="scr-refmain-copy" onClick={() => copy(l.key, l.value)}>
-                <span className="type-text-xs">{copied === l.key ? 'Copied' : 'Copy'}</span>
-                <Glyph name="copy" size={16} />
+              <button
+                type="button"
+                className={'scr-refmain-copy' + (copied === l.key ? ' scr-refmain-copy--done' : '')}
+                onClick={() => copy(l.key, l.value)}
+              >
+                {/* The label stays put; only the glyph acknowledges the copy,
+                    so the button never changes width under the finger. Both
+                    icons stay mounted and cross-fade via CSS (below) rather
+                    than one replacing the other, which read as a snap. */}
+                <span className="type-text-xs">Copy</span>
+                <span className="scr-refmain-copy-icon">
+                  <Glyph name="copy" size={16} className="scr-refmain-copy-icon-copy" />
+                  <Glyph name="check" size={16} className="scr-refmain-copy-icon-check" />
+                </span>
               </button>
             </div>
           ))}
         </div>
       </section>
 
-      <PromoCarousel start={1} />
+      <PromoCarousel start={1} section="referral" />
 
       <section
         className={'scr-refmain-list-card' + (referrals.length === 0 ? ' scr-refmain-list-card--empty' : '')}
@@ -241,9 +327,15 @@ export function ReferralMain({
           {/* Empty variant 1436:14439 drops the sort control entirely — there is
               nothing to order, so the head row is title-only. */}
           {referrals.length > 0 ? (
-            <button type="button" className="scr-refmain-sort" onClick={() => setSortDesc((v) => v === false)}>
+            <button
+              type="button"
+              className="scr-refmain-sort"
+              onClick={() => setSortBy((v) => (v === 'earnings' ? 'newest' : 'earnings'))}
+            >
               <Glyph name="swap-vertical" size={16} />
-              <span className="type-text-xs">{sortDesc === false ? 'Lowest earnings' : 'Highest earnings'}</span>
+              <span className="type-text-xs">
+                {sortBy === 'newest' ? 'Newest users' : 'Highest earnings'}
+              </span>
             </button>
           ) : null}
         </div>
@@ -255,7 +347,7 @@ export function ReferralMain({
           </p>
         ) : (
           <div className="scr-refmain-list-port">
-            <div className="scr-refmain-list-scroll">
+            <div className="scr-refmain-list-scroll" ref={listRef}>
               <ul className="scr-refmain-referrals">
               {sorted.map((r) => (
                 <li key={r.id} className="scr-refmain-referral">
@@ -291,7 +383,9 @@ export function ReferralMain({
               ))}
               </ul>
             </div>
-            <span className="scr-refmain-list-rail" aria-hidden="true" />
+            <span className="scr-refmain-list-rail" aria-hidden="true">
+              <span className="scr-refmain-list-thumb" style={railThumb} />
+            </span>
           </div>
         )}
       </section>

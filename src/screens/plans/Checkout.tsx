@@ -1,10 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Button, BottomSheet, Icon, Input, ProgressBar, Switch } from '../../design-system/components';
 import { PlanCard } from './PlanCard';
 import { OrderSummarySheet } from './OrderSummarySheet';
 import { Glyph } from './icons';
-import { PLANS, DISCOUNT_CODE, DISCOUNT_AMOUNT, EARNING_BALANCE_AVAILABLE, type PlanId } from './plans-data';
+import { PLANS, type PlanId } from './plans-data';
+import { cachedMe, checkDiscount, getMe } from '../../api/client';
+import { useBackButton } from '../../telegram';
 import './Checkout.css';
 
 /**
@@ -17,44 +19,86 @@ import './Checkout.css';
 export interface CheckoutProps {
   initialPlan?: PlanId;
   onBack?: () => void;
-  onReviewOrder?: (summary: { planId: PlanId; total: number }) => void;
+  onReviewOrder?: (summary: { planId: PlanId; total: number; code?: string; useBalance?: boolean }) => void;
 }
 
-// `onBack` is accepted for API compatibility (App.tsx wires it up) but
-// unused here: this screen renders no in-app header. Figma 552:3115 shows
-// only one back/title bar in the top 76px, which is the "Telegram header"
-// chrome instance, not app content — pixel-verified against the reference
-// (with no header, the progress bar lands at build y=16, matching ref
-// y=92 minus the 76px chrome exactly). A PlansHeader call previously
-// duplicated that chrome, pushing every element down 44px.
-export default function Checkout({ initialPlan = 'silver', onReviewOrder }: CheckoutProps): ReactNode {
+// No in-app header: this screen renders none. Figma 552:3115 shows only one
+// back/title bar in the top 76px, which is the "Telegram header" chrome
+// instance, not app content — pixel-verified against the reference (with no
+// header, the progress bar lands at build y=16, matching ref y=92 minus the
+// 76px chrome exactly). A PlansHeader call previously duplicated that
+// chrome, pushing every element down 44px. Back instead comes from
+// Telegram's native BackButton.
+export default function Checkout({ initialPlan = 'silver', onBack, onReviewOrder }: CheckoutProps): ReactNode {
+  useBackButton(onBack);
   const [planId, setPlanId] = useState<PlanId>(initialPlan);
-  const [useBalance, setUseBalance] = useState(false);
-  const [discountApplied, setDiscountApplied] = useState(false);
-  const [discountError, setDiscountError] = useState(false);
+  /* The applied code, as the server validated it — a percentage off this plan,
+     bound to this account. `null` means nothing is applied. */
+  const [discount, setDiscount] = useState<{ code: string; percent: number } | null>(null);
+  const [discountError, setDiscountError] = useState('');
   const [discountInput, setDiscountInput] = useState('');
+  const [checking, setChecking] = useState(false);
   const [changePlanOpen, setChangePlanOpen] = useState(false);
   const [orderSummaryOpen, setOrderSummaryOpen] = useState(false);
   const [modalPlanId, setModalPlanId] = useState<PlanId>(initialPlan);
 
   const plan = useMemo(() => PLANS.find((p) => p.id === planId)!, [planId]);
 
-  const total = useMemo(() => {
-    let t = plan.checkoutPrice;
-    if (useBalance) t -= EARNING_BALANCE_AVAILABLE;
-    if (discountApplied) t -= DISCOUNT_AMOUNT;
-    return Math.max(t, 0);
-  }, [plan, useBalance, discountApplied]);
+  /* Earning balance, straight off /api/me — the same figure the Earning tab
+     shows. Starts at 0 so the row renders with the screen rather than popping
+     in, and the toggle is simply not operable until there is something to
+     spend. */
+  const [balance, setBalance] = useState(() => cachedMe()?.wallet.balance ?? 0);
+  const [useBalance, setUseBalance] = useState(false);
+  useEffect(() => {
+    let live = true;
+    void getMe().then((me) => live && me && setBalance(me.wallet.balance));
+    return () => {
+      live = false;
+    };
+  }, []);
 
+  /** What the code takes off, in dollars — campaign discounts are percentages. */
+  const discountAmount = useMemo(
+    () => (discount ? Math.round(plan.checkoutPrice * (discount.percent / 100) * 100) / 100 : 0),
+    [discount, plan],
+  );
+
+  /* The discount comes off first, then the wallet covers what is left of it —
+     the same order the server applies them in, so the "Total payable" here is
+     the amount the order is actually created for. */
+  const afterDiscount = Math.max(plan.checkoutPrice - discountAmount, 0);
+  const balanceApplied = useBalance ? Math.min(balance, afterDiscount) : 0;
+  const total = useMemo(
+    () => Math.round((afterDiscount - balanceApplied) * 100) / 100,
+    [afterDiscount, balanceApplied],
+  );
+
+  /* Validated server-side against the campaign that minted it: unique codes are
+     bound to one account and one use, so a forwarded code has to fail here
+     rather than at payment. */
   const applyDiscount = (): void => {
     const code = discountInput.trim();
-    if (!code) return;
-    if (code.toUpperCase() === DISCOUNT_CODE) {
-      setDiscountApplied(true);
-      setDiscountError(false);
-    } else {
-      setDiscountError(true);
-    }
+    if (!code || checking) return;
+    setChecking(true);
+    checkDiscount(code, planId)
+      .then((r) => {
+        if (r.error || r.percent === undefined) {
+          setDiscount(null);
+          setDiscountError(
+            r.error === 'code_used' ? 'That code has already been used.'
+              : r.error === 'code_expired' ? 'That code has expired.'
+                : r.error === 'wrong_plan' ? 'That code does not apply to this plan.'
+                  : r.error === 'limit_reached' ? 'This offer has reached its redemption limit.'
+                    : 'That code is not valid.',
+          );
+          return;
+        }
+        setDiscount({ code: r.code ?? code.toUpperCase(), percent: r.percent });
+        setDiscountError('');
+      })
+      .catch(() => setDiscountError('Could not check that code.'))
+      .finally(() => setChecking(false));
   };
 
   const openChangePlan = (): void => {
@@ -85,33 +129,42 @@ export default function Checkout({ initialPlan = 'silver', onReviewOrder }: Chec
             </button>
           </div>
 
-          <div className="scr-checkout-divider" aria-hidden="true" />
-
+          {/* The server does the same sum again from its own books — this is
+              the display of it, not the authority on it (POST /api/orders,
+              `useBalance`). Always rendered, even at $0.00: a control that
+              vanishes when the wallet is empty reads as a missing feature, and
+              "Available: $0.00" is the answer to the question it raises. */}
           <div className="scr-checkout-balance">
             <div className="scr-checkout-balance-row">
               <span className="scr-checkout-title14">Use earning balance</span>
-              <Switch checked={useBalance} onChange={setUseBalance} />
+              <Switch
+                checked={useBalance}
+                onChange={setUseBalance}
+                disabled={balance <= 0}
+              />
             </div>
             <span className="scr-checkout-available">
               <span className="scr-checkout-label">Available :</span>
-              <span className="scr-checkout-availvalue">$ {EARNING_BALANCE_AVAILABLE.toFixed(2)}</span>
+              {/* No space after the $ — same money format as the summary sheet
+                  and the total below it. */}
+              <span className="scr-checkout-availvalue">${balance.toFixed(2)}</span>
             </span>
           </div>
 
           <div className="scr-checkout-divider" aria-hidden="true" />
 
-          {discountApplied ? (
+          {discount ? (
             <div className="scr-checkout-discount">
               <span className="scr-checkout-discount-label">Discount code</span>
               <div className="scr-checkout-chip">
-                <span className="scr-checkout-chip-code">{DISCOUNT_CODE}</span>
-                <span className="scr-checkout-chip-amount">-${DISCOUNT_AMOUNT.toFixed(2)}</span>
+                <span className="scr-checkout-chip-code">{discount.code}</span>
+                <span className="scr-checkout-chip-amount">-${discountAmount.toFixed(2)}</span>
                 <button
                   type="button"
                   className="scr-checkout-chip-clear"
                   aria-label="Remove discount code"
                   onClick={() => {
-                    setDiscountApplied(false);
+                    setDiscount(null);
                     setDiscountInput('');
                   }}
                 >
@@ -142,10 +195,10 @@ export default function Checkout({ initialPlan = 'silver', onReviewOrder }: Chec
                 value={discountInput}
                 onChange={(v) => {
                   setDiscountInput(v);
-                  setDiscountError(false);
+                  setDiscountError('');
                 }}
                 placeholder="Enter code ( optional )"
-                error={discountError ? 'Invalid code' : undefined}
+                error={discountError || undefined}
               />
             </div>
           )}
@@ -155,7 +208,7 @@ export default function Checkout({ initialPlan = 'silver', onReviewOrder }: Chec
       <footer className="scr-checkout-footer">
         <div className="scr-checkout-total">
           <span className="scr-checkout-totallabel">Total payable</span>
-          <span className="scr-checkout-totalvalue">$ {total.toFixed(2)}</span>
+          <span className="scr-checkout-totalvalue">${total.toFixed(2)}</span>
         </div>
         <Button
           variant="primary"
@@ -214,10 +267,12 @@ export default function Checkout({ initialPlan = 'silver', onReviewOrder }: Chec
         planName={plan.name}
         planDuration={plan.duration}
         price={plan.checkoutPrice}
-        balanceUsed={useBalance ? EARNING_BALANCE_AVAILABLE : undefined}
-        discount={discountApplied ? { code: DISCOUNT_CODE, amount: DISCOUNT_AMOUNT } : undefined}
+        balanceUsed={balanceApplied > 0 ? balanceApplied : undefined}
+        discount={discount ? { code: discount.code, amount: discountAmount } : undefined}
         total={total}
-        onConfirm={() => onReviewOrder?.({ planId, total })}
+        onConfirm={() =>
+          onReviewOrder?.({ planId, total, code: discount?.code, useBalance: balanceApplied > 0 })
+        }
       />
     </div>
   );

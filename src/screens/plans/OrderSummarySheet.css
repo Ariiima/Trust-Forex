@@ -5,9 +5,6 @@
   padding: var(--spacing-16) var(--spacing-16) 36px;
   border-radius: var(--radius-medium) var(--radius-medium) 0 0;
 }
-.scr-ordersum-sheet .ds-sheet-handle {
-  display: none;
-}
 
 .scr-ordersum-inner {
   display: flex;

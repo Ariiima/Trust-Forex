@@ -42,11 +42,6 @@
   color: rgba(255, 255, 255, 0.72);
 }
 
-.ds-cashback-info {
-  display: inline-flex;
-  color: var(--base-color-white);
-}
-
 .ds-cashback-total-row {
   align-items: flex-end;
 }
@@ -96,19 +91,36 @@
   background: var(--primary-colors-950);
 }
 
+/* "Standard" and "10%" are read as one statement, so their first lines share
+   a baseline. Centring the row measured the rate against the whole 56px badge
+   block and dropped it below the plan name, which the design review flagged as
+   the two texts not sitting on one line. */
 .ds-cashback-current-body {
-  align-items: center;
+  align-items: baseline;
 }
 
 .ds-cashback-plan {
   display: flex;
-  align-items: center;
+  /* Baseline, so this block reports the plan NAME's baseline up to the row
+     rather than the badge's bottom edge. */
+  align-items: baseline;
   gap: var(--spacing-8);
 }
+/* The badge is artwork, not text: it stays optically centred on the block and
+   out of the baseline group. */
+.ds-cashback-plan > .ds-cashback-badge {
+  align-self: center;
+}
 
+/* Block, not a column flex box. A column flex container has no real first-line
+   baseline to report, so the row above was baseline-aligning against a
+   synthesised edge and the plan name landed ~1.5px off the rate beside it.
+   The two children are block-level either way, so the layout is unchanged. */
 .ds-cashback-plan-text {
-  display: flex;
-  flex-direction: column;
+  display: block;
+}
+.ds-cashback-plan-text > * {
+  display: block;
 }
 
 .ds-cashback-plan-name {
@@ -170,22 +182,15 @@
 
 /* 18, not 24. Measured on all four tiers of 850:2053: the ring runs x47..64 /
    y238..255 against the build's x44..67 / y235..258 — same centre, a third too
-   big. That size error is most of why these glyphs "look wrong"; the artwork
-   inside is close to the right size already. */
+   big. The chip PNG carries its own ring, so no border here. */
 .ds-cashback-tier-badge {
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
   width: 18px;
   height: 18px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: var(--base-color-white);
 }
-.ds-cashback-tier-badge svg {
-  width: 12px;
-  height: 12px;
+.ds-cashback-tier-badge img {
+  width: 100%;
+  height: 100%;
   display: block;
 }
 

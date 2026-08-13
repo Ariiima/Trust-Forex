@@ -27,10 +27,10 @@
   padding: 8px 16px 24px;
 }
 
-.ds-sheet-handle {
-  width: 36px;
-  height: 4px;
-  border-radius: var(--radius-infinity);
-  background: var(--stroke-colors-default);
-  margin: 0 auto 12px;
+/* A scrolling sheet body must not hand the rest of the gesture to the page
+   behind it. The wheel/touchmove guard in BottomSheet.tsx bows out for any
+   scroller with room left, so at the end of that scroller the browser used to
+   chain into #root. `contain` is the native stop for exactly that. */
+.ds-sheet-overlay * {
+  overscroll-behavior: contain;
 }

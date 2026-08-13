@@ -17,10 +17,9 @@ export interface BottomSheetProps {
  * for the length of the exit. Every call site drives this with an `open` prop
  * and keeps the sheet mounted, so none of them needed changing.
  *
- * No drag-to-dismiss: all twelve sheets set `.ds-sheet-handle { display: none }`,
- * so there is no grab affordance to hang it off, and four of them scroll their
- * body — a whole-sheet drag listener would eat those scrolls. Tap-the-scrim is
- * the design's dismissal. Add drag if a handle ever shows up.
+ * No drag-to-dismiss and so no grab handle: nothing here drags, and four sheets
+ * scroll their body, which a whole-sheet drag listener would eat. Tap-the-scrim
+ * is the design's dismissal. Add both together if drag ever lands.
  */
 export function BottomSheet({ open, onClose, className, children }: BottomSheetProps) {
   /* The rise is a transform, so `reducedMotion="user"` suppresses it already.
@@ -85,7 +84,6 @@ export function BottomSheet({ open, onClose, className, children }: BottomSheetP
             exit={{ y: '100%' }}
             transition={SHEET}
           >
-            <div className="ds-sheet-handle" />
             {children}
           </m.div>
         </m.div>

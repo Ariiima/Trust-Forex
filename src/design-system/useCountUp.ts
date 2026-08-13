@@ -97,13 +97,20 @@ export function useSeenValue(
  * The API is missing on the web preview and on WebView versions below 6.1,
  * where touching it can throw rather than no-op — hence the guard and the
  * catch. `selection` is the light tick meant for a value scrubbing past steps.
+ * Without a Telegram client we fall back to the Vibration API, so scrubbing
+ * still ticks in the browser preview and on Telegram Web/Desktop on Android.
+ * iOS outside Telegram has neither — nothing to fall back to there.
  */
 export function haptic(kind: 'selection' | 'light' | 'rigid' = 'selection'): void {
   const h = window.Telegram?.WebApp?.HapticFeedback;
-  if (!h) return;
   try {
-    if (kind === 'selection') h.selectionChanged?.();
-    else h.impactOccurred?.(kind);
+    if (!h) {
+      navigator.vibrate?.(kind === 'selection' ? 8 : 15);
+    } else if (kind === 'selection') {
+      h.selectionChanged?.();
+    } else {
+      h.impactOccurred?.(kind);
+    }
   } catch {
     /* unsupported WebView version — haptics are a bonus, never a requirement */
   }

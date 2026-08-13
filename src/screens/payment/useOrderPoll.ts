@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react';
-import { getOrder } from '../../../api/client';
-import type { Order } from '../../../api/client';
+import { getOrder } from '../../api/client';
+import type { Order } from '../../api/client';
 
 const TERMINAL = new Set(['confirmed', 'failed', 'expired']);
 
-/** Fetch the order immediately, then every 5s; stops on a terminal status or
- *  unmount. Per-tick errors are swallowed — the last good order is kept and
- *  the next tick retries (no dedicated error design exists). */
-export function useOrderPoll(orderId: string): Order | null {
+/** Fetch the order immediately, then every 3s (the poll is half of the
+ *  user-visible confirmation latency); stops on a terminal status or unmount.
+ *  No orderId = no polling (the demo/harness render path). Per-tick errors
+ *  are swallowed — the last good order is kept and the next tick retries. */
+export function useOrderPoll(orderId?: string): Order | null {
   const [order, setOrder] = useState<Order | null>(null);
 
   useEffect(() => {
+    if (!orderId) return;
     let cancelled = false;
     let timer = 0;
     const tick = (): void => {
@@ -23,7 +25,7 @@ export function useOrderPoll(orderId: string): Order | null {
         .catch(() => undefined);
     };
     tick();
-    timer = window.setInterval(tick, 5000);
+    timer = window.setInterval(tick, 3000);
     return () => {
       cancelled = true;
       window.clearInterval(timer);

@@ -1,5 +1,9 @@
 import type { ReactNode } from 'react';
 import { Icon } from './Icon';
+import tierStandardUrl from '../../assets/cashback/tier-standard.png';
+import tierSilverUrl from '../../assets/cashback/tier-silver.png';
+import tierGoldUrl from '../../assets/cashback/tier-gold.png';
+import tierDiamondUrl from '../../assets/cashback/tier-diamond.png';
 import badgeStandardUrl from '../../assets/plans/badge-standard.png';
 import badgeSilverUrl from '../../assets/plans/badge-silver.png';
 import badgeGoldUrl from '../../assets/plans/badge-gold.png';
@@ -16,41 +20,14 @@ const BADGES: Record<CashbackPlan, string> = {
   diamond: badgeDiamondUrl,
 };
 
-/* Tier stepper badges. In Figma these are small raster image chips (image
- * fills, unexportable here), so they are redrawn — but SOLID, not outlined.
- * Measured over the ring's interior on 850:2053, the reference glyphs carry an
- * ink fill-ratio of 0.29 / 0.50 / 0.41 / 0.44 (standard→diamond); the stroke
- * versions these replace carried 0.13-0.23, which is what made them read as
- * spindly next to the design. At a 12px render weight is the only thing that
- * survives, so weight is what is matched.
- *
- * Holes (the shield's rosette, the gem's facets) are subpaths under
- * fill-rule="evenodd" rather than a background-coloured shape on top, so the
- * badge stays correct on any surface.
- *
- * These are approximations of unexportable raster chips, not traced vectors —
- * a 13px source has no recoverable outline. An SVG export of the four would
- * make them exact. */
-const TIER_ICONS: Record<CashbackPlan, ReactNode> = {
-  standard: (
-    <path
-      fillRule="evenodd"
-      d="M12 4.4a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2zM12 13.2c4 0 7.2 2.9 7.2 6.4H4.8c0-3.5 3.2-6.4 7.2-6.4z"
-    />
-  ),
-  silver: (
-    <path
-      fillRule="evenodd"
-      d="M12 2.2 20.6 5.7v6.4c0 4.7-3.5 8-8.6 9.7-5.1-1.7-8.6-5-8.6-9.7V5.7zM12 8.4a3.3 3.3 0 1 0 0 6.6 3.3 3.3 0 0 0 0-6.6z"
-    />
-  ),
-  gold: <path d="M2.8 7.6 8 11.4 12 4.2l4 7.2 5.2-3.8-1.9 11.2H4.7z" />,
-  diamond: (
-    <path
-      fillRule="evenodd"
-      d="M5.6 3.8h12.8l3.2 5.4-9.6 11-9.6-11zM9.5 9.9h5l-2.5 6.6z"
-    />
-  ),
+/* Tier stepper chips, cropped 1:1 (ring included) from the design's own PNG
+ * export, so no redrawing error. White artwork on transparency; the dim state
+ * comes from the parent's opacity. */
+const TIER_ICONS: Record<CashbackPlan, string> = {
+  standard: tierStandardUrl,
+  silver: tierSilverUrl,
+  gold: tierGoldUrl,
+  diamond: tierDiamondUrl,
 };
 
 const TIERS: readonly { key: CashbackPlan; label: string }[] = [
@@ -86,6 +63,8 @@ export interface CashbackOverviewProps {
   rate?: string;
   /** Overrides the tier artwork; defaults to the badge for `plan`. */
   badge?: ReactNode;
+  /** Opens the "About cashback" sheet. Omitted = the info glyph renders inert. */
+  onInfo?: () => void;
   onCashbackHistory?: () => void;
   onUpgrade?: () => void;
   className?: string;
@@ -100,6 +79,7 @@ export function CashbackOverview({
   planDuration,
   rate,
   badge,
+  onInfo,
   onCashbackHistory,
   onUpgrade,
   className,
@@ -117,9 +97,14 @@ export function CashbackOverview({
         <div className="ds-cashback-summary">
           <div className="ds-cashback-row">
             <span className="ds-cashback-label">Total cashback</span>
-            <span className="ds-cashback-info">
-              <Icon name="info" size={24} />
-            </span>
+            <button
+              type="button"
+              className="ds-info-btn ds-info-btn--on-dark"
+              onClick={onInfo}
+              aria-label="About cashback"
+            >
+              <Icon name="info" size={20} />
+            </button>
           </div>
           <div className="ds-cashback-row ds-cashback-total-row">
             <div className="ds-cashback-amount-wrap">
@@ -164,9 +149,7 @@ export function CashbackOverview({
           <div className="ds-cashback-tier-group" key={tier.key}>
             <div className={`ds-cashback-tier${i > activeIndex ? ' ds-cashback-tier-dim' : ''}`}>
               <span className="ds-cashback-tier-badge" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                  {TIER_ICONS[tier.key]}
-                </svg>
+                <img src={TIER_ICONS[tier.key]} alt="" />
               </span>
               <span className="ds-cashback-tier-label">{tier.label}</span>
             </div>

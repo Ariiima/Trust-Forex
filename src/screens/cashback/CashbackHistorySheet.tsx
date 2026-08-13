@@ -1,15 +1,20 @@
+import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { BottomSheet, Button } from '../../design-system/components';
 import { Glyph } from './Glyph';
-import { BROKER_INFO, HISTORY_ROWS, type HistoryRow } from './brokers-data';
+import { useScrollRail } from '../../design-system/useScrollRail';
+import { getCashbackHistory } from '../../api/client';
+import { BROKER_INFO, type HistoryRow } from './brokers-data';
 import './CashbackHistorySheet.css';
+
+const money = (n: number) => `$${n.toFixed(2)}`;
 
 /* ---------------------------------------------------------------------------
  * Cashback history bottom sheet — Figma 1292:4273 (filled) / 1233:6263
  * (empty), overlays /cashback. Supersedes the old routed CashbackHistory
- * screen. The thin grey rail on the right is a static scroll-thumb mock
- * baked into the design (same convention as before); the row list itself is
- * a real scrollable region.
+ * screen. The thin grey rail on the right is the design's own scroll thumb,
+ * driven off the list's real scroll position (useScrollRail) rather than
+ * parked at the frame's fixed height.
  * ------------------------------------------------------------------------- */
 
 export interface CashbackHistorySheetProps {
@@ -24,9 +29,35 @@ export interface CashbackHistorySheetProps {
 export function CashbackHistorySheet({
   open,
   onClose,
-  rows = HISTORY_ROWS,
+  rows,
   onStartEarning,
 }: CashbackHistorySheetProps): ReactNode {
+  const [listRef, railThumb] = useScrollRail<HTMLUListElement>();
+
+  /* `rows` passed in (design/review's own deep link) always wins; otherwise
+     the sheet fetches the honest live history — no sample data standing in
+     while that request is out. */
+  const [live, setLive] = useState<HistoryRow[]>();
+  useEffect(() => {
+    if (rows || !open) return;
+    let alive = true;
+    getCashbackHistory()
+      .then((entries) => alive && setLive(entries.map((e) => ({
+        broker: e.broker,
+        date: new Date(e.at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+        rate: `${e.ratePct}%`,
+        amount: money(e.amount),
+      }))))
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, [open, rows]);
+
+  // undefined while the fetch is out — distinct from [] (a confirmed-empty
+  // history) so the "No cashback activity yet" copy doesn't flash up for
+  // the one beat before the real rows land.
+  const shown = rows ?? live;
   return (
     <BottomSheet open={open} onClose={onClose} className="scr-history-sheet">
       {/* Own header, not the shared AboutCashbackSheet SheetHeader: measured
@@ -41,7 +72,7 @@ export function CashbackHistorySheet({
       </div>
       <div className="scr-history-sheet-headdivider" aria-hidden="true" />
 
-      {rows.length === 0 ? (
+      {shown === undefined ? null : shown.length === 0 ? (
         <div className="scr-history-sheet-empty">
           <p className="scr-history-sheet-empty-title">No cashback activity yet</p>
           <p className="scr-history-sheet-empty-body">
@@ -63,9 +94,12 @@ export function CashbackHistorySheet({
         </div>
       ) : (
         <div className="scr-history-sheet-listwrap">
-          <ul className="scr-history-sheet-list">
-            {rows.map((row, i) => {
-              const info = BROKER_INFO[row.broker];
+          <ul className="scr-history-sheet-list" ref={listRef}>
+            {shown.map((row, i) => {
+              // Broker catalogue is admin-defined (any id) — BROKER_INFO only
+              // has logos for the 3 shipped brokers, so fall back the same
+              // way Cashback.tsx's liveCards does, not an unchecked index.
+              const info = BROKER_INFO[row.broker] ?? { name: row.broker, logo: BROKER_INFO.xm.logo };
               return (
                 <li className="scr-history-sheet-row" key={`${row.broker}-${row.date}-${i}`}>
                   <span className="scr-history-sheet-row-id">
@@ -84,7 +118,7 @@ export function CashbackHistorySheet({
             })}
           </ul>
           <span className="scr-history-sheet-rail" aria-hidden="true">
-            <span className="scr-history-sheet-rail-thumb" />
+            <span className="scr-history-sheet-rail-thumb" style={railThumb} />
           </span>
         </div>
       )}

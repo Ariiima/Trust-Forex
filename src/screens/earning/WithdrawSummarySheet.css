@@ -17,9 +17,15 @@
 
    Two notes on the rule: the frame has ONE rule (under the header) — there is
    no second rule above "Network fee", the five rows run on an unbroken 40px
-   pitch. And it renders as two rows of #F1F1F1 rather than one of #E4E4E4
-   because Figma centres a 1px stroke on the y=472 grid line and smears it
-   across both pixels at 50%. 2px of #F1F1F1 reproduces that exactly. */
+   pitch. And it originally rendered as two rows of #F1F1F1 rather than one
+   of #E4E4E4 because Figma centres a 1px stroke on the y=472 grid line and
+   smears it across both pixels at 50%.
+
+   Design-call review (2026-08-06): a dashed rule reads as "this is
+   selectable", and this one selects nothing — it just separates the header
+   from the row stack that ends in "Final amount". Dashes are reserved for
+   actual selection state now, so the rule below is a plain solid hairline,
+   not a re-measurement of the frame. */
 
 .ds-sheet.scr-wdsum-sheet {
   padding: 20px var(--spacing-16) var(--spacing-24);
@@ -44,34 +50,13 @@
   padding-top: var(--spacing-16);
 }
 
-.scr-wdsum-sheet .ds-sheet-handle {
-  display: none;
-}
-
-/* Confirm -> submitted happens inside an already-open sheet, so without this
-   the whole panel just swaps its contents in one frame. The sheet is measured
-   in absolute offsets rather than flex gaps, so the transition is animated on
-   the elements themselves — a wrapper would move everything below it.
-
-   The banner leads, then the rows settle in sequence, then the new CTA: the
-   eye follows the confirmation down the panel. `both` holds the from-state
-   during the delay so nothing flashes at its final position first. */
+/* Confirm -> submitted happens inside an already-open sheet, and only one thing
+   about it is new: the banner. The rows and the CTA carry the same figures the
+   user just confirmed, so re-animating them read as the whole panel rebuilding
+   itself. Animation belongs to what changed. */
 @media (prefers-reduced-motion: no-preference) {
   .scr-wdsum-sheet-submitted .scr-wdsum-banner {
     animation: scr-wdsum-in 0.34s cubic-bezier(0.32, 0.72, 0, 1) both;
-  }
-
-  .scr-wdsum-sheet-submitted .scr-wdsum-row {
-    animation: scr-wdsum-in 0.3s cubic-bezier(0.32, 0.72, 0, 1) both;
-  }
-  .scr-wdsum-sheet-submitted .scr-wdsum-row:nth-child(1) { animation-delay: 0.05s; }
-  .scr-wdsum-sheet-submitted .scr-wdsum-row:nth-child(2) { animation-delay: 0.09s; }
-  .scr-wdsum-sheet-submitted .scr-wdsum-row:nth-child(3) { animation-delay: 0.13s; }
-  .scr-wdsum-sheet-submitted .scr-wdsum-row:nth-child(4) { animation-delay: 0.17s; }
-  .scr-wdsum-sheet-submitted .scr-wdsum-row:nth-child(5) { animation-delay: 0.21s; }
-
-  .scr-wdsum-sheet-submitted .scr-wdsum-cta {
-    animation: scr-wdsum-in 0.34s cubic-bezier(0.32, 0.72, 0, 1) 0.26s both;
   }
 }
 
@@ -109,16 +94,15 @@
   color: var(--base-color-black);
 }
 
-/* ---- rule -------------------------------------------------------------- */
+/* ---- rule ----------------------------------------------------------------
+   Solid, not dashed — reuses the exact border the broker Deposit-confirmation
+   card already renders (.scr-broker-readcard, src/screens/broker/BrokerDetail.css:
+   1px solid var(--stroke-colors-default)), rather than inventing a new weight
+   for this screen. */
 .scr-wdsum-rule {
-  height: 2px;
+  height: 0;
   margin: 15px 0;
-  background-image: repeating-linear-gradient(
-    to right,
-    var(--bg-colors-container-s) 0 4px,
-    transparent 4px 8px
-  );
-  background-position: -2px 0;
+  border-top: 1px solid var(--stroke-colors-default);
 }
 
 /* ---- under-review banner (1404:8028) ----------------------------------
@@ -187,4 +171,20 @@
   margin-top: var(--spacing-32);
   /* the frame sets 4 between the label and the chevron; .ds-button ships 8 */
   gap: var(--spacing-4);
+}
+
+/* A rejection from the server (over-balance, unreachable). Sits between the
+   summary rows and the CTA, so the reason is read before the retry. */
+.scr-wdsum-error {
+  margin: var(--spacing-16) 0 0;
+  color: var(--state-colors-eror);
+  font-size: 13px;
+  line-height: 20px;
+  text-align: center;
+}
+
+/* The CTA already owns the top margin; with an error above it the pair would
+   otherwise sit 48px below the rows. */
+.scr-wdsum-error + .scr-wdsum-cta {
+  margin-top: var(--spacing-12);
 }

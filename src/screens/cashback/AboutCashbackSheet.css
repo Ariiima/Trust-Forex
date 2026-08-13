@@ -1,21 +1,28 @@
 /* =====================================================================
-   About-cashback sheet (1233:5894) + the shared sheet header
-   (.scr-cashback-sheet-*) also consumed by CashbackHistorySheet.
-   DS BottomSheet supplies scrim, white bg, 20px top radius, handle and
-   8/16/24 padding.
+   About-cashback sheet (1233:5894). DS BottomSheet supplies scrim, white
+   bg, handle and 8/16/24 padding; the rest of this file matches the
+   about-referral sheet (AboutReferralSheet.css), which the two sheets now
+   share as one anatomy: 16 radius, 16/16/32 padding, a dashed rule under
+   the header, and a 261 body column inset 33.5.
    ===================================================================== */
 
-/* ---- shared sheet header: title row (32) + close (24) + divider ------- */
+.ds-sheet.scr-about-sheet {
+  padding: var(--spacing-16) var(--spacing-16) var(--spacing-32);
+  border-radius: 16px 16px 0 0;
+}
+
+/* ---- sheet header: title row (32) + close (24) + dashed rule ---------- */
 .scr-cashback-sheet-head {
   display: flex;
   flex-direction: column;
 }
 
+/* 11 to the rule, per the referral frame (was 12 against a solid hairline). */
 .scr-cashback-sheet-titlerow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--spacing-12);
+  margin-bottom: 11px;
 }
 
 .scr-cashback-sheet-title {
@@ -31,18 +38,30 @@
   color: var(--base-color-black);
 }
 
+/* Same 4-on/4-off 8px-pitch dashed rule as the referral sheet, no phase
+   offset so the first dash is full-length. */
 .scr-cashback-sheet-divider {
-  height: 1px;
-  background: var(--stroke-colors-default);
+  height: 2px;
+  background: repeating-linear-gradient(to right, #f1f1f1 0 4px, transparent 4px 8px);
 }
 
-/* ---- about sheet body ------------------------------------------------- */
+/* ---- about sheet body -------------------------------------------------
+   25 down from the rule, in the 261 column centred in the 328 content box. */
 .scr-about-sheet-body {
-  margin-top: var(--spacing-16);
+  padding: 25px 33.5px 0;
+}
+
+/* 3D art above the headline, matching the referral sheet's 144x104 box (the
+   square lottie letterboxes inside it, so both sheets read at 104). */
+.scr-about-cashback-art {
+  display: block;
+  width: 144px;
+  height: 104px;
+  margin: 0 auto var(--spacing-16);
 }
 
 .scr-about-sheet-headline {
-  margin: 0 0 var(--spacing-24);
+  margin: 0 0 23px; /* referral sheet's headline-to-body gap */
   font-size: 20px;
   line-height: 40px;
   font-weight: var(--font-weight-semibold);
@@ -62,6 +81,12 @@
   gap: var(--spacing-24);
   width: 261px;
   margin: 0 auto var(--spacing-12);
+}
+
+/* The sheet's own 32 bottom padding is the last gap now; the block keeps its
+   12 for CashbackPreview, which has no such padding. */
+.scr-about-sheet .scr-about-sheet-steps {
+  margin-bottom: 0;
 }
 
 .scr-about-sheet-step {

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
-import { BottomSheet, Icon } from '../../design-system/components';
+import { AnimatedEmoji, BottomSheet, Icon } from '../../design-system/components';
 import { ReferralBenefits } from './ReferralBenefits';
-import introArt from '../../assets/referral/referral-intro.png';
+import introArt from '../../assets/emoji/referral.json?url';
 import './ReferralBenefits.css';
 import './AboutReferralSheet.css';
 
@@ -24,7 +24,7 @@ export function AboutReferralSheet({ open, onClose }: { open: boolean; onClose?:
       </div>
 
       <div className="scr-about-ref-body">
-        <img className="scr-about-ref-art" src={introArt} alt="" width={144} height={104} />
+        <AnimatedEmoji className="scr-about-ref-art" src={introArt} />
 
         <h3 className="scr-about-ref-headline type-text-xl-bold">
           Turn your network into referral <span className="scr-about-ref-accent">income</span>

@@ -52,3 +52,13 @@
   padding: var(--spacing-8) var(--spacing-16) var(--spacing-16);
   background: var(--bg-colors-container-s);
 }
+
+/* Live mode only: /api/gateways answered with no configured networks. */
+.scr-payment-currency-empty {
+  margin: 0;
+  padding: 24px 0;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  color: var(--typography-colors-sub-text);
+}

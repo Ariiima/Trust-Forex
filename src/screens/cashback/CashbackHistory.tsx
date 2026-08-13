@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { CashbackOverview } from '../../design-system/components';
 import { CashbackHistorySheet } from './CashbackHistorySheet';
 import { OVERVIEW } from './brokers-data';
+import { useBackButton } from '../../telegram';
 import './CashbackHistory.css';
 
 /**
@@ -20,6 +21,9 @@ export interface CashbackHistoryProps {
 }
 
 export default function CashbackHistory({ onBack }: CashbackHistoryProps): ReactNode {
+  // No in-app header (the sheet's own close button is the in-app affordance) —
+  // Telegram's native BackButton needs the same wiring as every other screen.
+  useBackButton(onBack);
   return (
     <div className="scr-history">
       <div className="scr-history-bg" aria-hidden="true">

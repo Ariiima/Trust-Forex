@@ -38,8 +38,7 @@
 
 /* White at 72% is the exact sampled value of every muted label on the card
    (#BECDF1 over #144CCD). */
-.scr-refmain-card :is(.scr-refmain-head-title, .scr-refmain-stat-label, .scr-refmain-share-label),
-.scr-refmain-info {
+.scr-refmain-card :is(.scr-refmain-head-title, .scr-refmain-stat-label, .scr-refmain-share-label) {
   color: rgba(255, 255, 255, 0.72);
 }
 
@@ -55,19 +54,6 @@
   margin: 0;
   font-weight: var(--font-weight-regular);
   line-height: 28px;
-}
-
-.scr-refmain-info {
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-}
-
-.scr-refmain-info--sm {
-  width: 20px;
-  height: 20px;
 }
 
 .scr-refmain-amount-row {
@@ -112,7 +98,10 @@
   line-height: 20px;
 }
 
-/* 4px dash / 4px gap, phase-shifted so the run starting at x=32 is 2px long. */
+/* 4px dash / 4px gap, even pitch, no phase offset — matches the cashback hero
+   divider (Cashback.css). A previous pass phase-shifted this so the first run
+   was 2px, chasing a raster match; the client reads that clipped dash as a
+   defect, so plain even spacing wins instead. */
 .scr-refmain-rule {
   height: 2px;
   margin-top: 11px;
@@ -121,7 +110,6 @@
     rgba(255, 255, 255, 0.08) 0 4px,
     transparent 4px 8px
   );
-  background-position-x: -2px;
 }
 
 /* ---- 2x2 stat grid ---------------------------------------------------- */
@@ -191,6 +179,52 @@
   margin-top: var(--spacing-20);
 }
 
+/* Anchors the second info button's tooltip (client design call, no Figma
+   frame). Scoped to this one head row, not the shared .scr-refmain-head,
+   because the first head's info button still opens the About sheet and has
+   nothing absolutely positioned against it. */
+.scr-refmain-links-head {
+  position: relative;
+}
+
+/* The house info-tooltip is Home's .scr-home-infotip (Home.css): black card,
+   white 12/24 text, 8/12 padding, and a translucent 18x9 arrow aimed at the
+   button that opened it. This was a white card with a shadow — a second look
+   for the same job — so it now matches Home exactly. Flush to the row's right
+   edge, on the same side as its button. */
+.scr-refmain-linktip {
+  position: absolute;
+  z-index: 5;
+  /* Above the icon, not below it. Dropping it downward laid the tooltip over
+     the two link rows it is explaining, hiding the thing being described.
+     The 9px clears the arrow, so its tip lands on the row's top edge. */
+  bottom: calc(100% + 9px);
+  right: 0;
+  width: 264px;
+  box-sizing: border-box;
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-small);
+  background: var(--base-color-black);
+  color: #fff;
+  font-size: 12px;
+  line-height: 24px;
+  pointer-events: none;
+}
+/* Same 18x9 as Home's, centred on the 20px info button below it. Home draws
+   it at 24% because it points down over a WHITE card, where that reads as the
+   frame's grey; here it points over the blue referral card, where 24% black is
+   invisible. Solid keeps the arrow doing its one job — tying the tooltip to
+   the button that opened it. */
+.scr-refmain-linktip::after {
+  content: '';
+  position: absolute;
+  bottom: -9px;
+  right: 1px;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 9px solid var(--base-color-black);
+}
+
 .scr-refmain-link {
   display: flex;
   align-items: center;
@@ -234,6 +268,47 @@
   border: 1px solid var(--primary-colors-900);
   border-radius: 4px;
   background: transparent;
+}
+
+/* Copy/check cross-fade: both glyphs stay mounted, stacked in a 16x16 box,
+   and swap opacity + a small scale rather than one replacing the other in
+   the tree — that was an instant snap the eye had to catch mid-blink. */
+.scr-refmain-copy-icon {
+  position: relative;
+  width: 16px;
+  height: 16px;
+}
+.scr-refmain-copy-icon-copy,
+.scr-refmain-copy-icon-check {
+  position: absolute;
+  inset: 0;
+}
+.scr-refmain-copy-icon-check {
+  opacity: 0;
+}
+.scr-refmain-copy--done .scr-refmain-copy-icon-copy {
+  opacity: 0;
+}
+.scr-refmain-copy--done .scr-refmain-copy-icon-check {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .scr-refmain-copy-icon-copy,
+  .scr-refmain-copy-icon-check {
+    transition: opacity 0.16s ease, transform 0.16s ease;
+  }
+  .scr-refmain-copy-icon-copy {
+    transform: scale(1);
+  }
+  .scr-refmain-copy-icon-check {
+    transform: scale(0.7);
+  }
+  .scr-refmain-copy--done .scr-refmain-copy-icon-copy {
+    transform: scale(0.7);
+  }
+  .scr-refmain-copy--done .scr-refmain-copy-icon-check {
+    transform: scale(1);
+  }
 }
 
 /* ---- "Your referrals" list ------------------------------------------- */
@@ -283,9 +358,10 @@
 }
 
 /* 296x428 viewport: 286-wide rows, 8px gutter, then a 2px indicator hard
-   against the right edge. The frame draws that indicator as a fixed 199px
-   thumb (it is decoration, not a live scroll ratio), so the native bar is
-   hidden and the rail is drawn instead. */
+   against the right edge. The native bar is hidden and this rail is drawn
+   instead — the frame's fixed 199px thumb is now sized and moved from the real
+   scroll position by useScrollRail, so it is the scrollbar, not a picture of
+   one. */
 .scr-refmain-list-port {
   position: relative;
   height: 428px;
@@ -313,13 +389,10 @@
   background: var(--bg-colors-container-s);
 }
 
-.scr-refmain-list-rail::before {
-  content: '';
+.scr-refmain-list-thumb {
   position: absolute;
-  top: 1px;
   left: 0;
   width: 2px;
-  height: 199px;
   background: var(--stroke-colors-default);
 }
 
@@ -405,6 +478,19 @@
 
   .scr-refmain-stat-delta svg {
     animation: scr-refmain-arrow 0.5s cubic-bezier(0.34, 1.4, 0.64, 1) 0.3s backwards;
+  }
+
+  /* Grows from the info button that opened it, same idea as Home's callouts. */
+  .scr-refmain-linktip {
+    animation: scr-refmain-tip 0.18s cubic-bezier(0.34, 1.4, 0.64, 1);
+    transform-origin: bottom right;
+  }
+}
+
+@keyframes scr-refmain-tip {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
   }
 }
 

@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react';
 import type { ComponentType, FocusEvent, ReactNode, SVGProps } from 'react';
 import * as DS from '../../design-system/components';
 import type { ProgressStep } from '../../design-system/components';
-import xmLogoUrl from '../../assets/broker/xm-logo.png';
+import { useBackButton } from '../../telegram';
+import {
+  cachedBroker, getBroker, cachedMe, getMe, submitBrokerAccount, confirmBrokerDeposit,
+} from '../../api/client';
+import type { BrokerDetailPayload, Me, MeBrokerLink } from '../../api/client';
+import { BROKER_INFO } from '../cashback/brokers-data';
 import './BrokerDetail.css';
 
 /* ---------------------------------------------------------------------------
@@ -43,6 +48,8 @@ interface DSNotificationProps {
   title: string;
   description?: string;
   onClose?: () => void;
+  autoDismiss?: number;
+  hideClose?: boolean;
 }
 const dsExtra = DS as unknown as Record<string, unknown>;
 const Input = (dsExtra.Input ?? (() => null)) as ComponentType<DSInputProps>;
@@ -88,7 +95,8 @@ const GLYPHS: Record<GlyphName, readonly string[]> = {
   ],
   zap: ['M13 3l0 7l6 0l-8 11l0 -7l-6 0l8 -11'],
   // "Verification in progres" banner icon (ref/broker.png, ~40x40 strip under
-  // the broker card): a static 3/4-ring spinner glyph, near-black stroke.
+  // the broker card): a 3/4-ring spinner glyph, near-black stroke, spun via
+  // CSS (.scr-broker-pending-icon) so reduced-motion can turn it off cleanly.
   loader: ['M12 3a9 9 0 1 0 9 9'],
 };
 
@@ -139,11 +147,29 @@ const XM_SPECS: readonly Spec[] = [
   { icon: 'zap', label: 'Execution Speed', value: 'Fast' },
 ];
 
-const REFERRAL_CODE = '45789632';
+// preview.details keys line up with XM_SPECS 1:1 — indexed rather than named
+// so a missing/partial payload falls back to XM_SPECS's own value row by row.
+const DETAIL_KEYS: readonly string[] = [
+  'regulation', 'platform', 'accountTypes', 'leverage', 'depositBonus', 'spread', 'cashbackLevel', 'execution',
+];
+
+const REFERRAL_CODE = '45789632'; // fallback until the catalogue has a live preview
 
 export type AccountStatus = 'none' | 'submitted' | 'failed' | 'verified';
 export type DepositStatus = 'none' | 'awaiting' | 'submitted' | 'confirmed';
 type Modal = 'submit-account' | 'made-deposit' | null;
+
+/** The server's one-axis link state, unfolded onto the screen's two axes. */
+const LINK_STATES: Record<MeBrokerLink['state'], readonly [AccountStatus, DepositStatus]> = {
+  pending: ['submitted', 'none'],
+  rejected: ['failed', 'none'],
+  'waiting-for-deposit': ['verified', 'awaiting'],
+  'deposit-review': ['verified', 'submitted'],
+  'cashback-active': ['verified', 'confirmed'],
+};
+
+/** How often an under-review screen asks /api/me whether the admin decided. */
+const POLL_MS = 15_000;
 
 interface HeroCopy {
   title: string;
@@ -181,6 +207,9 @@ function heroCopy(deposit: DepositStatus): HeroCopy {
   };
 }
 
+/** How long a self-dismissing status banner stays up, bar included. */
+const BANNER_MS = 5000;
+
 interface Banner {
   key: string;
   variant: DSNotificationProps['variant'];
@@ -192,7 +221,7 @@ interface Banner {
 }
 
 export interface BrokerDetailProps {
-  /** Route param (assembly layer passes it); the captured instance is XM. */
+  /** Route param — drives getBroker(brokerId); falls back to XM's static specs. */
   brokerId?: string;
   onBack?: () => void;
   /** Dev/test hooks until the broker verification backend lands (spec §4). */
@@ -201,6 +230,7 @@ export interface BrokerDetailProps {
 }
 
 export default function BrokerDetail({
+  brokerId,
   onBack,
   // design/review/ref/broker.png captures the pending state (the "Verification
   // in progres" banner, a green *current* progress dot, a disabled footer CTA)
@@ -217,32 +247,81 @@ export default function BrokerDetail({
   const [userId, setUserId] = useState('');
   const [copied, setCopied] = useState(false);
   const [dismissed, setDismissed] = useState<readonly string[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [fieldError, setFieldError] = useState<{ email?: string; userId?: string }>({});
+  const [netError, setNetError] = useState('');
 
   // No in-app header (spec D1) — Telegram native BackButton drives onBack.
-  // ponytail: talks to window.Telegram directly; swap to useBackButton from
-  // src/telegram once the backend+telegram cluster lands that module.
-  useEffect(() => {
-    const bb = window.Telegram?.WebApp?.BackButton;
-    if (!bb || !onBack) return;
-    bb.onClick(onBack);
-    bb.show();
-    return () => {
-      bb.offClick(onBack);
-      bb.hide();
-    };
-  }, [onBack]);
+  useBackButton(onBack);
 
-  // ponytail: verification outcome comes from a backend that doesn't exist yet;
-  // a 2.5s timer auto-verifies (pass initialAccountStatus="failed" to exercise the
-  // resubmit sheet). Upgrade: poll the broker-account endpoint, set failed|verified.
+  // XM_SPECS/REFERRAL_CODE/the bundled XM logo render immediately so the
+  // screen is never blank; getBroker(brokerId) swaps real data in once it
+  // lands, and a failed fetch (or the static-only build, which has no server
+  // at all) just keeps the fallback. cachedX() seeds this synchronously so a
+  // tab switch doesn't re-fetch and visibly re-swap.
+  const [payload, setPayload] = useState<BrokerDetailPayload | null>(() =>
+    brokerId ? (cachedBroker(brokerId) ?? null) : null,
+  );
+  const [me, setMe] = useState<Me | null>(() => cachedMe() ?? null);
   useEffect(() => {
-    if (accountStatus !== 'submitted') return;
-    const t = window.setTimeout(() => {
-      setAccountStatus('verified');
-      setDepositStatus((d) => (d === 'none' ? 'awaiting' : d));
-    }, 2500);
-    return () => window.clearTimeout(t);
-  }, [accountStatus]);
+    if (!brokerId) return;
+    if (cachedBroker(brokerId) !== undefined && cachedMe() !== undefined) return;
+    let live = true;
+    void Promise.all([getBroker(brokerId), getMe()]).then(([broker, meResult]) => {
+      if (!live) return;
+      setPayload(broker);
+      setMe(meResult);
+    });
+    return () => {
+      live = false;
+    };
+  }, [brokerId]);
+
+  const preview = payload?.preview;
+  // The XM_SPECS/REFERRAL_CODE fallback is only for the no-brokerId harness
+  // render (design/review deep-links, bare-route previews) — it has no
+  // fetch to wait on, so there's nothing else to show. A real route always
+  // has a brokerId, and while its fetch is in flight this must NOT borrow
+  // XM's specs: that was the "shows fallback data first" bug — opening e.g.
+  // Exness flashed XM's regulation/leverage claims until the real payload
+  // swapped in. '—' (a genuine loading placeholder) until then instead.
+  const specs: readonly Spec[] = XM_SPECS.map((s, i) => ({
+    ...s,
+    value: preview?.details?.[DETAIL_KEYS[i]] ?? (brokerId ? '—' : s.value),
+  }));
+  const referralCode = preview?.referralCode ?? (brokerId ? '' : REFERRAL_CODE);
+  // Name/logo don't need to wait on the fetch — the catalogue already has
+  // them keyed by brokerId, so a known broker renders its own name/logo
+  // immediately instead of "XM" flashing before the payload swaps in.
+  const catalogueInfo = brokerId ? BROKER_INFO[brokerId] : undefined;
+  const brokerName = preview?.name ?? catalogueInfo?.name ?? 'XM';
+  const badgeOn = preview?.badgeOn ?? !brokerId;
+  const badgeText = preview?.badgeText ?? 'Popular';
+  const logo = catalogueInfo?.logo ?? BROKER_INFO.xm.logo;
+  const myLink = me?.brokers.find((b) => b.brokerId === brokerId);
+
+  /* The server's review state wins over local guesses whenever it exists —
+     the harness deep-links (?account=…) have no link and keep their initial
+     props. Keyed on the state string so a poll that changes nothing re-renders
+     nothing. */
+  const linkState = myLink?.state;
+  useEffect(() => {
+    if (!linkState) return;
+    const [acc, dep] = LINK_STATES[linkState];
+    setAccountStatus(acc);
+    setDepositStatus(dep);
+  }, [linkState]);
+
+  // While the admin holds the ball, ask /api/me until the decision lands.
+  useEffect(() => {
+    if (!brokerId) return;
+    if (accountStatus !== 'submitted' && depositStatus !== 'submitted') return;
+    const t = window.setInterval(() => {
+      // getMe() resolves null on a failed fetch — keep the last good read.
+      void getMe().then((m) => { if (m) setMe(m); });
+    }, POLL_MS);
+    return () => window.clearInterval(t);
+  }, [brokerId, accountStatus, depositStatus]);
 
   // Keyboard open (spec §6, frame 1233-7121): clamp the sheet to the visual
   // viewport so head + inputs stay reachable above the keyboard.
@@ -298,29 +377,70 @@ export default function BrokerDetail({
         : null;
 
   const copyReferral = (): void => {
-    navigator.clipboard?.writeText(REFERRAL_CODE).catch(() => undefined);
+    if (!referralCode) return;
+    navigator.clipboard?.writeText(referralCode).catch(() => undefined);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1500);
   };
 
+  const openModal = (which: Modal): void => {
+    setFieldError({});
+    setNetError('');
+    // Resubmission edits the rejected details rather than retyping them.
+    if (which === 'submit-account' && !email && myLink?.email) setEmail(myLink.email);
+    if (which === 'submit-account' && !userId && myLink?.brokerAccountId) setUserId(myLink.brokerAccountId);
+    setModal(which);
+  };
+
   const submitAccount = (): void => {
-    setAccountStatus('submitted');
-    setDismissed([]);
-    setModal(null);
+    const errs: { email?: string; userId?: string } = {};
+    if (!/^\S+@\S+\.\S+$/.test(email.trim())) errs.email = 'Enter a valid email address';
+    // The resubmit sheet has no user-ID input — the rejected request keeps its old one.
+    if (!resubmit && !userId.trim()) errs.userId = 'Enter your broker user ID';
+    setFieldError(errs);
+    if (errs.email || errs.userId) return;
+    if (!brokerId) {
+      // Bare-route harness render — no server, keep the local preview behaviour.
+      setAccountStatus('submitted');
+      setDismissed([]);
+      setModal(null);
+      return;
+    }
+    setBusy(true);
+    submitBrokerAccount(brokerId, { email: email.trim(), brokerAccountId: userId.trim() || undefined })
+      .then((brokers) => {
+        setMe((m) => (m ? { ...m, brokers } : m));
+        setDismissed([]);
+        setModal(null);
+      })
+      .catch(() => setNetError('Could not submit — please try again'))
+      .finally(() => setBusy(false));
   };
 
   const confirmDeposit = (): void => {
-    setDepositStatus('submitted');
-    setDismissed([]);
-    setModal(null);
+    if (!brokerId) {
+      setDepositStatus('submitted');
+      setDismissed([]);
+      setModal(null);
+      return;
+    }
+    setBusy(true);
+    confirmBrokerDeposit(brokerId)
+      .then((brokers) => {
+        setMe((m) => (m ? { ...m, brokers } : m));
+        setDismissed([]);
+        setModal(null);
+      })
+      .catch(() => setNetError('Could not submit — please try again'))
+      .finally(() => setBusy(false));
   };
 
   const scrollFocusedIntoView = (e: FocusEvent<HTMLDivElement>): void => {
     (e.target as HTMLElement).scrollIntoView?.({ block: 'nearest' });
   };
 
-  const displayEmail = email || 'Trustforex.info@gmail.com';
-  const displayUserId = userId || 'Nimanm24';
+  const displayEmail = email || myLink?.email || '—';
+  const displayUserId = userId || myLink?.brokerAccountId || '—';
 
   return (
     <div className="scr-broker">
@@ -329,10 +449,10 @@ export default function BrokerDetail({
         <section className="scr-broker-card">
           <div className="scr-broker-card-row">
             <div className="scr-broker-card-left">
-              <img className="scr-broker-logo" src={xmLogoUrl} alt="XM" width={32} height={32} />
-              <span className="scr-broker-name">XM</span>
+              <img className="scr-broker-logo" src={logo} alt={brokerName} width={32} height={32} />
+              <span className="scr-broker-name">{brokerName}</span>
             </div>
-            <span className="scr-broker-popular">Popular</span>
+            {badgeOn ? <span className="scr-broker-popular">{badgeText}</span> : null}
           </div>
           {visibleBanners.map((b) =>
             b.pending ? (
@@ -347,7 +467,15 @@ export default function BrokerDetail({
                 key={b.key}
                 variant={b.variant}
                 title={b.title}
+                /* Outcomes ("Account verified", "Deposit under review") are
+                   news, not state — they announce themselves, drain their bar
+                   and go. A failed verification stays: it is the one the user
+                   still has to act on. */
+                autoDismiss={b.variant === 'error' ? undefined : BANNER_MS}
                 onClose={() => setDismissed((d) => [...d, b.key])}
+                // ref shows icon + text + drain bar only — no close button
+                // (the pending banner above never had one either).
+                hideClose
               />
             ),
           )}
@@ -369,9 +497,10 @@ export default function BrokerDetail({
                 className="scr-broker-referral-code"
                 type="button"
                 onClick={copyReferral}
+                disabled={!referralCode}
                 aria-label={copied ? 'Copied' : 'Copy referral code'}
               >
-                {REFERRAL_CODE}
+                {referralCode || '—'}
               </button>
             </div>
             <button className="scr-broker-linkbtn" type="button">
@@ -384,7 +513,7 @@ export default function BrokerDetail({
         {/* Broker details spec list */}
         <section className="scr-broker-details">
           <h3 className="scr-broker-details-title">Broker details</h3>
-          {XM_SPECS.map((s) => (
+          {specs.map((s) => (
             <div className="scr-broker-spec" key={s.label}>
               <span className="scr-broker-spec-left">
                 <Glyph name={s.icon} size={20} />
@@ -408,7 +537,7 @@ export default function BrokerDetail({
             // an account that's already under review.
             disabled={accountStatus === 'submitted'}
             iconRight={<Icon name="chevron-right" size={20} />}
-            onClick={() => setModal(cta.modal)}
+            onClick={() => openModal(cta.modal)}
           >
             {cta.label}
           </Button>
@@ -438,6 +567,7 @@ export default function BrokerDetail({
                 value={email}
                 onChange={setEmail}
                 placeholder="enter your email address"
+                error={fieldError.email}
               />
               {!resubmit ? (
                 <Input
@@ -445,20 +575,28 @@ export default function BrokerDetail({
                   value={userId}
                   onChange={setUserId}
                   placeholder="enter your user ID"
+                  error={fieldError.userId}
                 />
               ) : null}
+              {netError ? <Notification variant="error" title={netError} onClose={() => setNetError('')} /> : null}
             </div>
           </div>
 
-          <Button
-            variant="primary"
-            size="medium"
-            fullWidth
-            iconRight={<Icon name="chevron-right" size={20} />}
-            onClick={submitAccount}
-          >
-            submit account
-          </Button>
+          {/* Sticky within the sheet's own scroller, same as the page CTA
+              — unreachable-without-scrolling was the same bug here once the
+              keyboard clamp shrinks the sheet. */}
+          <footer className="scr-broker-sheet-footer">
+            <Button
+              variant="primary"
+              size="medium"
+              fullWidth
+              disabled={busy}
+              iconRight={<Icon name="chevron-right" size={20} />}
+              onClick={submitAccount}
+            >
+              submit account
+            </Button>
+          </footer>
         </div>
       </BottomSheet>
 
@@ -495,17 +633,21 @@ export default function BrokerDetail({
                 </div>
               </div>
             </div>
+            {netError ? <Notification variant="error" title={netError} onClose={() => setNetError('')} /> : null}
           </div>
 
-          <Button
-            variant="primary"
-            size="medium"
-            fullWidth
-            iconRight={<Icon name="chevron-right" size={20} />}
-            onClick={confirmDeposit}
-          >
-            i made a deposit
-          </Button>
+          <footer className="scr-broker-sheet-footer">
+            <Button
+              variant="primary"
+              size="medium"
+              fullWidth
+              disabled={busy}
+              iconRight={<Icon name="chevron-right" size={20} />}
+              onClick={confirmDeposit}
+            >
+              i made a deposit
+            </Button>
+          </footer>
         </div>
       </BottomSheet>
     </div>

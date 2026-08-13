@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Button, Icon, Input } from '../../design-system/components';
+import { cachedMe, getMe, withdraw } from '../../api/client';
 import { useBackButton } from '../../telegram';
 import { WITHDRAW_OPTIONS } from './withdraw-data';
 import { WithdrawSummarySheet } from './WithdrawSummarySheet';
@@ -61,7 +62,7 @@ export interface WithdrawAmountProps {
 
 export function WithdrawAmount({
   optionId = 'usdt-bep20',
-  availableBalance = 245,
+  availableBalance: availableBalanceProp = 0,
   initialAmount = '',
   initialWallet = '',
   initialSheet,
@@ -71,6 +72,22 @@ export function WithdrawAmount({
   onDone,
 }: WithdrawAmountProps): ReactNode {
   useBackButton(onBack);
+  /* The real withdrawable balance, so the "exceeds your balance" notice fires
+     on the same number the server will check against. */
+  const [live, setLive] = useState(() => cachedMe());
+  useEffect(() => {
+    if (cachedMe()) return;
+    let alive = true;
+    void getMe().then((me) => alive && setLive(me));
+    return () => {
+      alive = false;
+    };
+  }, []);
+  const availableBalance = live ? live.wallet.balance : availableBalanceProp;
+  const balanceLoading = !live;
+
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [currencyId, setCurrencyId] = useState(optionId);
   const [changeOpen, setChangeOpen] = useState(initialSheet === 'change');
   const option = WITHDRAW_OPTIONS.find((o) => o.id === currencyId) ?? WITHDRAW_OPTIONS[0];
@@ -131,6 +148,7 @@ export function WithdrawAmount({
                 <button
                   type="button"
                   className="scr-wdamt-max"
+                  disabled={balanceLoading}
                   onClick={() => setAmount(money(availableBalance))}
                 >
                   Max
@@ -138,7 +156,8 @@ export function WithdrawAmount({
               }
             />
             <p className="scr-wdamt-balance">
-              Available balance: <span className="scr-wdamt-balance-value">{money(availableBalance)}</span>
+              Available balance:{' '}
+              <span className="scr-wdamt-balance-value">{balanceLoading ? '—' : money(availableBalance)}</span>
             </p>
             {amountError ? (
               <p className="scr-wdamt-error" role="alert">
@@ -206,7 +225,30 @@ export function WithdrawAmount({
         amount={numeric || 0}
         networkFee={option.networkFee}
         onClose={() => setSummary('closed')}
-        onConfirm={() => setSummary('submitted')}
+        /* This is where money actually leaves. The server re-checks the balance
+           against the ledger — the client-side check above is a courtesy, not
+           the authority — so a rejection here is shown rather than swallowed. */
+        onConfirm={() => {
+          setSubmitting(true);
+          setSubmitError('');
+          withdraw({ amount: numeric, currency: option.symbol, network: option.network, address: wallet.trim() })
+            .then((r) => {
+              if (r.error) {
+                setSubmitError(
+                  r.error === 'insufficient_funds' ? 'That is more than your available balance.'
+                    : r.error === 'invalid_address' ? `That does not look like a valid ${option.network} address.`
+                      : r.error === 'below_minimum' ? `The minimum withdrawal is $${r.minimum ?? option.minimum}.`
+                        : 'Could not submit the withdrawal.',
+                );
+                return;
+              }
+              setSummary('submitted');
+            })
+            .catch(() => setSubmitError('Could not reach the server.'))
+            .finally(() => setSubmitting(false));
+        }}
+        confirmDisabled={submitting}
+        error={submitError}
         onDone={onDone}
       />
     </div>

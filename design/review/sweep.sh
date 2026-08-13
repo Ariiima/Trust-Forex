@@ -43,7 +43,7 @@ run pay-currency  pay-currency  "$B/payment/currency" 776
 run pay-network   pay-network   "$B/payment/network" 776
 run pay-receive   pay-receive   "$B/payment/receive" 776
 run cashback      cashback      "$B/cashback" 1598
-run cb-history    cashback-history "$B/cashback/history" 776
+run cb-history    cashback-history "$B/cashback?sheet=history" 776
 run broker        broker        "$B/cashback/broker/xm?account=submitted" 902
 
 # index.html shows these next to each screen; a full sweep rewrites every entry,

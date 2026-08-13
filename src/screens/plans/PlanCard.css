@@ -90,13 +90,14 @@
   color: var(--typography-colors-sub-text);
 }
 
-/* The frame's "$" is a heavier, larger glyph than the price digits (ink
-   12x18 against the digits' 9x12) — it is type, not the stroked
-   currency-dollar icon this used to render. Padding places its ink on x=96
-   with the digits following at 113. */
+/* The "$" is heavier than the price digits (700 vs the price's 600 weight)
+   — it is type, not the stroked currency-dollar icon this used to render.
+   It used to also run 18px against the digits' 16 and carry 4px of padding
+   on each side; the client's review read that as a stray space plus an
+   oversized glyph, so it now sits flush against the number at the same
+   16px the digits render at — same ink weight, no gap, no size mismatch. */
 .scr-plans-currency {
-  padding: 0 4px 0 4px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
 }
 

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { PlanCard } from './PlanCard';
 import { PLANS, type PlanId } from './plans-data';
@@ -19,6 +20,8 @@ export interface ChoosePlanProps {
 export default function ChoosePlan({ onBack, onContinue }: ChoosePlanProps): ReactNode {
   // No in-app header: the 44px bar in the frame is Telegram's own chrome.
   useBackButton(onBack);
+  // Nothing preselected: a card shows its Continue only once tapped.
+  const [selected, setSelected] = useState<PlanId | null>(null);
   return (
     <div className="scr-choose">
 
@@ -29,7 +32,14 @@ export default function ChoosePlan({ onBack, onContinue }: ChoosePlanProps): Rea
         </p>
 
         {PLANS.map((plan) => (
-          <PlanCard key={plan.id} plan={plan} variant="full" onContinue={() => onContinue?.(plan.id)} />
+          <PlanCard
+            key={plan.id}
+            plan={plan}
+            variant="full"
+            selected={selected === plan.id}
+            onSelect={() => setSelected(plan.id)}
+            onContinue={() => onContinue?.(plan.id)}
+          />
         ))}
       </main>
     </div>

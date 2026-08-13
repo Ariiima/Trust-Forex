@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trust Forex — Admin</title>
+  </head>
+  <body>
+    <!--
+      THESIS: One company, one surface language. The operator tool is the Mini
+      App's own design system — Sora, #144CCD, the #E4E4E4 stroke, the 8/12/16
+      radii, the #48D48A / #FF334C state pairs — re-pitched from a phone in a
+      Telegram WebView to a 27" monitor someone sits at all day. Staff should
+      recognise the product they support, and support decisions should be made
+      in the same visual vocabulary customers see them in.
+
+      SYSTEM: src/design-system/tokens.css is the source. admin.css maps it once
+      at :root and every rule reads from there. Two deliberate deviations, both
+      because this is an all-day work surface with a 4.5:1 text commitment:
+      secondary ink is #6B6B6B rather than #7C7C7C, and each state colour has a
+      text-safe dark pair while the token value stays the fill, pip and dot it
+      is in the Mini App.
+
+      DENSITY: the one thing not carried over. The Mini App breathes at 2x
+      line-height with a single card in view; this surface puts ten columns and
+      forty rows in front of someone comparing them. Type sizes are the Mini
+      App's, line-heights are not, and paddings step down about a third.
+
+      STORY: An operator sees at a glance what is live, what needs review, and
+      what money is staged, then publishes a run knowing where each figure came
+      from.
+
+      FIRST VIEWPORT: Brand-blue rail at left with the current section filled in
+      the deeper #033AB8. Content opens on the section title and its primary
+      action, then a readings strip of large figures over quiet labels, then the
+      work surface — a full-width card of data.
+    -->
+    <div id="admin-root"></div>
+    <script type="module" src="/src/admin/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,56 @@
+/* =====================================================================
+   Cashback — preview (intro) state (850:1913). Geometry mirrors the referral
+   intro (1333:8306), which was measured off its 1:1 frame render: card at
+   16,16 with 44 top / 32 side / 56 bottom padding, art 168x120, CTA 328x44
+   sitting 16 above the bottom. Both frames are the same component in Figma
+   with different copy, so the values are shared rather than re-derived.
+   ===================================================================== */
+
+.scr-cashback-preview {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--bg-colors-container-s);
+}
+
+.scr-cashback-preview-main {
+  flex: 1;
+  padding: var(--spacing-16);
+}
+
+.scr-cashback-preview-card {
+  padding: 44px var(--spacing-32) 56px;
+  border-radius: 16px;
+  background: var(--bg-colors-container-p);
+}
+
+/* 3D illustration, 168x120, centred in the 264 content column */
+.scr-cashback-preview-art {
+  display: block;
+  width: 168px;
+  height: 120px;
+  margin: 0 auto var(--spacing-16);
+}
+
+.scr-cashback-preview-title {
+  margin: 0;
+  text-align: center;
+  color: var(--typography-colors-main-text);
+}
+
+.scr-cashback-preview-accent {
+  color: var(--primary-colors-900);
+}
+
+/* step rows come from AboutCashbackSheet.css; only the top gap is local */
+.scr-cashback-preview-steps {
+  margin-top: var(--spacing-40);
+}
+
+.scr-cashback-preview-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  padding: 0 var(--spacing-16) var(--spacing-16);
+  background: var(--bg-colors-container-s);
+}

@@ -1,6 +1,7 @@
 // Trust Forex — Telegram Mini App shared component library.
 // Consumes design tokens from ../tokens.css (import that once, globally).
 
+export { AnimatedEmoji, preloadEmoji } from './AnimatedEmoji';
 export { Icon } from './Icon';
 export type { IconName, IconProps } from './Icon';
 
@@ -32,5 +33,7 @@ export type { RadioProps } from './Radio';
 
 export { Notification } from './Notification';
 export type { NotificationProps, NotificationVariant } from './Notification';
+
+export { Skeleton } from './Skeleton';
 
 export * from './BottomSheet'
