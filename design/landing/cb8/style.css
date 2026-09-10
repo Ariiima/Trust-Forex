@@ -386,6 +386,10 @@ html.reduce #calculator .live i,html.reduce #calculator .level:hover{animation:n
 :is(.display,.h2,h3).words .w i,:is(.display,.h2):not(.words){background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 :is(.display,.h2,h3).words :is(.w,.w i){padding:.14em .12em .18em;margin:-.14em -.12em -.18em}
 
+/* the FAQ heading only (Cashback, Referral): the .w side margins above cancel a -.055em-tracked
+   space, so the words read as one string — put the gap back on the two pages that carry it */
+.faq-title{word-spacing:.08em}
+
 /* the page number's "0" and the heading's capital share a left edge in ink, not in boxes: the capital
    carries a side bearing four times the digit's at that size (founder, 2026-09-08: "align vertically") */
 .mech-copy .page-number{margin-left:.2em}
