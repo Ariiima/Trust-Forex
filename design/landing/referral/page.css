@@ -82,16 +82,23 @@ html.reduce #m2 .block{animation:none}
 .glass .rate-cell{min-height:124px;padding:19px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;border-radius:16px}
 .glass .rate-cell small{font-size:var(--text-small);line-height:1.25;white-space:nowrap;color:var(--label,rgba(255,255,255,.85))}
 .glass .rate-cell strong{font-size:var(--text-ring);line-height:1;letter-spacing:-.045em;color:#fff}
-/* the rail is a chooser: one tile carries the reader's plan, the other three wait for it. The chosen
-   one keeps its metal at full strength inside a white rim; the rest stay readable but step back. */
+/* the rail is a chooser. Nothing here is dimmed or greyed — an unpicked plan is an offer, not a
+   disabled control — so every tile keeps its label, its figure and its metal at full strength. The
+   difference is the glass itself: the three the reader has not picked hold a thinner pane, the
+   picked one thickens to its full tint inside a white rim. Hover previews that thickening. */
 button.rate-cell{appearance:none;-webkit-appearance:none;margin:0;font:inherit;cursor:pointer;
-  transition:transform .25s var(--ease),opacity .25s var(--ease),filter .25s var(--ease),box-shadow .25s var(--ease),border-color .25s var(--ease)}
-.glass .rate-cell[aria-pressed=false]{opacity:.62;filter:saturate(.7)}
-.glass .rate-cell[aria-pressed=false]:hover{opacity:.85;filter:saturate(.9);transform:translateY(-2px)}
-.glass .rate-cell[aria-pressed=true]{border-color:#fff;transform:translateY(-3px);
-  box-shadow:inset 0 0 0 1px #fff,inset 0 1px 0 rgba(255,255,255,.42),0 18px 34px -16px var(--rim)}
+  transition:background .3s var(--ease),border-color .3s var(--ease),box-shadow .3s var(--ease),transform .3s var(--ease)}
+.glass .rate-cell[aria-pressed=false][data-tier=standard]{--tint:rgba(200,128,88,.19);--tint2:rgba(120,70,48,.17);--rim:rgba(236,176,136,.34)}
+.glass .rate-cell[aria-pressed=false][data-tier=silver]{--tint:rgba(204,218,238,.15);--tint2:rgba(118,144,184,.13);--rim:rgba(228,238,250,.36)}
+.glass .rate-cell[aria-pressed=false][data-tier=gold]{--tint:rgba(210,172,86,.19);--tint2:rgba(124,96,40,.17);--rim:rgba(240,208,130,.36)}
+.glass .rate-cell[aria-pressed=false][data-tier=diamond]{--tint:rgba(138,96,224,.2);--tint2:rgba(76,48,150,.18);--rim:rgba(196,166,250,.36)}
+.glass .rate-cell[aria-pressed=false]:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.6);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 16px 30px -20px rgba(var(--rgb-shadow),.7)}
+.glass .rate-cell[aria-pressed=true]{border-color:#fff;
+  box-shadow:inset 0 0 0 1px #fff,inset 0 1px 0 rgba(255,255,255,.5),0 0 0 4px rgba(255,255,255,.12),0 18px 34px -18px var(--rim)}
 button.rate-cell:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
-html.reduce button.rate-cell,html.reduce .glass .rate-cell[aria-pressed=true]{transform:none;transition:none}
+html.reduce button.rate-cell{transition:none}
+html.reduce .glass .rate-cell[aria-pressed=false]:hover{transform:none}
 .example-part b.swap{animation:xf .28s var(--ease)}   /* cb8's estimate cross-fade */
 html.reduce .example-part b.swap{animation:none}
 .rate-example{margin-top:14px;padding:22px 20px;border-radius:18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
@@ -123,6 +130,10 @@ html.reduce .example-part b.swap{animation:none}
 .referral-list-head+.referral-row{border-top:0}
 .referral-row>strong{font-size:var(--text-ui)}
 .user-status{justify-self:start;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.14);font-size:var(--text-small);color:#fff}
+.user-status.is-active{background:rgba(46,196,127,.22);border:1px solid rgba(84,226,160,.55);color:#c9f7e0;
+  box-shadow:0 0 0 3px rgba(46,196,127,.12),0 6px 18px rgba(24,150,96,.34)}
+.user-status.is-pending{background:rgba(240,186,60,.2);border:1px solid rgba(247,206,102,.5);color:#ffe6ab;
+  box-shadow:0 0 0 3px rgba(240,186,60,.1),0 6px 18px rgba(176,124,20,.3)}
 .user-earning{text-align:right;font-size:var(--text-ui)}
 .glass .balance-bar{grid-column:1/-1;grid-row:4;min-height:0;padding:12px 16px;border-radius:15px;display:flex;align-items:center;justify-content:space-between;gap:20px;
   --tint:rgba(38,104,224,.5);--tint2:rgba(20,70,190,.36);--rim:rgba(130,178,255,.6)}
