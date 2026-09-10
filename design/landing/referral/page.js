@@ -36,6 +36,12 @@
     });
     const on = cells.filter((c) => c.getAttribute('aria-pressed') === 'true');
     if (on.length !== 1) fails.push(`${on.length} tiles are selected, exactly 1 must be`);
+    const pill = document.querySelector('.plan-pill');                 // 04's preview names the plan 03 ships selected
+    if (!pill) fails.push('the App preview has no plan pill on its rate card');
+    if (pill && on.length === 1 && pill.dataset.tier !== on[0].dataset.tier)
+      fails.push(`plan pill says ${pill.dataset.tier}, the selected tile is ${on[0].dataset.tier}`);
+    if (pill && on.length === 1 && pill.textContent.trim().toLowerCase() !== on[0].dataset.tier)
+      fails.push(`plan pill reads "${pill.textContent.trim()}", its data-tier is ${pill.dataset.tier}`);
     if (on.length === 1) {
       const r = +on[0].dataset.rate;
       if (pct.textContent.trim() !== `${r}%`) fails.push(`shipped rate ${pct.textContent} != selected tile's ${r}%`);
