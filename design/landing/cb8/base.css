@@ -303,11 +303,8 @@ html.reduce .chapter .h2{animation:none}
 .split-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;position:relative}
 .split-grid::before{content:'';position:absolute;left:50%;top:-1px;width:70%;max-width:340px;height:1px;background:var(--line);transform:translateX(-50%)}
 .split-card{min-height:190px;border:1px solid var(--line);border-radius:20px;padding:24px;background:#fff;display:flex;flex-direction:column;gap:14px}
-.split-card.dark{background:var(--blue);border-color:var(--blue);color:#fff}
 .split-card h3{margin:0;font-size:var(--text-card-title);line-height:var(--leading-card);font-weight:var(--weight-strong);letter-spacing:var(--tracking-card);color:var(--navy)}
-.split-card.dark h3{color:#fff}
 .split-card p{margin:0;font-size:var(--text-ui);line-height:var(--leading-body);color:var(--muted)}
-.split-card.dark p{color:var(--navy-muted)}
 .split-panel{padding:22px}
 /* the two record cards: icon on the heading row, so both headings stay on one line */
 .split-head{display:flex;align-items:center;gap:12px}

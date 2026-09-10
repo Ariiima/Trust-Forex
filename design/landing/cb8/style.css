@@ -419,6 +419,70 @@ html.past-hero .to-top:hover{transform:translateY(-2px)}
 html.dark-now .to-top{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.38);backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%)}
 html.reduce .to-top{transition:none}
 
+/* ---------- Two records on the mechanics' own glass (founder, 2026-09-10) ----------
+   The panel wore the thick white frame, a 24px title and a solid navy card; it is now 03's factor pane
+   exactly — deep-blue glass with a light-blue rim, two tinted tiles at the factor's own type sizes, the
+   same streak, specular, rim glow and lean. The section stays paper, so the pane carries its own opaque
+   --blue base under the translucent layers: every alpha below then composites as it does over a blue
+   ground, and white type has the dark ground it needs. */
+.screen-paper .split-panel{padding:1.75rem;border-radius:22px;
+  transform:perspective(1200px) rotateX(calc(var(--ty,0) * -3deg)) rotateY(calc(var(--tx,0) * 3deg));transition:transform .6s var(--ease)}
+.screen-paper .split-panel.lit{transition-duration:.15s}
+html.reduce .screen-paper .split-panel{transform:none;transition:none}
+/* the pane, in place of the frame that stood 14px proud of it */
+.screen-paper .split-panel::before{inset:0;border-radius:inherit;border:1px solid rgba(160,196,255,.55);
+  background:linear-gradient(160deg,rgba(var(--rgb-900),.14),rgba(var(--rgb-abyss),.22)),linear-gradient(var(--blue),var(--blue));
+  box-shadow:0 0 34px rgba(96,156,255,.3),inset 0 1px 0 rgba(255,255,255,.38),inset 0 0 0 1px rgba(160,196,255,.18),
+             inset 0 0 64px rgba(96,156,255,.14),0 30px 60px -28px rgba(var(--rgb-shadow),.8)}
+/* ::after was the pane's white ground; it is now its light, on the paper screen's own --ground timeline */
+.screen-paper .split-panel::after{border-radius:inherit;transition:--lit .45s var(--ease);
+  animation:glass-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%;background:
+  radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,var(--lit)),transparent 70%) no-repeat 0 0/auto,
+  linear-gradient(115deg,transparent 32%,rgba(255,255,255,.14) 46%,rgba(255,255,255,.04) 52%,transparent 62%) no-repeat 100% 0/220% 100%}
+.screen-paper .split-panel.lit{--lit:.08}
+/* the source chip and its two hairlines, on the pane */
+.split-panel .split-source{color:#fff;padding:16px;margin-bottom:24px;border-radius:16px;border:1px solid rgba(160,196,255,.42);
+  background:linear-gradient(150deg,rgba(var(--rgb-900),.34),rgba(var(--rgb-abyss),.34));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 -1px 0 rgba(var(--rgb-shadow),.22)}
+.split-panel .split-grid{gap:1.125rem}
+/* the connector, drawn to the geometry it describes: the chip drops to a rail halfway down the 24px
+   gap, and the rail runs corner to corner between the two card centres — half the pane's width plus
+   half the 1.125rem column gap — turning down into each card's top edge. One box does the rail and
+   both legs (top, left and right borders); the chip's drop meets its centre. */
+.split-panel .split-source::after{height:12px;transform:translateX(-50%);background:rgba(255,255,255,.22)}
+.split-panel .split-grid::before{top:-12px;width:calc(50% + .5625rem);max-width:none;height:12px;
+  background:none;border:1px solid rgba(255,255,255,.22);border-bottom:0;border-radius:8px 8px 0 0}
+@media (max-width:1023px){
+  /* one column: the cards' centres and the chip's are the same line, so the rail has no width to run */
+  .split-panel .split-grid::before{display:none}
+  .split-panel .split-source::after{height:24px}
+}
+/* the two tiles, at the factor's tints and type: warm for the market record, green for the cashback record */
+.split-panel .split-card{--tint:rgba(var(--rgb-900),.34);--tint2:rgba(var(--rgb-abyss),.34);--rim:rgba(160,196,255,.42);--streak:.12;
+  position:relative;isolation:isolate;min-height:156px;padding:20px;gap:.625rem;color:#fff;border-radius:16px;border:1px solid var(--rim);
+  background:linear-gradient(150deg,var(--tint),var(--tint2));
+  backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 -1px 0 rgba(var(--rgb-shadow),.22),0 14px 30px -18px rgba(var(--rgb-shadow),.7)}
+.split-panel .split-card:nth-child(1){--tint:rgba(214,140,80,.24);--rim:rgba(240,196,150,.42)}
+.split-panel .split-card:nth-child(2){--tint:rgba(46,178,134,.24);--rim:rgba(150,230,190,.42)}
+.split-panel .split-card h3{margin:0;font:var(--weight-strong) var(--text-panel-title)/1.2 var(--sans);letter-spacing:0;color:#fff}
+.split-panel .split-card p{font-size:var(--text-small);color:rgba(255,255,255,.84)}
+.split-panel .ico:not(.ico-success):not(.ico-warning){stroke:#fff}
+.split-panel .split-card::after,.split-panel .split-card::before{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none}
+.split-panel .split-card::after{transition:--lit .45s var(--ease);
+  animation:glass-light linear both;animation-timeline:--ground;animation-range:entry 30% exit 70%;background:
+  radial-gradient(180px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,calc(var(--lit) * 1.6)),transparent 70%) no-repeat 0 0/auto,
+  linear-gradient(115deg,transparent 26%,rgba(255,255,255,var(--streak)) 44%,rgba(255,255,255,.06) 51%,transparent 64%) no-repeat 100% 0/260% 100%}
+.split-panel .split-card::before{inset:-1px;padding:1px;opacity:0;transition:opacity .45s var(--ease);
+  background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.55),transparent 70%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
+.split-panel.lit .split-card::before{opacity:1}
+html.reduce .screen-paper .split-panel::after,html.reduce .split-panel .split-card::after,html.reduce .split-panel .split-card::before{animation:none;transition:none}
+@media (prefers-reduced-transparency:reduce){
+  .split-panel .split-card{backdrop-filter:none;-webkit-backdrop-filter:none}
+}
+
 /* ---------- 01 · Account setup: two coloured routes joined by a line (founder ref, 2026-09-10) ----------
    The two routes stop being plain rows and become their own coloured glass — blue for reviewing a
    broker, green for opening the account — each with its icon in a light chip and a short line

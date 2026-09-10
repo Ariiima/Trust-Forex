@@ -154,10 +154,10 @@
     node.replaceChildren(frag);
   });
 
-  /* ---------- glass panes (02, 04): the light follows the pointer ----------
+  /* ---------- glass panes (02, 04) and the two-records panel: the light follows the pointer ----------
      --mx/--my in px on the pane and on each tile, relative to its own box, so every radial in
      style.css centres under the cursor; .lit while the pointer is over the pane. */
-  document.querySelectorAll('.glass .panel').forEach(pane => {
+  document.querySelectorAll('.glass .panel, .split-panel').forEach(pane => {
     const lit = [pane, ...pane.querySelectorAll('.tile')];
     pane.addEventListener('pointermove', e => {
       for (const el of lit) {
