@@ -60,16 +60,15 @@ html.reduce #chapter-routes::after{animation:none}
 }
 html.reduce #m2 .block{animation:none}
 
-/* ---------- 6 · lasting value: three numbered tiles and the summary on white ---------- */
+/* ---------- 6 · lasting value: three tiles and the summary on white ---------- */
 .glass .lifetime-story{width:100%;min-height:420px;overflow:hidden;padding:14px;display:grid;grid-template-rows:repeat(3,minmax(92px,auto)) 82px;gap:10px;border-radius:24px}
-.glass .lifetime-point{min-height:92px;padding:15px 16px;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:14px;align-items:center;border-radius:14px}
+.glass .lifetime-point{min-height:92px;padding:15px 16px;display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;align-items:center;border-radius:14px}
 /* each point carries its icon on a small glass tile and a faint colour of its own: blue for the connection,
    the TP green for rewards arriving, plain for the rule that never expires (founder, 2026-09-09: "can be improved") */
 .glass .lifetime-icon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;padding:0;--streak:.16}
 .glass .lifetime-point:nth-child(1){--tint:rgba(38,104,224,.42);--tint2:rgba(20,70,190,.3);--rim:rgba(130,178,255,.55)}
 .glass .lifetime-point:nth-child(2){--tint:rgba(46,178,134,.26);--tint2:rgba(20,90,70,.3);--rim:rgba(150,230,190,.45)}
 .glass .lifetime-point:nth-child(2) .lifetime-icon .ico{stroke:var(--success)}
-.lifetime-number{align-self:start;font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.1em;color:rgba(255,255,255,.55)}
 .glass .lifetime-point h3{margin:0 0 4px;font-size:var(--text-panel-title);line-height:1.2;letter-spacing:-.015em;font-weight:var(--weight-strong);color:#fff}
 .glass .lifetime-point p{margin:0;max-width:400px;color:rgba(255,255,255,.8);font-size:var(--text-meta);line-height:1.4}
 .lifetime-summary{min-height:82px;padding:18px 20px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:#fff;color:var(--navy);text-align:center}
@@ -83,6 +82,18 @@ html.reduce #m2 .block{animation:none}
 .glass .rate-cell{min-height:124px;padding:19px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;border-radius:16px}
 .glass .rate-cell small{font-size:var(--text-small);line-height:1.25;white-space:nowrap;color:var(--label,rgba(255,255,255,.85))}
 .glass .rate-cell strong{font-size:var(--text-ring);line-height:1;letter-spacing:-.045em;color:#fff}
+/* the rail is a chooser: one tile carries the reader's plan, the other three wait for it. The chosen
+   one keeps its metal at full strength inside a white rim; the rest stay readable but step back. */
+button.rate-cell{appearance:none;-webkit-appearance:none;margin:0;font:inherit;cursor:pointer;
+  transition:transform .25s var(--ease),opacity .25s var(--ease),filter .25s var(--ease),box-shadow .25s var(--ease),border-color .25s var(--ease)}
+.glass .rate-cell[aria-pressed=false]{opacity:.62;filter:saturate(.7)}
+.glass .rate-cell[aria-pressed=false]:hover{opacity:.85;filter:saturate(.9);transform:translateY(-2px)}
+.glass .rate-cell[aria-pressed=true]{border-color:#fff;transform:translateY(-3px);
+  box-shadow:inset 0 0 0 1px #fff,inset 0 1px 0 rgba(255,255,255,.42),0 18px 34px -16px var(--rim)}
+button.rate-cell:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
+html.reduce button.rate-cell,html.reduce .glass .rate-cell[aria-pressed=true]{transform:none;transition:none}
+.example-part b.swap{animation:xf .28s var(--ease)}   /* cb8's estimate cross-fade */
+html.reduce .example-part b.swap{animation:none}
 .rate-example{margin-top:14px;padding:22px 20px;border-radius:18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
 .example-flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:10px}
 .example-part{min-width:0;text-align:center;color:#fff}
@@ -98,8 +109,7 @@ html.reduce #m2 .block{animation:none}
 .app-top{grid-column:1;grid-row:1;display:flex;align-items:center;padding:0 4px;color:#fff}
 .app-top strong{font-size:var(--text-step)}
 .toast{grid-column:2;grid-row:1;align-self:center;max-width:220px;min-height:34px;padding:8px 11px;border:1px solid rgba(255,255,255,.35);border-radius:999px;background:rgba(255,255,255,.14);
-  display:flex;align-items:center;gap:8px;font-size:var(--text-label);white-space:nowrap;color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
-.toast::before{content:'';width:8px;height:8px;flex:0 0 8px;border-radius:50%;background:var(--success);box-shadow:0 0 0 4px rgba(72,212,138,.25)}
+  display:flex;align-items:center;font-size:var(--text-label);white-space:nowrap;color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
 .toast strong{font-size:var(--text-small)}
 .summary-grid{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .glass .summary-card{min-height:0;padding:14px;border-radius:14px;display:flex;flex-direction:column;justify-content:center}
@@ -142,7 +152,7 @@ html.reduce #m2 .block{animation:none}
   .glass .route-panel{min-height:0;grid-template-rows:repeat(2,minmax(118px,auto)) 76px}
   .route-row{min-height:118px;padding:16px;column-gap:12px}.glass .route-icon{width:40px;height:40px}.route-row h3{white-space:normal}
   .shared-destination strong{font-size:30px}
-  .glass .lifetime-story{grid-template-rows:none}.glass .lifetime-point{min-height:96px;padding:15px;grid-template-columns:40px minmax(0,1fr) auto;gap:12px}.glass .lifetime-icon{width:40px;height:40px}
+  .glass .lifetime-story{grid-template-rows:none}.glass .lifetime-point{min-height:96px;padding:15px;grid-template-columns:40px minmax(0,1fr);gap:12px}.glass .lifetime-icon{width:40px;height:40px}
   .lifetime-summary{padding:20px 16px}.lifetime-summary strong{font-size:23px}
   .glass .rates-panel{padding:14px}.rate-rail{grid-template-columns:1fr}.glass .rate-cell{min-height:96px}
   .rate-example{padding:17px}.example-flow{grid-template-columns:1fr}.example-arrow{transform:rotate(90deg);justify-self:center}.example-part.result{width:100%}
