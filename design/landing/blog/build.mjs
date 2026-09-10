@@ -32,7 +32,7 @@ const cb8 = readFileSync(join(LANDING, 'cb8/index.html'), 'utf8');
 const NAV = /<header class="nav" id="nav">[\s\S]*?<\/header>/.exec(cb8)[0]
   .replace('<a href="#hero" aria-current="page">Cashback</a>', '<a href="../cb8/">Cashback</a>')
   .replace(/<a href="[^"]*">Blogs<\/a>/, '<a href="#hero" aria-current="page">Blogs</a>');
-const nav = rel => NAV.replace(/href="\.\.\//g, `href="${rel}`);
+const nav = (rel, top = "hero") => NAV.replace(/href="\.\.\//g, `href="${rel}`).replace("href=\"#hero\"", `href="#${top}"`);
 
 /* ---- the icons on the covers: one glyph per category, the Iconly file over it once pulled ---- */
 const GLYPH = {
@@ -45,9 +45,12 @@ const GLYPH = {
 const ico = (name, rel, cls = '') => `<span class="ico ${cls}" data-lottie="${rel}cb8/ico/${name}.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${GLYPH[name]}</svg></span>`;
 const ray = k => `<div class="rayfield k ${k}" aria-hidden="true"><i></i><i></i><i></i><i></i></div>`;
 const EXT = '<svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-const cover = (p, rel, cls = '') => `<div class="cover ${cls}">${ray(p.cat.ground)}${p.cover ? `<img src="${esc(p.cover)}" alt="" loading="lazy">` : ico(p.cat.icon, rel, 'cover-ico')}</div>`;
+const PLACEHOLDER = Object.fromEntries(cats.map(c => [c.id, existsSync(join(BLOG, 'img', `${c.id}.jpg`))]));
+const coverSrc = (p, rel) => p.cover || (PLACEHOLDER[p.cat.id] ? `${rel}blog/img/${p.cat.id}.jpg` : '');
+const cover = (p, rel, cls = '') => { const src = coverSrc(p, rel);
+  return `<div class="cover ${cls}">${ray(p.cat.ground)}${src ? `<img src="${esc(src)}" alt="" loading="lazy">` : ico(p.cat.icon, rel, 'cover-ico')}${cls.includes('cover-sm') ? '' : `<span class="read">${p.minutes} min read</span>`}</div>`; };
 const initials = n => n.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
-const author = p => `<div class="author"><i>${initials(p.author)}</i><div>${esc(p.author)}<span>${p.minutes} min read</span></div></div>`;
+const author = p => `<div class="author"><i>${initials(p.author)}</i><span>${esc(p.author)}</span></div>`;
 const url = (p, rel) => `${rel}blog/p/${p.slug}/`;
 
 const card = (p, rel, big = false) => `<article class="card${big ? ' card-big' : ''}" data-cat="${p.cat.id}" data-date="${p.date}" data-reads="${p.reads}">
@@ -62,7 +65,7 @@ const footer = rel => `<footer class="footer"><div class="wrap"><div class="foot
   <div class="social"><a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3 11l5 2 2 6 3-4 5 4 3-15Z"/></svg></a><a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r=".9"/></svg></a></div>
 </div></div></footer>`;
 const final = rel => `<section class="screen footer-only" id="final" data-name="Footer">${footer(rel)}</section>`;
-const shell = ({ rel, title, desc, body, extraHead = '', scripts = '' }) => `<!doctype html>
+const shell = ({ rel, title, desc, body, extraHead = '', scripts = '', top = 'hero' }) => `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -77,7 +80,7 @@ ${FAVICON}
 </head>
 <body>
 ${LIQUID}
-${nav(rel)}
+${nav(rel, top)}
 <div id="rail" role="navigation" aria-label="Page sections"></div>
 <main id="deck">
 ${body}
@@ -91,7 +94,7 @@ ${scripts}
 </html>
 `;
 
-/* ---- the listing page: the latest post, the chips, the grid, "From the Blog" ---- */
+/* ---- the listing page: the chips, the grid, "From the Blog" ---- */
 const chips = (rel, current) => `<div class="chips" role="list"><a class="chip" role="listitem" href="${rel}blog/" data-cat="all"${current === 'all' ? ' aria-current="true"' : ''}>All</a>${cats.map(c => `<a class="chip" role="listitem" href="${rel}blog/c/${c.id}/" data-cat="${c.id}"${current === c.id ? ' aria-current="true"' : ''}>${esc(c.name)}</a>`).join('')}</div>`;
 const fromBlog = rel => {
   const featured = posts.filter(p => p.featured).slice(0, 2); while (featured.length < 2 && posts[featured.length]) if (!featured.includes(posts[featured.length])) featured.push(posts[featured.length]); else break;
@@ -99,26 +102,16 @@ const fromBlog = rel => {
   if (!posts.length) return '';
   return `<section class="screen" id="from-blog" data-name="From the Blog" aria-labelledby="fb-h"><div class="wrap">
   <h2 class="h2 words" id="fb-h">From the Blog</h2>
-  <div class="fb-grid rv" style="--i:1">${featured.map(p => card(p, rel, true)).join('')}<aside class="fb-popular"><h3>Most popular</h3>${popular.map(p => mini(p, rel)).join('')}</aside></div>
+  <div class="fb-grid rv" style="--i:1">${featured.map(p => card(p, rel, true)).join('')}<aside class="fb-popular" aria-label="Most popular">${popular.map(p => mini(p, rel)).join('')}</aside></div>
 </div></section>`;
 };
 const listing = ({ rel, list, current, heading, blurb, title, desc }) => {
-  const latest = list[0];
-  const hero = latest ? `<section class="screen screen-dark on-dark" id="hero" data-name="Latest" aria-labelledby="h1">${ray(latest.cat.ground)}
-  <div class="wrap latest"><h1 class="sr" id="h1">${esc(title)}</h1>
-    <div class="latest-cover rv"><a href="${url(latest, rel)}" aria-label="${esc(latest.title)}">${cover(latest, rel, 'cover-hero')}</a></div>
-    <div class="latest-copy"><span class="card-meta rv"><b>${esc(current === 'all' ? 'Latest' : latest.cat.name)}</b> · ${fmtDate(latest.date)}</span>
-      <h2 class="h2 words">${esc(latest.title)}</h2>
-      <p class="lede rv" style="--i:1">${esc(latest.excerpt)}</p>
-      <div class="rv" style="--i:2"><a class="btn btn-solid" href="${url(latest, rel)}">Read the post ${EXT}</a></div></div>
-  </div></section>` : `<section class="screen screen-dark on-dark" id="hero" data-name="Blog" aria-labelledby="h1">${ray('k01')}
-  <div class="wrap hero-center"><h1 class="display words" id="h1">${esc(heading)}</h1><p class="lede rv" style="--i:1">${esc(blurb)}</p></div></section>`;
   const grid = `<section class="screen" id="posts" data-name="Posts" aria-labelledby="posts-h"><div class="wrap">
-  <div class="posts-head"><div><h2 class="h2 words" id="posts-h">${esc(heading)}</h2><p class="copy rv" style="--i:1">${esc(blurb)}</p></div>
-    <div class="posts-tools rv" style="--i:2">${chips(rel, current)}<label class="sort">Sort <select id="sort"><option value="new">Newest</option><option value="old">Oldest</option><option value="reads">Most read</option></select></label></div></div>
+  <div class="posts-head"><h1 class="h2 words" id="posts-h">${esc(heading)}</h1>
+    <div class="posts-tools rv" style="--i:1">${chips(rel, current)}<div class="field well sort-well"><label for="sort">Sort</label><select id="sort"><option value="new">Newest</option><option value="old">Oldest</option><option value="reads">Most read</option></select></div></div></div>
   ${list.length ? `<div class="post-grid rv" id="grid" style="--i:2">${list.map(p => card(p, rel)).join('')}</div><button class="btn more" id="more" type="button" hidden>Show more</button>` : `<p class="copy rv" style="--i:2">No posts in this category yet.</p>`}
 </div></section>`;
-  return shell({ rel, title, desc, body: hero + grid + fromBlog(rel) + final(rel), scripts: `<script src="${rel}blog/blog.js?v=${V.blog}"></script>` });
+  return shell({ rel, title, desc, top: 'posts', body: grid + fromBlog(rel) + final(rel), scripts: `<script src="${rel}blog/blog.js?v=${V.blog}"></script>` });
 };
 
 /* ---- the post page ---- */
@@ -134,7 +127,7 @@ const postPage = p => {
     <button class="btn copy-link" type="button" data-url="https://trustforex.net/v/landing/blog/p/${p.slug}/">Copy link</button></aside>
   <article class="article rv" style="--i:1">${p.html}</article>
 </div></section>
-${related.length ? `<section class="screen" id="related" data-name="More" aria-labelledby="rel-h"><div class="wrap"><h2 class="h2 words" id="rel-h">More in ${esc(p.cat.name)}</h2><div class="post-grid rv" style="--i:1">${related.map(o => card(o, rel)).join('')}</div></div></section>` : ''}
+${related.length ? `<section class="screen" id="related" data-name="More" aria-labelledby="rel-h"><div class="wrap"><h2 class="h2 words" id="rel-h">${related[0].cat === p.cat ? `More in ${esc(p.cat.name)}` : 'More from the Blog'}</h2><div class="post-grid rv" style="--i:1">${related.map(o => card(o, rel)).join('')}</div></div></section>` : ''}
 ${final(rel)}`;
   return shell({ rel, title: `${p.title} — TrustForex Blog`, desc: p.excerpt, body, scripts: `<script src="${rel}blog/blog.js?v=${V.blog}"></script>` });
 };
@@ -150,7 +143,7 @@ const editorPage = () => {
       <div class="field"><label for="title">Title</label><input id="title" type="text" placeholder="Four fixed targets define every signal"></div>
       <div class="ed-row"><div class="field"><label for="slug">Slug (URL)</label><input id="slug" type="text" placeholder="four-fixed-targets"></div><div class="field"><label for="category">Category</label><select id="category">${cats.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></div></div>
       <div class="ed-row"><div class="field"><label for="date">Date</label><input id="date" type="date"></div><div class="field"><label for="author">Author</label><input id="author" type="text" value="TrustForex"></div></div>
-      <div class="field"><label for="excerpt">Excerpt (the card and the hero)</label><input id="excerpt" type="text" placeholder="One sentence that says what the post is."></div>
+      <div class="field"><label for="excerpt">Excerpt (the card and the page description)</label><input id="excerpt" type="text" placeholder="One sentence that says what the post is."></div>
       <div class="ed-row"><div class="field"><label for="cover">Cover image URL (optional — the category ground otherwise)</label><input id="cover" type="url" placeholder="https://…/cover.webp"></div><div class="field"><label for="reads">Reads (ranks Most popular)</label><input id="reads" type="number" min="0" value="0"></div></div>
       <label class="ed-check"><input id="featured" type="checkbox"> Featured — one of the two large cards in “From the Blog”</label>
       <div class="field"><label for="body">Body</label>
@@ -168,7 +161,7 @@ const editorPage = () => {
     </div>
   </div>
 </div></section>`;
-  return shell({ rel, title: 'Write a post — TrustForex Blog', desc: 'The blog editor.', body, scripts: `<script type="module" src="${rel}blog/editor.js?v=${V.editor}"></script>` });
+  return shell({ rel, title: 'Write a post — TrustForex Blog', desc: 'The blog editor.', top: 'editor', body, scripts: `<script type="module" src="${rel}blog/editor.js?v=${V.editor}"></script>` });
 };
 
 /* ---- write everything ---- */

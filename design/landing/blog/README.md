@@ -20,12 +20,12 @@ Live at https://trustforex.net/v/landing/blog/ — the editor at `/blog/editor/`
 | `render.js` | the renderer — Markdown subset + the theme's blocks; used by the build and the editor |
 | `build.mjs` | the templates: listing, category, post, editor, `posts.json` |
 | `page.css`, `blog.js`, `editor.js` | the blog's styles and scripts over cb8's |
+| `img/` | one placeholder cover per category (`<id>.jpg`), and `make.mjs`, which renders them. Neutral on purpose — drop a real photograph over any one of them, or give a post its own `cover:` |
 
 `index.html`, `c/`, `p/`, `editor/index.html` and `posts.json` are outputs of the build.
 
 ## Where a post appears
 
-- **Latest** — the newest post is the hero of the listing (and of its category page).
 - **The grid** — every post, three across, filtered by the category chips and sorted (newest / oldest / most read); nine at a time, then *Show more*.
 - **From the Blog** — at the foot of every listing: the two `featured: true` posts as large cards, and *Most popular* — the four highest `reads`.
 - **More in <category>** — three related posts under every post.
@@ -46,8 +46,8 @@ title: How we measure a signal
 category: signals          # an id from categories.json
 date: 2026-09-01           # YYYY-MM-DD; newest first everywhere
 author: TrustForex
-excerpt: One sentence for the card and the hero.   # optional — the first paragraph otherwise
-cover: https://…/image.webp   # optional — the category's halo otherwise
+excerpt: One sentence for the card.       # optional — the first paragraph otherwise
+cover: https://…/image.webp   # optional — the category's placeholder photograph otherwise
 featured: true             # optional — one of the two large cards in From the Blog
 reads: 412                 # optional — ranks Most popular (until real analytics exist)
 draft: true                # optional — skipped by the build
