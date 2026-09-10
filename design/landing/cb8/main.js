@@ -174,12 +174,28 @@
     pane.addEventListener('pointerleave', () => { pane.classList.remove('lit'); pane.style.setProperty('--tx', 0); pane.style.setProperty('--ty', 0); });
   });
 
-  /* ---------- FAQ ---------- */
-  document.querySelectorAll('.faq-q').forEach(b => b.addEventListener('click', () => {
-    const item = b.closest('.faq-item');
-    const open = item.classList.toggle('open');
-    b.setAttribute('aria-expanded', String(open));
-  }));
+  /* ---------- FAQ ----------
+     The row's height is a real layout animation, so every frame of it resizes the section and
+     repaints the field behind. Each question is also glass, and a backdrop blur over a backdrop
+     that is repainting has to be re-sampled on every one of those frames — seven of them, which
+     is where the open used to stutter (founder, 2026-09-10: "some lag while opening"). The list
+     wears .busy for the length of the motion and the glass drops to flat white until it lands;
+     measured against the blurred still frame that costs at most 10/255 on a pixel, on the faint
+     grid lines alone, and it is only on screen while something is moving. */
+  document.querySelectorAll('.faq-list').forEach(list => {
+    const ms = parseFloat(getComputedStyle(list).getPropertyValue('--faq-ms')) || 380;
+    let settle;
+    list.addEventListener('click', e => {
+      const b = e.target.closest('.faq-q');
+      if (!b || !list.contains(b)) return;
+      const item = b.closest('.faq-item');
+      const open = item.classList.toggle('open');
+      b.setAttribute('aria-expanded', String(open));
+      list.classList.add('busy');
+      clearTimeout(settle);
+      settle = setTimeout(() => list.classList.remove('busy'), ms + 40);
+    });
+  });
 
   /* ---------- calculator: volume x 17 x account factor x share (the Cashback page only — the Results,
      Referral and About pages load this same script and have no form) ---------- */

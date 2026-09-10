@@ -476,7 +476,8 @@ html.reduce .estimate strong.swap{animation:none}
 .plus::before,.plus::after{content:'';position:absolute;left:0;top:7px;width:15px;height:1px;background:var(--muted)}
 .plus::after{transform:rotate(90deg)}
 .faq-item.open .plus{transform:rotate(45deg)}
-.faq-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .38s var(--ease)}
+.faq-list{--faq-ms:380}   /* main.js reads it: the glass is suspended for exactly this long */
+.faq-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows calc(var(--faq-ms) * 1ms) var(--ease)}
 .faq-item.open .faq-a{grid-template-rows:1fr}
 .faq-a>div{overflow:hidden}
 .faq-a p{margin:0 0 23px;padding-right:48px;font-size:var(--text-panel-title);line-height:var(--leading-body);color:var(--muted);max-width:770px}

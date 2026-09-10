@@ -6,7 +6,7 @@
    feDisplacementMap (#liquid in index.html) in backdrop-filter, Chromium only; every other
    engine gets the same glass without the bend. The data stays opaque white — the founder's
    "white chart" — so figures never sit on a translucent ground. */
-@import url('base.css?v=eafb7639');
+@import url('base.css?v=7bedec09');
 
 /* ---------- structure behind the glass: a faint grid in every blue ground ---------- */
 .rayfield.k::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:
@@ -398,6 +398,8 @@ html.reduce #calculator .live i,html.reduce #calculator .level:hover{animation:n
   backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);
   box-shadow:inset 0 1px 0 #fff,0 18px 40px -30px rgba(var(--rgb-shadow),.3);transition:background-color .3s var(--ease)}
 .faq-item:hover,.faq-item.open{background:rgba(255,255,255,.8)}
+/* while a row is growing, the glass goes flat — see the FAQ block in main.js for why */
+.faq-list.busy .faq-item{backdrop-filter:none;-webkit-backdrop-filter:none}
 .faq-a p{margin-bottom:20px}
 @media (prefers-reduced-transparency:reduce){.faq-item{background:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}}
 
