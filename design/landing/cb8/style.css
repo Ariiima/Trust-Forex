@@ -414,3 +414,21 @@ html.past-hero .to-top{opacity:1;transform:none;pointer-events:auto}
 html.past-hero .to-top:hover{transform:translateY(-2px)}
 html.dark-now .to-top{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.38);backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%)}
 html.reduce .to-top{transition:none}
+
+/* ---------- 01 · Account setup: two coloured routes joined by a line (founder ref, 2026-09-10) ----------
+   The two routes stop being plain rows and become their own coloured glass — blue for reviewing a
+   broker, green for opening the account — each with its icon in a light chip and a short line
+   running from the first box into the second. No trailing chevron or launch mark: the panel is a
+   sample of the app, not a link. */
+.route-flow{display:flex;flex-direction:column;align-items:stretch}
+.route-flow .route-option{margin-top:0;height:auto;min-height:66px;padding:12px 14px;gap:14px}
+.route-flow .route-option+.route-option,.route-link+.route-option{margin-top:0}
+.route-link{width:2px;height:14px;margin-left:33px;flex:none;border-radius:2px;
+  background:linear-gradient(180deg,rgba(130,178,255,.75),rgba(120,214,176,.75))}
+.route-chip{display:grid;place-items:center;width:40px;height:40px;flex:none;border-radius:12px;
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
+.route-chip .ico{width:22px;height:22px}
+.glass [data-route=review]{--tint:rgba(38,104,224,.5);--tint2:rgba(20,70,190,.36);--rim:rgba(130,178,255,.6)}
+.glass [data-route=open]{--tint:rgba(32,152,112,.48);--tint2:rgba(16,92,70,.36);--rim:rgba(120,214,176,.55)}
+html.reduce .route-link{background:rgba(255,255,255,.5)}
