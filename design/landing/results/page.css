@@ -156,39 +156,76 @@
 .dark-state.reached{color:#fff;border-color:rgba(72,212,138,.7);background:rgba(72,212,138,.14)}
 .dark-state.reached::before{background:var(--success);box-shadow:0 0 0 3px rgba(72,212,138,.25)}
 
-/* 03 · two rings. The ring fills once, as the card reveals — a state change, not a mount effect. */
+/* 03 · two rings. The ring fills once, as the card reveals — a state change, not a mount effect.
+   The cases carry a faint TP green tint of their own now (the record's colour, not a neutral tile).
+   The TP pill sits flush against the case's top edge as a tiny filled chip — an accent next to the
+   ring's number, not a reading — so nothing but its own gap holds it away from the corner, and the
+   ring itself grows to the size the case can actually give it, closing the dead air that used to sit
+   above and below it. Equation drops to a small pinned chip so the case reads as one composed card
+   top-to-bottom instead of three centred rows with air between each. */
 @property --sweep{syntax:'<percentage>';inherits:false;initial-value:0%}
 .winrate-body{min-height:0;padding:20px;display:grid}
 .winrate-compare{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.glass .winrate-case{min-height:0;padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;border-radius:16px}
-.winrate-case-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.winrate-case-head strong{min-width:46px;padding:7px 10px;border:1px solid rgba(255,255,255,.4);border-radius:999px;text-align:center;font-size:var(--text-small);color:#fff}
-.winrate-case-head span{color:rgba(255,255,255,.7);font-size:var(--text-label)}
-.winrate-ring{position:relative;width:126px;height:126px;border-radius:50%;display:grid;place-content:center;text-align:center}
+.glass .winrate-case{--tint:rgba(72,212,138,.22);--tint2:rgba(72,212,138,.1);--rim:rgba(150,230,190,.3);
+  min-height:0;padding:14px 16px 16px;display:flex;flex-direction:column;align-items:center;gap:12px;border-radius:16px}
+.winrate-case-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px}
+/* smaller than any type token carries — the one deliberate literal size on the page, for a chip that
+   is an accent next to the ring's number, not a reading. `.glass` prefixed in so this actually beats
+   .glass .tile strong (style.css), which was winning on specificity and forcing --text-stat (30px)
+   through regardless of what this rule said. */
+.glass .winrate-case-head strong{padding:2px 7px;border-radius:999px;background:rgba(72,212,138,.3);
+  text-align:center;font-size:9px;line-height:1.5;font-weight:var(--weight-strong);letter-spacing:.04em;color:#fff}
+.winrate-case-head span{color:rgba(255,255,255,.62);font-size:var(--text-nano);font-weight:var(--weight-label);letter-spacing:.01em}
+/* the ring is the card's one real event, so it takes the height the head and equation leave it —
+   no leftover band top or bottom — and its number is sized to that, not to the shared --text-ring token */
+.winrate-ring{position:relative;width:208px;height:208px;border-radius:50%;display:grid;place-content:center;text-align:center}
+/* a faint bloom of the ring's own colour behind it, low enough to read as depth, not a second light source */
+.winrate-ring::after{content:'';position:absolute;inset:-10px;z-index:-1;border-radius:50%;background:radial-gradient(circle,rgba(72,212,138,.14),transparent 65%)}
 .winrate-ring::before{content:'';position:absolute;inset:0;border-radius:50%;--sweep:0%;
-  background:conic-gradient(var(--success) 0 var(--sweep),rgba(255,255,255,.18) var(--sweep) 100%);
-  -webkit-mask:radial-gradient(circle,transparent 59%,#000 60%);mask:radial-gradient(circle,transparent 59%,#000 60%);transition:--sweep 1.3s var(--ease) .55s}
-.screen.in .winrate-ring::before{--sweep:var(--rate)}
-.glass .winrate-ring strong{font-size:var(--text-ring);line-height:1;letter-spacing:-.05em;color:#fff}
-.winrate-ring span{margin-top:6px;color:rgba(255,255,255,.7);font-size:var(--text-nano)}
-.winrate-equation{color:rgba(255,255,255,.7);font-size:var(--text-label)}
-
-/* 04 · the timer, its window filling once on reveal */
-.timer-body{height:100%;padding:26px 28px 25px;display:flex;flex-direction:column;justify-content:center}
-.timer-readout{position:relative;width:132px;height:132px;margin:0 auto 26px;border-radius:50%;display:grid;place-content:center;text-align:center}
-.timer-readout::before{content:'';position:absolute;inset:0;border-radius:50%;--sweep:0%;
-  background:conic-gradient(#fff 0 var(--sweep),rgba(255,255,255,.18) var(--sweep));
+  background:conic-gradient(var(--success) 0 var(--sweep),rgba(72,212,138,.16) var(--sweep) 100%);
   -webkit-mask:radial-gradient(circle,transparent 62%,#000 63%);mask:radial-gradient(circle,transparent 62%,#000 63%);transition:--sweep 1.3s var(--ease) .55s}
-.screen.in .timer-readout::before{--sweep:72%}
+.screen.in .winrate-ring::before{--sweep:var(--rate)}
+.glass .winrate-ring strong{font-size:44px;line-height:1;letter-spacing:-.04em;color:#fff}
+.winrate-ring span{margin-top:6px;color:rgba(255,255,255,.6);font-size:var(--text-nano);font-weight:var(--weight-strong);letter-spacing:.1em}
+.winrate-equation{padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);font-size:var(--text-nano);letter-spacing:.03em}
+
+/* 04 · the timer (founder, 2026-09-10). The card used to hold one small ring, one bar and a third of
+   its height in empty pane — the thinnest visual in a chapter whose other cards carry a chart and a
+   pair of tiles. Two things were also saying the wrong thing: the ring swept 72%, which reads as time
+   already spent under a caption saying FIXED WINDOW, and a single bar labelled 00:00–15:00 showed a
+   duration without showing what the copy is actually about — that the window is the same one for
+   every Level. So the ring now closes the whole circle, dim at the first touch and brightest as it
+   shuts, with the seam hidden under the same white-and-blue dot the bars start on; and under it three
+   touched Levels start at three different clock times and run bars of identical length. Equal terms
+   as something you can see, not only read. */
+.timer-body{height:100%;padding:22px 24px 20px;display:grid;grid-template-rows:auto minmax(0,1fr);gap:20px}
+.timer-readout{position:relative;width:156px;height:156px;margin:0 auto;border-radius:50%;display:grid;place-content:center;text-align:center}
+.timer-readout::before{content:'';position:absolute;inset:0;border-radius:50%;--sweep:0%;
+  background:conic-gradient(rgba(255,255,255,.6) 0,#fff var(--sweep),rgba(255,255,255,.16) var(--sweep));
+  -webkit-mask:radial-gradient(circle,transparent 62%,#000 63%);mask:radial-gradient(circle,transparent 62%,#000 63%);transition:--sweep 1.3s var(--ease) .55s}
+.screen.in .timer-readout::before{--sweep:100%}
 .timer-readout strong{font-size:var(--text-timer);line-height:1;letter-spacing:-.04em;color:#fff}
 .timer-readout span{margin-top:7px;color:rgba(255,255,255,.7);font-size:var(--text-micro)}
-.window-line{position:relative;height:3px;margin:0 4px 19px;background:rgba(255,255,255,.2);border-radius:999px}
-.window-fill{position:absolute;inset:0;background:#fff;border-radius:999px;transform:scaleX(0);transform-origin:left;transition:transform 1.3s var(--ease) .55s}
+/* the three runs: a header naming the two ends and the length, then one row per touched Level */
+.window-runs{min-height:0;display:grid;grid-template-rows:auto repeat(3,minmax(0,1fr));align-items:center;
+  border-top:1px solid rgba(255,255,255,.16)}
+.window-run{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;gap:12px;align-items:center}
+/* the head names the two ends and the length; it spans the row rather than sitting in its columns,
+   so none of the three labels wraps */
+.window-runs-head{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;padding-top:12px;
+  color:rgba(255,255,255,.6);font-size:var(--text-nano);font-weight:var(--weight-strong);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.window-runs-head span:last-child{text-align:right}
+.window-run b{color:#fff;font-size:var(--text-label);font-weight:var(--weight-strong);font-variant-numeric:tabular-nums}
+.window-run b:last-child{text-align:right;color:rgba(255,255,255,.72)}
+.window-line{position:relative;display:block;height:3px;margin:0 8px;background:rgba(255,255,255,.2);border-radius:999px}
+.window-fill{position:absolute;inset:0;background:#fff;border-radius:999px;transform:scaleX(0);transform-origin:left;transition:transform 1.3s var(--ease) var(--d,.55s)}
 .screen.in .window-fill{transform:none}
 .window-dot{position:absolute;top:50%;width:14px;height:14px;transform:translate(-50%,-50%);border:4px solid var(--blue);border-radius:50%;background:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.5)}
-.window-dot.start{left:0}.window-dot.end{left:100%}
-.window-labels{display:flex;justify-content:space-between;gap:20px;color:#fff}.window-labels div:last-child{text-align:right}
-.window-labels strong{display:block;font-size:var(--text-ui)}.window-labels span{display:block;margin-top:4px;color:rgba(255,255,255,.7);font-size:var(--text-label)}
+.window-dot.start{left:0}
+/* the close is a boundary, not an event: the card-02 measure cap, not a second touch dot */
+.window-dot.end{left:100%;width:2px;height:11px;border:0;border-radius:999px;background:#fff;box-shadow:none}
+/* the ring's own first touch, sitting on the seam where the sweep opens and closes */
+.window-dot.touch{top:15px;left:50%}
 
 /* 05 · one touched Level: the price journey, in the chart's own colours */
 .mini-timer{min-height:30px;padding:0 9px;display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.35);border-radius:999px;color:#fff;background:rgba(255,255,255,.08)}
@@ -230,15 +267,15 @@
 .avg-gridline{position:absolute;left:0;right:0;height:1px;border-top:1px solid rgba(255,255,255,.14)}
 .avg-gridline span{position:absolute;left:8px;top:0;transform:translateY(-50%);color:rgba(255,255,255,.6);font-size:var(--text-nano)}
 .avg-bars{position:absolute;left:38px;right:12px;top:0;bottom:0}
-.avg-bar{position:absolute;width:30px;left:50%;transform:translateX(-50%)}
-.avg-bar.bounce{bottom:32%;height:47%;margin-left:-18px;border-radius:6px 6px 0 0;background:var(--bounce)}
-.avg-bar.breach{top:68%;height:15%;margin-left:18px;border-radius:0 0 6px 6px;background:var(--breach)}
+.avg-bar{position:absolute;width:30px;left:50%;transform:translateX(-50%);border:1px solid rgba(255,255,255,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 18px rgba(255,255,255,.08)}
+.avg-bar.bounce{bottom:32%;height:47%;margin-left:-18px;border-radius:6px 6px 0 0;border-bottom:0;background:linear-gradient(180deg,var(--bounce),color-mix(in srgb,var(--bounce) 45%,transparent))}
+.avg-bar.breach{top:68%;height:15%;margin-left:18px;border-radius:0 0 6px 6px;border-top:0;background:linear-gradient(0deg,var(--breach),color-mix(in srgb,var(--breach) 45%,transparent))}
 .avg-bar b{position:absolute;left:50%;transform:translateX(-50%);font-size:var(--text-micro);white-space:nowrap}
 .avg-bar.bounce b{top:-18px;color:var(--bounce)}.avg-bar.breach b{bottom:-18px;color:var(--breach)}
 .average-metrics{min-width:0;display:grid;grid-template-rows:repeat(2,1fr);gap:12px}
 .glass .average-formula{min-width:0;min-height:0;padding:16px 17px;display:flex;flex-direction:column;justify-content:center;border-radius:14px}
 .glass .average-formula>small{margin-bottom:12px;color:rgba(255,255,255,.7);font-size:var(--text-nano);font-weight:var(--weight-strong);letter-spacing:.04em}
-.average-calc{min-width:0;display:grid;grid-template-columns:minmax(0,1fr) 14px auto;gap:6px;align-items:center}
+.average-calc{min-width:0;display:grid;grid-template-columns:auto 14px auto;justify-content:center;gap:6px;align-items:center}
 .average-fraction{min-width:0;display:grid;text-align:center}
 .average-fraction span{min-width:0;min-height:27px;padding:6px 3px;display:grid;place-items:center;color:#fff;font-size:var(--text-label);line-height:1}
 .average-fraction span:first-child{border-bottom:1px solid rgba(255,255,255,.4)}
@@ -247,6 +284,8 @@
 .glass .average-answer b{font-size:var(--text-answer);line-height:1;letter-spacing:-.035em}
 .glass .average-answer em{color:#fff;font-size:var(--text-row-title);font-weight:var(--weight-strong);font-style:normal;line-height:1}
 .glass .average-formula:first-child .average-answer b{color:var(--bounce)}.glass .average-formula:last-child .average-answer b{color:var(--breach)}
+.glass .average-formula:first-child{--tint:rgba(72,212,138,.18);--rim:rgba(72,212,138,.42)}
+.glass .average-formula:last-child{--tint:rgba(255,195,0,.16);--rim:rgba(255,195,0,.4)}
 
 /* ---------- two stacks of three: 01–03 close on Signals 03, 01–03 of Scalp open after the second chapter ----------
    base.css writes the four-card grammar on m1–m4; here m3 closes the first stack (nothing covers it), m4 opens
@@ -304,8 +343,13 @@ html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
   .mech-copy .page-number{min-width:138px}
   .dark-row{grid-template-columns:58px 1fr auto;gap:10px}.dark-row small{font-size:var(--text-micro)}.dark-state{min-width:auto;padding-inline:8px}
   .target-ladder{padding-inline:12px;gap:7px}.glass .target-step{padding:11px 8px}.glass .target-step b{font-size:var(--text-micro)}
-  .winrate-body{padding:12px}.winrate-compare{gap:8px}.glass .winrate-case{min-height:218px;padding:12px 9px}.winrate-case-head{gap:6px}
-  .winrate-ring{width:108px;height:108px}.glass .winrate-ring strong{font-size:32px}
+  .winrate-body{padding:12px}.winrate-compare{gap:8px}.glass .winrate-case{min-height:218px;padding:12px 10px 12px;gap:8px}.winrate-case-head{gap:6px}.glass .winrate-case-head strong{padding:2px 6px}
+  .winrate-ring{width:156px;height:156px}.glass .winrate-ring strong{font-size:36px}
+  .timer-body{padding:16px 14px}.timer-readout{width:118px;height:118px}.window-dot.touch{top:11px}
+  .window-run{grid-template-columns:34px minmax(0,1fr) 34px;gap:8px}.window-line{margin:0 7px}
+  /* the phone has no room for three labels on one line: the length goes above the two ends */
+  .window-runs-head{grid-template-columns:1fr auto;gap:2px 8px;letter-spacing:.06em}
+  .window-runs-head span:nth-child(2){grid-row:1;grid-column:1/-1;text-align:center}
   .breach-body{padding-inline:12px}.breach-values{gap:8px}.glass .breach-value{padding:12px}.glass .breach-value b{font-size:17px}
   .average-body{grid-template-columns:118px minmax(0,1fr);gap:10px;padding:10px}.average-chart{min-height:230px}.avg-bar{width:24px}
   .average-metrics{gap:9px}.glass .average-formula{padding:13px 9px}.glass .average-formula>small{margin-bottom:8px}
