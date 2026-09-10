@@ -200,6 +200,10 @@ html.reduce .glass .panel{transform:none;transition:none}
 .glass .p-note{color:rgba(255,255,255,.72);letter-spacing:0;font-weight:var(--weight-body)}
 .glass .dash-row{font-weight:var(--weight-body);color:#fff;border-top-color:rgba(255,255,255,.18)}
 .glass .dash-row b{color:#fff;font-weight:var(--weight-strong)}
+/* 04 Â· the withdrawable figure carries its own tile â€” the balance card's glass in green, sized to the
+   row, so the amount you can take out reads as the one live number in the list (founder, 2026-09-10) */
+#m4 .dash-avail{--tint:rgba(34,170,124,.5);--tint2:rgba(16,112,82,.36);--rim:rgba(150,230,190,.6);--streak:.2;
+  display:inline-block;padding:.5rem .75rem;border-radius:12px;white-space:nowrap}
 /* the light. The streak is the glass (founder, 2026-09-07: "the previous glass was better"): one
    across the pane and one across each tile, travelling with the section's own view timeline (the
    --m2/--m4 the stack already uses) at two speeds, so the light reads as falling on layered glass.
