@@ -21,7 +21,7 @@
 .proof-canvas{min-height:356px;padding:14px;display:grid;grid-template-rows:repeat(3,minmax(100px,auto));gap:10px;border-radius:24px}
 .proof-row{min-height:100px;padding:16px 18px;display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:16px;align-items:center;border:1px solid var(--line);border-radius:14px;background:var(--paper)}
 .proof-row>div{min-width:0}
-.proof-row h3{display:flex;align-items:center;gap:10px;margin:0 0 5px;font-size:var(--text-row-title);line-height:1.2;letter-spacing:-.025em;font-weight:var(--weight-strong);color:var(--navy);white-space:nowrap}
+.proof-row h3{display:flex;align-items:center;gap:10px;margin:0 0 5px;font-size:var(--text-panel-title);line-height:1.2;letter-spacing:-.015em;font-weight:var(--weight-strong);color:var(--navy);white-space:nowrap}
 .proof-row p{margin:0;max-width:360px;font-size:var(--text-meta);line-height:1.4;color:var(--muted)}
 #chapter-routes{background:linear-gradient(180deg,#fff,var(--p-100) 55%,#fff)}
 #chapter-routes::after{content:'';position:absolute;inset:0 auto 0 0;width:40%;z-index:0;pointer-events:none;
@@ -31,12 +31,25 @@
   animation:paper-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%}
 html.reduce #chapter-routes::after{animation:none}
 
+/* the sharing chapter's travelling light, widened (founder, 2026-09-10: "the shadow below this text
+   looks bad"). cb8's paper beam is a 40%-wide band whose x-mask keeps only its middle, so on this
+   chapter — an empty screen with one sentence — it parked under the sentence as a narrow grey column
+   and read as a shadow, not as light. Same move, three times the spread and a third of the ink: it
+   crosses as a wash nothing casts. Its own keyframe because the band's travel is set by its width
+   (150% of 40% = the far edge), so a wider band needs a shorter throw to land on the same edge. */
+#chapter-2::after{width:72%;--beam:rgba(var(--rgb-200),.17);
+  background:linear-gradient(115deg,transparent 10%,var(--beam) 50%,transparent 90%);
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 22%,#000 78%,transparent),linear-gradient(90deg,transparent,#000 16%,#000 84%,transparent);
+  mask-image:linear-gradient(180deg,transparent,#000 22%,#000 78%,transparent),linear-gradient(90deg,transparent,#000 16%,#000 84%,transparent);
+  animation-name:share-light}
+@keyframes share-light{from{transform:translateX(38.8%)}to{transform:translateX(0)}}
+
 /* ---------- 4 · the routes: two rows and the shared destination, on the pane ---------- */
 .glass .route-panel{width:100%;max-width:440px;min-height:304px;justify-self:end;overflow:hidden;padding:0;display:grid;grid-template-rows:repeat(2,minmax(114px,1fr)) 76px;border-radius:24px}
 .route-row{min-height:114px;padding:16px 18px;display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:14px;align-items:center;border-bottom:1px solid rgba(255,255,255,.18);color:#fff}
 .route-row>div{min-width:0}
 .glass .route-icon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;padding:0}
-.route-row h3{margin:0 0 6px;font-size:var(--text-row-title);line-height:1.2;letter-spacing:-.025em;font-weight:var(--weight-strong);white-space:nowrap}
+.route-row h3{margin:0 0 6px;font-size:var(--text-panel-title);line-height:1.2;letter-spacing:-.015em;font-weight:var(--weight-strong);white-space:nowrap}
 .route-row p{margin:0;max-width:360px;color:rgba(255,255,255,.8);font-size:var(--text-meta);line-height:1.4}
 .shared-destination{min-height:76px;padding:16px 18px;display:grid;place-items:center;text-align:center;background:#fff;color:var(--navy)}
 .shared-destination strong{font-size:var(--text-destination);line-height:1;letter-spacing:-.04em}
@@ -57,7 +70,7 @@ html.reduce #m2 .block{animation:none}
 .glass .lifetime-point:nth-child(2){--tint:rgba(46,178,134,.26);--tint2:rgba(20,90,70,.3);--rim:rgba(150,230,190,.45)}
 .glass .lifetime-point:nth-child(2) .lifetime-icon .ico{stroke:var(--success)}
 .lifetime-number{align-self:start;font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.1em;color:rgba(255,255,255,.55)}
-.glass .lifetime-point h3{margin:0 0 5px;font-size:var(--text-row-title);line-height:1.2;letter-spacing:-.025em;font-weight:var(--weight-strong);color:#fff}
+.glass .lifetime-point h3{margin:0 0 4px;font-size:var(--text-panel-title);line-height:1.2;letter-spacing:-.015em;font-weight:var(--weight-strong);color:#fff}
 .glass .lifetime-point p{margin:0;max-width:400px;color:rgba(255,255,255,.8);font-size:var(--text-meta);line-height:1.4}
 .lifetime-summary{min-height:82px;padding:18px 20px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:#fff;color:var(--navy);text-align:center}
 .lifetime-summary strong{display:block;max-width:430px;font-size:var(--text-summary);line-height:1.08;letter-spacing:-.04em}

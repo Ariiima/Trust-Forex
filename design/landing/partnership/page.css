@@ -86,7 +86,7 @@ html.reduce .swap,html.reduce .access-switch .tile:hover{animation:none;transfor
 .case-row{min-height:108px;padding:22px 24px;display:grid;grid-template-columns:48px minmax(0,1fr);gap:18px;align-items:center;border-bottom:1px solid var(--line)}
 .case-row:last-child{border-bottom:0}
 .case-icon{width:48px;height:48px;display:grid;place-items:center;border:1px solid var(--line);border-radius:15px;background:var(--paper);color:var(--accent)}
-.case-row h3{margin:0;font-size:var(--text-row-title);line-height:1.25;letter-spacing:-.025em;font-weight:var(--weight-strong);color:var(--navy)}
+.case-row h3{margin:0;font-size:var(--text-panel-title);line-height:1.25;letter-spacing:-.015em;font-weight:var(--weight-strong);color:var(--navy)}
 .case-row p{margin:6px 0 0;font-size:var(--text-meta);line-height:1.45;color:var(--muted)}
 
 /* ---------- 7 · the pilot: .screen-paper (cb8/style.css); the card on the blue with its own light ---------- */
@@ -192,7 +192,7 @@ html.reduce .ready i{animation:none}
   .access-step{min-height:76px;border-right:0;border-bottom:1px solid rgba(255,255,255,.22);display:flex;align-items:center;gap:12px}
   .access-step:last-child{border-bottom:0}.access-step i{margin:0;flex:0 0 auto}
   .glass .app-campaign{padding:27px 18px 18px}
-  .case-row{min-height:0;padding:20px;grid-template-columns:42px 1fr;gap:14px}.case-icon{width:42px;height:42px}.case-row h3{font-size:16px}
+  .case-row{min-height:0;padding:20px;grid-template-columns:42px 1fr;gap:14px}.case-icon{width:42px;height:42px}
   .pilot-card{padding:24px}.pilot-head{grid-template-columns:40px 1fr}.pilot-head>b{grid-column:2;width:max-content}.pilot-offer{grid-template-columns:1fr}
   .faq-q{font-size:17px}.faq-a p{font-size:15px;padding-right:10px}
   .fld-grid,.goal-grid{grid-template-columns:1fr}.form-card{padding:18px;border-radius:18px}.send{min-height:52px}
