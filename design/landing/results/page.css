@@ -123,12 +123,27 @@
 .visual-head>span{color:rgba(255,255,255,.7);font-size:var(--text-label)}
 .glass .tile{border-radius:14px}
 
-/* 01 · the target ladder */
+/* 01 · the target ladder — the columns carry the TP green (founder, 2026-09-10). A flat green slab
+   fought the royal ground: the two sat at the same value, so the edges vibrated. The green is spent
+   where it is read instead — bright at the head of each column, cooling through teal, meeting the
+   pane in a blue-green deep the ground already contains. Height, not hue, still ranks the targets;
+   TP4 only gets the brightest head. The fall is measured in px, not per cent, so the light reads as
+   one source above the ladder: every head is lit the same and a taller column simply holds more body.
+   The taller the column, the greener it is kept — TP4's body stays teal where TP1's falls to the
+   pane's blue, so reach reads as green earned and the short end still settles into the ground. */
 .target-ladder{padding:24px 22px 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}
-.glass .target-step{height:var(--step);min-height:108px;padding:14px 12px;display:flex;flex-direction:column;justify-content:space-between;border-radius:14px 14px 8px 8px}
-.glass .target-step strong{font-size:var(--text-row-title);letter-spacing:-.02em}.glass .target-step span{color:rgba(255,255,255,.7);font-size:var(--text-micro)}
-.glass .target-step b{font-size:var(--text-small);font-weight:var(--weight-strong);color:rgba(255,255,255,.85)}
-.glass .target-step:last-child{--rim:rgba(255,255,255,.7);--tint:rgba(255,255,255,.22)}
+.glass .target-step{--head:rgba(72,212,138,.5);--mid:rgba(28,150,140,.34);--deep:rgba(10,64,110,.46);
+  --rim:rgba(142,232,196,.5);--streak:.2;
+  height:var(--step);min-height:108px;padding:14px 12px;display:flex;flex-direction:column;justify-content:space-between;border-radius:14px 14px 6px 6px;
+  background:linear-gradient(180deg,var(--head) 0,var(--mid) 88px,var(--deep) 100%);
+  box-shadow:inset 0 1px 0 rgba(214,255,238,.42),inset 0 -1px 0 rgba(var(--rgb-shadow),.24),0 16px 32px -22px rgba(24,140,112,.85)}
+.glass .target-step:nth-child(1){--head:rgba(72,212,138,.44)}
+.glass .target-step:nth-child(2){--head:rgba(78,218,144,.54);--mid:rgba(32,162,146,.38);--deep:rgba(12,86,116,.46)}
+.glass .target-step:nth-child(3){--head:rgba(84,224,152,.62);--mid:rgba(36,174,150,.44);--deep:rgba(16,110,126,.48);--rim:rgba(158,238,202,.56)}
+.glass .target-step strong{font-size:var(--text-row-title);letter-spacing:-.02em;text-shadow:0 1px 1px rgba(4,32,72,.22)}.glass .target-step span{color:rgba(255,255,255,.7);font-size:var(--text-micro)}
+.glass .target-step b{font-size:var(--text-small);font-weight:var(--weight-strong);color:rgba(206,244,226,.86);font-variant-numeric:tabular-nums}
+.glass .target-step:last-child{--head:rgba(96,236,168,.72);--mid:rgba(40,186,158,.5);--deep:rgba(18,132,132,.52);--rim:rgba(178,244,208,.66)}
+.glass .target-step:last-child b{color:rgba(232,255,242,.94)}
 
 /* 02 · the four rows, the two reached in TP green */
 .dark-rows{display:grid;grid-template-rows:repeat(4,1fr);padding:0 18px}
