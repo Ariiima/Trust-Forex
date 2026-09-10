@@ -7,14 +7,11 @@
   const barsNode = document.getElementById('bars');
   const compareChart = document.getElementById('compare-chart');
   const compareToggle = document.getElementById('compare-toggle');
-  const compareLegend = document.getElementById('compare-legend');
   const targetSelector = document.querySelector('.selector.target');
-  const guide = document.getElementById('guide');
   const tooltip = document.getElementById('tooltip');
   const live = document.getElementById('chart-live');
   const scalpStage = document.getElementById('scalp-stage');
   const scalpBars = document.getElementById('scalp-bars');
-  const scalpGuide = document.getElementById('scalp-guide');
   const scalpTooltip = document.getElementById('scalp-tooltip');
   const scalpLive = document.getElementById('scalp-live');
   const base = { tp1: 84, tp2: 68, tp3: 49, tp4: 31 };
@@ -57,15 +54,23 @@
     return { width, height, left, right, top, bottom, plotWidth: width - left - right, plotHeight: height - top - bottom };
   }
 
+  /* the bars are a flex row with its own padding and gaps, so an evenly divided plot width lands
+     between the columns. The compare line, the tooltip and the hit test all read x off the slots themselves. */
+  function slotCenters() {
+    const stageBounds = chartStage.getBoundingClientRect();
+    return [...barsNode.children].map(slot => { const bounds = slot.getBoundingClientRect(); return bounds.left - stageBounds.left + bounds.width / 2; });
+  }
+
   function drawCompare() {
-    const geometry = chartGeometry(), count = data[timeframe].length;
+    const geometry = chartGeometry(), count = data[timeframe].length, centers = slotCenters();
+    const xAt = index => centers.length === count ? centers[index] : geometry.left + (count === 1 ? geometry.plotWidth / 2 : (index / (count - 1)) * geometry.plotWidth);
     compareChart.setAttribute('viewBox', '0 0 ' + geometry.width + ' ' + geometry.height);
     compareChart.innerHTML = '';
     targets.forEach(targetName => {
       const current = rowsFor(targetName); let path = '', drawing = false;
       current.forEach((item, index) => {
         if (item.rate === null) return;
-        const x = geometry.left + (count === 1 ? geometry.plotWidth / 2 : (index / (count - 1)) * geometry.plotWidth);
+        const x = xAt(index);
         const y = geometry.top + (100 - item.rate) / 100 * geometry.plotHeight;
         path += (drawing ? ' L ' : ' M ') + x.toFixed(2) + ' ' + y.toFixed(2); drawing = true;
       });
@@ -76,7 +81,7 @@
         current.forEach((item, index) => {
           if (item.rate === null) return;
           const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-          point.setAttribute('cx', String(geometry.left + (count === 1 ? geometry.plotWidth / 2 : (index / (count - 1)) * geometry.plotWidth)));
+          point.setAttribute('cx', String(xAt(index)));
           point.setAttribute('cy', String(geometry.top + (100 - item.rate) / 100 * geometry.plotHeight)); point.setAttribute('r', '4'); point.setAttribute('fill', color); point.setAttribute('class', 'compare-point'); compareChart.appendChild(point);
         });
       }
@@ -84,8 +89,7 @@
   }
 
   function draw() {
-    barsNode.innerHTML = ''; activeIndex = null; pinned = false; guide.style.opacity = '0'; tooltip.style.opacity = '0'; chartStage.dataset.timeframe = timeframe;
-    chartStage.style.setProperty('--series', `var(--${target})`);   // the bars in the selected target's colour
+    barsNode.innerHTML = ''; activeIndex = null; pinned = false; tooltip.style.opacity = '0'; chartStage.dataset.timeframe = timeframe;
     const current = rowsFor(target);
     chartStage.setAttribute('aria-label', compareMode ? 'Comparing TP1 through TP4 across ' + current.length + ' ' + timeframe + ' periods' : target.toUpperCase() + ' Win Rate across ' + current.length + ' ' + timeframe + ' periods');
     current.forEach((item, index) => {
@@ -96,9 +100,9 @@
   }
 
   function showIndex(index, clientY) {
-    const current = rowsFor(target), slots = [...barsNode.children], item = current[index], geometry = chartGeometry(), stageBounds = chartStage.getBoundingClientRect(); activeIndex = index;
+    const current = rowsFor(target), slots = [...barsNode.children], item = current[index], stageBounds = chartStage.getBoundingClientRect(); activeIndex = index;
     slots.forEach((slot, i) => slot.classList.toggle('active', i === index));
-    const center = geometry.left + (current.length === 1 ? geometry.plotWidth / 2 : (index / (current.length - 1)) * geometry.plotWidth); guide.style.left = center + 'px'; guide.style.opacity = '1';
+    const center = slotCenters()[index];   // the lit column is the reading's marker — no rule is drawn through it
     if (item.rate === null) {
       tooltip.innerHTML = '<strong>' + item.period + '</strong><span>No Signals</span>';
       live.textContent = item.period + ', No Signals.';
@@ -116,12 +120,13 @@
   }
 
   function showAt(clientX, clientY) {
-    const geometry = chartGeometry(), count = data[timeframe].length, stageBounds = chartStage.getBoundingClientRect();
-    const relative = Math.max(0, Math.min(geometry.plotWidth, clientX - stageBounds.left - geometry.left));
-    const index = Math.max(0, Math.min(count - 1, Math.round(relative / geometry.plotWidth * (count - 1)))); showIndex(index, clientY);
+    const centers = slotCenters(); if (!centers.length) return;
+    const x = clientX - chartStage.getBoundingClientRect().left;
+    let index = 0; centers.forEach((center, i) => { if (Math.abs(center - x) < Math.abs(centers[index] - x)) index = i; });
+    showIndex(index, clientY);
   }
 
-  function closeTooltip() { [...barsNode.children].forEach(slot => slot.classList.remove('active')); activeIndex = null; pinned = false; guide.style.opacity = '0'; tooltip.style.opacity = '0'; }
+  function closeTooltip() { [...barsNode.children].forEach(slot => slot.classList.remove('active')); activeIndex = null; pinned = false; tooltip.style.opacity = '0'; }
   chartStage.addEventListener('pointermove', event => { if (event.pointerType === 'mouse' || event.buttons) showAt(event.clientX, event.clientY); });
   chartStage.addEventListener('pointerdown', event => { pinned = true; showAt(event.clientX, event.clientY); });
   chartStage.addEventListener('pointerleave', () => { if (!pinned) closeTooltip(); });
@@ -134,7 +139,8 @@
   });
 
   function drawScalp() {
-    const rows = scalpData[scalpTimeframe]; scalpBars.innerHTML = ''; scalpActiveIndex = null; scalpPinned = false; scalpGuide.style.opacity = '0'; scalpTooltip.style.opacity = '0';
+    const rows = scalpData[scalpTimeframe]; scalpBars.innerHTML = ''; scalpActiveIndex = null; scalpPinned = false; scalpTooltip.style.opacity = '0';
+    scalpStage.dataset.scalpTimeframe = scalpTimeframe;   // the mark's width scales with how few columns the grain leaves
     scalpStage.classList.toggle('is-empty', rows.length === 0);
     scalpStage.setAttribute('aria-label', rows.length ? 'Average Scalp Level Bounce and First Breach in pips across ' + rows.length + ' completed ' + scalpTimeframe + ' periods' : 'No completed ' + scalpTimeframe + ' Scalp Level periods yet');
     if (!rows.length) return;
@@ -150,7 +156,7 @@
     const rows = scalpData[scalpTimeframe]; if (!rows.length) return;
     const slots = [...scalpBars.children], item = rows[index], stageBounds = scalpStage.getBoundingClientRect(), slotBounds = slots[index].getBoundingClientRect(); scalpActiveIndex = index;
     slots.forEach((slot, i) => slot.classList.toggle('active', i === index));
-    const center = slotBounds.left - stageBounds.left + slotBounds.width / 2; scalpGuide.style.left = center + 'px'; scalpGuide.style.opacity = '1';
+    const center = slotBounds.left - stageBounds.left + slotBounds.width / 2;
     scalpTooltip.innerHTML = '<strong>' + item.period + '</strong><span>' + item.levels + ' Touched Levels</span><span>Average Bounce +' + item.bounce + ' pips</span><span>Average First Breach −' + item.breach + ' pips</span>';
     scalpLive.textContent = item.period + ', ' + item.levels + ' Touched Levels, Average Bounce ' + item.bounce + ' pips, Average First Breach minus ' + item.breach + ' pips.';
     const tipX = Math.max(105, Math.min(scalpStage.clientWidth - 105, center));
@@ -162,7 +168,7 @@
     const rows = scalpData[scalpTimeframe]; if (!rows.length) return;
     const bounds = scalpBars.getBoundingClientRect(); const relative = Math.max(0, Math.min(bounds.width - 1, clientX - bounds.left)); const index = Math.min(rows.length - 1, Math.floor(relative / bounds.width * rows.length)); showScalpIndex(index, clientY);
   }
-  function closeScalpTooltip() { [...scalpBars.children].forEach(slot => slot.classList.remove('active')); scalpActiveIndex = null; scalpPinned = false; scalpGuide.style.opacity = '0'; scalpTooltip.style.opacity = '0'; }
+  function closeScalpTooltip() { [...scalpBars.children].forEach(slot => slot.classList.remove('active')); scalpActiveIndex = null; scalpPinned = false; scalpTooltip.style.opacity = '0'; }
   scalpStage.addEventListener('pointermove', event => { if (event.pointerType === 'mouse' || event.buttons) showScalpAt(event.clientX, event.clientY); });
   scalpStage.addEventListener('pointerdown', event => { scalpPinned = true; showScalpAt(event.clientX, event.clientY); });
   scalpStage.addEventListener('pointerleave', () => { if (!scalpPinned) closeScalpTooltip(); });
@@ -181,9 +187,10 @@
   document.querySelectorAll('[data-scalp-timeframe]').forEach(button => button.addEventListener('click', () => {
     scalpTimeframe = button.dataset.scalpTimeframe; document.querySelectorAll('[data-scalp-timeframe]').forEach(item => item.setAttribute('aria-pressed', String(item === button))); drawScalp();
   }));
-  document.querySelectorAll('[data-target]').forEach(button => button.addEventListener('click', () => { target = button.dataset.target; document.querySelectorAll('[data-target]').forEach(item => item.setAttribute('aria-pressed', String(item === button))); draw(); }));
+  document.querySelectorAll('[data-target]').forEach(button => button.addEventListener('click', () => { if (compareMode) return;   /* the bar is a legend now — pointer-events stops the mouse, this stops the keyboard */
+    target = button.dataset.target; document.querySelectorAll('[data-target]').forEach(item => item.setAttribute('aria-pressed', String(item === button))); draw(); }));
   document.querySelectorAll('[data-timeframe]').forEach(button => button.addEventListener('click', () => { timeframe = button.dataset.timeframe; document.querySelectorAll('[data-timeframe]').forEach(item => item.setAttribute('aria-pressed', String(item === button))); draw(); }));
-  compareToggle.addEventListener('change', () => { compareMode = compareToggle.checked; explorer.classList.toggle('compare-mode', compareMode); targetSelector.classList.toggle('is-disabled', compareMode); targetSelector.setAttribute('aria-disabled', String(compareMode)); compareLegend.setAttribute('aria-hidden', String(!compareMode)); draw(); });
+  compareToggle.addEventListener('change', () => { compareMode = compareToggle.checked; explorer.classList.toggle('compare-mode', compareMode); targetSelector.classList.toggle('is-disabled', compareMode); targetSelector.setAttribute('aria-disabled', String(compareMode)); targetSelector.setAttribute('aria-label', compareMode ? 'Compared targets legend' : 'Target selector'); draw(); });
   window.addEventListener('resize', () => { draw(); drawScalp(); });
   draw(); drawScalp();
 

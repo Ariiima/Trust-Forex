@@ -8,8 +8,8 @@
 <link rel="preload" href="../shared/fonts/Inter-VF.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-2 -2 29 30%27%3E%3Cg fill=%27%23144CCD%27%3E%3Cpath d=%27M9.447 21.464l-.039-6.979c-.002-1.612-1.409-2.918-3.143-2.918H.259c.24 1.032.52 2.69.875 3.702 1.594 4.322 4.496 7.606 8.313 10.024z%27/%3E%3Cpath d=%27M18.037 11.567c-1.568 0-2.84 1.18-2.842 2.638v11.068c3.797-2.414 6.686-5.689 8.276-10.003.362-1.012.649-2.671.889-3.703z%27/%3E%3Cpath d=%27M24.615 5.29V3.216C20.628 1.712 16.646.61 12.424 0 8.128.602 4.013 1.717 0 3.263V5.29z%27/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="../cb8/grounds.css?v=348acab3">
-<link rel="stylesheet" href="../cb8/style.css?v=c430638f">
-<link rel="stylesheet" href="page.css?v=907b9ee1">
+<link rel="stylesheet" href="../cb8/style.css?v=45b83fa8">
+<link rel="stylesheet" href="page.css?v=e6ffa036">
 </head>
 <body>
 <svg id="liquid-svg" width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="liquid" x="-4%" y="-8%" width="108%" height="116%" color-interpolation-filters="sRGB">
@@ -65,12 +65,6 @@
               <button type="button" data-timeframe="yearly" aria-pressed="false">Yearly</button>
             </div>
           </div>
-          <div class="compare-legend" id="compare-legend" aria-hidden="true">
-            <span class="legend-item"><i class="legend-line" style="--line-color:var(--tp1)"></i>TP1 · R:R 1:0.5</span>
-            <span class="legend-item"><i class="legend-line" style="--line-color:var(--tp2)"></i>TP2 · R:R 1:1</span>
-            <span class="legend-item"><i class="legend-line" style="--line-color:var(--tp3)"></i>TP3 · R:R 1:2</span>
-            <span class="legend-item"><i class="legend-line" style="--line-color:var(--tp4)"></i>TP4 · R:R 1:3</span>
-          </div>
         </div>
 
         <div class="chart-stage" id="chart-stage" data-timeframe="weekly" role="region" tabindex="0" aria-label="TP2 Win Rate across weekly periods. Use left and right arrow keys to inspect periods.">
@@ -83,7 +77,6 @@
           </div>
           <div class="bars" id="bars"></div>
           <svg class="compare-chart" id="compare-chart" aria-hidden="true"></svg>
-          <div class="guide" id="guide"></div>
           <div class="tooltip" id="tooltip" role="tooltip"></div>
         </div>
         <div class="sr" id="chart-live" aria-live="polite"></div>
@@ -113,7 +106,6 @@
             <div class="scalp-gridline" style="bottom:0"><span>−20</span></div>
           </div>
           <div class="scalp-bars" id="scalp-bars"></div>
-          <div class="guide" id="scalp-guide"></div>
           <div class="tooltip" id="scalp-tooltip" role="tooltip"></div>
           <div class="scalp-empty-state"><div><span class="ico" data-lottie="../cb8/ico/time-circle.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg></span><strong>No completed quarters yet</strong><span>Scalp Level tracking is new. The first completed quarter will appear here.</span></div></div>
         </div>
@@ -356,8 +348,8 @@
 <button class="to-top" id="toTop" type="button" aria-label="Back to top"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 
 <script src="../cb8/ico/lottie_light.min.js"></script>
-<script src="../cb8/main.js?v=6a8f7c90"></script>
-<script src="page.js?v=acc143e3"></script>
+<script src="../cb8/main.js?v=1eb397eb"></script>
+<script src="page.js?v=7fdf5827"></script>
 <script>if (document.documentElement.classList.contains('reduce')) document.getElementById('liquid-svg').pauseAnimations();</script>
 </body>
 </html>

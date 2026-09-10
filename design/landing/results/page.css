@@ -2,7 +2,11 @@
    Structure, sizes and layout are the Results wireframe's (result.html, "final", 2026-09-09) and are not
    argued with here; the treatment is cb8's — the blue grounds, the held cards, the glass panes and tiles,
    the light that travels every screen. Chart series may be vibrant (BRAND, 2026-09-05); green stays TP. */
-:root{--tp1:#fff;--tp2:#A1B7EB;--tp3:#48D48A;--tp4:#FFC300;--bounce:var(--success);--breach:var(--warning)}
+:root{--tp1:#fff;--tp2:var(--info);--tp3:#48D48A;--tp4:#FFC300;--bounce:var(--success);--breach:var(--warning)}
+/* TP2 was the brand's blue-300 (#A1B7EB), a hair off white at 2.2px — it is the palette's own
+   unused info blue now (#0099FF), which reads against both TP1 and the ground. */
+/* --tp1..--tp4 now colour the four compare LINES only. The columns are one green for every target
+   (founder, 2026-09-10), so a per-target dot on the selector has nothing left to say. */
 
 /* ---------- 1 · the explorer opens the page: the record is the hero ---------- */
 #hero{padding-bottom:40px}                                   /* no fact strip under this one */
@@ -25,19 +29,26 @@
 .control-cluster{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .selector{display:inline-flex;align-items:center;gap:4px;padding:4px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
 .selector button{min-height:calc(var(--control-height) - 8px);padding:6px 16px;border-radius:999px;color:rgba(255,255,255,.72);font-size:var(--text-meta);font-weight:var(--weight-strong);white-space:nowrap;
-  display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:background-color .25s var(--ease),color .25s var(--ease)}
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:background-color .25s var(--ease),color .25s var(--ease),box-shadow .25s var(--ease)}
 .selector button:hover{color:#fff}
 .selector button strong{font-size:var(--text-meta)}.selector button small{font-size:var(--text-label);font-weight:var(--weight-label)}
 .selector button[aria-pressed=true]{background:#fff;color:var(--navy)}
-.selector.target.is-disabled{opacity:.36;pointer-events:none}
+.selector.target.is-disabled{pointer-events:none}   /* compare on: the bar stops selecting and reads as the chart's legend */
 .compare-toggle{min-height:var(--control-height);display:inline-flex;align-items:center;gap:9px;padding:9px 14px;border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(255,255,255,.12);color:#fff;
   font-size:var(--text-meta);font-weight:var(--weight-strong);cursor:pointer;white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,.35);transition:background-color .25s var(--ease)}
 .compare-toggle:hover{background:rgba(255,255,255,.2)}
-.compare-toggle input{width:16px;height:16px;margin:0;accent-color:#fff}
+.compare-mode .compare-toggle{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.5)}
+/* the box is drawn, not the browser's: a glass square that fills white and strikes a navy tick */
+.compare-toggle input{appearance:none;-webkit-appearance:none;flex:none;width:18px;height:18px;margin:0;position:relative;cursor:pointer;
+  border:1.5px solid rgba(255,255,255,.55);border-radius:6px;background:rgba(255,255,255,.16);
+  transition:background-color .22s var(--ease),border-color .22s var(--ease),box-shadow .22s var(--ease)}
+.compare-toggle input::after{content:'';position:absolute;left:5px;top:1px;width:4px;height:9px;border:solid var(--navy);border-width:0 2px 2px 0;border-radius:1px;
+  transform:rotate(45deg) scale(.3);opacity:0;transition:opacity .18s var(--ease),transform .18s var(--ease)}
+.compare-toggle input:hover{border-color:rgba(255,255,255,.8);background:rgba(255,255,255,.26)}
+.compare-toggle input:checked{background:#fff;border-color:#fff;box-shadow:0 2px 10px rgba(255,255,255,.3)}
+.compare-toggle input:checked::after{opacity:1;transform:rotate(45deg) scale(1)}
+.compare-toggle input:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
 .compare-short{display:none}
-.compare-legend{min-height:32px;display:flex;visibility:hidden;opacity:0;align-items:center;gap:22px;flex-wrap:wrap;margin:0 0 8px 54px;color:rgba(255,255,255,.72);font-size:var(--text-small);transition:opacity .3s var(--ease)}
-.compare-mode .compare-legend{visibility:visible;opacity:1}
-.legend-item{display:inline-flex;align-items:center;gap:8px}.legend-line{width:22px;height:3px;border-radius:999px;background:var(--line-color)}
 
 /* the Signals chart */
 .chart-stage{position:relative;height:450px;touch-action:pan-y;user-select:none;cursor:crosshair}
@@ -56,11 +67,12 @@
 .compare-point{stroke:var(--blue);stroke-width:1.5}
 .chart-stage[data-timeframe=yearly] .bars{gap:54px;padding-inline:12%}
 .bar-slot{height:100%;flex:1 1 0;min-width:0;display:flex;align-items:flex-end;justify-content:center;position:relative}
-.bar{width:min(100%,13px);min-height:2px;border-radius:5px 5px 0 0;background:rgba(255,255,255,.55);transition:height .24s var(--ease),background-color .15s var(--ease)}
-.bar-slot.active .bar{background:#fff}
-.chart-stage[data-timeframe=yearly] .bar{width:min(100%,92px)}
+.chart-stage{--bar-w:13px}
+.chart-stage[data-timeframe=monthly]{--bar-w:18px}
+.chart-stage[data-timeframe=yearly]{--bar-w:92px}
+.bar{width:min(100%,var(--bar-w));min-height:2px;border-radius:5px 5px 0 0;background:rgba(255,255,255,.55);transition:height .24s var(--ease),filter .2s var(--ease),box-shadow .2s var(--ease)}
+.bar-slot.active .bar{filter:brightness(1.65)}
 .bar-slot.no-signals .bar{height:18px!important;min-height:18px;background:transparent;border:1px dashed rgba(255,255,255,.45);border-bottom:0}
-.guide{position:absolute;top:30px;bottom:2px;width:1px;background:rgba(255,255,255,.6);opacity:0;pointer-events:none}
 /* the reading is a white card with dark figures — data never sits on a translucent ground (BRAND) */
 .tooltip{position:absolute;z-index:5;min-width:190px;padding:12px 14px;border-radius:12px;background:#fff;color:var(--ink);box-shadow:0 12px 34px rgba(var(--rgb-shadow),.4);
   transform:translate(-50%,calc(-100% - 12px));opacity:0;pointer-events:none;font-size:var(--text-meta);text-align:left;transition:opacity .15s var(--ease)}
@@ -70,14 +82,13 @@
 .tooltip .compare-row b{font-size:var(--text-small);color:var(--navy)}.tooltip .compare-row em{font-size:var(--text-small);font-style:normal;color:var(--muted)}
 
 /* the Scalp Level chart */
-#scalp-results-panel .mode-toolbar{display:flex;align-items:center}
+#scalp-results-panel .mode-toolbar{display:flex;align-items:flex-start}
 .scalp-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
 .scalp-legend{min-height:var(--control-height);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;flex:0 1 390px;margin:0;padding:4px;border-radius:14px;
   background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);font-size:var(--text-small)}
-.scalp-legend span{min-height:38px;display:inline-flex;align-items:center;gap:9px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.1);font-weight:var(--weight-strong);white-space:nowrap}
+.scalp-legend span{min-height:32px;display:inline-flex;align-items:center;gap:9px;padding:6px 12px;border-radius:10px;background:rgba(255,255,255,.1);font-weight:var(--weight-strong);white-space:nowrap}
 .scalp-legend i{width:12px;height:12px;flex:0 0 12px;border-radius:3px}.scalp-legend .bounce{background:var(--bounce)}.scalp-legend .breach{background:var(--breach)}
 .scalp-stage{position:relative;height:450px;touch-action:pan-y;user-select:none;cursor:crosshair}
-#scalp-guide{bottom:2px}
 .scalp-grid{position:absolute;inset:30px 0 2px;pointer-events:none}
 .scalp-gridline{position:absolute;left:0;right:0;height:1px}
 .scalp-gridline::after{content:'';position:absolute;left:54px;right:0;top:0;border-top:1px solid rgba(255,255,255,.14)}
@@ -86,13 +97,16 @@
 .scalp-axis-title{position:absolute;left:0;top:-26px;font-size:var(--text-label);font-weight:var(--weight-strong);color:rgba(255,255,255,.6)}
 .scalp-bars{position:absolute;z-index:1;left:54px;right:0;top:30px;bottom:2px;display:flex;gap:18px;padding-inline:18px;border-bottom:1px solid rgba(255,255,255,.3)}
 .scalp-slot{position:relative;flex:1 1 0;min-width:0}
-.scalp-mark{position:absolute;left:50%;width:min(42px,64%);transform:translateX(-50%);transition:height .24s var(--ease),opacity .15s var(--ease);opacity:.85}
+.scalp-stage{--mark-w:42px}
+.scalp-stage[data-scalp-timeframe=monthly]{--mark-w:72px}
+.scalp-stage[data-scalp-timeframe=yearly]{--mark-w:92px}
+.scalp-mark{position:absolute;left:50%;width:min(var(--mark-w),64%);transform:translateX(-50%);transition:height .24s var(--ease),opacity .2s var(--ease),filter .2s var(--ease),box-shadow .2s var(--ease);opacity:.85}
 .scalp-mark.bounce{bottom:25%;background:var(--bounce);border-radius:6px 6px 0 0}
 .scalp-mark.breach{top:75%;background:var(--breach);border-radius:0 0 6px 6px}
 .scalp-slot.active .scalp-mark{opacity:1}
 .scalp-empty-state{min-height:360px;display:none;place-items:center;text-align:center;border-bottom:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.7)}
 .scalp-empty-state strong{display:block;color:#fff;font-size:var(--text-empty);margin-bottom:6px}
-.scalp-stage.is-empty .scalp-grid,.scalp-stage.is-empty .scalp-bars,.scalp-stage.is-empty .guide,.scalp-stage.is-empty .tooltip{display:none}.scalp-stage.is-empty .scalp-empty-state{display:grid}
+.scalp-stage.is-empty .scalp-grid,.scalp-stage.is-empty .scalp-bars,.scalp-stage.is-empty .tooltip{display:none}.scalp-stage.is-empty .scalp-empty-state{display:grid}
 
 /* ---------- 3–9 · the six held cards ---------- */
 .mech-grid{grid-template-columns:minmax(0,1.08fr) minmax(440px,.92fr);gap:80px}
@@ -267,9 +281,9 @@ html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
   .selector.target{grid-template-columns:repeat(4,1fr);gap:2px;padding:3px}.selector.time{grid-template-columns:repeat(3,1fr)}
   .selector button{padding-inline:8px}.selector.target button{padding-inline:4px}.selector.target button small{display:none}
   .compare-toggle{width:auto;justify-content:center;padding-inline:9px}.compare-wide{display:none}.compare-short{display:inline}
-  .compare-legend,.scalp-legend{margin-left:44px;gap:12px 18px}.gridline::after,.scalp-gridline::after{left:44px}
+  .scalp-legend{margin-left:44px;gap:12px 18px}.gridline::after,.scalp-gridline::after{left:44px}
   .bars{width:calc(100% - 44px);margin-left:44px;gap:2px;padding-inline:2px}.scalp-bars{left:44px;gap:7px;padding-inline:5px}
-  .chart-stage,.scalp-stage{height:330px}.chart-stage[data-timeframe=yearly] .bars{gap:18px;padding-inline:8%}.scalp-mark{width:min(32px,70%)}
+  .chart-stage,.scalp-stage{height:330px}.chart-stage[data-timeframe=yearly] .bars{gap:18px;padding-inline:8%}.scalp-stage{--mark-w:32px}.scalp-stage[data-scalp-timeframe=monthly]{--mark-w:56px}.scalp-stage[data-scalp-timeframe=yearly]{--mark-w:72px}.scalp-mark{width:min(var(--mark-w),70%)}
   .scalp-head .scalp-legend{flex:1 0 100%;width:100%}.scalp-legend span{padding-inline:9px;font-size:var(--text-label)}
   .mech-copy .page-number{min-width:138px}
   .dark-row{grid-template-columns:58px 1fr auto;gap:10px}.dark-row small{font-size:var(--text-micro)}.dark-state{min-width:auto;padding-inline:8px}
@@ -295,7 +309,7 @@ html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
 /* Tabular figures (cb8's body rule) widen Inter's LETTERS by ~2% as well, which broke lines the wireframe keeps
    whole; the wireframes set no figure style. Off for the page, kept where numbers line up. */
 body{font-variant-numeric:normal}
-.panel,.value-panel,.tooltip,.compare-legend{font-variant-numeric:tabular-nums}
+.panel,.value-panel,.tooltip{font-variant-numeric:tabular-nums}
 
 /* ---------- the explorer in colour and motion (founder, 2026-09-09: "more animation and color and icon") ----------
    The bars take the selected target's series colour on glass and grow from the baseline on every redraw, staggered;
@@ -303,26 +317,43 @@ body{font-variant-numeric:normal}
    a redraw, a toggle — never a loop. */
 .result-type .ico{width:18px;height:18px;stroke:currentColor}
 .result-type[aria-pressed=true] .ico,.glass .result-type[aria-pressed=true] .ico{stroke:var(--accent)}   /* the .glass white-icon rule carries two :not()s, so it outranks a plain three-class selector */
-.selector.target button::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--dot);box-shadow:0 0 0 2px rgba(255,255,255,.18)}
-.selector.target button[data-target=tp1]{--dot:var(--tp1)}.selector.target button[data-target=tp2]{--dot:var(--tp2)}.selector.target button[data-target=tp3]{--dot:var(--tp3)}.selector.target button[data-target=tp4]{--dot:var(--tp4)}
-.selector.target button[aria-pressed=true]::before{box-shadow:0 0 0 2px rgba(var(--rgb-shadow),.12)}
-.chart-stage{--series:var(--tp2)}
+/* Compare on turns the target bar into the legend it used to be captioned by: every button carries its
+   own line's colour, and none carries the white "you are here" pill, because in
+   compare mode you are on all four at once. Off, the bar has no swatch — one green answers for every
+   target. Every layer here is a gradient, a shadow or an absolute pseudo-element: the pill's box never
+   changes, so switching compare cannot widen the bar or shove the toggle sideways. */
+.selector.target button[data-target=tp1]{--dot:var(--tp1);--mix:15%}   /* white needs less of itself than a colour does */
+.selector.target button[data-target=tp2]{--dot:var(--tp2)}
+.selector.target button[data-target=tp3]{--dot:var(--tp3)}
+.selector.target button[data-target=tp4]{--dot:var(--tp4)}
+.compare-mode .selector.target{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12);box-shadow:none}   /* the trough recedes; the four chips carry the light */
+.compare-mode .selector.target button,.compare-mode .selector.target button[aria-pressed=true]{position:relative;isolation:isolate;background:transparent;color:#fff;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.15),inset 0 1px 0 rgba(255,255,255,.32)}
+.compare-mode .selector.target button::before{content:'';position:absolute;z-index:-1;inset:0;border-radius:inherit;   /* absolute: the swatch costs the pill no width */
+  background:linear-gradient(90deg,var(--dot) 0 100%) bottom/100% 2.5px no-repeat,   /* one unbroken line, every target */
+    linear-gradient(180deg,rgba(255,255,255,.04) 0%,color-mix(in srgb,var(--dot) var(--mix,24%),transparent) 100%);   /* the colour rises out of its own line */
+  box-shadow:0 6px 16px -12px var(--dot);animation:chip-in .5s var(--ease) both}
+.compare-mode .selector.target button[data-target=tp2]::before{animation-delay:.12s}   /* the four light up in the order the lines draw */
+.compare-mode .selector.target button[data-target=tp3]::before{animation-delay:.24s}
+.compare-mode .selector.target button[data-target=tp4]::before{animation-delay:.36s}
+@keyframes chip-in{from{opacity:0}}
+.compare-mode .selector.target button small{color:rgba(255,255,255,.74)}
+.chart-stage{--series:var(--tp3)}   /* the columns are green whichever target is read */
 .bar{background:linear-gradient(180deg,var(--series) 0%,color-mix(in srgb,var(--series) 30%,transparent) 100%);border:1px solid rgba(255,255,255,.4);border-bottom:0;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 10px 24px -12px var(--series);transform-origin:bottom;animation:bar-in .55s var(--ease) both;animation-delay:calc(var(--i,0) * 16ms)}
-.bar-slot.active .bar{background:var(--series);box-shadow:inset 0 1px 0 #fff,0 0 22px color-mix(in srgb,var(--series) 60%,transparent)}
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 0 0 99px rgba(255,255,255,0),0 10px 24px -12px var(--series);transform-origin:bottom;animation:bar-in .55s var(--ease) both;animation-delay:calc(var(--i,0) * 16ms)}
+.bar-slot.active .bar{filter:brightness(1.4) saturate(1.1);box-shadow:inset 0 1px 0 #fff,inset 0 0 0 99px rgba(255,255,255,.26),0 10px 24px -12px var(--series)}
 .bar-slot.no-signals .bar{background:transparent;box-shadow:none;animation:none}
-.guide{background:var(--series);opacity:0;box-shadow:0 0 8px var(--series)}
 @keyframes bar-in{from{transform:scaleY(0)}}
 .compare-path{stroke-dasharray:1;stroke-dashoffset:1;animation:line-in 1.1s var(--ease) both}
 .compare-path.tp2{animation-delay:.12s}.compare-path.tp3{animation-delay:.24s}.compare-path.tp4{animation-delay:.36s}
 @keyframes line-in{to{stroke-dashoffset:0}}
 .compare-point{animation:xf .4s var(--ease) both .9s}
-.scalp-mark{border:1px solid rgba(255,255,255,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.5);animation:bar-in .55s var(--ease) both;animation-delay:calc(var(--i,0) * 60ms)}
+.scalp-mark{border:1px solid rgba(255,255,255,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 99px rgba(255,255,255,0),0 0 18px rgba(255,255,255,0);animation:bar-in .55s var(--ease) both;animation-delay:calc(var(--i,0) * 60ms)}
 .scalp-mark.bounce{background:linear-gradient(180deg,var(--bounce),color-mix(in srgb,var(--bounce) 45%,transparent));transform-origin:bottom;border-bottom:0}
 .scalp-mark.breach{background:linear-gradient(0deg,var(--breach),color-mix(in srgb,var(--breach) 45%,transparent));transform-origin:top;border-top:0}
-.scalp-slot.active .scalp-mark{opacity:1;box-shadow:inset 0 1px 0 #fff,0 0 18px rgba(255,255,255,.25)}
+.scalp-slot.active .scalp-mark{opacity:1;filter:brightness(1.07);box-shadow:inset 0 1px 0 #fff,inset 0 0 0 99px rgba(255,255,255,.1),0 0 18px rgba(255,255,255,.14)}
 .scalp-empty-state .ico{margin:0 auto 14px;width:40px;height:40px;stroke:rgba(255,255,255,.7)}
-html.reduce .bar,html.reduce .compare-path,html.reduce .compare-point,html.reduce .scalp-mark{animation:none}
+html.reduce .bar,html.reduce .compare-path,html.reduce .compare-point,html.reduce .scalp-mark,html.reduce .selector.target button::before{animation:none}
 
 /* ---------- the Signals half on white (founder, 2026-09-10) ----------
    Chapter 1 and cards 01–03 go the calculator's way (cb8 style.css §9): the block is white, its
