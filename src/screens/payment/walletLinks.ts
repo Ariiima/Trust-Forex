@@ -54,6 +54,17 @@ export function trustWalletUrl(o: Order): string | undefined {
   return `https://link.trustwallet.com/send?${p.toString()}`;
 }
 
+/** TON wallets (Tonkeeper, MyTonWallet, Tonhub, …) all register the `ton://`
+ *  scheme. Native TON only — a USDT-TON jetton transfer needs a signed
+ *  transfer body, not a plain querystring, so that stays undefined here (same
+ *  "no link beats a wrong-amount send" rule as everywhere else in this file). */
+export function tonWalletUrl(o: Order): string | undefined {
+  if (o.network !== 'TON' || o.currency !== 'TON' || !o.address || !o.amountCrypto) return undefined;
+  const p = new URLSearchParams({ amount: shiftDecimal(o.amountCrypto, 9) });
+  if (o.memo) p.set('text', o.memo);
+  return `ton://transfer/${o.address}?${p.toString()}`;
+}
+
 /**
  * Payment-request URI for the "Payment QR" tab — a scan hands the wallet the
  * address AND the exact amount. EIP-681 for EVM, BIP-21 for BTC, Solana Pay

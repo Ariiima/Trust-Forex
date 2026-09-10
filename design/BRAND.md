@@ -38,6 +38,16 @@ the landing prototype.
 - **No neon green, no purple / pink hype.**
 - No trader photos, cars, money, or exaggerated charts.
 - No countdowns, fake scarcity, profit calculators, "one signal pays for it".
+- **No share-of-a-whole visual.** Cashback is never drawn as a slice of the broker
+  rebate — no split bar, no pie, no "your share of" geometry, no visual that shows a
+  total with your portion inside it. It reads as "they keep the rest". Cashback
+  appears only as an absolute figure (`+$37.50`, `$150.00`) or as a level
+  (`10% · Standard`, `30% · Diamond`). Founder ruling, 2026-09-03.
+- ~~At most two colour-shifted screens per page~~ — **superseded 2026-09-05.** Core pages
+  are built on blue/white contrast transitions: solid blue (the v2 halo palette, `#0C2E7B`),
+  white with outlined panels, and white-to-blue hand-offs, varied section by section. Data on
+  blue is a white card with dark figures (or white figures on blue) — strong contrast both
+  ways, never a translucent ground under numbers. Founder brief, 2026-09-05.
 - **Final rule:** if a visual element makes trading look easy, guaranteed,
   luxurious or exciting, it does not belong in TrustForex.
 
@@ -59,11 +69,19 @@ the landing prototype.
 - **Hero visual = a preview of the Results dashboard.** Not a render.
 - **Badges:** Published/Active = blue · TP Hit = green · SL/Failed = red ·
   Not Activated/Closed = grey · Pending = soft yellow.
-- **Charts:** line, bar, limited donut, table, progress. Clarifying, not showy.
+- **Charts:** line, bar, limited donut, table, progress. Clarifying, not showy. **Charts may
+  use diverse, vibrant series colours** (founder, 2026-09-05) — the green/red reservation
+  below applies to badges and outcomes, not to chart series. Chart language is still set on
+  the Results page; Cashback has no charts.
 - **Logo:** a T inside a shield — the shield is protection of trust through record.
   Simple, legible small, works in one colour.
 - **Motion: minimal.** Hover, soft transition, sorting. No confetti, no exploding
   animation, **no flashing/counting numbers** — success is not a casino win.
+- **Typeface: Inter — the default for every website design, no exceptions.**
+  Self-hosted variable face at `design/landing/shared/fonts/Inter-VF.woff2`;
+  new builds link `../shared/fonts/inter.css` and use `var(--sans)`. Numbers,
+  tables and labels may use the mono (`Spline Sans Mono`); everything else is
+  Inter. Do not introduce a second display face.
 
 ## Verbal
 
@@ -109,6 +127,7 @@ stays free. Only live signal access is paid.
   open again, and the brand path points at *View Results* first.
 - Mandatory referral at first Bot contact — display must be contextual.
 - Quarterly results range — replaced by Weekly / Monthly / Yearly.
+- Archivo as the landing typeface — replaced by Inter (2026-09-03).
 
 ## Open, do not invent
 

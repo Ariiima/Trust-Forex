@@ -334,6 +334,14 @@
   height: 110px;
   object-fit: cover;
 }
+/* An admin-uploaded card, cropped to the slide's proportions: fills the frame. */
+.scr-home-slide-full {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .scr-home-dots {
   position: absolute;
   left: 0;
@@ -564,12 +572,12 @@
   left: 0;
   bottom: 0;
   width: 296px;
-  height: 164px;
+  height: 204px;
 }
 .scr-home-chart-crosshair {
   position: absolute;
   bottom: 0;
-  height: 158px;
+  height: 196px;
   border-left: 1px dashed var(--primary-colors-300);
   pointer-events: none;
 }

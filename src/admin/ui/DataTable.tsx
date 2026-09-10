@@ -26,7 +26,7 @@ export interface DataTableProps<T> {
   /** Renders a leading "#" column numbered from 1 in the *displayed* order. */
   showIndex?: boolean;
   /** Use a value from the row instead of the display position (referral ids). */
-  indexOf?: (row: T) => ReactNode;
+  indexOf?: (row: T, i: number) => ReactNode;
   onRowClick?: (row: T) => void;
   selectedKey?: string;
   /** Height the body scrolls within. Defaults so every table shows its whole
@@ -157,7 +157,7 @@ export function DataTable<T>({
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
                 style={onRowClick ? { cursor: 'pointer' } : undefined}
               >
-                {showIndex && <td className="a-table__num">{indexOf ? indexOf(row) : i + 1}</td>}
+                {showIndex && <td className="a-table__num">{indexOf ? indexOf(row, i) : i + 1}</td>}
                 {columns.map((c) => (
                   <td
                     key={c.id}

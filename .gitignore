@@ -56,3 +56,9 @@ server/backups/
 # Wallet addresses (server/gateways.json's own comment: "not in git" — deploy.sh
 # already excludes it from the shipped tarball).
 server/gateways.json
+
+# Generated landing candidates — pick, then move the keepers in deliberately.
+design/landing-assets/
+
+# landing QA screenshots (design/landing/_qa/shoot.mjs scratch)
+design/landing/.shots/

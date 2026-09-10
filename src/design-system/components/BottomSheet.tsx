@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import type React from 'react'
 import type { ReactNode } from 'react'
 import { AnimatePresence, m, useReducedMotion } from 'motion/react'
 import { FADE, SHEET } from '../motion'
@@ -27,6 +28,33 @@ export function BottomSheet({ open, onClose, className, children }: BottomSheetP
    * entrance outright and let a reduced-motion capture be correct on frame 1. */
   const still = useReducedMotion()
   const overlayRef = useRef<HTMLDivElement>(null)
+
+  /* First tap outside while typing only closes the keyboard — the sheet stays.
+   * Losing a half-filled form to a stray tap next to the field is the worse
+   * outcome; a second tap (nothing focused now) closes the sheet as before.
+   *
+   * Decided on pointerdown, not click: the browser has already blurred the
+   * field by the time click fires, so activeElement is <body> and the check
+   * never matched. */
+  const swallowed = useRef(false)
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    swallowed.current = false
+    if ((e.target as HTMLElement).closest('.ds-sheet')) return
+    const el = document.activeElement
+    if (el instanceof HTMLElement && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable)) {
+      el.blur()
+      swallowed.current = true
+    }
+  }
+
+  const dismiss = () => {
+    if (swallowed.current) {
+      swallowed.current = false
+      return
+    }
+    onClose?.()
+  }
 
   /* Stop the page behind the sheet from scrolling.
    *
@@ -67,15 +95,21 @@ export function BottomSheet({ open, onClose, className, children }: BottomSheetP
   return (
     <AnimatePresence>
       {open ? (
-        <m.div
-          className="ds-sheet-overlay"
-          ref={overlayRef}
-          onClick={onClose}
-          initial={still ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={FADE}
-        >
+        /* The wrapper is a plain div and the scrim is a childless sibling of
+         * the sheet, not its animated parent: on mobile WebKit an opacity-
+         * animated layer that also contains the sheet (and its scrolling list)
+         * gets torn down and rebuilt whenever that subtree re-layerizes — the
+         * rise finishing, the history list mounting after its fetch — and the
+         * dim visibly drops out for a frame each time. Its own layer, pinned
+         * with will-change in the CSS, has nothing inside it to re-layerize. */
+        <div className="ds-sheet-overlay" ref={overlayRef} onClick={dismiss} onPointerDown={onPointerDown}>
+          <m.div
+            className="ds-sheet-scrim"
+            initial={still ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={FADE}
+          />
           <m.div
             className={'ds-sheet' + (className ? ' ' + className : '')}
             onClick={(e) => e.stopPropagation()}
@@ -86,7 +120,7 @@ export function BottomSheet({ open, onClose, className, children }: BottomSheetP
           >
             {children}
           </m.div>
-        </m.div>
+        </div>
       ) : null}
     </AnimatePresence>
   )

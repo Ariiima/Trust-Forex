@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react';
 import type { MouseEvent, ReactNode } from 'react';
 import QRCode from 'qrcode';
-import { Button, BottomSheet, Icon, ProgressBar } from '../../design-system/components';
+import { Button, BottomSheet, Icon, ProgressBar, Skeleton } from '../../design-system/components';
 import { Glyph } from './Glyph';
 import { getMe, joinGroup } from '../../api/client';
 import { useBackButton } from '../../telegram';
 import { useOrderPoll } from './useOrderPoll';
-import { metamaskUrl, paymentUri, trustWalletUrl } from './walletLinks';
+import { metamaskUrl, paymentUri, tonWalletUrl, trustWalletUrl } from './walletLinks';
+import { currencyIcon } from './gatewayDisplay';
 import qrPlaceholder from '../../assets/qr-placeholder.png';
 import wallet1 from '../../assets/payment/wallet-connect-1.png';
 import wallet2 from '../../assets/payment/wallet-connect-2.png';
 import wallet3 from '../../assets/payment/wallet-connect-3.png';
+import tonIcon from '../../assets/crypto/ton.svg';
 import './PaymentReceive.css';
 
 /* ---------------------------------------------------------------------------
@@ -140,7 +142,10 @@ export default function PaymentReceive({
   useEffect(() => {
     if (!qrData || !orderId) return;
     let stale = false;
-    QRCode.toDataURL(qrData, { width: 296, margin: 1 })
+    // 'H' (30% redundancy) so the currency icon painted over the center in
+    // the markup below still scans — 'M' (the qrcode default) does not
+    // leave enough redundancy for that much of the code to be covered.
+    QRCode.toDataURL(qrData, { width: 296, margin: 1, errorCorrectionLevel: 'H' })
       .then((url) => {
         if (!stale) setQrSrc(url);
       })
@@ -217,7 +222,7 @@ export default function PaymentReceive({
           <div className="scr-receive-warning">
             <Glyph name="alert-triangle" size={20} />
             <p className="scr-receive-warning-text">
-              Verify the network, wallet address, and exact amount before making the payment
+              Send the <strong>exact amount</strong> shown — every digit. A different amount can’t be matched to your order. Check the network and address too.
             </p>
           </div>
 
@@ -243,7 +248,21 @@ export default function PaymentReceive({
               </div>
 
               <div className="scr-receive-qr-frame">
-                <img className="scr-receive-qr" src={qrSrc ?? qrPlaceholder} alt="Payment QR code" width={148} height={148} />
+                {qrSrc ? (
+                  <div className="scr-receive-qr-wrap">
+                    <img className="scr-receive-qr" src={qrSrc} alt="Payment QR code" width={148} height={148} />
+                    {currencyIcon(order?.currency) ? (
+                      <img className="scr-receive-qr-coin" src={currencyIcon(order?.currency)} alt="" width={36} height={36} />
+                    ) : null}
+                  </div>
+                ) : orderId ? (
+                  // Live order, QR not generated yet — a loading skeleton, not
+                  // the demo placeholder, so the screen never shows one QR
+                  // image and then swaps it for a different, real one.
+                  <Skeleton className="scr-receive-qr" />
+                ) : (
+                  <img className="scr-receive-qr" src={qrPlaceholder} alt="Payment QR code" width={148} height={148} />
+                )}
               </div>
 
               <div className="scr-receive-rows">
@@ -303,6 +322,12 @@ export default function PaymentReceive({
                         alt: 'MetaMask',
                         url: metamaskUrl(order),
                         icon: <img src={wallet2} alt="" width={32} height={32} />,
+                      },
+                      {
+                        id: 'ton-wallet',
+                        alt: 'TON Wallet',
+                        url: tonWalletUrl(order),
+                        icon: <img src={tonIcon} alt="" width={32} height={32} />,
                       },
                     ]
                       .filter((w): w is typeof w & { url: string } => Boolean(w.url))

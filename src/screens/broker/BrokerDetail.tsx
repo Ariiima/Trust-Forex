@@ -4,10 +4,10 @@ import * as DS from '../../design-system/components';
 import type { ProgressStep } from '../../design-system/components';
 import { useBackButton } from '../../telegram';
 import {
-  cachedBroker, getBroker, cachedMe, getMe, submitBrokerAccount, confirmBrokerDeposit,
+  cachedBrokers, getBrokers, cachedMe, getMe, setCachedMe, submitBrokerAccount, confirmBrokerDeposit,
 } from '../../api/client';
-import type { BrokerDetailPayload, Me, MeBrokerLink } from '../../api/client';
-import { BROKER_INFO } from '../cashback/brokers-data';
+import type { Me, MeBrokerLink } from '../../api/client';
+import { BROKER_INFO, flowTitle } from '../cashback/brokers-data';
 import './BrokerDetail.css';
 
 /* ---------------------------------------------------------------------------
@@ -19,16 +19,16 @@ import './BrokerDetail.css';
  *   accountStatus: none | submitted | failed | verified
  *   depositStatus: none | awaiting | submitted | confirmed
  *   S1        deposit none            → step 1, CTA "submit account"
- *   S1-sheet  submit-account sheet    (2 inputs; 1 input when account failed)
+ *   S1-sheet  submit-account sheet    (the fields the broker requires)
  *   S2        verified + awaiting     → step 2, CTA "i made a deposit"
  *   S2-sheet  confirm-deposit sheet   (read-only rows)
- *   S3-review deposit submitted       → step 3, NO footer CTA (under review)
+ *   S3-review deposit submitted       → still step 2, NO footer CTA (under review)
  *   S4        deposit confirmed       → "Cashback activated" (kept from old step 3;
  *             'confirmed' extends the spec enum so the terminal copy stays reachable)
  * No in-app header — back nav is the Telegram BackButton.
  * ------------------------------------------------------------------------- */
 
-const { Button, ProgressBar, BottomSheet, Icon } = DS;
+const { Button, ProgressBar, BottomSheet, Icon, Skeleton } = DS;
 
 // The ds-components cluster ships Input/Notification in parallel (CONTRACT §DS APIs).
 // ponytail: resolved through the namespace so this file typechecks before they land;
@@ -42,6 +42,7 @@ interface DSInputProps {
   hint?: string;
   rightSlot?: ReactNode;
   disabled?: boolean;
+  onSubmit?: () => void;
 }
 interface DSNotificationProps {
   variant: 'success' | 'error' | 'warning' | 'info';
@@ -72,7 +73,8 @@ type GlyphName =
   | 'loader';
 
 const GLYPHS: Record<GlyphName, readonly string[]> = {
-  external: ['M4 6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z', 'M9 15l6 -6', 'M11 9h4v4'],
+  // Figma 1316:7986 icon: box 3..21 r4, arrow diag + full-span head, 1.25px stroke at 20px.
+  external: ['M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-10a4 4 0 0 1 4 -4z', 'M9 15l6 -6', 'M9 9h6v6'],
   close: ['M18 6l-12 12', 'M6 6l12 12'],
   mail: ['M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z', 'M3 7l9 6l9 -6'],
   user: ['M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0', 'M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2'],
@@ -132,7 +134,8 @@ function Glyph({ name, size = 24, strokeWidth = 1.75, ...rest }: GlyphProps): Re
 interface Spec {
   icon: GlyphName;
   label: string;
-  value: string;
+  /** null while the catalogue is still loading — renders a Skeleton row. */
+  value: string | null;
 }
 
 // Canonical row order from the 5 newest full screens (spec D4).
@@ -165,6 +168,8 @@ const LINK_STATES: Record<MeBrokerLink['state'], readonly [AccountStatus, Deposi
   rejected: ['failed', 'none'],
   'waiting-for-deposit': ['verified', 'awaiting'],
   'deposit-review': ['verified', 'submitted'],
+  // A failed deposit review leaves the account verified — back to "make a deposit".
+  'deposit-rejected': ['verified', 'awaiting'],
   'cashback-active': ['verified', 'confirmed'],
 };
 
@@ -207,8 +212,23 @@ function heroCopy(deposit: DepositStatus): HeroCopy {
   };
 }
 
+/** Leave the webview through the Telegram API when it's there, plain window
+ *  otherwise. Admins type links bare ("xm.com/…"), so assume https. */
+function openExternal(url: string): void {
+  const href = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+  const tg = window.Telegram?.WebApp;
+  if (tg?.openLink) tg.openLink(href);
+  else window.open(href, '_blank', 'noopener');
+}
+
 /** How long a self-dismissing status banner stays up, bar included. */
 const BANNER_MS = 5000;
+
+// ponytail: per-device memory of "this banner already ran", under the same
+// tf.banner.* namespace the Cashback list uses (its own keys — the two screens
+// announce separately). Storage throws in some webviews; treat that as unseen.
+const seenBanner = (k: string) => { try { return localStorage.getItem(k) === '1'; } catch { return false; } };
+const markBannerSeen = (k: string) => { try { localStorage.setItem(k, '1'); } catch { /* private mode */ } };
 
 interface Banner {
   key: string;
@@ -221,7 +241,7 @@ interface Banner {
 }
 
 export interface BrokerDetailProps {
-  /** Route param — drives getBroker(brokerId); falls back to XM's static specs. */
+  /** Route param — drives getBrokers(); falls back to XM's static specs. */
   brokerId?: string;
   onBack?: () => void;
   /** Dev/test hooks until the broker verification backend lands (spec §4). */
@@ -254,50 +274,50 @@ export default function BrokerDetail({
   // No in-app header (spec D1) — Telegram native BackButton drives onBack.
   useBackButton(onBack);
 
-  // XM_SPECS/REFERRAL_CODE/the bundled XM logo render immediately so the
-  // screen is never blank; getBroker(brokerId) swaps real data in once it
-  // lands, and a failed fetch (or the static-only build, which has no server
-  // at all) just keeps the fallback. cachedX() seeds this synchronously so a
-  // tab switch doesn't re-fetch and visibly re-swap.
-  const [payload, setPayload] = useState<BrokerDetailPayload | null>(() =>
-    brokerId ? (cachedBroker(brokerId) ?? null) : null,
-  );
+  // The whole broker catalogue is warmed by the boot splash (App.tsx) before
+  // any screen mounts, preview/flow copy included — so this normally reads
+  // straight from cache with nothing left to fetch. The live call below only
+  // covers a cold cache (a deep link that skipped the splash, e.g. a fresh
+  // tab opened straight to this route in dev).
+  const [brokers, setBrokers] = useState<Awaited<ReturnType<typeof getBrokers>> | undefined>(() => cachedBrokers());
   const [me, setMe] = useState<Me | null>(() => cachedMe() ?? null);
   useEffect(() => {
-    if (!brokerId) return;
-    if (cachedBroker(brokerId) !== undefined && cachedMe() !== undefined) return;
     let live = true;
-    void Promise.all([getBroker(brokerId), getMe()]).then(([broker, meResult]) => {
-      if (!live) return;
-      setPayload(broker);
-      setMe(meResult);
-    });
+    // The catalogue barely changes, so it's cache-only past the first load —
+    // but `me` is the admin's decision on this exact broker. Revalidate it on
+    // every visit, or a reject/waiting/approve made while this screen wasn't
+    // open (or its 15s poll wasn't running) shows stale state until restart.
+    if (cachedBrokers() === undefined) void getBrokers().then((b) => { if (live) setBrokers(b); });
+    void getMe().then((m) => { if (live && m) setMe(m); });
     return () => {
       live = false;
     };
-  }, [brokerId]);
+  }, []);
 
-  const preview = payload?.preview;
+  const loading = brokerId != null && brokers === undefined;
+  const broker = brokerId ? brokers?.find((b) => b.id === brokerId) : undefined;
+  const preview = broker?.preview;
   // The XM_SPECS/REFERRAL_CODE fallback is only for the no-brokerId harness
-  // render (design/review deep-links, bare-route previews) — it has no
-  // fetch to wait on, so there's nothing else to show. A real route always
-  // has a brokerId, and while its fetch is in flight this must NOT borrow
-  // XM's specs: that was the "shows fallback data first" bug — opening e.g.
-  // Exness flashed XM's regulation/leverage claims until the real payload
-  // swapped in. '—' (a genuine loading placeholder) until then instead.
+  // render (design/review deep-links, bare-route previews) — there's nothing
+  // else to show. A real route always has a brokerId; while the catalogue is
+  // still loading this must NOT borrow XM's specs (that was the "shows
+  // fallback data first" bug) — a Skeleton row instead, `null` marks that.
   const specs: readonly Spec[] = XM_SPECS.map((s, i) => ({
     ...s,
-    value: preview?.details?.[DETAIL_KEYS[i]] ?? (brokerId ? '—' : s.value),
+    value: preview?.details?.[DETAIL_KEYS[i]] ?? (loading ? null : brokerId ? '—' : s.value),
   }));
-  const referralCode = preview?.referralCode ?? (brokerId ? '' : REFERRAL_CODE);
+  const referralCode = preview?.referralCode ?? (loading ? null : brokerId ? '' : REFERRAL_CODE);
   // Name/logo don't need to wait on the fetch — the catalogue already has
   // them keyed by brokerId, so a known broker renders its own name/logo
   // immediately instead of "XM" flashing before the payload swaps in.
   const catalogueInfo = brokerId ? BROKER_INFO[brokerId] : undefined;
-  const brokerName = preview?.name ?? catalogueInfo?.name ?? 'XM';
+  const brokerName = preview?.name ?? catalogueInfo?.name ?? (loading ? null : 'XM');
   const badgeOn = preview?.badgeOn ?? !brokerId;
   const badgeText = preview?.badgeText ?? 'Popular';
-  const logo = catalogueInfo?.logo ?? BROKER_INFO.xm.logo;
+  const badgeColor = preview?.badgeColor;
+  // ponytail: no XM fallback — an unknown broker showed XM's mark for a frame
+  // before its own arrived. Empty slot until we actually have the logo.
+  const logo = broker?.logoUrl ?? catalogueInfo?.logo;
   const myLink = me?.brokers.find((b) => b.brokerId === brokerId);
 
   /* The server's review state wins over local guesses whenever it exists —
@@ -341,39 +361,88 @@ export default function BrokerDetail({
   }, [modal]);
 
   const progress: ProgressStep =
-    depositStatus === 'submitted' || depositStatus === 'confirmed'
+    depositStatus === 'confirmed'
       ? 'make-payment'
-      : depositStatus === 'awaiting'
+      : // ponytail: deposit submitted is still step 2 — step 3 is the accepted deposit
+        depositStatus === 'awaiting' || depositStatus === 'submitted'
         ? 'payment-details'
         : 'order-created';
   const hero = heroCopy(depositStatus);
-  const resubmit = accountStatus === 'failed';
+  // Registration link before an account exists, the plain broker link after —
+  // either falls back to the other, since admins often fill only one.
+  const heroLink = (depositStatus === 'none'
+    ? preview?.createAccountLink || preview?.goToBrokerLink
+    : preview?.goToBrokerLink || preview?.createAccountLink) ?? '';
+  // A resubmit asks for the same fields again — the rejected details are
+  // cleared, so hiding the user-ID input left the sheet with nothing in it
+  // for a broker that only asks for a user ID.
+  const needEmail = preview?.requireEmail ?? true;
+  const needUserId = preview?.requireUserId ?? false;
 
-  // Banner titles are inference (spec §10.1) — only "Account verification failed"
-  // is confirmed copy. All banners are dismissible (S2-sheet frame shows zero).
+  // Banner titles fall back to the spec-inferred copy (§10.1) only when the
+  // broker has no admin-edited flow message for this decision yet; otherwise
+  // the operator's own "Manage user flow" text wins (broker.flow, live from
+  // getBroker — same admin-editable copy their Telegram DM uses).
   const banners: Banner[] = [];
   if (accountStatus === 'submitted') {
     // Copy measured verbatim from design/review/ref/broker.png: the text is
     // visually cut off at "progres" (no ellipsis) in the reference itself.
+    // No admin decision exists yet at this point, so there's no flow entry to read.
     banners.push({ key: 'account-review', variant: 'info', title: 'Verification in progres', pending: true });
   }
   if (accountStatus === 'failed') {
-    banners.push({ key: 'account-failed', variant: 'error', title: 'Account verification failed' });
+    banners.push({
+      key: 'account-failed',
+      variant: 'error',
+      title: flowTitle(broker?.flow, linkState, 'Account verification failed'),
+    });
   }
-  if (accountStatus === 'verified' && depositStatus === 'awaiting') {
-    banners.push({ key: 'account-verified', variant: 'success', title: 'Account verified' });
-    banners.push({ key: 'deposit-awaiting', variant: 'info', title: 'Make a deposit to activate cashback' });
+  if (linkState === 'waiting-for-deposit') {
+    // The admin's "waiting for deposit" decision IS the account-verified news.
+    banners.push({
+      key: 'account-verified',
+      variant: 'success',
+      title: flowTitle(broker?.flow, linkState, 'Account verified'),
+    });
   }
-  if (depositStatus === 'submitted') {
-    banners.push({ key: 'deposit-review', variant: 'info', title: 'Deposit under review' });
+  if (linkState === 'deposit-review') {
+    // Same "under review" beat as a submitted account — no admin decision yet,
+    // so no flow entry to read.
+    banners.push({ key: 'deposit-review', variant: 'info', title: 'Verification in progres', pending: true });
   }
-  const visibleBanners = banners.filter((b) => !dismissed.includes(b.key));
+  if (linkState === 'deposit-rejected') {
+    banners.push({
+      key: 'deposit-failed',
+      variant: 'error',
+      title: flowTitle(broker?.flow, linkState, 'Deposit confirmation failed'),
+    });
+  }
+  if (linkState === 'cashback-active') {
+    // The list announces this one too — the detail screen must not stay silent
+    // just because its hero already says "Cashback activated".
+    banners.push({
+      key: 'deposit-confirmed',
+      variant: 'success',
+      title: flowTitle(broker?.flow, linkState, 'Deposit confirmed'),
+    });
+  }
+  /* Same rule as the Cashback list: an outcome banner is news. Once it has
+     announced itself on this device it must not greet the user again on every
+     visit — failures included.
+     `requestedAt` is in the key because the server restamps it on every
+     re-entry into review: a second rejection is a second piece of news, not the
+     one already dismissed. */
+  const bannerSeenKey = (k: string) => `tf.banner.${brokerId ?? 'xm'}:${myLink?.requestedAt ?? ''}:${k}`;
+  const visibleBanners = banners.filter(
+    (b) => !dismissed.includes(b.key) && (b.pending || !seenBanner(bannerSeenKey(b.key))),
+  );
 
   const cta =
     depositStatus === 'none'
       ? { label: 'Submit account', modal: 'submit-account' as const } // ref: capital S
       : depositStatus === 'awaiting'
         ? { label: 'i made a deposit', modal: 'made-deposit' as const }
+        // 'submitted' is under review — nothing left to press until the admin decides.
         : null;
 
   const copyReferral = (): void => {
@@ -386,17 +455,15 @@ export default function BrokerDetail({
   const openModal = (which: Modal): void => {
     setFieldError({});
     setNetError('');
-    // Resubmission edits the rejected details rather than retyping them.
-    if (which === 'submit-account' && !email && myLink?.email) setEmail(myLink.email);
-    if (which === 'submit-account' && !userId && myLink?.brokerAccountId) setUserId(myLink.brokerAccountId);
+    // Rejected details were wrong — start blank rather than re-offering them.
+    if (which === 'submit-account') { setEmail(''); setUserId(''); }
     setModal(which);
   };
 
   const submitAccount = (): void => {
     const errs: { email?: string; userId?: string } = {};
-    if (!/^\S+@\S+\.\S+$/.test(email.trim())) errs.email = 'Enter a valid email address';
-    // The resubmit sheet has no user-ID input — the rejected request keeps its old one.
-    if (!resubmit && !userId.trim()) errs.userId = 'Enter your broker user ID';
+    if (needEmail && !/^\S+@\S+\.\S+$/.test(email.trim())) errs.email = 'Enter a valid email address';
+    if (needUserId && !userId.trim()) errs.userId = 'Enter your broker user ID';
     setFieldError(errs);
     if (errs.email || errs.userId) return;
     if (!brokerId) {
@@ -409,7 +476,9 @@ export default function BrokerDetail({
     setBusy(true);
     submitBrokerAccount(brokerId, { email: email.trim(), brokerAccountId: userId.trim() || undefined })
       .then((brokers) => {
-        setMe((m) => (m ? { ...m, brokers } : m));
+        const patch = (m: Me | null) => (m ? { ...m, brokers } : m);
+        setMe(patch);
+        setCachedMe(patch);
         setDismissed([]);
         setModal(null);
       })
@@ -427,7 +496,9 @@ export default function BrokerDetail({
     setBusy(true);
     confirmBrokerDeposit(brokerId)
       .then((brokers) => {
-        setMe((m) => (m ? { ...m, brokers } : m));
+        const patch = (m: Me | null) => (m ? { ...m, brokers } : m);
+        setMe(patch);
+        setCachedMe(patch);
         setDismissed([]);
         setModal(null);
       })
@@ -449,10 +520,27 @@ export default function BrokerDetail({
         <section className="scr-broker-card">
           <div className="scr-broker-card-row">
             <div className="scr-broker-card-left">
-              <img className="scr-broker-logo" src={logo} alt={brokerName} width={32} height={32} />
-              <span className="scr-broker-name">{brokerName}</span>
+              {logo ? (
+                <img className="scr-broker-logo" src={logo} alt={brokerName ?? ''} width={32} height={32} />
+              ) : loading ? (
+                <Skeleton className="scr-broker-logo" />
+              ) : (
+                <span className="scr-broker-logo" />
+              )}
+              {brokerName ? (
+                <span className="scr-broker-name">{brokerName}</span>
+              ) : (
+                <Skeleton className="scr-broker-name-skeleton" />
+              )}
             </div>
-            {badgeOn ? <span className="scr-broker-popular">{badgeText}</span> : null}
+            {badgeOn ? (
+              <span
+                className="scr-broker-popular"
+                style={badgeColor ? { background: `${badgeColor}22`, color: badgeColor } : undefined}
+              >
+                {badgeText}
+              </span>
+            ) : null}
           </div>
           {visibleBanners.map((b) =>
             b.pending ? (
@@ -467,12 +555,14 @@ export default function BrokerDetail({
                 key={b.key}
                 variant={b.variant}
                 title={b.title}
-                /* Outcomes ("Account verified", "Deposit under review") are
-                   news, not state — they announce themselves, drain their bar
-                   and go. A failed verification stays: it is the one the user
-                   still has to act on. */
-                autoDismiss={b.variant === 'error' ? undefined : BANNER_MS}
-                onClose={() => setDismissed((d) => [...d, b.key])}
+                /* Every outcome — verified, failed — is news, not state: it
+                   announces itself, drains its bar and goes. What to do next
+                   is the hero's job, not the banner's. */
+                autoDismiss={BANNER_MS}
+                onClose={() => {
+                  markBannerSeen(bannerSeenKey(b.key));
+                  setDismissed((d) => [...d, b.key]);
+                }}
                 // ref shows icon + text + drain bar only — no close button
                 // (the pending banner above never had one either).
                 hideClose
@@ -491,21 +581,34 @@ export default function BrokerDetail({
           </div>
 
           <div className="scr-broker-hero-block">
-            <div className="scr-broker-referral">
-              <span className="scr-broker-referral-label">referral code</span>
-              <button
-                className="scr-broker-referral-code"
-                type="button"
-                onClick={copyReferral}
-                disabled={!referralCode}
-                aria-label={copied ? 'Copied' : 'Copy referral code'}
-              >
-                {referralCode || '—'}
-              </button>
-            </div>
-            <button className="scr-broker-linkbtn" type="button">
+            {loading ? (
+              <div className="scr-broker-referral">
+                <span className="scr-broker-referral-label">referral code</span>
+                <Skeleton className="scr-broker-referral-code-skeleton" />
+              </div>
+            ) : (
+              referralCode && (
+                <div className="scr-broker-referral">
+                  <span className="scr-broker-referral-label">referral code</span>
+                  <button
+                    className="scr-broker-referral-code"
+                    type="button"
+                    onClick={copyReferral}
+                    aria-label={copied ? 'Copied' : 'Copy referral code'}
+                  >
+                    {referralCode}
+                  </button>
+                </div>
+              )
+            )}
+            <button
+              className="scr-broker-linkbtn"
+              type="button"
+              disabled={!heroLink}
+              onClick={() => heroLink && openExternal(heroLink)}
+            >
               <span className="scr-broker-linkbtn-label">{hero.actionLabel}</span>
-              <Glyph name="external" size={24} />
+              <Glyph name="external" size={20} strokeWidth={1.5} />
             </button>
           </div>
         </section>
@@ -519,23 +622,27 @@ export default function BrokerDetail({
                 <Glyph name={s.icon} size={20} />
                 <span className="scr-broker-spec-label">{s.label}</span>
               </span>
-              <span className="scr-broker-spec-value">{s.value}</span>
+              {s.value === null ? (
+                <Skeleton className="scr-broker-spec-value-skeleton" />
+              ) : (
+                <span className="scr-broker-spec-value">{s.value}</span>
+              )}
             </div>
           ))}
         </section>
       </main>
 
-      {/* Sticky bottom CTA — S1 & S2 only; gone once the deposit is under review */}
+      {/* Sticky bottom CTA — S1 & S2; stays visible but disabled once the deposit is under review */}
       {cta ? (
         <footer className="scr-broker-footer">
           <Button
             variant="primary"
             size="medium"
             fullWidth
-            // ref: while accountStatus='submitted' the CTA renders in the DS
-            // disabled style (grey #E4E4E4 bg / #7C7C7C text) — can't resubmit
-            // an account that's already under review.
-            disabled={accountStatus === 'submitted'}
+            // ref: while accountStatus='submitted' or depositStatus='submitted' the CTA
+            // renders in the DS disabled style (grey #E4E4E4 bg / #7C7C7C text) — can't
+            // resubmit an account, or a deposit, that's already under review.
+            disabled={accountStatus === 'submitted' || depositStatus === 'submitted'}
             iconRight={<Icon name="chevron-right" size={20} />}
             onClick={() => openModal(cta.modal)}
           >
@@ -544,7 +651,7 @@ export default function BrokerDetail({
         </footer>
       ) : null}
 
-      {/* Submit-account sheet (2 inputs; 1-input resubmit when verification failed) */}
+      {/* Submit-account sheet — the inputs the broker asks for (email, user ID, or both) */}
       <BottomSheet open={modal === 'submit-account'} onClose={() => setModal(null)} className="scr-broker-sheet">
         <div className="scr-broker-sheet-inner" onFocus={scrollFocusedIntoView}>
           <div className="scr-broker-sheet-content">
@@ -556,26 +663,32 @@ export default function BrokerDetail({
                     <Glyph name="close" size={24} />
                   </button>
                 </div>
-                <p className="scr-broker-sheet-desc">please send us the email you used to register with your broker</p>
+                <p className="scr-broker-sheet-desc">
+                  {needEmail
+                    ? 'please send us the email you used to register with your broker'
+                    : 'please send us the user ID of the account you registered with your broker'}
+                </p>
               </div>
               <hr className="scr-broker-sheet-divider" />
             </div>
 
             <div className="scr-broker-fields">
-              <Input
-                label="Email address"
-                value={email}
-                onChange={setEmail}
-                placeholder="enter your email address"
-                error={fieldError.email}
-              />
-              {!resubmit ? (
+              {needEmail ? (
                 <Input
-                  label="user ID"
+                  value={email}
+                  onChange={(v) => { setEmail(v); setFieldError((e) => ({ ...e, email: undefined })); }}
+                  placeholder="Enter your Email address"
+                  error={fieldError.email}
+                  onSubmit={submitAccount}
+                />
+              ) : null}
+              {needUserId ? (
+                <Input
                   value={userId}
-                  onChange={setUserId}
-                  placeholder="enter your user ID"
+                  onChange={(v) => { setUserId(v); setFieldError((e) => ({ ...e, userId: undefined })); }}
+                  placeholder="Enter your user ID"
                   error={fieldError.userId}
+                  onSubmit={submitAccount}
                 />
               ) : null}
               {netError ? <Notification variant="error" title={netError} onClose={() => setNetError('')} /> : null}
@@ -584,7 +697,9 @@ export default function BrokerDetail({
 
           {/* Sticky within the sheet's own scroller, same as the page CTA
               — unreachable-without-scrolling was the same bug here once the
-              keyboard clamp shrinks the sheet. */}
+              keyboard clamp shrinks the sheet. Hidden while a field has focus
+              (index.css `body.is-typing footer`), else it sits on top of the
+              input being typed into. */}
           <footer className="scr-broker-sheet-footer">
             <Button
               variant="primary"

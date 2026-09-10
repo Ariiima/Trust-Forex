@@ -1,0 +1,539 @@
+/* TrustForex Cashback — common layout and components
+   Soft scroll: native scrolling with guided chapter and card transitions; one screen
+   is still one viewport. The .snap class selects this layout, not browser scroll snapping.
+   Colour flow (founder brief 2026-09-05, supersedes the two-dark-screens cap of 09-03): blue and
+   white in alternation — solid blue (#0C2E7B, the v5 halo grounds) on hero, chapter 1, mechanics
+   02 and 04 and the final; white with outlined panels between them; and two white-to-blue
+   gradients (meaning, FAQ) that hand off into the next blue screen. Panels on blue are glass. */
+@import url('../shared/fonts/inter.css');
+@import url('../shared/scale.css?v=869ac7b1');
+
+:root{
+  /* ---- Primary blue, lifted verbatim from the Mini App's design tokens ----------
+     src/design-system/tokens.css. The site and the app are now the same blue; if the
+     app's ramp moves, these move with it. */
+  --p-950:#033AB8;--p-900:#144CCD;--p-pressed:#002D94;--p-800:#2C5ED2;--p-700:#4370D7;
+  --p-600:#5B82DC;--p-500:#7294E1;--p-400:#89A5E6;--p-300:#A1B7EB;--p-200:#B8C9F0;
+  --p-100:#D0DBF5;--p-50:#E7EDFA;
+  /* Two steps below the app's darkest. The app never needs them — it has no full-screen
+     dark ground — so they are #144CCD carried down, not a separate navy. */
+  --p-deep:#09225C;--p-abyss:#06173E;
+  /* The same ramp as RGB triplets, so the grounds can take an alpha off it. */
+  --rgb-950:3,58,184;--rgb-900:20,76,205;--rgb-pressed:0,45,148;--rgb-800:44,94,210;
+  --rgb-700:67,112,215;--rgb-600:91,130,220;--rgb-500:114,148,225;--rgb-400:137,165,230;
+  --rgb-300:161,183,235;--rgb-200:184,201,240;--rgb-100:208,219,245;--rgb-50:231,237,250;
+  --rgb-deep:9,34,92;--rgb-abyss:6,23,62;--rgb-white:255,255,255;
+
+  /* ---- Roles ------------------------------------------------------------------- */
+  --paper:#F4F5F8;--soft:#EEF1F6;--ink:#12141A;--body:#454D5C;--muted:#646E7E;
+  --line:#DFE2EA;--line-strong:#C3C9D6;
+  --navy:var(--p-deep);--navy-2:var(--p-pressed);
+  --accent:var(--p-900);--accent-deep:var(--p-950);--accent-soft:var(--p-50);
+  --navy-line:rgba(255,255,255,.14);--navy-soft:rgba(255,255,255,.06);--navy-muted:#B8C9F0;
+  /* ---- State colours, from the brand palette (founder, 2026-09-05): each with its pale
+     companion, which is what a two-tone icon's disc is made of. Green = success only,
+     red = risk only (BRAND); yellow = pending; the info blue is unused so far. */
+  --success:#48D48A;--success-bg:#E9F9F1;--danger:#FF334C;--danger-bg:#FFEFF1;
+  --warning:#FFC300;--warning-bg:#FFFBEF;--info:#0099FF;--info-bg:#EBF7FF;
+  --pend:var(--warning-bg);--pend-ink:#8A6A00;   /* the ink is darker than #FFC300 so the tag's text passes on its pale ground */
+  --blue:#0C2E7B;--rgb-blue:12,46,123;--rgb-shadow:4,8,26;
+  --radius:var(--radius-card);--wrap:var(--content-width);--nav-h:56px;--ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+html{-webkit-text-size-adjust:100%;font-family:var(--sans)}
+/* Inter everywhere, as the wireframe has it. Tabular figures because the monospace that
+   used to align the log columns and the dashboard rows is gone. */
+body{margin:0;background:#fff;color:var(--ink);font:var(--weight-body) var(--text-body)/var(--leading-body) var(--sans);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+img,svg{display:block;max-width:100%}
+.wrap{width:100%;max-width:var(--wrap);margin:auto;padding:0 var(--content-gutter)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- the deck ---------- */
+/* the document is the scroller — not #deck — so the keyboard, find-in-page, hash links and scroll
+   restoration all work without a line of JS (a nested scroller gets none of them until clicked) */
+html{overflow-x:hidden;overscroll-behavior:none}
+.screen{position:relative;min-height:100dvh;display:flex;flex-direction:column;justify-content:center;
+        padding:calc(var(--nav-h) + 28px) 0 40px}
+/* A sticky section's offsetTop and rect move with the scroll; main.js lays a zero-height sibling
+   before each screen as the stable navigation target. */
+.scroll-anchor{height:0}
+/* The hold (founder, 2026-09-08): a screen in a .hold box pins at the top and stays for --hold of
+   scroll, then releases and the page carries on. Native sticky inside a box that is --hold taller
+   than the screen (the ::after is the gap) — nothing captures the wheel, momentum is the touchpad's
+   own, scrolling back reverses it at once. The four mechanics hold the full --hold, the two chapters
+   a short beat, every other screen scrolls plainly (his rulings, same day). */
+:root{--hold:30vh}
+.hold.beat{--hold:12vh}
+html.snap .hold>.screen{position:sticky;top:0}
+html.snap .hold::after{content:'';display:block;height:var(--hold)}
+/* the four cards pin inside .stack (under the next card), not inside their own box — the wrapper
+   gives up its box and only its ::after, the gap that is each card's hold, stays in the stack's flow */
+.stack>.hold{display:contents}
+/* Scroll-driven animations read a sticky screen's FLOW position, which keeps moving while the screen
+   visibly stands still — so a timeline named on the screen runs through the hold. Named on the .hold
+   box instead, exit 0% is the release and exit 100% the screen gone: "as the screen leaves" stays true.
+   Plain screens name their own (style.css). */
+.hold{view-timeline-name:--ground}
+html:not(.snap) .screen{min-height:auto;padding:var(--section-space) 0}
+html:not(.snap) #hero,html:not(.snap) #final{min-height:100svh}
+
+/* ---------- type ---------- */
+.display{font-size:var(--text-display);line-height:var(--leading-display);letter-spacing:var(--tracking-display);font-weight:var(--weight-display);color:var(--navy);margin:0 0 26px;text-wrap:balance}
+.h2,.mech-copy h3{font-size:var(--text-title);line-height:var(--leading-title);letter-spacing:var(--tracking-title);font-weight:var(--weight-title);color:var(--navy);margin:0 0 21px;text-wrap:balance}
+.mech-copy h3{font-size:var(--text-title-mech);line-height:var(--leading-mech);letter-spacing:var(--tracking-mech);margin:0 0 24px;max-width:600px}
+#activation .h2{font-size:var(--text-title-compact)}
+#final .display{font-size:var(--text-display-final)}
+.lede,.copy,.mech-copy p{font-size:var(--text-copy);line-height:var(--leading-body);font-weight:var(--weight-body);color:var(--body);max-width:600px;margin:0}
+.lede{font-size:var(--text-lede);max-width:790px;margin:0 auto 34px}
+.mech-copy p{font-size:var(--text-mech-copy);max-width:590px}
+.label{font:var(--weight-label) var(--text-small)/1 var(--sans);letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.page-number{font:var(--weight-heavy) var(--text-meta)/var(--leading-ui) var(--sans);letter-spacing:.1em;color:var(--accent);display:block;margin-bottom:20px}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:var(--control-height);gap:9px;padding:8px 18px;border:1px solid var(--navy);border-radius:999px;font-weight:var(--weight-strong);font-size:var(--text-panel-title);color:var(--navy);background:#fff;transition:background-color .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease)}
+.btn:hover{background:var(--navy);color:#fff}
+.btn-solid{background:var(--navy);color:#fff}
+.btn-solid:hover{background:var(--accent);border-color:var(--accent)}
+.on-dark .btn{border-color:rgba(255,255,255,.5);color:#fff;background:transparent}
+.on-dark .btn:hover{background:#fff;color:var(--navy)}
+.on-dark .btn-solid{background:#fff;color:var(--navy);border-color:#fff}
+.on-dark .btn-solid:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* ---------- nav: a slim frosted strip, the iPad Pro register (founder brief 2026-09-05) ----------
+   One continuous glass bar, 56px (was 64, founder 2026-09-10: "a little smaller"), saturate(180%) blur(20px), a hairline under it, plain text
+   links — no pills, no borders. Dark-tinted on the blue screens, white-tinted on paper. */
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;height:var(--nav-h);display:flex;align-items:center;
+     background:rgba(var(--rgb-shadow),.36);border-bottom:1px solid rgba(255,255,255,.12);
+     backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+     transition:background-color .4s var(--ease),border-color .4s var(--ease)}
+.nav-inner{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px}
+.brand{display:inline-flex;flex-direction:column;align-items:center;gap:4px;color:#fff;justify-self:start;transition:color .4s var(--ease)}
+/* the brand lockup he sent (2026-09-05): the TRUST wordmark with its T-shield over the spaced FOREX,
+   both drawn in currentColor — white on the blue screens, navy on paper */
+.brand svg{display:block;fill:currentColor}
+.brand-word{width:78px;height:17px}
+.brand-sub{width:74px;height:7.2px}
+.navlinks{display:flex;gap:28px;justify-self:center}
+.navlinks a{font-size:var(--text-ui);font-weight:var(--weight-body);letter-spacing:-.005em;color:rgba(255,255,255,.72);transition:color .3s var(--ease)}
+.navlinks a:hover{color:#fff}
+.navlinks a[aria-current]{color:#fff;font-weight:var(--weight-label)}   /* one step over the others, not the wireframe's 800 (founder, 2026-09-08: "just one step") */
+.nav-action{justify-self:end}
+.pill{display:inline-flex;align-items:center;min-height:var(--control-height);padding:8px 18px;border-radius:999px;font-size:var(--text-panel-title);font-weight:var(--weight-label);color:var(--navy);background:#fff;
+      transition:background-color .3s var(--ease),color .3s var(--ease)}
+.pill:hover{background:var(--p-100)}
+/* off the blue the strip sits on paper and flips to ink */
+.nav.is-paper{background:rgba(255,255,255,.72);border-bottom-color:rgba(var(--rgb-shadow),.08)}
+.nav.is-paper .brand{color:var(--navy)}
+.nav.is-paper .navlinks a{color:var(--body)}
+.nav.is-paper .navlinks a:hover,.nav.is-paper .navlinks a[aria-current]{color:var(--navy)}
+.nav.is-paper .pill{background:var(--navy);color:#fff}
+.nav.is-paper .pill:hover{background:var(--accent)}
+
+/* ---------- the dot rail: the affordance that replaces the scrollbar ---------- */
+#rail{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:45;display:flex;flex-direction:column;gap:11px}
+html:not(.snap) #rail{display:none}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--line-strong);transition:background-color .3s var(--ease),transform .3s var(--ease)}
+.dot:hover{transform:scale(1.35)}
+.dot[aria-current=true]{background:var(--accent);transform:scale(1.35)}
+html.dark-now .dot{background:rgba(255,255,255,.28)}
+html.dark-now .dot[aria-current=true]{background:#fff}
+
+/* ---------- reveals: once, on entry, never on hover (founder ruling) ---------- */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .62s var(--ease),transform .62s var(--ease);transition-delay:calc(var(--i,0) * 90ms + 60ms)}
+.screen.in .rv{opacity:1;transform:none}
+/* the mask is the word's own box, and at line-height .98 that box ends above the descenders —
+   the y of "already" was shaved off (founder, 2026-09-05). Pad the mask below the baseline and
+   pull the same amount back off the margin, so the clip box grows but the layout does not; the
+   rest state then has to start further down (125%) to still clear the taller box. */
+.words .w{display:inline-block;overflow:hidden;vertical-align:bottom;padding:0 .08em .18em 0;margin:0 -.08em -.18em 0}   /* the right pad: the wireframe's -.067em tracking pushes the last glyph's ink past its box (cut 'e', 2026-09-07) */
+.words .w i{display:inline-block;font-style:normal;transform:translateY(125%);transition:transform .72s var(--ease);transition-delay:calc(var(--i) * 52ms + 80ms)}
+.screen.in .words .w i{transform:none}
+/* icons are Iconly's own Lottie files (ico/*.json, founder 2026-09-08), played by lottie_light in main.js:
+   they rest on their last frame, play once on entry and once per hover. Colour is still the page's —
+   the player writes its own stroke/fill attributes, so the paths are told to take the .ico's. */
+.ico{display:block;width:var(--icon-size);height:var(--icon-size);flex:none;stroke:var(--accent);fill:none}
+.ico svg [stroke]{stroke:inherit}
+.ico svg.fb:not(:last-child){display:none}   /* the inline stand-in steps aside once the player has appended the Iconly file */
+html.reduce .rv,html.reduce .words .w i{opacity:1;transform:none;transition:none}
+
+/* ---------- 1 · HERO: the ray field, glass, and the log that never moves ---------- */
+#hero{background:var(--blue);color:#fff;--grad:var(--grad-light);overflow:hidden}
+.hero-center{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;max-width:960px}
+#hero .display{max-width:960px;margin:0 auto 26px}
+#hero .lede{max-width:790px;margin:0 auto 34px;color:rgba(255,255,255,.78)}
+.rayfield{position:absolute;inset:0;z-index:0}
+.rayfield img{width:100%;height:100%;object-fit:cover}
+/* ponytail: the wash is one radial gradient over the still, so the blue stays one hue at any size */
+/* The light now comes from the image, not from CSS: a second wash on top fights a halo
+   and re-introduces the directional look. What is left is only the bottom scrim that keeps
+   the copy legible where the field is brightest. */
+.rayfield::after{content:'';position:absolute;inset:0;background:
+  linear-gradient(180deg,rgba(var(--rgb-deep),0) 55%,rgba(var(--rgb-deep),.72) 100%)}
+/* ponytail: the reference glow is a gradient mesh, and CSS makes one natively — exact colours
+   (no violet or green leaking out of an image model), crisp at any size, no image request, and
+   tuned in seconds rather than a 60s round trip. Kept alongside the generated fields, not
+   instead of them, until one is chosen. */
+/* --- Recreations of the founder's three reference images, in CSS rather than generated ---
+   No blur() and no negative inset: a radial-gradient is already smooth, and a negative inset
+   maps the percentage positions to a box bigger than the one you can see. Layers paint first
+   on top, so the grid is listed first and the deep falloff last. */
+
+/* MESH — the loose read of the references (kept for comparison) */
+.rayfield.mesh{background:#06173E}
+.rayfield.mesh img{display:none}
+.rayfield.mesh::before{content:'';position:absolute;inset:0;background:
+  radial-gradient(58% 68% at 16% 10%,rgba(var(--rgb-100),.58),transparent 63%),
+  radial-gradient(50% 58% at 52% -12%,rgba(var(--rgb-400),.40),transparent 60%),
+  radial-gradient(72% 82% at -6% 88%,rgba(var(--rgb-900),.46),transparent 66%),
+  radial-gradient(46% 56% at 96% 102%,rgba(var(--rgb-700),.26),transparent 66%)}
+
+/* ORBIT — a direct recreation of reference #4's screen ground: a saturated royal-blue body
+   brightest high and left of centre, a cool pale lift at the very top edge, a faint grid in
+   the mid-tones, and a hard fall to near-black across the bottom and the right edge. */
+.rayfield.orbit{background:#06173E}
+.rayfield.orbit img{display:none}
+.rayfield.orbit::before{content:'';position:absolute;inset:0;background:
+  repeating-linear-gradient(0deg,rgba(var(--rgb-300),.045) 0 1px,transparent 1px 62px),
+  repeating-linear-gradient(90deg,rgba(var(--rgb-300),.045) 0 1px,transparent 1px 62px),
+  radial-gradient(42% 30% at 17% -6%,rgba(var(--rgb-200),.50),transparent 72%),
+  radial-gradient(78% 68% at 36% -2%,rgba(var(--rgb-900),.92),rgba(var(--rgb-pressed),.50) 46%,transparent 79%),
+  linear-gradient(180deg,transparent 26%,rgba(var(--rgb-abyss),.88) 94%),
+  linear-gradient(270deg,rgba(var(--rgb-abyss),.72),transparent 42%)}
+
+/* GROUND-A — reference #5's card: near-black with one dark blue mass left of centre and a
+   softer, brighter bloom low and slightly left. Everything past the middle stays black. */
+.ground-a{background:#040409;position:relative;overflow:hidden}
+.ground-a::before{content:'';position:absolute;inset:0;background:
+  radial-gradient(36% 46% at 30% 42%,rgba(var(--rgb-900),.95),transparent 70%),
+  radial-gradient(32% 36% at 24% 76%,rgba(var(--rgb-400),.78),transparent 68%),
+  radial-gradient(28% 32% at 46% 18%,rgba(var(--rgb-pressed),.85),transparent 70%),
+  radial-gradient(64% 74% at 52% 50%,transparent 44%,rgba(4,4,9,.90) 90%)}
+
+/* GROUND-B — reference #6's wide card: black on the left, a broad diffuse wash sweeping
+   through the centre to the right, with paler wisps riding on top of it. */
+.ground-b{background:#07070C;position:relative;overflow:hidden}
+.ground-b::before{content:'';position:absolute;inset:0;background:
+  radial-gradient(28% 42% at 60% 34%,rgba(var(--rgb-200),.66),transparent 66%),
+  radial-gradient(42% 54% at 52% 62%,rgba(var(--rgb-700),.92),transparent 70%),
+  radial-gradient(48% 62% at 80% 46%,rgba(var(--rgb-800),.86),transparent 72%),
+  linear-gradient(90deg,rgba(7,7,12,.96) 10%,transparent 44%)}
+
+.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:52px;align-items:center}
+#hero .display{color:#fff}
+.ul{position:relative;white-space:nowrap}
+.ul::after{content:'';position:absolute;left:0;right:0;bottom:.06em;height:2px;background:rgba(255,255,255,.42);transform:scaleX(0);transform-origin:left;transition:transform .8s var(--ease) .75s}
+.screen.in .ul::after{transform:none}
+
+/* the log: glass panel on the field, the Cashback column arriving beside it */
+/* Smoked glass, not frosted-white. A light tint takes its brightness from whatever is behind
+   it, so on the brand-blue field the trade rows lost their contrast. A dark tint keeps the
+   panel's interior dark on any ground while staying transparent enough to read as glass. */
+.log{border-radius:var(--radius);padding:20px 22px;color:#fff;
+     background:rgba(5,12,36,.42);border:1px solid rgba(255,255,255,.18);
+     backdrop-filter:blur(20px) saturate(1.1);-webkit-backdrop-filter:blur(20px) saturate(1.1);
+     box-shadow:0 26px 60px -22px rgba(var(--rgb-abyss),.7)}
+.log-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.14)}
+.log-title b{display:block;font-size:var(--text-ui);font-weight:var(--weight-strong);letter-spacing:-.01em}
+.log-title{font:var(--weight-label) var(--text-small)/var(--leading-ui) var(--sans);letter-spacing:.06em;color:rgba(255,255,255,.6)}
+.switch{display:inline-flex;align-items:center;gap:9px;font-size:var(--text-small);font-weight:var(--weight-label);color:rgba(255,255,255,.82)}
+.sw-track{width:34px;height:19px;border-radius:999px;background:rgba(255,255,255,.2);position:relative;transition:background-color .5s var(--ease) .5s}
+.sw-knob{position:absolute;top:2.5px;left:2.5px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .5s var(--ease) .5s}
+.screen.in .switch .sw-track{background:var(--accent)}
+.screen.in .switch .sw-knob{transform:translateX(15px)}
+.sw-state{font:var(--weight-label) var(--text-small)/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);width:22px}
+.log-row{display:grid;grid-template-columns:74px 52px 82px 1fr 108px;align-items:center;gap:10px;padding:9.5px 0;font-size:var(--text-ui);border-bottom:1px solid rgba(255,255,255,.07)}
+.log-row.head{font:var(--weight-label) var(--text-small)/1 var(--sans);letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.45);padding:12px 0 9px;border-bottom-color:rgba(255,255,255,.12)}
+.log-row .num{font-family:var(--sans);font-size:var(--text-ui);color:rgba(255,255,255,.9)}
+.log-row .side{color:rgba(255,255,255,.62)}
+.status{display:inline-flex;align-items:center;gap:7px;font-size:var(--text-small);color:rgba(255,255,255,.55)}
+.status i{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.4)}
+.credit-head,.credit{text-align:right;font-family:var(--sans);font-size:var(--text-ui);font-weight:var(--weight-label);color:#fff}
+/* the one thing that moves: the record beside the unchanged trades writes itself in */
+.credit-head,.credit{opacity:0;transform:translateX(14px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.log-row:nth-child(1) .credit-head{transition-delay:.66s}
+.log-row:nth-child(2) .credit{transition-delay:.78s}
+.log-row:nth-child(3) .credit{transition-delay:.87s}
+.log-row:nth-child(4) .credit{transition-delay:.96s}
+.log-row:nth-child(5) .credit{transition-delay:1.05s}
+.log-row:nth-child(6) .credit{transition-delay:1.14s}
+.screen.in .credit-head,.screen.in .credit{opacity:1;transform:none}
+.log-foot{display:flex;justify-content:space-between;gap:14px;padding-top:13px;font-size:var(--text-small);color:rgba(255,255,255,.5)}
+.log-note{font-family:var(--sans);letter-spacing:.04em}
+
+/* ---------- the fact strip — the wireframe's marquee, at the foot of the hero screen ---------- */
+#hero{padding-bottom:98px}
+.fact-strip{position:absolute;left:0;right:0;bottom:0;z-index:1;border-top:1px solid rgba(255,255,255,.16);overflow:hidden}   /* on the blue, not a white bar (founder, 2026-09-05) */
+.fact-marquee{display:flex;width:max-content;animation:fact-scroll 34s linear infinite}
+.facts{display:flex;margin:0;padding:0;list-style:none}
+.facts li{padding:20px 44px;font:var(--weight-body) var(--text-label)/1 var(--sans);letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,.72);border-right:1px solid rgba(255,255,255,.16);white-space:nowrap}
+@keyframes fact-scroll{to{transform:translateX(-50%)}}
+html.reduce .fact-marquee{animation:none}
+
+/* ---------- 3 · MEANING ---------- */
+/* meaning: the white chart in the blue card (founder refs 2026-09-05) — see .block below */
+.grid2{display:grid;grid-template-columns:.88fr 1.12fr;gap:78px;align-items:center}
+/* the wireframe's header bar: one full-width grey band over the two records */
+
+/* ---------- 4 · CHAPTER 1 — dark screen one of two ---------- */
+.chapter{background:var(--blue);color:#fff;--grad:var(--grad-light);text-align:center;overflow:hidden}
+.chapter .wrap{position:relative;z-index:1;overflow:clip}
+.chapter .h2{color:#fff;font-size:var(--text-chapter);line-height:var(--leading-chapter);letter-spacing:var(--tracking-mech);max-width:940px;margin:0 auto;padding:.1em 0 .16em}   /* at line-height 1 the glyphs hang outside the box, and .wrap clips — the pad keeps descenders inside (cut g/p/y, 2026-09-07) */
+.chapter-2 .h2{font-size:var(--text-chapter-compact)}
+.chapter-2{background:linear-gradient(180deg,#fff,var(--p-100));color:var(--navy);--grad:var(--grad-blue)}
+/* the chapter sentence grows as its screen leaves — inside → out (founder, 2026-09-05). A native
+   scroll-driven animation: the section's own exit through the top edge is the timeline, 1× when it
+   starts to leave, 1.8× when it is gone. No JS; a browser without view timelines scrolls it out at
+   size. Desktop snap modes only — cb6's pinned runway has its own chapter grammar. */
+html.snap .chapter .h2{animation:chapter-out linear both;animation-timeline:--ground;animation-range:exit 0% exit 100%}
+@keyframes chapter-out{from{transform:scale(1)}to{transform:scale(1.8)}}
+html.reduce .chapter .h2{animation:none}
+.chapter-2 .h2{color:var(--navy)}
+
+/* ---------- 5–8 · MECHANICS ---------- */
+.mech{background:#fff}
+.mech-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--content-gap);align-items:center;position:relative}
+.mech-copy p{margin-bottom:0}
+.mech-grid .panel{padding:0;border-radius:22px}
+.split-source{display:block;text-align:center;font:var(--weight-heavy) var(--text-panel-title)/var(--leading-ui) var(--sans);letter-spacing:0;color:var(--navy);background:var(--soft);padding:18px;border-radius:18px;margin-bottom:28px;position:relative}
+.split-source::after{content:'';position:absolute;left:50%;top:100%;width:1px;height:28px;background:var(--line)}
+.split-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;position:relative}
+.split-grid::before{content:'';position:absolute;left:50%;top:-1px;width:70%;max-width:340px;height:1px;background:var(--line);transform:translateX(-50%)}
+.split-card{min-height:190px;border:1px solid var(--line);border-radius:20px;padding:24px;background:#fff;display:flex;flex-direction:column;gap:14px}
+.split-card.dark{background:var(--blue);border-color:var(--blue);color:#fff}
+.split-card h3{margin:0;font-size:var(--text-card-title);line-height:var(--leading-card);font-weight:var(--weight-strong);letter-spacing:var(--tracking-card);color:var(--navy)}
+.split-card.dark h3{color:#fff}
+.split-card p{margin:0;font-size:var(--text-ui);line-height:var(--leading-body);color:var(--muted)}
+.split-card.dark p{color:var(--navy-muted)}
+.split-panel{padding:22px}
+/* the two record cards: icon on the heading row, so both headings stay on one line */
+.split-head{display:flex;align-items:center;gap:12px}
+.split-head .ico{order:-1;width:var(--icon-size);height:var(--icon-size)}   /* the icon leads the title (founder, 2026-09-08) */
+.split-head h3{margin:0}
+.panel{border:1px solid var(--line);border-radius:var(--radius);background:#fff;padding:var(--card-space);box-shadow:0 20px 44px -30px rgba(var(--rgb-abyss),.34)}
+.p-title{font:var(--weight-strong) var(--text-ui)/1.2 var(--sans);color:var(--muted);margin:0 0 16px}
+.p-note{margin:12px 0 0;font:var(--weight-body) var(--text-label)/var(--leading-ui) var(--sans);letter-spacing:.05em;color:var(--muted)}
+.p-broker{display:grid;grid-template-columns:.82fr 1.18fr;gap:0}
+.p-broker>div{padding:20px}
+.p-broker>div+div{border-left:1px solid var(--line)}
+.broker-option{display:flex;align-items:center;gap:11px;min-height:54px;padding:10px;border:1px solid var(--line);border-radius:12px;margin:0;font-size:var(--text-small);font-weight:var(--weight-body);color:var(--navy)}
+.broker-option+.broker-option{margin-top:8px}
+.broker-option.is-selected{border-color:var(--accent);background:var(--accent-soft)}
+.broker-mark{width:30px;height:30px;padding:4px;box-sizing:border-box;border-radius:8px;background:#fff;object-fit:contain;flex:none;box-shadow:0 4px 12px -2px var(--glow,rgba(10,27,97,.4))}
+.chk{margin-left:auto;width:15px;height:15px;border-radius:50%;background:var(--accent);position:relative}
+.chk::after{content:'';position:absolute;left:4px;top:5px;width:6px;height:3px;border-left:1.6px solid #fff;border-bottom:1.6px solid #fff;transform:rotate(-45deg)}
+.route-option{display:flex;align-items:center;gap:11px;height:66px;margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:12px;line-height:1.3;white-space:nowrap;font-size:var(--text-small);color:var(--body)}
+#m2 .panel{padding:20px}
+/* four separate tiles, not the wireframe's one bordered grid (founder, 2026-09-07) */
+.ladder{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.rate{min-height:112px;padding:20px;text-align:left;border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;justify-content:space-between}
+.rate.is{border-color:var(--accent);background:var(--accent-soft)}
+.rate small{display:block;font:var(--weight-body) var(--text-micro)/var(--leading-ui) var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin:0}
+.rate b{display:block;font-size:var(--text-number);font-weight:var(--weight-title);letter-spacing:-.03em;color:var(--navy)}
+.factors{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:18px}
+.factor{min-height:156px;border:1px solid var(--line);border-radius:16px;padding:20px}
+.factor h4{margin:16px 0 0;font-size:var(--text-panel-title);line-height:1.2;font-weight:var(--weight-strong);letter-spacing:-.015em;color:var(--navy)}
+.factor p{margin:10px 0 0;font-size:var(--text-small);line-height:var(--leading-body);color:var(--muted)}
+/* 04 · the dashboard, with cb3's week strip and credits arriving as notifications */
+.dash-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:18px 18px 10px;margin:0}
+.dash-card{min-height:112px;border-radius:14px;padding:18px;background:var(--accent);color:#fff}
+.dash-card.ghost{background:var(--soft);color:var(--navy)}
+.dash-card h4{margin:0;font:var(--weight-label) var(--text-panel-title)/1.2 var(--sans);letter-spacing:.13em;text-transform:uppercase;opacity:.72}
+.dash-card strong{display:block;margin:12px 0 0;font-size:var(--text-stat);line-height:1;font-weight:var(--weight-title);letter-spacing:var(--tracking-stat)}
+.dash-card p{margin:8px 0 0;font-size:var(--text-small);opacity:.72}
+.dash-rows{padding:0 18px 18px}
+.dash-row{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:70px;padding:15px 4px;font-size:var(--text-body);color:var(--body);border-top:1px solid var(--line)}
+.dash-row b{font-family:var(--sans);font-size:var(--text-ui);font-weight:var(--weight-label);color:var(--navy)}
+
+/* ---------- the blue block: mechanics 02 and 04 (founder refs 2026-09-05) ----------
+   The reference's second format: a white page with one rounded blue block inset in it, the copy
+   in white inside the block and the data as a WHITE card with dark figures — strong contrast both
+   ways — sitting in a frosted rim. The full-bleed blue stays for the hero, chapter 1 and the final. */
+.screen-blue{background:#fff}
+.block{position:relative;overflow:hidden;border-radius:32px;background:var(--blue);color:#fff;--grad:var(--grad-light);padding:var(--block-space) var(--content-gutter)}   /* no drop shadow (founder, 2026-09-05) */
+.block .mech-grid,.block .grid2{position:relative;z-index:1}
+/* .fill — the block fills its screen: 20px off the nav, the edges and the bottom, the content
+   centred inside (founder ref 2026-09-05). The four mechanics and the calculator; Meaning keeps
+   the inset card. */
+.screen-blue.fill{padding:calc(var(--nav-h) + var(--frame-inset)) 0 var(--frame-inset)}
+.screen-blue.fill .wrap{max-width:none;padding:0 var(--frame-inset)}
+.fill .block{min-height:calc(100dvh - var(--nav-h) - 2 * var(--frame-inset));display:flex;align-items:center;padding:var(--block-space) var(--content-gutter)}
+.fill .block > :not(.rayfield){position:relative;z-index:1;width:100%;max-width:calc(var(--wrap) - 2 * var(--content-gutter));margin:0 auto}
+html:not(.snap) .fill .block{min-height:auto}
+/* the four mechanics stack (founder, 2026-09-05): each stays put while the next slides over it.
+   Sticky pins the screen; the incoming block arrives at 0.92 and grows to full size over its own
+   entry, so the one behind shows at the sides while it comes; the one behind dims as the next
+   screen enters (its timeline is hoisted to the deck so a sibling can read it). Desktop snap
+   modes only; a browser without view timelines still stacks, just without the motion. */
+/* .stack wraps the four: a sticky screen only sticks inside its parent, so 01–03 pin under the
+   next card and the whole stack is released when the calculator scrolls it away — 04 never pins
+   under anything, so nothing of it can show through a gutter later (it did, 2026-09-05). */
+/* the sliding screens carry no ground of their own, or their white would wipe the pinned block
+   as a hard band — only the block slides over the block; the page's white shows in the gutters */
+html.snap .mech.fill{background:transparent}
+#deck{timeline-scope:--m1,--m2,--m3,--m4}
+#m1{view-timeline-name:--m1}#m2{view-timeline-name:--m2}#m3{view-timeline-name:--m3}#m4{view-timeline-name:--m4}
+/* Frame budget (2026-09-07, `_qa/perf.mjs`): the pinned stack was the page's one real cost — three
+   viewport-sized blocks composited over each other every scrolled frame. Three cuts, each measured:
+     · the block clips by clip-path, not overflow:hidden — a rounded overflow clip over composited
+       children needs a mask redrawn per frame, a clip-path shape is applied by the compositor;
+     · the pinned block is promoted up front (will-change), so its layer is not rebuilt mid-move;
+     · a card that the next one has fully covered turns invisible (visibility, the last 1% of the
+       cover's entry — same size, same spot, nothing to see), so at most two blocks composite.
+   Nothing focusable lives in the cards, so hiding a covered one strands no keyboard user. */
+.mech .block{overflow:visible;clip-path:inset(0 round 32px)}
+html.snap .mech.fill .block{will-change:transform}
+html.snap #m1 .block{animation:stack-in linear both,cover step-end both;animation-timeline:--m1,--m2;animation-range:entry,entry 99% entry 100%}
+html.snap #m2 .block{animation:stack-in linear both,cover step-end both;animation-timeline:--m2,--m3;animation-range:entry,entry 99% entry 100%}
+html.snap #m3 .block{animation:stack-in linear both,cover step-end both;animation-timeline:--m3,--m4;animation-range:entry,entry 99% entry 100%}
+html.snap #m4 .block{animation:stack-in linear both;animation-timeline:--m4;animation-range:entry}
+@keyframes stack-in{from{transform:scale(.92)}to{transform:scale(1)}}
+@keyframes cover{to{visibility:hidden}}
+/* the block behind dims through a black veil fading in, not filter:brightness() — opacity on its
+   own layer is compositor work, a filter re-rasterises the whole card every scrolled frame */
+.mech .block::after{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;background:#000;opacity:0}
+html.snap #m1 .block::after{animation:stack-back linear both;animation-timeline:--m2;animation-range:entry}
+html.snap #m2 .block::after{animation:stack-back linear both;animation-timeline:--m3;animation-range:entry}
+html.snap #m3 .block::after{animation:stack-back linear both;animation-timeline:--m4;animation-range:entry}
+@keyframes stack-back{to{opacity:.45}}
+html.reduce .mech.fill .block,html.reduce .mech .block::after{animation:none}
+.block .mech-copy h3,.block .h2{color:#fff}
+.block .mech-copy p,.block .copy{color:rgba(255,255,255,.76)}
+.block .page-number{color:var(--p-200)}
+.block .p-title{color:var(--muted)}
+/* ponytail: the glass rim is two ring shadows, not a wrapper with backdrop-filter — the ground
+   behind it is already blurred, so there is nothing for a real backdrop blur to do */
+.block .panel{border-color:transparent;box-shadow:0 0 0 10px rgba(255,255,255,.10),0 0 0 11px rgba(255,255,255,.20),0 34px 70px -30px rgba(var(--rgb-shadow),.8)}
+
+/* ---------- 9 · CALCULATOR ---------- */
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--content-gap);align-items:center}
+.calc-grid>div:first-child{max-width:500px}
+#calculator .panel{width:100%;max-width:600px;justify-self:end;padding:22px;border-radius:20px}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.field-level{grid-column:1/-1;border:0;padding:0;margin:0;min-width:0}
+.field label,.field legend{display:block;font:var(--weight-heavy) var(--text-label)/var(--leading-ui) var(--sans);letter-spacing:.075em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;padding:0}
+.field select,.field input{min-height:var(--control-height);min-width:0;width:100%;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font:var(--weight-body) var(--text-body)/var(--leading-ui) var(--sans);color:var(--navy)}
+.level-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.level{min-height:50px;border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;transition:border-color .25s var(--ease),background-color .25s var(--ease)}
+.level b{display:block;font-size:var(--text-small);font-weight:var(--weight-strong);color:var(--navy)}
+.level span{display:block;margin-top:2px;font-size:var(--text-micro);color:var(--muted)}
+.level[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft)}
+.estimate{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-top:18px;padding:18px 20px;border-radius:13px;background:var(--soft)}
+.estimate small{display:block;margin-bottom:2px;font:var(--weight-strong) var(--text-body)/var(--leading-ui) var(--sans);color:var(--muted)}
+.estimate strong{font-size:var(--text-estimate);line-height:1;font-weight:var(--weight-title);letter-spacing:var(--tracking-estimate);color:var(--navy)}
+.estimate strong em{font-style:normal;font-size:var(--text-meta);font-weight:var(--weight-strong);color:var(--muted)}
+.estimate strong.swap{animation:xf .18s var(--ease)}          /* cross-fade, never a count-up */
+@keyframes xf{from{opacity:0}to{opacity:1}}
+html.reduce .estimate strong.swap{animation:none}
+.broker-rules{display:inline-flex;align-items:center;width:max-content;min-height:20px;gap:6px;margin:6px 4px 0 auto;font-size:10.5px;font-weight:var(--weight-label);color:var(--accent)}
+.broker-rules span{font-size:var(--text-small)}
+
+/* ---------- 11 · ACTIVATION ---------- */
+#activation{background:var(--paper)}
+/* ---------- the record layout (founder, 2026-09-10): copy on paper, the content on one blue card ----------
+   Results' "Nothing is removed" is the model; the small blue-card screens and the white step lists now take it.
+   The panel is a grid of equal rows. */
+.record-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(400px,.85fr);gap:16px;align-items:stretch}
+.record-copy{display:flex;flex-direction:column;justify-content:center;padding-right:16px}
+.record-copy .h2{max-width:none}
+.record-copy .btn{margin-top:30px;align-self:flex-start}
+.value-panel{position:relative;min-height:380px;height:100%;margin-left:42px;border-radius:24px;background:var(--blue);color:#fff;display:grid;grid-auto-rows:minmax(0,1fr);overflow:hidden;
+  box-shadow:0 24px 48px -30px rgba(var(--rgb-shadow),.5)}
+.value-panel .rayfield{border-radius:24px}
+.value-row{position:relative;z-index:1;min-width:0;padding:20px 22px;display:grid;grid-template-columns:36px minmax(0,1fr);gap:17px;align-items:center;border-bottom:1px solid rgba(255,255,255,.16)}
+.value-row:last-child{border-bottom:0}
+.value-index{width:34px;height:34px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.35);border-radius:50%;color:rgba(255,255,255,.8);font-size:var(--text-nano);font-weight:var(--weight-strong);letter-spacing:.05em}
+.value-copy{min-width:0}
+.value-copy strong{display:block;font-size:var(--text-body);line-height:1.2;letter-spacing:-.02em}
+.value-copy p{margin:5px 0 0;color:rgba(255,255,255,.72);font-size:var(--text-label);line-height:1.4}
+.path{list-style:none;margin:0;padding:0;width:100%;max-width:560px;justify-self:end;display:grid;gap:0;border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:0 18px 60px rgba(17,19,21,.04)}
+.pstep{display:flex;align-items:center;gap:18px;min-height:88px;padding:18px 22px;background:#fff;border:0;border-top:1px solid var(--line);border-radius:0}
+.pstep:first-child{border-top:0}
+.pstep .ico{width:40px;height:40px}   /* Iconly's Number N Circle — the circle is the icon's own */
+.pstep b{font-size:var(--text-step);line-height:var(--leading-step);font-weight:var(--weight-strong);letter-spacing:-.02em;color:var(--navy)}
+.pstep.last{background:var(--blue);border-color:var(--blue)}
+.pstep.last b{color:#fff}
+.pstep.last .ico{stroke:#fff}
+
+/* ---------- the icons he sent (CASHBACK-NEXT §14) — after .pstep.last .ico, which is the same
+   specificity and used to win by source order, painting the green check white ---------- */
+.ico-warning{stroke:var(--warning);color:var(--warning)}   /* "orange" — the brand has no orange; this is its amber */
+.ico-success,.pstep.last .ico-success{stroke:var(--success);color:var(--success)}
+
+/* ---------- 12 · FAQ ---------- */
+#faq{background:linear-gradient(180deg,#fff 35%,var(--p-50))}
+/* the wireframe's structure exactly (founder, 2026-09-05): one centred column, the heading on top,
+   a rule, then one question per row with the plus at the right; the open one shows a cross */
+.faq-wrap{max-width:900px}
+.faq-list{margin-top:0;border-top:1px solid var(--line)}
+.faq-item{border-bottom:1px solid var(--line)}
+.faq-q{display:flex;width:100%;min-height:70px;justify-content:space-between;align-items:center;gap:24px;padding:20px 0;text-align:left;font-size:var(--text-question);font-weight:var(--weight-strong);letter-spacing:-.01em;color:var(--navy)}
+.plus{width:15px;height:15px;flex:none;position:relative;transition:transform .3s var(--ease)}
+/* one bar drawn twice, the second rotated 90° — identical geometry so neither line rasterises heavier than the other, closed or open */
+.plus::before,.plus::after{content:'';position:absolute;left:0;top:7px;width:15px;height:1px;background:var(--muted)}
+.plus::after{transform:rotate(90deg)}
+.faq-item.open .plus{transform:rotate(45deg)}
+.faq-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .38s var(--ease)}
+.faq-item.open .faq-a{grid-template-rows:1fr}
+.faq-a>div{overflow:hidden}
+.faq-a p{margin:0 0 23px;padding-right:48px;font-size:var(--text-panel-title);line-height:var(--leading-body);color:var(--muted);max-width:770px}
+
+/* ---------- 13 · FINAL — dark screen two of two, footer inside it ---------- */
+#final{background:var(--blue);color:#fff;--grad:var(--grad-light);overflow:hidden;justify-content:space-between;padding-bottom:0}
+#final .rayfield.k{transform:scaleX(-1)}   /* the hero's halo, mirrored: the page opens and closes on the same ground */
+.final-inner{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center;align-items:center}
+#final .display{color:#fff;max-width:900px;margin-bottom:24px}
+#final .lede{color:rgba(255,255,255,.78);text-align:center;max-width:760px;margin:0 auto 30px}
+.footer{position:relative;z-index:1;border-top:1px solid var(--navy-line);padding:36px 0 48px;width:100%}
+.footer-row{display:flex;justify-content:space-between;align-items:center;gap:26px;flex-wrap:wrap;font-size:var(--text-meta);color:rgba(255,255,255,.66)}
+.footer-row nav{display:flex;gap:18px;flex-wrap:wrap}
+.footer-row a:hover{color:#fff}
+.social{display:flex;gap:10px}
+.social a{width:32px;height:32px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--navy-line);transition:background-color .3s var(--ease)}
+.social a:hover{background:rgba(255,255,255,.12)}
+.social svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.6;fill:none}
+
+/* ---------- mobile / no-lock: an ordinary scrolling page ---------- */
+@media (max-width:1023px){
+  .log{padding:16px 18px}
+  /* Side and Status carry nothing the point needs — the point is lots to credit */
+  .log-row>*:nth-child(2),.log-row>*:nth-child(4){display:none}
+  .navlinks{display:none}
+  .hero-grid,.grid2,.mech-grid,.calc-grid,.record-grid{grid-template-columns:1fr;gap:42px}
+  .record-copy{padding-right:0}.value-panel{margin-left:0}
+  #calculator .panel,.path{max-width:none;justify-self:stretch}
+  .block,.fill .block{padding:var(--space-6) var(--space-5);border-radius:24px}
+  .screen-blue.fill .wrap{padding:0 12px}
+  .fields{grid-template-columns:1fr}
+  .ladder,.level-row{grid-template-columns:1fr 1fr}
+  .p-broker,.factors,.split-grid,.dash-cards{grid-template-columns:1fr}
+  .facts li{padding:16px 22px}
+  .log-row{grid-template-columns:58px 66px 1fr;font-size:var(--text-ui);gap:8px}
+  .nav-inner{grid-template-columns:1fr auto}
+  .pill{font-size:var(--text-meta)}
+}
+
+@media (max-width:560px){
+  .display,#final .display{font-size:50px}#hero .display{font-size:48px}.chapter .h2,.mech-copy h3{font-size:42px}.mech-copy p{font-size:16px}.facts li{font-size:var(--text-micro)}
+  .chapter-2 .h2{font-size:54px}
+  .estimate{flex-direction:column;align-items:flex-start;gap:8px;padding:18px}
+  .dash-row{flex-direction:column;align-items:flex-start;gap:4px}
+  .pstep{min-height:92px;padding:20px}
+  .field select,.field input{font-size:var(--text-body)}
+  .faq-q{gap:var(--space-4)}
+  .faq-a p{padding-right:0}
+  .final-inner .btn,.record-copy .btn{width:100%}
+}
+
+/* ---------- CTAs that leave the page carry a 45° arrow; it levels on hover (founder, 2026-09-07) ---------- */
+.pill{gap:7px}
+.ext{width:1em;height:1em;flex:none;transform:rotate(-45deg);transition:transform .3s var(--ease)}
+.btn:hover .ext,.pill:hover .ext{transform:rotate(0)}
+
+/* ---------- CTAs that leave the page carry a 45° arrow; it levels on hover (founder, 2026-09-07) ---------- */
+.pill{gap:7px}
+.ext{width:1em;height:1em;flex:none;transform:rotate(-45deg);transition:transform .3s var(--ease)}
+.btn:hover .ext,.pill:hover .ext{transform:rotate(0)}

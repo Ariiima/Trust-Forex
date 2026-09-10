@@ -283,3 +283,18 @@ asset change.
 - **The calculator under the brand rules.** Rebate estimate, not profit — kept
   on that reading; the founder decides.
 - **The app deep link** (`t.me/<bot>?startapp=…` vs `app.trustforex.net/cashback`).
+
+
+## 6. cb2 retired — 2026-09-03
+
+The founder, reviewing references on a screen-share, ruled out any visual that shows a
+whole with your share inside it: "این مدل رو هیچ موقع هیچ جا قرار نیست داشته باشیم،
+چونکه خیلی به کاربر این حس رو می‌ده که انقدرش رو ما داریم برمی‌داریم" — it tells the
+reader how much *we* keep. That is cb2's entire signature, the rebate bar, so cb2 is
+not re-skinnable and is retired. Confirmed 2026-09-03. The directory stays for the
+record; it is off `landing/index.html` and out of `deploy.sh`'s verify loop, and the
+rule is now in `BRAND.md`.
+
+The successor is a single build, `cb5`, specified in `design/CASHBACK-NEXT.md` — no
+new lane. cb1's Meaning, cb3's week strip and cb4's fixed-log-fills-in hero survive
+into it.

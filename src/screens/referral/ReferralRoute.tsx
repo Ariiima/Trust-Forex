@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { cachedFlags, getFlags, getMyReferral, getReferrals, setFlag, type MyReferral } from '../../api/client';
+import {
+  cachedFlags, cachedMyReferral, cachedReferrals, getFlags, getMyReferral, getReferrals, setFlag, type MyReferral,
+} from '../../api/client';
 import type { NavigationTab } from '../../design-system/components';
 import ReferralPreview from './ReferralPreview';
 import ReferralMain from './ReferralMain';
@@ -37,9 +39,15 @@ export function ReferralRoute({
     force ? force !== 'preview' : (cachedFlags()?.includes('referral_preview_seen') ?? null),
   );
   /* The account's own referral code. The links are useless without it — the
-     screen used to render two empty "copy" rows. */
-  const [mine, setMine] = useState<MyReferral | null>(null);
-  const [referrals, setReferrals] = useState<Referral[]>();
+     screen used to render two empty "copy" rows. cachedX() seeds this from
+     the boot-splash prefetch (App.tsx), so a warm session has nothing left
+     to wait on. */
+  const [mine, setMine] = useState<MyReferral | null>(() => cachedMyReferral() ?? null);
+  const [referrals, setReferrals] = useState<Referral[] | undefined>(() =>
+    cachedReferrals()?.map((r): Referral => (
+      { id: r.id, joined: formatJoined(r.joinedAt), plan: r.plan, cashback: r.cashback }
+    )),
+  );
 
   useEffect(() => {
     if (force) return;
@@ -53,6 +61,7 @@ export function ReferralRoute({
   }, [force]);
 
   useEffect(() => {
+    if (cachedMyReferral() !== undefined) return;
     let live = true;
     getMyReferral().then((r) => live && setMine(r)).catch(() => {});
     return () => {
@@ -61,6 +70,7 @@ export function ReferralRoute({
   }, []);
 
   useEffect(() => {
+    if (cachedReferrals() !== undefined) return;
     let live = true;
     getReferrals()
       .then((rows) => live && setReferrals(rows.map((r): Referral => (

@@ -1,13 +1,22 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { BottomSheet, Button } from '../../design-system/components';
+import { BottomSheet } from '../../design-system/components';
 import { Glyph } from './Glyph';
 import { useScrollRail } from '../../design-system/useScrollRail';
-import { getCashbackHistory } from '../../api/client';
+import { getCashbackHistory, cachedCashbackHistory, getBrokers, cachedBrokers, type ApiBroker, type CashbackHistoryEntry } from '../../api/client';
 import { BROKER_INFO, type HistoryRow } from './brokers-data';
 import './CashbackHistorySheet.css';
 
 const money = (n: number) => `$${n.toFixed(2)}`;
+
+const toRow = (e: CashbackHistoryEntry): HistoryRow => ({
+  broker: e.broker,
+  name: e.brokerName,
+  logo: e.brokerLogo,
+  date: new Date(e.at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+  rate: `${e.ratePct}%`,
+  amount: money(e.amount),
+});
 
 /* ---------------------------------------------------------------------------
  * Cashback history bottom sheet — Figma 1292:4273 (filled) / 1233:6263
@@ -22,32 +31,31 @@ export interface CashbackHistorySheetProps {
   onClose: () => void;
   /** Payout rows; pass [] to get the empty state (1233:6263). */
   rows?: readonly HistoryRow[];
-  /** Empty-state "Start earning" CTA (fires after the sheet closes itself). */
-  onStartEarning?: () => void;
 }
 
 export function CashbackHistorySheet({
   open,
   onClose,
   rows,
-  onStartEarning,
 }: CashbackHistorySheetProps): ReactNode {
   const [listRef, railThumb] = useScrollRail<HTMLUListElement>();
 
   /* `rows` passed in (design/review's own deep link) always wins; otherwise
-     the sheet fetches the honest live history — no sample data standing in
-     while that request is out. */
-  const [live, setLive] = useState<HistoryRow[]>();
+     the sheet shows the honest live history — seeded from the boot prefetch
+     (App.tsx) so it opens with its rows already there, and re-fetched on each
+     open so a payout landing mid-session shows up. */
+  const [live, setLive] = useState<HistoryRow[] | undefined>(() => cachedCashbackHistory()?.map(toRow));
+  // Same source as the dashboard cards: admin-uploaded logoUrl, warm from
+  // /cashback's own fetch on open.
+  const [brokers, setBrokers] = useState<readonly ApiBroker[]>(() => cachedBrokers() ?? []);
   useEffect(() => {
     if (rows || !open) return;
     let alive = true;
     getCashbackHistory()
-      .then((entries) => alive && setLive(entries.map((e) => ({
-        broker: e.broker,
-        date: new Date(e.at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-        rate: `${e.ratePct}%`,
-        amount: money(e.amount),
-      }))))
+      .then((entries) => alive && setLive(entries.map(toRow)))
+      .catch(() => undefined);
+    getBrokers()
+      .then((bs) => alive && setBrokers(bs))
       .catch(() => undefined);
     return () => {
       alive = false;
@@ -79,33 +87,26 @@ export function CashbackHistorySheet({
             Complete the cashback setup with a partner broker. Your earnings will appear here after
             your first cashback is processed.
           </p>
-          <Button
-            variant="primary"
-            size="medium"
-            fullWidth
-            className="scr-history-sheet-empty-cta"
-            onClick={() => {
-              onClose();
-              onStartEarning?.();
-            }}
-          >
-            Start earning
-          </Button>
         </div>
       ) : (
         <div className="scr-history-sheet-listwrap">
           <ul className="scr-history-sheet-list" ref={listRef}>
             {shown.map((row, i) => {
-              // Broker catalogue is admin-defined (any id) — BROKER_INFO only
-              // has logos for the 3 shipped brokers, so fall back the same
-              // way Cashback.tsx's liveCards does, not an unchecked index.
-              const info = BROKER_INFO[row.broker] ?? { name: row.broker, logo: BROKER_INFO.xm.logo };
+              // The row's own name/logo win — they come from the API and cover
+              // private brokers too. The catalogue is admin-defined (any id),
+              // so BROKER_INFO's 3 shipped brokers are the last fallback, and
+              // no logo at all beats showing some other broker's mark.
+              const b = brokers.find((x) => x.id === row.broker);
+              const name = row.name ?? b?.preview?.name ?? b?.name ?? BROKER_INFO[row.broker]?.name ?? row.broker;
+              const logo = row.logo ?? b?.logoUrl ?? BROKER_INFO[row.broker]?.logo;
               return (
                 <li className="scr-history-sheet-row" key={`${row.broker}-${row.date}-${i}`}>
                   <span className="scr-history-sheet-row-id">
-                    <img className="scr-history-sheet-row-logo" src={info.logo} alt="" width={32} height={32} />
+                    {logo ? (
+                      <img className="scr-history-sheet-row-logo" src={logo} alt="" width={32} height={32} />
+                    ) : null}
                     <span className="scr-history-sheet-row-text">
-                      <span className="scr-history-sheet-row-name">{info.name}</span>
+                      <span className="scr-history-sheet-row-name">{name}</span>
                       <span className="scr-history-sheet-row-date">{row.date}</span>
                     </span>
                   </span>

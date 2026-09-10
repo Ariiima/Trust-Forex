@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { CashbackOverview, BrokerState, NavigationBar, Icon } from '../../design-system/components';
 import type { NavigationTab, BrokerStateVariant, CashbackPlan } from '../../design-system/components';
-import { BROKER_INFO, OVERVIEW, type BrokerId, type BrokerBanner } from './brokers-data';
+import { BROKER_INFO, OVERVIEW, flowTitle, type BrokerId, type BrokerBanner } from './brokers-data';
 import { AboutCashbackSheet } from './AboutCashbackSheet';
 import { CashbackHistorySheet } from './CashbackHistorySheet';
 import { PromoCarousel } from '../home/PromoCarousel';
+import { useSeenValue } from '../../design-system/useCountUp';
 import { cachedMe, getMe, cachedBrokers, getBrokers } from '../../api/client';
 import type { ApiBroker, Me, MeBrokerLink } from '../../api/client';
 import './Cashback.css';
@@ -33,19 +34,30 @@ const BANNER_ICON: Record<BrokerBanner['variant'], ReactNode> = {
 /** How long a self-dismissing status banner stays up, bar included. */
 const BANNER_MS = 5000;
 
+// ponytail: localStorage, not the server — "did this device already see it"
+// is per-device anyway. Storage throws in some webviews; treat that as unseen.
+const seen = (k: string) => { try { return localStorage.getItem(k) === '1'; } catch { return false; } };
+const markSeen = (k: string) => { try { localStorage.setItem(k, '1'); } catch { /* private mode */ } };
+
 /* Same behaviour as the DS Notification's autoDismiss — the outcome banners
    drain a bar and go — but written out here because these live inside the
    broker card's <button>, whose content model is phrasing only. `pending` is
-   an ongoing state rather than news, so it stays until the state changes; so
-   does `error`, which the user still has to act on. */
-function StatusBanner({ banner }: { banner: BrokerBanner }): ReactNode {
-  const transient = banner.variant === 'success';
-  const [gone, setGone] = useState(false);
+   an ongoing state rather than news, so it stays until the state changes.
+   `error` is an outcome like `success`, so it drains and goes too — the state
+   panel below still says what to do next. */
+function StatusBanner({ banner, seenKey }: { banner: BrokerBanner; seenKey: string }): ReactNode {
+  const transient = banner.variant !== 'pending';
+  /* "Approved" is news, not state — it drains its bar and goes, and it must
+     stay gone on the next visit. localStorage keyed by broker + headline, so
+     the next outcome (deposit confirmed) is its own piece of news. */
+  const key = `tf.banner.${seenKey}`;
+  const [gone, setGone] = useState(() => transient && seen(key));
   useEffect(() => {
-    if (!transient) return;
+    if (!transient || gone) return;
+    markSeen(key);
     const t = window.setTimeout(() => setGone(true), BANNER_MS);
     return () => window.clearTimeout(t);
-  }, [transient]);
+  }, [transient, gone, key]);
 
   if (gone) return null;
   return (
@@ -75,10 +87,14 @@ interface BrokerCard {
   logo: string;
   popular: boolean;
   popularLabel: string;
+  popularColor?: string;
   state: BrokerStateVariant;
   stateLabel?: string;
   stateCaption?: string;
   totalEarned?: string;
+  /* Restamped by the server on every re-entry into review — folded into the
+     banner's seen-key so a second rejection reads as new news. */
+  stamp: string;
   banners: readonly BrokerBanner[];
 }
 
@@ -92,19 +108,28 @@ const STATE_COPY: Record<BrokerStateVariant, { label: string; caption: string }>
 };
 
 function stateFor(linkState: MeBrokerLink['state'] | undefined): BrokerStateVariant {
-  return linkState === 'waiting-for-deposit' || linkState === 'cashback-active' ? linkState : 'no-account';
+  if (linkState === 'cashback-active') return 'cashback-active';
+  // deposit-review = account verified, deposit claimed and under review — the
+  // account exists, so it must not read as "no linked account".
+  if (linkState === 'waiting-for-deposit' || linkState === 'deposit-review' || linkState === 'deposit-rejected')
+    return 'waiting-for-deposit';
+  return 'no-account';
 }
 
-function bannerFor(linkState: MeBrokerLink['state'] | undefined): BrokerBanner | undefined {
+function bannerFor(linkState: MeBrokerLink['state'] | undefined, flow: ApiBroker['flow'] | undefined): BrokerBanner | undefined {
   switch (linkState) {
     case 'rejected':
-      return { variant: 'error', title: 'Account verification failed' };
+      return { variant: 'error', title: flowTitle(flow, linkState, 'Account verification failed') };
     case 'pending':
+    case 'deposit-review':
       return { variant: 'pending', title: 'Verification in progres' }; // sic — 850:2053's own copy
     case 'waiting-for-deposit':
-      return { variant: 'success', title: 'Account verified' };
+      // The admin's "waiting for deposit" decision IS the account-verified news.
+      return { variant: 'success', title: flowTitle(flow, linkState, 'Account verified') };
+    case 'deposit-rejected':
+      return { variant: 'error', title: flowTitle(flow, linkState, 'Deposit confirmation failed') };
     case 'cashback-active':
-      return { variant: 'success', title: 'Deposit confirmed' };
+      return { variant: 'success', title: flowTitle(flow, linkState, 'Deposit confirmed') };
     default:
       return undefined;
   }
@@ -115,20 +140,21 @@ function liveCards(brokers: readonly ApiBroker[], me: Me | null): readonly Broke
   return brokers.map((b) => {
     const link = links.get(b.id);
     const state = stateFor(link?.state);
-    const banner = bannerFor(link?.state);
+    const banner = bannerFor(link?.state, b.flow);
     return {
       id: b.id,
       key: b.id,
       name: b.preview?.name ?? b.name,
-      // preview.logoName is a filename, not a URL — no asset pipeline for it,
-      // so this keeps using the bundled crops, falling back to XM's for any
-      // catalogue id that isn't one of the three shipped logos.
-      logo: BROKER_INFO[b.id]?.logo ?? BROKER_INFO.xm.logo,
+      // Admin-uploaded logo (data URL) wins; the bundled crops are only a
+      // fallback for catalogue ids nobody's set a logo for yet.
+      logo: b.logoUrl ?? BROKER_INFO[b.id]?.logo ?? BROKER_INFO.xm.logo,
       popular: b.preview?.badgeOn ?? false,
       popularLabel: b.preview?.badgeText ?? 'Popular',
+      popularColor: b.preview?.badgeColor,
       state,
       stateLabel: STATE_COPY[state].label,
       stateCaption: STATE_COPY[state].caption,
+      stamp: link?.requestedAt ?? '',
       totalEarned: state === 'cashback-active' ? `$${(link?.totalRebate ?? 0).toFixed(2)}` : undefined,
       banners: banner ? [banner] : [],
     };
@@ -223,13 +249,12 @@ export default function Cashback({
   const [me, setMe] = useState<Me | null>(() => cachedMe() ?? null);
   const [brokers, setBrokers] = useState<readonly ApiBroker[] | undefined>(() => cachedBrokers());
   useEffect(() => {
-    if (cachedMe() !== undefined && cachedBrokers() !== undefined) return;
     let live = true;
-    void Promise.all([getMe(), getBrokers()]).then(([m, b]) => {
-      if (!live) return;
-      setMe(m);
-      setBrokers(b);
-    });
+    // `me` carries each broker's review decision — revalidate it every visit
+    // so a reject/approve made elsewhere shows up here without an app restart.
+    // The broker catalogue itself barely changes, so that stays cache-only.
+    if (cachedBrokers() === undefined) void getBrokers().then((b) => { if (live) setBrokers(b); });
+    void getMe().then((m) => { if (live) setMe(m); });
     return () => {
       live = false;
     };
@@ -237,6 +262,11 @@ export default function Cashback({
 
   const cards = brokers ? liveCards(brokers, me) : [];
   const plan = me ? planFrom(me.tier.id) : OVERVIEW.plan;
+  // Rolls up once per genuine change, same as the referral page's "invited
+  // users" stat — not on every tab switch. Falls back to 0 (not OVERVIEW.total)
+  // pre-fetch since useSeenValue needs a number; the string swap it used to do
+  // before `me` landed is what this replaces.
+  const cashbackTotal = useSeenValue('cashback.total', me ? me.cashback.earned : 0).shown;
 
   return (
     <div className="scr-cashback">
@@ -256,7 +286,7 @@ export default function Cashback({
           /* `earned`, not `netTotal`: the latter is the platform's margin on
              this user's rebates ("Our Monthly Net" in the admin), not their
              cashback. See miniAppUser in server/admin.mjs. */
-          total={me ? `$${me.cashback.earned.toFixed(2)}` : OVERVIEW.total}
+          total={me ? `$${cashbackTotal.toFixed(2)}` : OVERVIEW.total}
           planName={me ? plan.charAt(0).toUpperCase() + plan.slice(1) : OVERVIEW.planName}
           /* The rate the server actually pays this user at, not the card's
              per-tier default — those are Figma sample values. */
@@ -309,7 +339,16 @@ export default function Cashback({
                     <span className="scr-cashback-broker-name">{card.name}</span>
                   </span>
                   <span className="scr-cashback-broker-right">
-                    {card.popular ? <span className="scr-cashback-broker-popular">{card.popularLabel}</span> : null}
+                    {card.popular ? (
+                      <span
+                        className="scr-cashback-broker-popular"
+                        style={card.popularColor
+                          ? { background: `${card.popularColor}22`, color: card.popularColor }
+                          : undefined}
+                      >
+                        {card.popularLabel}
+                      </span>
+                    ) : null}
                     <Icon name="chevron-right" size={16} />
                   </span>
                 </span>
@@ -319,7 +358,7 @@ export default function Cashback({
                     user's link state for that broker. */}
                 <span className="scr-cashback-broker-content">
                   {card.banners.map((banner, bi) => (
-                    <StatusBanner key={bi} banner={banner} />
+                    <StatusBanner key={bi} banner={banner} seenKey={`${card.id}:${card.stamp}:${banner.title}`} />
                   ))}
 
                   <BrokerState

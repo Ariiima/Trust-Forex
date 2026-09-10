@@ -90,7 +90,8 @@ export default function Checkout({ initialPlan = 'silver', onBack, onReviewOrder
               : r.error === 'code_expired' ? 'That code has expired.'
                 : r.error === 'wrong_plan' ? 'That code does not apply to this plan.'
                   : r.error === 'limit_reached' ? 'This offer has reached its redemption limit.'
-                    : 'That code is not valid.',
+                    : r.error === 'not_your_code' ? 'That code belongs to another account.'
+                      : 'That code is not valid.',
           );
           return;
         }

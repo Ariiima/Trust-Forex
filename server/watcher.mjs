@@ -3,7 +3,7 @@
 // UNIQUE-AMOUNT base-unit equality, promotes to confirmed, expires stale orders.
 // Zero top-level sibling imports: index.mjs may start this while db.mjs/notify.mjs
 // are still being built in parallel — only units.mjs is imported statically.
-import { toBaseUnits } from './chains/units.mjs';
+import { toBaseUnits, fromBaseUnits } from './chains/units.mjs';
 // Pure data + a pure function only, same reasoning as jobs.mjs/payouts.mjs:
 // payment.test.mjs imports `tick` directly against an in-memory db and must
 // never see this module open the real one as a side effect of import.
@@ -215,15 +215,6 @@ async function runGroup(dbh, notifyFn, grp, now, templates) {
   );
   const readStmt = dbh.prepare('SELECT * FROM orders WHERE id = ?');
 
-  const partialStmt = dbh.prepare(
-    `UPDATE orders SET paid_units=?, txid=?, confirmations=?, detected_at=COALESCE(detected_at, ?), updated_at=?
-     WHERE id=? AND status IN ('pending','submitted')`,
-  );
-  const confirmPartialStmt = dbh.prepare(
-    `UPDATE orders SET status='confirmed', txid=?, confirmations=?, confirmed_at=?, updated_at=?
-     WHERE id=? AND status IN ('pending','submitted')`,
-  );
-
   /* notify.mjs reads the raw snake_case row (same shape orders.mjs hands it on
      the balance-settled path) — a camelCase copy silently lost order.user_id,
      i.e. no booking and no buyer DM. */
@@ -287,64 +278,221 @@ async function runGroup(dbh, notifyFn, grp, now, templates) {
        final transfers are summed (a reorged partial must not inflate the
        total), and only up to 3x the due amount — the receiving wallet also
        sees unrelated deposits, and a big one must not buy a stranger's order.
-       ponytail: with 2+ live orders attribution is guesswork, so we log and
-       leave it to the admin — revisit if simultaneous orders become common. */
+
+       Everything else is parked in `unmatched_txs` for a human. With 2+ live
+       orders attribution is genuinely undecidable: the amount is the only
+       identity a payment carries, and the sender is no help — exchange
+       withdrawals all share one hot wallet, so guessing from `from` would
+       credit one user's money to another's order. */
     if (consumed) continue;
     if (seenStmt.get(t.txid)) continue; // already counted (for this or another order)
+    // Not final yet: reconsidered next tick. Checked before parking so the
+    // admin screen never offers a transfer that could still be reorged away.
+    if (t.confirmations < requiredConfirmations) continue;
     const live = candidates.filter((c) => !c.done);
+    const park = (reason) => parkUnmatched(dbh, grp, t, reason, now);
     if (live.length !== 1) {
-      if (live.length > 1) console.warn(`[watcher] unmatched transfer ${t.txid} (${t.amountRaw}) with ${live.length} live orders; ignoring`);
+      park(live.length > 1 ? 'ambiguous' : 'no_live_order');
       continue;
     }
     const c = live[0];
     const o = c.row;
-    if (t.timestamp * 1000 < o.created_at) continue;
-    if (t.confirmations < requiredConfirmations) continue;
-    if (amt > c.baseUnits * 3n) continue; // unrelated deposit, not a payment attempt
-    insertSeen.run(t.txid, o.id);
-    const paid = BigInt(o.paid_units ?? '0') + amt;
-    o.paid_units = paid.toString();
-    o.txid = t.txid;
-    // Tolerance in this order's own units, via the same amount_crypto/amount_usd
-    // ratio the paidUsd display math already uses — no extra rate lookup.
-    const toleranceUnits = BigInt(
-      toBaseUnits(((Number(o.amount_crypto) * PAYMENT_TOLERANCE_USD) / o.amount_usd).toFixed(grp.decimals), grp.decimals),
-    );
-    const threshold = c.baseUnits > toleranceUnits ? c.baseUnits - toleranceUnits : 0n;
-    if (paid >= threshold) {
-      partialStmt.run(o.paid_units, t.txid, t.confirmations, now, now, o.id);
-      const res = confirmPartialStmt.run(t.txid, t.confirmations, now, now, o.id);
-      c.done = true;
-      /* Overpayment: same amount_crypto/amount_usd ratio the display math uses.
-         The order is paid; the excess belongs to the user, so it goes back as
-         earning balance rather than sitting on our side of the books. */
-      const overUnits = paid > c.baseUnits ? paid - c.baseUnits : 0n;
-      const overpaidUsd = overUnits > 0n
-        ? Math.round((o.amount_usd * Number((overUnits * 10000n) / c.baseUnits)) / 100) / 100
-        : 0;
-      await confirmAndNotify(o, res, overpaidUsd);
-    } else {
-      partialStmt.run(o.paid_units, t.txid, t.confirmations, now, now, o.id);
-      console.log(`[watcher] partial payment on ${o.id}: ${o.paid_units}/${c.baseUnits} base units`);
-      /* The payer has usually closed the page by the time an underpayment is
-         discovered — Telegram is the channel that still reaches them. Once
-         per partial tx (this branch is behind the seen_txs guard). */
-      if (o.user_id) {
-        try {
-          const { fromBaseUnits } = await import('./chains/units.mjs');
-          const { sendMessage, appButton } = await import('./telegram.mjs');
-          const got = fromBaseUnits(o.paid_units, grp.decimals);
-          const left = fromBaseUnits((c.baseUnits - paid).toString(), grp.decimals);
-          const body = renderTemplate(templates?.('payment_incomplete') ?? DEFAULT_TPL.payment_incomplete, {
-            received: got, due: o.amount_crypto, remaining: left, currency: o.currency,
-            network: o.network, address: o.address,
-          });
-          await sendMessage(o.user_id, body, appButton());
-        } catch (e) {
-          console.error('[watcher] partial DM failed:', e.message);
-        }
+    if (t.timestamp * 1000 < o.created_at) { park('predates_order'); continue; }
+    if (amt > c.baseUnits * 3n) { park('too_large'); continue; }
+    const outcome = await creditPartial({
+      dbh, notifyFn, templates, order: o, dueUnits: c.baseUnits, amount: amt,
+      txid: t.txid, confirmations: t.confirmations, decimals: grp.decimals, now,
+    });
+    if (outcome === 'confirmed') c.done = true;
+  }
+}
+
+/** Park a transfer the watcher would not attribute on its own. Upsert: the same
+ *  transfer is re-seen on every tick until it is resolved — and resolving it
+ *  writes a seen_txs row, which is what finally stops it being reconsidered. */
+function parkUnmatched(dbh, grp, t, reason, now) {
+  const order = grp.orders[0]; // one chain+address+token ⇒ one (currency, network)
+  dbh.prepare(
+    `INSERT INTO unmatched_txs
+       (txid, chain, currency, network, address, sender, amount_raw, decimals, amount, reason, seen_at, tx_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT(txid) DO UPDATE SET reason=excluded.reason`,
+  ).run(
+    t.txid, grp.chain, order?.currency ?? null, order?.network ?? null, grp.address, t.from ?? null,
+    String(t.amountRaw), grp.decimals, fromBaseUnits(String(t.amountRaw), grp.decimals),
+    reason, now, t.timestamp ? t.timestamp * 1000 : null,
+  );
+}
+
+/**
+ * Credit `amount` base units to `order` as a partial payment, confirming it
+ * once the running total covers what is due (less the underpayment grace).
+ *
+ * The ONE place partial-payment money is booked — the watcher's single-live-
+ * order path and the admin's manual attribution both come through here, so a
+ * hand-attributed transfer settles by exactly the same arithmetic, sends the
+ * same DM and returns the same overpayment to the earning balance.
+ *
+ * Returns 'confirmed' or 'partial'.
+ */
+export async function creditPartial({
+  dbh, notifyFn, templates, order: o, dueUnits, amount, txid, confirmations, decimals, now = Date.now(),
+}) {
+  dbh.prepare('INSERT OR IGNORE INTO seen_txs (txid, order_id) VALUES (?, ?)').run(txid, o.id);
+  const paid = BigInt(o.paid_units ?? '0') + amount;
+  o.paid_units = paid.toString();
+  o.txid = txid;
+  // Tolerance in this order's own units, via the same amount_crypto/amount_usd
+  // ratio the paidUsd display math already uses — no extra rate lookup.
+  const toleranceUnits = BigInt(
+    toBaseUnits(((Number(o.amount_crypto) * PAYMENT_TOLERANCE_USD) / o.amount_usd).toFixed(decimals), decimals),
+  );
+  const threshold = dueUnits > toleranceUnits ? dueUnits - toleranceUnits : 0n;
+  dbh.prepare(
+    `UPDATE orders SET paid_units=?, txid=?, confirmations=?, detected_at=COALESCE(detected_at, ?), updated_at=?
+     WHERE id=? AND status IN ('pending','submitted')`,
+  ).run(o.paid_units, txid, confirmations, now, now, o.id);
+
+  if (paid < threshold) {
+    console.log(`[watcher] partial payment on ${o.id}: ${o.paid_units}/${dueUnits} base units`);
+    /* The payer has usually closed the page by the time an underpayment is
+       discovered — Telegram is the channel that still reaches them. Once
+       per partial tx (this branch is behind the seen_txs guard). */
+    if (o.user_id) {
+      try {
+        const { sendMessage, appButton } = await import('./telegram.mjs');
+        const body = renderTemplate(templates?.('payment_incomplete') ?? DEFAULT_TPL.payment_incomplete, {
+          received: fromBaseUnits(o.paid_units, decimals), due: o.amount_crypto,
+          remaining: fromBaseUnits((dueUnits - paid).toString(), decimals),
+          currency: o.currency, network: o.network, address: o.address,
+        });
+        await sendMessage(o.user_id, body, appButton());
+      } catch (e) {
+        console.error('[watcher] partial DM failed:', e.message);
       }
     }
+    return 'partial';
   }
+
+  const res = dbh.prepare(
+    `UPDATE orders SET status='confirmed', txid=?, confirmations=?, confirmed_at=?, updated_at=?
+     WHERE id=? AND status IN ('pending','submitted')`,
+  ).run(txid, confirmations, now, now, o.id);
+  /* Overpayment: same amount_crypto/amount_usd ratio the display math uses.
+     The order is paid; the excess belongs to the user, so it goes back as
+     earning balance rather than sitting on our side of the books. */
+  const overUnits = paid > dueUnits ? paid - dueUnits : 0n;
+  const overpaidUsd = overUnits > 0n
+    ? Math.round((o.amount_usd * Number((overUnits * 10000n) / dueUnits)) / 100) / 100
+    : 0;
+  // changes === 0 -> admin override already finalized it; skip notify.
+  if (res.changes > 0) {
+    try {
+      await notifyFn(dbh.prepare('SELECT * FROM orders WHERE id = ?').get(o.id), overpaidUsd);
+    } catch (e) {
+      console.error('[watcher] notify failed:', e.message);
+    }
+  }
+  return 'confirmed';
+}
+
+/** Reasons an attribution is refused, as returned to the admin UI. */
+export const ATTRIBUTE_ERRORS = [
+  'not_found', 'already_resolved', 'already_credited',
+  'order_not_found', 'order_not_open', 'order_has_no_invoice', 'network_mismatch',
+];
+
+/**
+ * Manual confirmation: settle an open order in full by hand, for money the
+ * watcher will never see — paid on a chain we don't poll, sent from an
+ * exchange that never landed, or handed over off-platform. Books the whole
+ * remaining due through the same creditPartial() everything else uses, so the
+ * DM, the ledger credit and the invite all fire exactly as usual.
+ *
+ * ponytail: provenance is the synthetic `manual:<order id>` txid, no extra
+ * audit column. Add one if operators ever need "who confirmed this".
+ */
+export async function confirmOrderManually({
+  db, notify, templates, orderId, loadGateways, now = Date.now(),
+}) {
+  const dbh = db?.prepare ? db : db?.db;
+  const o = dbh.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
+  if (!o) return { error: 'order_not_found' };
+  if (!['pending', 'submitted'].includes(o.status)) return { error: 'order_not_open' };
+  if (!o.amount_crypto || !o.currency) return { error: 'order_has_no_invoice' };
+
+  let gws = await loadGateways();
+  if (gws && !Array.isArray(gws)) gws = gws.gateways ?? [];
+  const g = gws?.find((x) => x.currency === o.currency)?.networks?.find((n) => n.network === o.network);
+  const decimals = g?.decimals ?? 6;
+  const dueUnits = BigInt(toBaseUnits(o.amount_crypto, decimals));
+  const paid = BigInt(o.paid_units ?? '0');
+
+  const notifyFn = typeof notify === 'function'
+    ? notify
+    : (notify?.notifyOrderConfirmed ?? notify?.orderConfirmed ?? notify?.notify ?? (() => {}));
+  const result = await creditPartial({
+    dbh, notifyFn, templates, order: o, dueUnits,
+    amount: dueUnits > paid ? dueUnits - paid : 0n,
+    txid: `manual:${o.id}`, confirmations: g?.requiredConfirmations ?? 1, decimals, now,
+  });
+  return { result, order: dbh.prepare('SELECT * FROM orders WHERE id = ?').get(o.id) };
+}
+
+/**
+ * Manual attribution: book a parked transfer against an order an admin chose,
+ * exactly as the watcher would have had the amount been unambiguous.
+ * Returns { result, order } or { error }.
+ */
+export async function attributeUnmatched({
+  db, notify, templates, txid, orderId, by = null, loadGateways, now = Date.now(),
+}) {
+  const dbh = db?.prepare ? db : db?.db;
+  const tx = dbh.prepare('SELECT * FROM unmatched_txs WHERE txid = ?').get(txid);
+  if (!tx) return { error: 'not_found' };
+  if (tx.resolution) return { error: 'already_resolved' };
+  // Belt and braces: seen_txs is the double-credit guard the watcher uses, and
+  // this path must never be the one that spends the same transfer twice.
+  if (dbh.prepare('SELECT 1 FROM seen_txs WHERE txid = ?').get(txid)) return { error: 'already_credited' };
+
+  const o = dbh.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
+  if (!o) return { error: 'order_not_found' };
+  if (!['pending', 'submitted'].includes(o.status)) return { error: 'order_not_open' };
+  if (!o.amount_crypto || !o.currency) return { error: 'order_has_no_invoice' };
+  /* Crediting a TRON transfer to an ERC-20 order would book money that never
+     reached that order's address. The one mistake this screen could make that
+     the watcher never can, so it is refused rather than warned about. */
+  if (tx.currency && (tx.currency !== o.currency || tx.network !== o.network)) return { error: 'network_mismatch' };
+
+  let gws = await loadGateways();
+  if (gws && !Array.isArray(gws)) gws = gws.gateways ?? [];
+  const g = gws?.find((x) => x.currency === o.currency)?.networks?.find((n) => n.network === o.network);
+  const decimals = g?.decimals ?? tx.decimals;
+
+  const notifyFn = typeof notify === 'function'
+    ? notify
+    : (notify?.notifyOrderConfirmed ?? notify?.orderConfirmed ?? notify?.notify ?? (() => {}));
+  const result = await creditPartial({
+    dbh, notifyFn, templates, order: o, dueUnits: BigInt(toBaseUnits(o.amount_crypto, decimals)),
+    amount: BigInt(tx.amount_raw), txid, confirmations: g?.requiredConfirmations ?? 1, decimals, now,
+  });
+  dbh.prepare('UPDATE unmatched_txs SET resolution=?, order_id=?, resolved_by=?, resolved_at=? WHERE txid=?')
+    .run('attributed', orderId, by, now, txid);
+  return { result, order: dbh.prepare('SELECT * FROM orders WHERE id = ?').get(orderId) };
+}
+
+/**
+ * Dismiss a parked transfer as not-a-payment (an unrelated deposit into the
+ * wallet). Writes seen_txs so the watcher stops re-parking it every tick.
+ */
+export function ignoreUnmatched({ db, txid, by = null, now = Date.now() }) {
+  const dbh = db?.prepare ? db : db?.db;
+  const tx = dbh.prepare('SELECT * FROM unmatched_txs WHERE txid = ?').get(txid);
+  if (!tx) return { error: 'not_found' };
+  if (tx.resolution) return { error: 'already_resolved' };
+  dbh.prepare('INSERT OR IGNORE INTO seen_txs (txid, order_id) VALUES (?, NULL)').run(txid);
+  dbh.prepare('UPDATE unmatched_txs SET resolution=?, resolved_by=?, resolved_at=? WHERE txid=?')
+    .run('ignored', by, now, txid);
+  return { ok: true };
 }
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { BottomSheet, Button, Icon } from '../../design-system/components';
+import { useScrollRail } from '../../design-system/useScrollRail';
 import { WITHDRAW_OPTIONS } from './withdraw-data';
 import { WithdrawOptionCard } from './WithdrawOptionCard';
 import './ChangeCurrencySheet.css';
@@ -22,6 +23,7 @@ export interface ChangeCurrencySheetProps {
 
 export function ChangeCurrencySheet({ open, selectedId, onClose, onChoose }: ChangeCurrencySheetProps): ReactNode {
   const [draft, setDraft] = useState(selectedId);
+  const [listRef, railThumb] = useScrollRail<HTMLUListElement>();
 
   // Re-seed each time it opens so a discarded draft never leaks into the next open.
   useEffect(() => {
@@ -39,13 +41,19 @@ export function ChangeCurrencySheet({ open, selectedId, onClose, onChoose }: Cha
 
       <div className="scr-chgcur-rule" aria-hidden="true" />
 
-      <ul className="scr-chgcur-list">
-        {WITHDRAW_OPTIONS.map((o) => (
-          <li key={o.id}>
-            <WithdrawOptionCard option={o} selected={draft === o.id} onSelect={() => setDraft(o.id)} />
-          </li>
-        ))}
-      </ul>
+      <div className="scr-chgcur-body">
+        <ul className="scr-chgcur-list" ref={listRef}>
+          {WITHDRAW_OPTIONS.map((o) => (
+            <li key={o.id}>
+              <WithdrawOptionCard option={o} selected={draft === o.id} onSelect={() => setDraft(o.id)} />
+            </li>
+          ))}
+        </ul>
+        {/* The design's 2px rail; thumb height/offset from useScrollRail. */}
+        <span className="scr-chgcur-rail" aria-hidden="true">
+          <span className="scr-chgcur-rail-thumb" style={railThumb} />
+        </span>
+      </div>
 
       <Button
         variant="primary"

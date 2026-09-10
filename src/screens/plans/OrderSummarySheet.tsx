@@ -16,7 +16,7 @@ export interface OrderSummarySheetProps {
   open: boolean;
   onClose: () => void;
   planName: string; // "Silver"
-  planDuration: string; // "1 month"
+  planDuration: string; // "1 Month"
   price: number; // plan.checkoutPrice
   /** Balance applied when the checkout toggle is on; undefined hides the row. */
   balanceUsed?: number;

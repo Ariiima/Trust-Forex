@@ -3,8 +3,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { openDb } from './db.mjs';
-import { handleOrders, uniqueAmount, PLAN_PRICES } from './orders.mjs';
-import { tick, EXPIRY_MS } from './watcher.mjs';
+import { handleOrders, uniqueAmount, validateGateways, PLAN_PRICES } from './orders.mjs';
+import { tick, attributeUnmatched, confirmOrderManually, ignoreUnmatched, EXPIRY_MS } from './watcher.mjs';
 import { toBaseUnits } from './chains/units.mjs';
 
 const store = openDb(':memory:');
@@ -43,17 +43,23 @@ test('unknown plan is refused', async () => {
   assert.equal(out.error, 'invalid_order');
 });
 
-test('uniqueAmount never asks for less than the USD price and never collides', () => {
+test('uniqueAmount dithers cents just under the price and never collides', () => {
   const seen = new Set();
   for (let i = 0; i < 20; i += 1) {
     const amt = uniqueAmount({
-      amountUsd: 49, rate: 1, currency: 'USDT', network: 'TRC-20', address: 'TAddr',
+      amountUsd: 200, rate: 1, currency: 'USDT', network: 'TRC-20', address: 'TAddr',
       db: { amountTaken: (c, n, a, v) => seen.has(v) },
     });
-    assert.ok(Number(amt) >= 49, `${amt} >= 49`);
+    assert.match(amt, /^199\.\d{1,2}$/, `${amt} is 199.01–199.99`);
     assert.ok(!seen.has(amt));
     seen.add(amt);
   }
+  // A sub-dollar remainder (earning balance covered the rest) can't go below zero.
+  const tiny = uniqueAmount({
+    amountUsd: 0.3, rate: 1, currency: 'USDT', network: 'TRC-20', address: 'TAddr',
+    db: { amountTaken: () => false },
+  });
+  assert.ok(Number(tiny) > 0.3 && Number(tiny) <= 1.29, `${tiny} dithers up`);
 });
 
 /** Seed a selected order the watcher can match. Created a minute ago: the
@@ -191,6 +197,139 @@ test('partial attribution is refused with 2+ live orders or oversized deposits',
   args.adapters = { tron: { listIncoming: async () => [transferOf('500', 'ptxD')] } };
   await tick(args);
   assert.equal(store.getOrder('p2').paid_units, null);
+
+  // Both are parked for a human rather than dropped on the floor.
+  const parked = store.db.prepare("SELECT * FROM unmatched_txs WHERE txid IN ('ptxC','ptxD') ORDER BY txid").all();
+  assert.deepEqual(parked.map((r) => [r.txid, r.reason]), [['ptxC', 'ambiguous'], ['ptxD', 'too_large']]);
+  assert.equal(parked[0].amount, '10');
+});
+
+test('an admin attributes a parked transfer through the same credit path', async () => {
+  store.db.prepare(`UPDATE orders SET status='expired' WHERE status IN ('pending','submitted')`).run();
+  store.db.prepare('DELETE FROM unmatched_txs').run();
+  seedOrder('m1', '70.0000');
+  seedOrder('m2', '71.0000');
+  const notified = [];
+  const args = {
+    db: store, notify: (o) => notified.push(o.id), loadGateways: async () => GATEWAYS,
+    adapters: { tron: { listIncoming: async () => [transferOf('69.9', 'mtx1')] } },
+  };
+  await tick(args); // two live orders: refuses to guess
+  assert.equal(store.getOrder('m1').paid_units, null);
+
+  // The admin says it was m1's. Money books exactly as the watcher would have.
+  const out = await attributeUnmatched({
+    db: store, notify: args.notify, loadGateways: args.loadGateways,
+    txid: 'mtx1', orderId: 'm1', by: 'admin',
+  });
+  assert.equal(out.result, 'confirmed');
+  assert.equal(store.getOrder('m1').status, 'confirmed');
+  assert.deepEqual(notified, ['m1']);
+
+  // Attributing the same transfer twice must never spend it twice.
+  const again = await attributeUnmatched({
+    db: store, notify: args.notify, loadGateways: args.loadGateways,
+    txid: 'mtx1', orderId: 'm2', by: 'admin',
+  });
+  assert.equal(again.error, 'already_resolved');
+  assert.equal(store.getOrder('m2').paid_units, null);
+
+  // And a later tick must not re-park or re-credit it.
+  await tick(args);
+  assert.equal(store.db.prepare('SELECT COUNT(*) c FROM unmatched_txs').get().c, 1);
+  assert.equal(notified.length, 1);
+});
+
+test('an admin confirms an order by hand, once', async () => {
+  store.db.prepare(`UPDATE orders SET status='expired' WHERE status IN ('pending','submitted')`).run();
+  seedOrder('mc1', '90.0000');
+  const notified = [];
+  const args = { db: store, notify: (o) => notified.push(o.id), loadGateways: async () => GATEWAYS };
+
+  const out = await confirmOrderManually({ ...args, orderId: 'mc1' });
+  assert.equal(out.result, 'confirmed');
+  assert.equal(store.getOrder('mc1').status, 'confirmed');
+  assert.deepEqual(notified, ['mc1']);
+
+  // Already settled — a second click must not credit or notify again.
+  const again = await confirmOrderManually({ ...args, orderId: 'mc1' });
+  assert.equal(again.error, 'order_not_open');
+  assert.equal(notified.length, 1);
+});
+
+test('a short manual attribution stays pending and asks for the rest', async () => {
+  store.db.prepare(`UPDATE orders SET status='expired' WHERE status IN ('pending','submitted')`).run();
+  store.db.prepare('DELETE FROM unmatched_txs').run();
+  seedOrder('m3', '80.0000');
+  seedOrder('m4', '81.0000');
+  const args = {
+    db: store, notify: () => {}, loadGateways: async () => GATEWAYS,
+    adapters: { tron: { listIncoming: async () => [transferOf('30', 'mtx2')] } },
+  };
+  await tick(args);
+  const out = await attributeUnmatched({
+    db: store, notify: () => {}, loadGateways: args.loadGateways,
+    txid: 'mtx2', orderId: 'm3', by: 'admin',
+  });
+  assert.equal(out.result, 'partial');
+  assert.equal(store.getOrder('m3').status, 'pending');
+  assert.equal(store.getOrder('m3').paid_units, toBaseUnits('30', 6));
+
+  // A dismissed transfer is never creditable afterwards.
+  store.db.prepare('DELETE FROM unmatched_txs').run();
+  await tick(args); // re-parks mtx2? no — seen_txs already holds it
+  assert.equal(store.db.prepare('SELECT COUNT(*) c FROM unmatched_txs').get().c, 0);
+});
+
+test('ignoring a transfer stops the watcher re-parking it', async () => {
+  store.db.prepare(`UPDATE orders SET status='expired' WHERE status IN ('pending','submitted')`).run();
+  store.db.prepare('DELETE FROM unmatched_txs').run();
+  seedOrder('m5', '90.0000');
+  seedOrder('m6', '91.0000');
+  const args = {
+    db: store, notify: () => {}, loadGateways: async () => GATEWAYS,
+    adapters: { tron: { listIncoming: async () => [transferOf('5', 'mtx3')] } },
+  };
+  await tick(args);
+  assert.equal(ignoreUnmatched({ db: store, txid: 'mtx3', by: 'admin' }).ok, true);
+  assert.equal(
+    (await attributeUnmatched({
+      db: store, notify: () => {}, loadGateways: args.loadGateways, txid: 'mtx3', orderId: 'm5',
+    })).error,
+    'already_resolved',
+  );
+  store.db.prepare('DELETE FROM unmatched_txs').run();
+  await tick(args);
+  assert.equal(store.db.prepare('SELECT COUNT(*) c FROM unmatched_txs').get().c, 0);
+  assert.equal(store.getOrder('m5').paid_units, null);
+});
+
+test('gateways.json is refused before a bad wallet can reach a buyer', () => {
+  const good = {
+    gateways: [{
+      currency: 'USDT',
+      name: 'Tether',
+      networks: [{
+        network: 'TRC-20', address: 'TApPG3ozMjK9Ky3tn6FC8ngGGkCCY6jaH3',
+        chain: 'tron', decimals: 6, requiredConfirmations: 1,
+      }],
+    }],
+  };
+  assert.equal(validateGateways(good), null);
+
+  const bad = (mutate) => {
+    const doc = structuredClone(good);
+    mutate(doc.gateways[0]);
+    return validateGateways(doc);
+  };
+  assert.match(bad((g) => { g.networks[0].address = 'TShort'; }), /^invalid_address:/);
+  assert.match(bad((g) => { g.networks[0].decimals = 6.5; }), /^invalid_decimals:/);
+  assert.match(bad((g) => { g.networks[0].chain = 'dogecoin'; }), /^invalid_chain:/);
+  assert.match(bad((g) => { g.networks[0].chain = 'evm'; }), /^rpc_required:/);
+  assert.match(bad((g) => { g.networks[0].rpc = 'http://insecure'; }), /^rpc_must_be_https:/);
+  assert.match(bad((g) => { g.networks.push({ ...g.networks[0] }); }), /^duplicate_network:/);
+  // manualOnly needs no adapter, so the chain check is skipped for it.
+  assert.equal(bad((g) => { g.networks[0].chain = 'xrpl'; g.networks[0].manualOnly = true; }), null);
 });
 
 test('a partial payment survives 40 min of activity, then expires into a refund', async () => {

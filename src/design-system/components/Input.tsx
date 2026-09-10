@@ -16,6 +16,8 @@ export interface InputProps {
   rightSlot?: ReactNode;
   disabled?: boolean;
   className?: string;
+  /** Enter / the keyboard's "Done" key fires this (and closes the keyboard). */
+  onSubmit?: () => void;
 }
 
 export function Input({
@@ -28,6 +30,7 @@ export function Input({
   rightSlot,
   disabled = false,
   className,
+  onSubmit,
 }: InputProps): ReactNode {
   const id = useId();
   const msg = error ?? hint;
@@ -56,6 +59,16 @@ export function Input({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
+          enterKeyHint={onSubmit ? 'done' : undefined}
+          onKeyDown={
+            onSubmit
+              ? (e) => {
+                  if (e.key !== 'Enter') return;
+                  e.currentTarget.blur(); // drops the keyboard
+                  onSubmit();
+                }
+              : undefined
+          }
           aria-invalid={error ? true : undefined}
           aria-describedby={msg ? msgId : undefined}
         />

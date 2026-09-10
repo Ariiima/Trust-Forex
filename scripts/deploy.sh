@@ -96,5 +96,5 @@ esac
 # trust-forex.old / server.prev stay: ~4MB that buys a one-command rollback of
 # whatever just shipped. Each deploy clears the previous pair before making its
 # own, so they never accumulate.
-echo "==> done — https://trustforex.net"
+echo "==> done — https://app.trustforex.net"
 echo "    roll back:  ssh $HOST 'cd /var/www/tf-root && rm -rf trust-forex && mv trust-forex.old trust-forex'"

@@ -10,8 +10,22 @@ import { EarningsGlyph } from './EarningsGlyph';
 import { useSeenValue } from '../../design-system/useCountUp';
 import { useScrollRail } from '../../design-system/useScrollRail';
 import { cachedMe, getMe } from '../../api/client';
-import shareCoin from '../../assets/referral/referral-share-coin.png';
+import shareCoinStandard from '../../assets/referral/referral-share-coin.png';
+import shareCoinSilver from '../../assets/plans/badge-silver.png';
+import shareCoinGold from '../../assets/plans/badge-gold.png';
+import shareCoinDiamond from '../../assets/plans/badge-diamond.png';
 import './ReferralMain.css';
+
+/* Referral share badge only ships bronze/"standard" art (a person icon); the
+ * other tiers borrow the plan badges (CashbackOverview.tsx does the same) —
+ * same TIER_PCT bucketing the server uses, matched here by the rounded pct
+ * rather than a tier name the API doesn't send. */
+const shareCoinForPct = (pct: number): string => {
+  if (pct >= 30) return shareCoinDiamond;
+  if (pct >= 20) return shareCoinGold;
+  if (pct >= 15) return shareCoinSilver;
+  return shareCoinStandard;
+};
 
 /* ---------------------------------------------------------------------------
  * Referral — main page — route /referral
@@ -35,7 +49,6 @@ interface Stat {
   icon: ReferralGlyphName | { earnings: 'plan' | 'cashback' };
   label: string;
   value: string;
-  delta?: string;
 }
 
 const money = (n: number) => `$${n.toFixed(2)}`;
@@ -63,7 +76,6 @@ export interface ReferralMainProps {
   totalEarnings?: number;
   sharePct?: number;
   invitedUsers?: number;
-  invitedDelta?: number;
   activeUsers?: number;
   planEarnings?: number;
   cashbackEarnings?: number;
@@ -80,7 +92,6 @@ export function ReferralMain({
   totalEarnings: totalEarningsDefault = 0,
   sharePct: sharePctDefault = 10,
   invitedUsers: invitedUsersDefault = 0,
-  invitedDelta = 0,
   activeUsers: activeUsersDefault = 0,
   planEarnings: planEarningsDefault = 0,
   cashbackEarnings: cashbackEarningsDefault = 0,
@@ -106,34 +117,31 @@ export function ReferralMain({
 
   const invitedUsers = live?.invited ?? invitedUsersDefault;
   const activeUsers = live?.active ?? activeUsersDefault;
-  /* `earned` is the user's cut; `plan` + `cashback` are what their referrals
-     generated for the platform (they sum to `revenue`, the admin's own
-     "Our Monthly Revenue"). This screen is the user's, so the headline is what
-     they earned and the two tiles split it in the same proportion — quoting the
-     platform's revenue under "Total referral earnings" would overstate what the
-     user is owed by the whole margin. */
-  const generated = (live?.plan ?? 0) + (live?.cashback ?? 0);
+  /* The headline is `earned` — the user's own cut, straight off the ledger.
+     The two tiles are the SAME money split by stream, summed from the rows
+     below (each already carries this account's plan/cashback earnings from
+     that invitee). `live.plan`/`live.cashback` are invitee COUNTS, not money —
+     prorating `earned` by them paid a $0.60 plan cut and a $1.50 cashback cut
+     out as $1.05 / $1.05. */
   const totalEarnings = live ? live.earned : totalEarningsDefault;
-  const planEarnings = live
-    ? (generated ? (live.earned * live.plan) / generated : 0)
-    : planEarningsDefault;
-  const cashbackEarnings = live
-    ? (generated ? (live.earned * live.cashback) / generated : 0)
-    : cashbackEarningsDefault;
+  const rowsPlan = referrals.reduce((s, r) => s + r.plan, 0);
+  const rowsCashback = referrals.reduce((s, r) => s + r.cashback, 0);
+  const planEarnings = referrals.length ? rowsPlan : planEarningsDefault;
+  const cashbackEarnings = referrals.length ? rowsCashback : cashbackEarningsDefault;
   // The commission rate itself is one pair; the badge shows the plan rate.
   const sharePct = live?.share ? Math.round(live.share.planPct) : sharePctDefault;
 
   /* Figures render at their real value straight away — rolling them up from
      zero made the card read as "loading" every single visit for information
-     that is not new. What animates is only the change: the green +N chip, which
-     is the part the user has not seen before.
-
-     On a first visit there is no baseline to difference against, so the chip
-     falls back to the server's own figure — which is also what frame 1333:8366
-     renders. After that it is the real "since you last looked" increment, and
-     it disappears once seen. */
-  const invited = useSeenValue('referral.invited', invitedUsers);
-  const invitedDeltaShown = invited.firstVisit ? invitedDelta : invited.delta;
+     that is not new. Each rolls up once, from the value last seen to the
+     current one, on a genuine change — not on every tab switch (cachedMe()
+     already seeds `live` before first paint, so a revisit with nothing new
+     shows the settled figure straight away). */
+  const invitedShown = useSeenValue('referral.invited', invitedUsers).shown;
+  const activeUsersShown = useSeenValue('referral.active', activeUsers).shown;
+  const planEarningsShown = useSeenValue('referral.planEarnings', planEarnings).shown;
+  const cashbackEarningsShown = useSeenValue('referral.cashbackEarnings', cashbackEarnings).shown;
+  const totalEarningsShown = useSeenValue('referral.total', totalEarnings).shown;
 
   const [copied, setCopied] = useState<'telegram' | 'website' | null>(null);
   const [aboutOpen, setAboutOpen] = useState(initialSheet === 'about');
@@ -194,12 +202,11 @@ export function ReferralMain({
     {
       icon: 'user-receive',
       label: 'Invited users',
-      value: String(invitedUsers),
-      delta: invitedDeltaShown > 0 ? `+${invitedDeltaShown}` : undefined,
+      value: String(Math.round(invitedShown)),
     },
-    { icon: 'user-check', label: 'Active users', value: String(activeUsers) },
-    { icon: { earnings: 'plan' }, label: 'Plan earnings', value: money(planEarnings) },
-    { icon: { earnings: 'cashback' }, label: 'Cashback earnings', value: money(cashbackEarnings) },
+    { icon: 'user-check', label: 'Active users', value: String(Math.round(activeUsersShown)) },
+    { icon: { earnings: 'plan' }, label: 'Plan earnings', value: money(planEarningsShown) },
+    { icon: { earnings: 'cashback' }, label: 'Cashback earnings', value: money(cashbackEarningsShown) },
   ];
 
   const total = (r: Referral) => r.plan + r.cashback;
@@ -226,11 +233,17 @@ export function ReferralMain({
         </div>
 
         <div className="scr-refmain-amount-row">
-          <span className="scr-refmain-amount type-text-2xl-semibold">{money(totalEarnings)}</span>
+          <span className="scr-refmain-amount type-text-2xl-semibold">{money(totalEarningsShown)}</span>
           <div className="scr-refmain-share">
             <div className="scr-refmain-share-top">
               {/* 1429:14241 is a raster badge in Figma — cropped 1:1 out of the frame. */}
-              <img className="scr-refmain-share-coin" src={shareCoin} alt="" width={24} height={24} />
+              <img
+                className="scr-refmain-share-coin"
+                src={shareCoinForPct(sharePct)}
+                alt=""
+                width={24}
+                height={24}
+              />
               <span className="scr-refmain-share-pct type-text-base-semibold">{sharePct}%</span>
             </div>
             <span className="scr-refmain-share-label type-text-xs-10">Referral share</span>
@@ -251,15 +264,7 @@ export function ReferralMain({
               </span>
               <span className="scr-refmain-stat-text">
                 <span className="scr-refmain-stat-label type-text-xs-10">{s.label}</span>
-                <span className="scr-refmain-stat-value-row">
-                  <span className="scr-refmain-stat-value type-text-sm-semibold">{s.value}</span>
-                  {s.delta ? (
-                    <span className="scr-refmain-stat-delta type-text-xs">
-                      <Icon name="arrow-up" size={16} />
-                      {s.delta}
-                    </span>
-                  ) : null}
-                </span>
+                <span className="scr-refmain-stat-value type-text-sm-semibold">{s.value}</span>
               </span>
             </li>
           ))}

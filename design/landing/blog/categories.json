@@ -1,0 +1,7 @@
+[
+  { "id": "records",  "name": "Results & Records", "blurb": "How performance is measured, published and read.", "ground": "k03", "icon": "analytics" },
+  { "id": "signals",  "name": "Signals",           "blurb": "Targets, risk and the rules behind every signal.", "ground": "k04", "icon": "target" },
+  { "id": "cashback", "name": "Cashback",          "blurb": "Partner brokers, shares and weekly credits.",       "ground": "k09", "icon": "dollar-receive" },
+  { "id": "referral", "name": "Referral",          "blurb": "Sharing TrustForex and what follows from it.",      "ground": "k06", "icon": "send" },
+  { "id": "company",  "name": "Company",           "blurb": "Decisions, standards and the people behind them.", "ground": "k13", "icon": "shield-done" }
+]

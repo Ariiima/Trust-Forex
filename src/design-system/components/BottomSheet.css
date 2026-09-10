@@ -1,15 +1,23 @@
 .ds-sheet-overlay {
   position: fixed;
   inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+}
+
+/* The dim, on its own layer for its whole life (will-change) so mobile WebKit
+   never promotes/demotes it mid-animation — see BottomSheet.tsx. */
+.ds-sheet-scrim {
+  position: absolute;
+  inset: 0;
   /* #212121 at 16%, derived from the frame renders: solving out = a*c + b over
      white (255->219), the page grey (241->208) AND a saturated pixel
      (247,147,26 -> 213,129,27) pins it. Two neutral samples alone do not —
      they admit a whole family of (tint, alpha) pairs. */
   background: rgba(33, 33, 33, 0.16);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  z-index: 100;
+  will-change: opacity;
 }
 
 /* The rise and the scrim fade are driven from BottomSheet.tsx (motion) so the
@@ -17,6 +25,8 @@
    transform motion writes inline. */
 
 .ds-sheet {
+  position: relative; /* paints over the absolute scrim; also its own stable layer */
+  will-change: transform;
   width: 100%;
   max-width: 360px;
   background: var(--base-color-white);

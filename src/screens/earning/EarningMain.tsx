@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { Button, Icon, NavigationBar } from '../../design-system/components';
+import { Button, NavigationBar } from '../../design-system/components';
 import type { NavigationTab } from '../../design-system/components';
 import { WithdrawHistorySheet } from './WithdrawHistorySheet';
 import type { WithdrawRecord } from './WithdrawHistorySheet';
 import { haptic, useSeenValue } from '../../design-system/useCountUp';
-import { cachedMe, getEarningsWeekly, getMe, getWithdrawals } from '../../api/client';
-import type { WeeklyEarnings } from '../../api/client';
+import { cachedEarningsWeekly, cachedMe, cachedWithdrawals, getEarningsWeekly, getMe, getWithdrawals } from '../../api/client';
+import type { WeeklyEarnings, WithdrawalRecord } from '../../api/client';
+import { axisFor, axisLabel, GRID_LINES } from './earnings-axis';
+import type { Axis } from './earnings-axis';
 import './EarningMain.css';
 
 /* ---------------------------------------------------------------------------
@@ -23,7 +25,6 @@ import './EarningMain.css';
 
 const PLOT_W = 296; // x32..328 — the card's content width
 const PLOT_H = 160; // top grid line (y568) .. bottom grid line (y728)
-const GRID_LINES = 6; // the frame draws six, 32px apart
 const WEEKS = 20; // matches the server's own default window (ledger.weeklyEarnings)
 const WINDOW = 13; // weeks visible at once by default
 const MIN_WINDOW = 4; // smallest range the brush can be squeezed to
@@ -54,36 +55,6 @@ function weekLabel(i: number): string {
   return `Week ${i + 1}`;
 }
 
-/** Round a raw axis step up to 1/2/2.5/5 x 10^k, so the labels stay readable. */
-function niceStep(raw: number): number {
-  const mag = 10 ** Math.floor(Math.log10(Math.max(raw, 1)));
-  return ([1, 2, 2.5, 5, 10].find((m) => m * mag >= raw) ?? 10) * mag;
-}
-
-interface Axis {
-  bottom: number;
-  top: number;
-  step: number;
-}
-
-/** Six grid lines the given values fill top to bottom. The axis used to be a
-    fixed $0..$500, so squeezing the brush down to a fortnight of $30 swings
-    drew both series as flat lines along the bottom of the card. */
-function axisFor(values: readonly number[]): Axis {
-  // Empty or all-zero data keeps the frame's resting $0..$500 axis.
-  if (!values.length || Math.max(...values) <= 0) return { bottom: 0, top: 500, step: 100 };
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  // Two passes: the first picks a step to round the floor down to, the second
-  // sizes the step to the range that floor actually leaves — which guarantees
-  // `top` clears `max` without a third pass.
-  const rough = niceStep((max - min) / (GRID_LINES - 1));
-  const bottom = Math.max(0, Math.floor(min / rough) * rough);
-  const step = niceStep((max - bottom) / (GRID_LINES - 1));
-  return { bottom, top: bottom + step * (GRID_LINES - 1), step };
-}
-
-const axisLabel = (n: number) => `$${n % 1 ? n.toFixed(2) : n}`;
 
 export interface EarningMainProps {
   /** Review deep-link: open the history sheet on mount. */
@@ -96,6 +67,18 @@ export interface EarningMainProps {
   onHistory?: () => void;
   onNavigate?: (tab: NavigationTab) => void;
 }
+
+
+const toRecord = (w: WithdrawalRecord): WithdrawRecord => ({
+  id: w.id,
+  symbol: w.currency,
+  network: w.network,
+  status: w.status,
+  amount: w.amount,
+  date: new Date(w.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+  time: new Date(w.createdAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+  to: w.address.length > 16 ? `${w.address.slice(0, 8)}...${w.address.slice(-6)}` : w.address,
+});
 
 export function EarningMain({
   initialSheet,
@@ -136,44 +119,35 @@ export function EarningMain({
   const referralPct = totalEarnings ? Math.round((referralEarnings / totalEarnings) * 100) : 0;
   const cashbackPct = totalEarnings ? 100 - referralPct : 0;
 
-  /* The figures render at their real value; only the change animates — a green
-     +N chip for whatever came in since this device last looked. Same treatment
-     as the referral card. There is no chip on a first visit (no baseline to
-     difference against), which is also what frame 1367:5166 shows. */
-  const balance = useSeenValue('earning.balance', withdrawable);
+  // Only the available balance counts up — it's the number that actually moves
+  // for the user. Total earnings is a static reference figure.
+  const shownWithdrawable = useSeenValue('earning.balance', withdrawable).shown;
 
   const [historyOpen, setHistoryOpen] = useState(initialSheet === 'history');
-  /* Live withdrawal history for the sheet; `undefined` keeps the sheet's
-     built-in demo rows (the pixel-harness deep-link has no server). */
-  const [withdrawals, setWithdrawals] = useState<WithdrawRecord[]>();
+  /* Live withdrawal history for the sheet — seeded from the boot prefetch
+     (App.tsx) so it opens with its rows already there, re-fetched on each open
+     so a withdrawal made this session shows up. `undefined` (no server, e.g.
+     the pixel-harness deep link) keeps the sheet's list blank. */
+  const [withdrawals, setWithdrawals] = useState<WithdrawRecord[] | undefined>(() => cachedWithdrawals()?.map(toRecord));
   useEffect(() => {
     if (!historyOpen) return;
     let alive = true;
     getWithdrawals()
-      .then((rows) => {
-        if (!alive) return;
-        setWithdrawals(rows.map((w) => ({
-          id: w.id,
-          symbol: w.currency,
-          network: w.network,
-          status: w.status,
-          amount: w.amount,
-          date: new Date(w.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-          time: new Date(w.createdAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
-          to: w.address.length > 16 ? `${w.address.slice(0, 8)}...${w.address.slice(-6)}` : w.address,
-        })));
-      })
+      .then((rows) => alive && setWithdrawals(rows.map(toRecord)))
       .catch(() => undefined);
     return () => {
       alive = false;
     };
   }, [historyOpen]);
 
-  /* The chart's real series, once /api/me/earnings-weekly answers. Stays
-     undefined (flatSeries fallback) on a fresh mount and on a failed fetch —
-     same "don't invent history" treatment flatSeries itself already carries. */
-  const [weekly, setWeekly] = useState<WeeklyEarnings[]>();
+  /* The chart's real series — cachedEarningsWeekly() seeds this from the
+     boot-splash prefetch (App.tsx), so a warm session has nothing left to
+     wait on. Empty (not just undefined — a failed fetch's cached fallback is
+     `[]`, same "don't invent history" treatment flatSeries itself carries)
+     keeps the flatSeries placeholder rather than plotting nothing. */
+  const [weekly, setWeekly] = useState<WeeklyEarnings[] | undefined>(() => cachedEarningsWeekly());
   useEffect(() => {
+    if (cachedEarningsWeekly() !== undefined) return;
     let alive = true;
     getEarningsWeekly().then((weeks) => alive && setWeekly(weeks)).catch(() => undefined);
     return () => {
@@ -221,11 +195,11 @@ export function EarningMain({
   }, [reading]);
 
   const referral = useMemo(
-    () => weekly ? weekly.map((w) => w.referral) : flatSeries(referralEarnings),
+    () => weekly?.length ? weekly.map((w) => w.referral) : flatSeries(referralEarnings),
     [weekly, referralEarnings],
   );
   const cashback = useMemo(
-    () => weekly ? weekly.map((w) => w.cashback) : flatSeries(cashbackEarnings),
+    () => weekly?.length ? weekly.map((w) => w.cashback) : flatSeries(cashbackEarnings),
     [weekly, cashbackEarnings],
   );
 
@@ -354,13 +328,7 @@ export function EarningMain({
         <div className="scr-earn-summary">
           <h1 className="scr-earn-balance-label">Available balance</h1>
           <div className="scr-earn-balance-row">
-            <span className="scr-earn-balance-value">{loading ? '—' : money(withdrawable)}</span>
-            {!loading && balance.delta > 0 ? (
-              <span className="scr-earn-balance-delta">
-                <Icon name="arrow-up" size={16} />
-                {money(balance.delta)}
-              </span>
-            ) : null}
+            <span className="scr-earn-balance-value">{loading ? '—' : money(shownWithdrawable)}</span>
             <span className="scr-earn-total">
               <span className="scr-earn-total-value">{loading ? '—' : money(totalEarnings)}</span>
               <span className="scr-earn-total-label">Total earnings</span>
@@ -417,7 +385,6 @@ export function EarningMain({
             size="medium"
             fullWidth
             className="scr-earn-cta"
-            iconRight={<Icon name="chevron-right" size={20} />}
             onClick={onWithdraw}
           >
             Withdraw earnings
@@ -521,7 +488,6 @@ export function EarningMain({
           onPointerUp={endDrag}
           onPointerCancel={endDrag}
         >
-          <span className="scr-earn-brush-mask" style={{ width: `${windowLeft}%` }} />
           <span
             className="scr-earn-brush-window"
             style={{ left: `${windowLeft}%`, width: `${windowWidth}%` }}

@@ -1,0 +1,86 @@
+[
+ {
+  "slug": "how-we-measure-a-signal",
+  "title": "How we measure a signal: four targets, one rule",
+  "category": "signals",
+  "date": "2026-09-01",
+  "author": "TrustForex",
+  "excerpt": "Every signal is issued with TP1 through TP4 and fixed R:R values, so every result is judged against targets that were known from the start.",
+  "minutes": 1,
+  "reads": 412,
+  "featured": true,
+  "url": "/v/landing/blog/p/how-we-measure-a-signal/"
+ },
+ {
+  "slug": "reading-the-win-rate-chart",
+  "title": "Reading the Win Rate chart",
+  "category": "records",
+  "date": "2026-08-27",
+  "author": "TrustForex",
+  "excerpt": "What a Win Rate bar contains, what a No Signals period means, and how to compare the four targets across the same weeks.",
+  "minutes": 1,
+  "reads": 388,
+  "featured": false,
+  "url": "/v/landing/blog/p/reading-the-win-rate-chart/"
+ },
+ {
+  "slug": "scalp-levels-first-touch",
+  "title": "Scalp Levels: what the first 15 minutes tell you",
+  "category": "signals",
+  "date": "2026-08-20",
+  "author": "TrustForex",
+  "excerpt": "A Scalp Level is measured from its first touch for a fixed 15-minute window, so every Level is judged on equal terms.",
+  "minutes": 1,
+  "reads": 251,
+  "featured": false,
+  "url": "/v/landing/blog/p/scalp-levels-first-touch/"
+ },
+ {
+  "slug": "cashback-what-the-share-means",
+  "title": "Cashback: what your share actually means",
+  "category": "cashback",
+  "date": "2026-08-14",
+  "author": "TrustForex",
+  "excerpt": "The Cashback percentages are your share of the eligible rebate from a partner broker. They are not a share of your deposit, volume, profit or loss.",
+  "minutes": 1,
+  "reads": 305,
+  "featured": true,
+  "url": "/v/landing/blog/p/cashback-what-the-share-means/"
+ },
+ {
+  "slug": "two-referral-links",
+  "title": "Two referral links, one lasting connection",
+  "category": "referral",
+  "date": "2026-08-07",
+  "author": "TrustForex",
+  "excerpt": "The website link tells the full story first; the Bot link opens Telegram directly. Both record the connection at the first Bot Start, and it does not expire.",
+  "minutes": 1,
+  "reads": 199,
+  "featured": false,
+  "url": "/v/landing/blog/p/two-referral-links/"
+ },
+ {
+  "slug": "why-we-record-before-we-publish",
+  "title": "Why we recorded before we published",
+  "category": "company",
+  "date": "2026-07-30",
+  "author": "Amir Dankoob",
+  "excerpt": "Signal presentation was standardised first, and outcomes were recorded under one framework from early 2026, before the product was ready to launch.",
+  "minutes": 1,
+  "reads": 344,
+  "featured": false,
+  "url": "/v/landing/blog/p/why-we-record-before-we-publish/"
+ },
+ {
+  "slug": "no-signals-is-not-zero",
+  "title": "No Signals is not zero",
+  "category": "records",
+  "date": "2026-07-22",
+  "author": "TrustForex",
+  "excerpt": "A period without signals stays in the sequence as No Signals. It is neither removed from the record nor counted as a failure.",
+  "minutes": 1,
+  "reads": 173,
+  "featured": false,
+  "url": "/v/landing/blog/p/no-signals-is-not-zero/"
+ }
+]

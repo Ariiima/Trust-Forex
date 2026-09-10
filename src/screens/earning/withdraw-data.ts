@@ -1,11 +1,13 @@
 import usdt from '../../assets/crypto/usdt.png';
-import bep20 from '../../assets/crypto/bnb-smart-chain.png';
+import bep20 from '../../assets/crypto/bnb-smart-chain.svg';
 import trc20 from '../../assets/crypto/tron.png';
 
 export interface WithdrawOption {
   id: string;
   symbol: string;
   network: string;
+  /** Chain name shown under the title, same wording as the payment network picker. */
+  chain: string;
   icon: string;
   networkIcon: string;
   networkFee: number;
@@ -14,6 +16,6 @@ export interface WithdrawOption {
 
 /** Only two withdrawal rails for now — mirrors server/payouts.mjs WITHDRAW_RULES. */
 export const WITHDRAW_OPTIONS: readonly WithdrawOption[] = [
-  { id: 'usdt-bep20', symbol: 'USDT', network: 'BEP20', icon: usdt, networkIcon: bep20, networkFee: 1, minimum: 10 },
-  { id: 'usdt-trc20', symbol: 'USDT', network: 'TRC20', icon: usdt, networkIcon: trc20, networkFee: 3, minimum: 10 },
+  { id: 'usdt-bep20', symbol: 'USDT', network: 'BEP20', chain: 'BNB Smart Chain', icon: usdt, networkIcon: bep20, networkFee: 1, minimum: 10 },
+  { id: 'usdt-trc20', symbol: 'USDT', network: 'TRC20', chain: 'TRON', icon: usdt, networkIcon: trc20, networkFee: 3, minimum: 10 },
 ];

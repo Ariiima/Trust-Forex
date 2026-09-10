@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  api, type AdminUser, type Broker, type BrokerPreview, type BrokerStatus, type BrokerTotals,
+  api, fmtStamp, type AdminUser, type Broker, type BrokerPreview, type BrokerStatus, type BrokerTotals,
   type CashbackCycle, type Grain, type ReviewRequest,
 } from '../data';
 import { useAsync } from '../useAsync';
 import {
-  AnimatePresence, BrokerLogo, Button, Card, Cell2, Chip, Confirm, CopyValue, DragList, EmptyState, Icon, Modal,
+  AnimatePresence, BrokerLogo, Button, Card, Cell2, Confirm, CopyValue, DragList, EmptyState, Icon, Modal,
   MultiSelect, Select, Skeleton, StatusChip, Sweep, Tabs, UserCell,
   fmtNum, fmtUsd, type TabItem,
 } from '../ui';
@@ -14,6 +14,10 @@ import { DataTable, type Column } from '../ui/DataTable';
 import { BrokerForm, badgeIncomplete, blankBrokerPreview } from './BrokerForm';
 import { LineChart, type Series } from '../ui/Chart';
 import EventsRail from './EventsRail';
+
+/** `updated_at` is a bare date for brokers seeded before exact-time tracking
+ *  shipped; those render as-is rather than a fake midnight. */
+const fmtUpdatedAt = (v: string) => (v.includes('T') ? fmtStamp(Date.parse(v)) : v);
 
 type Tab = 'all' | 'cycles' | 'charts' | 'review';
 
@@ -34,18 +38,29 @@ const CHART_SERIES: Series[] = [
   { key: 'activeUsers', label: 'Active users', axis: 'count' },
   { key: 'pendingUsers', label: 'Pending users', axis: 'count' },
   { key: 'cashbackUsers', label: 'Cashback users', axis: 'count' },
-  { key: 'grossRebate', label: 'Gross rebate (USD)', axis: 'usd' },
+  // Shared cashback is the outflow, so it sits ahead of gross rebate in
+  // SERIES_COLORS order to inherit red — matching the "at-neg" red used
+  // for it in the totals table below.
   { key: 'sharedCashback', label: 'Shared cashback (USD)', axis: 'usd', style: 'dashed' },
+  { key: 'grossRebate', label: 'Gross rebate (USD)', axis: 'usd' },
   { key: 'netRevenue', label: 'Net revenue (USD)', axis: 'usd' },
 ];
 
 export default function Brokers() {
   const nav = useNavigate();
   const loaded = useAsync(api.brokers);
-  const [tab, setTab] = useState<Tab>('all');
+  // ?tab= so Notifications can land straight on the review queue.
+  const wanted = new URLSearchParams(useLocation().search).get('tab');
+  const [tab, setTab] = useState<Tab>(
+    TABS.some((t) => t.id === wanted) ? wanted as Tab : 'all');
   const [brokers, setBrokers] = useState<Broker[] | null>(null);
   const [sorting, setSorting] = useState(false);
   const [adding, setAdding] = useState(false);
+  // Same count the sidebar and Notifications wear, so the queue that is
+  // waiting says so on its own tab.
+  const alerts = useAsync(api.alerts);
+  const tabs = TABS.map((t) =>
+    t.id === 'review' && alerts?.reviews ? { ...t, count: alerts.reviews, alert: true } : t);
 
   // ponytail: no name filter — the broker list tops out around a dozen or two
   // rows, all visible on one page, so a search box was a control for a
@@ -64,7 +79,7 @@ export default function Brokers() {
   return (
     <>
       <header className="a-pagehead">
-        <Tabs items={TABS} value={tab} onChange={setTab} />
+        <Tabs items={tabs} value={tab} onChange={setTab} />
       </header>
 
       <Sweep key={tab}>
@@ -163,7 +178,7 @@ function AllBrokers({
           <button key={b.id} type="button" className="a-brokercard" onClick={() => onOpen(b)}>
             <div className="a-row">
               <span className="a-brokercard__rank">{b.rank ?? '–'}</span>
-              <BrokerLogo name={b.name} color={b.color} size={34} />
+              <BrokerLogo name={b.name} logo={b.logoUrl} color={b.color} size={34} />
               <span className="at-16 at-semibold">{b.name}</span>
               <span className="a-spacer">
                 <StatusChip status={b.status} />
@@ -176,7 +191,7 @@ function AllBrokers({
             </dl>
             <div className="a-row at-12 at-muted" style={{ marginTop: 12 }}>
               Last updated:
-              <span className="a-spacer">{b.updatedAt}</span>
+              <span className="a-spacer">{fmtUpdatedAt(b.updatedAt)}</span>
             </div>
           </button>
         ))}
@@ -357,7 +372,7 @@ function SortBrokersModal({
             <span className="at-13 at-muted" style={{ width: 20 }}>
               {b.status === 'public' ? draft.slice(0, i + 1).filter((x) => x.status === 'public').length : ''}
             </span>
-            <BrokerLogo name={b.name} color={b.color} />
+            <BrokerLogo name={b.name} logo={b.logoUrl} color={b.color} />
             <span className="at-14 at-semibold" style={{ flex: 1 }}>{b.name}</span>
             <Select
               value={b.status}
@@ -379,20 +394,19 @@ function SortBrokersModal({
 
 function Cycles() {
   const loadedCycles = useAsync(api.cashbackCycles);
-  const cycles = loadedCycles ?? [];
+  const cycles = loadedCycles ? [...loadedCycles].reverse() : [];
 
   const columns: Column<CashbackCycle>[] = [
-    { id: 'cycle', header: 'Cycle', render: (c) => <Cell2 top={<b>{c.name}</b>} bottom={c.range} />, sort: (c) => c.name },
+    { id: 'cycle', header: 'Cycle', render: (c) => <Cell2 top={<b>{c.name}</b>} bottom={c.publishedAt.split(' ')[1]} />, sort: (c) => c.name },
     { id: 'gross', header: 'Gross rebate', align: 'right', render: (c) => fmtUsd(c.grossRebate), sort: (c) => c.grossRebate },
     { id: 'shared', header: 'Shared cashback', align: 'right', render: (c) => <span className="at-neg">{fmtUsd(c.sharedCashback)}</span>, sort: (c) => c.sharedCashback },
     { id: 'net', header: 'Net revenue', align: 'right', render: (c) => <span className="at-pos">{fmtUsd(c.netRevenue)}</span>, sort: (c) => c.netRevenue },
     { id: 'users', header: 'Cashback users', align: 'right', render: (c) => fmtNum(c.cashbackUsers), sort: (c) => c.cashbackUsers },
-    { id: 'published', header: 'Published at', align: 'right', render: (c) => <Cell2 top={c.publishedAt.split(' · ')[0]} bottom={c.publishedAt.split(' · ')[1]} /> },
   ];
 
   return (
     <Card title={`Cashback cycles (${cycles.length})`} flush>
-      <DataTable columns={columns} rows={cycles} rowKey={(c) => c.id} showIndex loading={!loadedCycles} />
+      <DataTable columns={columns} rows={cycles} rowKey={(c) => c.id} showIndex indexOf={(c) => cycles.length - cycles.indexOf(c)} loading={!loadedCycles} />
     </Card>
   );
 }
@@ -405,7 +419,7 @@ function Charts() {
   const brokers = useAsync(api.brokers) ?? [];
   const events = useAsync(api.events) ?? [];
   const [selected, setSelected] = useState<string[]>([]);
-  const [grain, setGrain] = useState<Grain>('weekly');
+  const [grain, setGrain] = useState<Grain>('cycle');
 
   // Refetched whenever the filter or the granularity changes — the server owns
   // the rollup, so a narrower selection is a different query, not a slice.
@@ -417,7 +431,7 @@ function Charts() {
   const options = brokers.map((b) => ({
     value: b.id,
     label: b.name,
-    icon: <BrokerLogo name={b.name} color={b.color} size={20} />,
+    icon: <BrokerLogo name={b.name} logo={b.logoUrl} color={b.color} size={20} />,
   }));
 
   return (
@@ -450,6 +464,7 @@ function Charts() {
 }
 
 export const GRAIN_OPTIONS: { value: Grain; label: string }[] = [
+  { value: 'cycle', label: 'Cyclically' },
   { value: 'daily', label: 'Daily' },
   { value: 'weekly', label: 'Weekly' },
   { value: 'monthly', label: 'Monthly' },
@@ -493,7 +508,6 @@ function parseDisplayDate(s: string | null | undefined): number {
 }
 
 function ReviewQueue() {
-  const nav = useNavigate();
   const loadedQueue = useAsync(api.reviewQueue);
   const queue = loadedQueue ?? [];
   const brokers = useAsync(api.brokers) ?? [];
@@ -503,17 +517,28 @@ function ReviewQueue() {
   const [decided, setDecided] = useState<Record<string, string>>({});
   const [brokerFilter, setBrokerFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
+  // A settled user's row keeps its actions behind one click, so a stray tap in
+  // the Recent users list can't silently flip somebody's account status.
+  const [openRow, setOpenRow] = useState<string | null>(null);
 
   const brokerOf = (id: string) => brokers.find((b) => b.id === id);
+
+  // One user id can now have several rows (one per broker); key by the pair
+  // so approving one broker link doesn't touch the user's other rows.
+  const rowKeyOf = (u: AdminUser) => `${u.id}:${u.broker}`;
+
 
   const decide = (id: string, outcome: 'approved' | 'waiting' | 'rejected') => {
     const request = queue.find((r) => r.id === id);
     setDecided((d) => ({ ...d, [id]: outcome }));
     // The server writes both the queue row and the account status in one
     // transaction; mirror both here so the two tables never disagree on screen.
+    // Only the (user, broker) row moves — the same user's other broker rows
+    // keep their own decision.
     if (request) {
       const status = ({ approved: 'active', rejected: 'rejected', waiting: 'pending' } as const)[outcome];
-      setEdited(users.map((u) => (u.id === request.userId ? { ...u, status } : u)));
+      const key = `${request.userId}:${request.brokerId}`;
+      setEdited(users.map((u) => (rowKeyOf(u) === key ? { ...u, status } : u)));
     }
     api.decideReview(id, outcome).catch(() => setDecided((d) => {
       const { [id]: _dropped, ...rest } = d;
@@ -522,7 +547,7 @@ function ReviewQueue() {
   };
 
   const reviewColumns: Column<ReviewRequest>[] = [
-    { id: 'user', header: 'User', render: (r) => <UserCell name={r.name} sub={r.userId} plan={r.plan} /> },
+    { id: 'user', header: 'User', render: (r) => <UserCell name={r.name} userNo={r.userNo} plan={r.plan} userId={r.userId} /> },
     {
       id: 'broker',
       header: 'Broker',
@@ -530,7 +555,7 @@ function ReviewQueue() {
         const b = brokerOf(r.brokerId);
         return (
           <span className="a-row" style={{ gap: 8 }}>
-            <BrokerLogo name={b?.name ?? r.brokerId} color={b?.color} size={24} />
+            <BrokerLogo name={b?.name ?? r.brokerId} logo={b?.logoUrl} color={b?.color} size={24} />
             {b?.name ?? r.brokerId}
           </span>
         );
@@ -563,36 +588,50 @@ function ReviewQueue() {
       id: 'actions',
       header: 'Actions',
       align: 'right',
-      render: (r) =>
-        decided[r.id] ? (
-          <Chip tone={decided[r.id] === 'approved' ? 'success' : decided[r.id] === 'rejected' ? 'danger' : 'warn'}>
-            {decided[r.id][0].toUpperCase() + decided[r.id].slice(1)}
-          </Chip>
-        ) : (
-          <span className="a-row" style={{ gap: 8, justifyContent: 'flex-end' }}>
-            <Button size="sm" variant="success" onClick={() => decide(r.id, 'approved')}>Approve</Button>
-            <Button size="sm" variant="warn" onClick={() => decide(r.id, 'waiting')}>Waiting for deposit</Button>
-            <Button size="sm" variant="danger" onClick={() => decide(r.id, 'rejected')}>Reject</Button>
-          </span>
-        ),
+      // No post-decision chip: the row is gone from this table by the time it
+      // would render (and back if the request fails).
+      render: (r) => (
+        <span className="a-row" style={{ gap: 8, justifyContent: 'flex-end' }}>
+          <Button size="sm" variant="success" onClick={() => decide(r.id, 'approved')}>Approve</Button>
+          <Button size="sm" variant="warn" onClick={() => decide(r.id, 'waiting')}>Waiting for deposit</Button>
+          <Button size="sm" variant="danger" onClick={() => decide(r.id, 'rejected')}>Reject</Button>
+        </span>
+      ),
     },
   ];
 
+  // A decision empties the row out of the review table in the same click that
+  // fills it into Recent users below — one row, one place, no refresh. Keyed
+  // by the (user, broker) pair, not just the user: one user can have a pending
+  // request on broker A while already decided on broker B.
+  const open = queue.filter((r) => !decided[r.id]);
+  const underReview = new Set(open.map((r) => `${r.userId}:${r.brokerId}`));
+
   const recent = users.filter((u) =>
-    (statusFilter === 'all' || u.status === statusFilter)
-    && (brokerFilter === 'all' || u.broker === brokerFilter));
+    !underReview.has(`${u.id}:${u.broker}`)
+    && (statusFilter === 'all' || u.status === statusFilter)
+    && (brokerFilter === 'all' || u.broker === brokerFilter))
+    .sort((a, b) => parseDisplayDate(b.lastActionAt) - parseDisplayDate(a.lastActionAt));
+
+  const decideUser = (u: AdminUser, outcome: 'approved' | 'waiting' | 'rejected') => {
+    if (!u.broker) return;
+    const status = ({ approved: 'active', rejected: 'rejected', waiting: 'pending' } as const)[outcome];
+    const key = rowKeyOf(u);
+    setDecided((d) => ({ ...d, [key]: outcome }));
+    setEdited(users.map((x) => (rowKeyOf(x) === key ? { ...x, status } : x)));
+    setOpenRow(null);
+    api.decideReviewForUser(u.id, u.broker, outcome).catch(() => setDecided((d) => {
+      const { [key]: _dropped, ...rest } = d;
+      return rest;
+    }));
+  };
 
   const recentColumns: Column<(typeof users)[number]>[] = [
     {
       id: 'user',
       header: 'User',
       render: (u) => (
-        <UserCell
-          name={u.name}
-          sub={u.userNo != null ? `#${u.userNo}` : u.id}
-          plan={u.plan}
-          onClick={() => nav(`/users/${u.id}`)}
-        />
+        <UserCell name={u.name} userNo={u.userNo} plan={u.plan} userId={u.id} />
       ),
     },
     {
@@ -602,7 +641,7 @@ function ReviewQueue() {
         const b = brokerOf(u.broker ?? '');
         return b ? (
           <span className="a-row" style={{ gap: 8 }}>
-            <BrokerLogo name={b.name} color={b.color} size={24} />
+            <BrokerLogo name={b.name} logo={b.logoUrl} color={b.color} size={24} />
             {b.name}
           </span>
         ) : <span className="at-muted">—</span>;
@@ -623,16 +662,37 @@ function ReviewQueue() {
     {
       id: 'date',
       header: 'Action date',
-      align: 'right',
       render: (u) => <Cell2 top={u.lastActionAt.split(' · ')[0]} bottom={u.lastActionAt.split(' · ')[1]} />,
       sort: (u) => parseDisplayDate(u.lastActionAt),
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      align: 'right',
+      render: (u) => {
+        const key = rowKeyOf(u);
+        // Every settled row collapses, whatever its status: a row down here is
+        // one the admin already ruled on (a pending one is still 'waiting for
+        // deposit'), so its buttons stay behind one click — including right
+        // after a decision, which is what closed this row in the first place.
+        return !u.broker ? null : openRow !== key ? (
+          <Button size="sm" variant="ghost" onClick={() => setOpenRow(key)}>Change…</Button>
+        ) : (
+          <span className="a-row" style={{ gap: 8, justifyContent: 'flex-end' }}>
+            <Button size="sm" variant="success" onClick={() => decideUser(u, 'approved')}>Approve</Button>
+            <Button size="sm" variant="warn" onClick={() => decideUser(u, 'waiting')}>Waiting for deposit</Button>
+            <Button size="sm" variant="danger" onClick={() => decideUser(u, 'rejected')}>Reject</Button>
+            <Button size="sm" variant="plain" onClick={() => setOpenRow(null)}>Cancel</Button>
+          </span>
+        );
+      },
     },
   ];
 
   return (
     <>
       <Card title="Users under review" flush>
-        <DataTable columns={reviewColumns} rows={queue} rowKey={(r) => r.id} showIndex maxHeight={420} loading={!loadedQueue}
+        <DataTable columns={reviewColumns} rows={open} rowKey={(r) => r.id} showIndex maxHeight={420} loading={!loadedQueue}
           empty={<EmptyState icon="check-circle" title="Nothing waiting for review" hint="New broker registrations land here." />} />
       </Card>
 
@@ -661,7 +721,7 @@ function ReviewQueue() {
           </>
         }
       >
-        <DataTable columns={recentColumns} rows={recent} rowKey={(u) => u.id} showIndex maxHeight={420} />
+        <DataTable columns={recentColumns} rows={recent} rowKey={rowKeyOf} showIndex maxHeight={420} />
       </Card>
     </>
   );

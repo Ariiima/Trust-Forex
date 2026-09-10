@@ -88,6 +88,10 @@
   --control-h: 36px;
   --control-h-sm: 28px;
 
+  /* The one non-Sora face: {tokens} and on-chain addresses are read character
+     by character, and Sora's digits and letterforms are not built for that. */
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
   /* ---- Motion -------------------------------------------------------
      150-250ms, and only where something changed state. The operator is
      mid-task; nothing here is worth waiting to watch. */
@@ -250,6 +254,50 @@ img, svg { display: block; max-width: 100%; }
   font-weight: var(--font-weight-semibold);
 }
 .a-navitem--active:hover { background: var(--body-2); }
+
+/* A count only appears while that section has something waiting — so it reads
+   as "act on this", not as a permanent decoration. */
+.a-navitem__badge {
+  margin-left: auto;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--loss);
+  color: #fff;
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 18px;
+  text-align: center;
+}
+
+/* Sits on a white card, not on the rail — rail tokens here rendered the whole
+   row white on white. Card inks only. */
+.a-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 4px;
+  color: var(--ink);
+  font-size: 13px;
+  border-bottom: 1px solid var(--hairline);
+}
+.a-notice:last-child { border-bottom: none; }
+.a-notice:hover { color: var(--ink); background: var(--index-soft); }
+.a-notice__text { font-weight: var(--font-weight-semibold); }
+.a-notice__where { margin-left: auto; color: var(--ink-2); font-size: 12px; }
+.a-notice__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: var(--r-sm);
+  background: var(--index-soft);
+  color: var(--index);
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
 
 .a-navitem__count {
   margin-left: auto;
@@ -541,12 +589,30 @@ img, svg { display: block; max-width: 100%; }
   color: var(--ink-2);
 }
 .a-tab--active .a-tab__count { color: var(--index); }
+.a-tab__count--alert,
+.a-tab--active .a-tab__count--alert {
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--loss);
+  color: #fff;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+}
 
 /* The sub variant is a full-width toggle, the way the Mini App sets its
-   Weekly / Monthly / Yearly row under a chart. */
+   Weekly / Monthly / Yearly row under a chart — same neutral fill on the
+   active segment, not the index blue the main tabs use, or an operator
+   reading this card would see a different chart toggle than the customer. */
 .a-tabs--sub { gap: 2px; background: transparent; border: 1px solid var(--edge); padding: 3px; }
 .a-tabs--sub .a-tab { flex: 1 1 0; }
-.a-tabs--sub .a-tab--active { background: var(--index-soft); box-shadow: none; }
+.a-tabs--sub .a-tab--active {
+  background: var(--plate-sunk);
+  color: var(--ink);
+  font-weight: var(--font-weight-regular);
+  box-shadow: none;
+}
 
 /* ---------------------------------------------------------------------
    Chips — the Mini App's state pill: tinted ground, no outline
@@ -923,8 +989,14 @@ img, svg { display: block; max-width: 100%; }
 .a-cell2 > span:last-child { font-size: 12px; color: var(--ink-2); }
 
 .a-user { display: flex; align-items: center; gap: 10px; min-width: 0; }
-button.a-user .at-semibold { transition: color var(--t-fast) var(--ease); }
-button.a-user:hover .at-semibold { color: var(--index); }
+a.a-user { color: inherit; text-decoration: none; }
+button.a-user .at-semibold,
+a.a-user .at-semibold { transition: color var(--t-fast) var(--ease); }
+button.a-user:hover .at-semibold,
+a.a-user:hover .at-semibold { color: var(--index); }
+/* The same affordance where the user is one line inside another cell. */
+.a-userlink { color: inherit; text-decoration: none; transition: color var(--t-fast) var(--ease); }
+.a-userlink:hover { color: var(--index); }
 
 .a-empty {
   display: grid;
@@ -1158,8 +1230,88 @@ button.a-user:hover .at-semibold { color: var(--index); }
   font-variant-numeric: tabular-nums;
 }
 
-.a-rte__area { min-height: 98px; padding: 10px; font-size: 13px; line-height: 20px; outline: none; overflow-y: auto; }
+/* Bodies are stored with real newlines (server/admin.mjs MESSAGE_TEMPLATES),
+   and Telegram sends them as breaks. Without pre-wrap the editor collapsed
+   them to spaces and disagreed with its own preview. */
+.a-rte__area {
+  min-height: 98px;
+  padding: 10px;
+  font-size: 13px;
+  line-height: 20px;
+  outline: none;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 .a-rte__area:empty::before { content: attr(data-placeholder); color: var(--ink-3); }
+
+/* The global reset strips links to inherited colour, which left a link in a
+   message indistinguishable from the text around it — in the editor and in
+   the preview of what Telegram sends, where it is unmistakably blue. */
+.a-rte__area a, .a-tg-bubble a, .a-tg-preview a {
+  color: var(--index);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+.a-tg-bubble a, .a-tg-preview a { cursor: pointer; }
+.a-rte__area a { cursor: text; }
+
+/* Tokens are data the send site fills in, not a mark the writer applies, so
+   they sit in their own strip under the writing area rather than competing
+   with bold/italic in the toolbar. */
+.a-rte__tokens {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 7px 8px;
+  border-top: 1px solid var(--hairline);
+  background: var(--plate-sunk);
+  border-radius: 0 0 var(--r-md) var(--r-md);
+}
+.a-rte__tokenlabel { font-size: 12px; color: var(--ink-2); padding-left: 2px; }
+.a-rte__token {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 16px;
+  padding: 3px 8px;
+  color: var(--index);
+  background: var(--plate);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-sm);
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.a-rte__token:hover { background: var(--index-soft); border-color: var(--index); }
+/* The global reset zeroes blockquote, so a quote was invisible in the editor
+   and its preview — the same bar Telegram draws. */
+/* Telegram draws a quote as a coloured bar; the preview keeps exactly that.
+   In the editor it also takes a tint, because a quote is the one mark whose
+   block extends past the words you selected — you need to see where it ends
+   before you send it. */
+.a-tg-preview blockquote, .a-tg-bubble blockquote {
+  border-left: 3px solid var(--index);
+  padding: 2px 0 2px 10px;
+  margin: 4px 0;
+}
+.a-rte__area blockquote {
+  border-left: 3px solid var(--index);
+  background: var(--index-soft);
+  padding: 3px 8px 3px 9px;
+  margin: 4px 0;
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+}
+/* Telegram sets <code> in its own mono face; a wallet address read as body
+   text is the one thing on this surface an operator checks character by
+   character. */
+.a-rte__area code, .a-tg-bubble code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: var(--plate-sunk);
+}
+.a-tg-bubble code { background: var(--field); }
 
 /* Sticker picker — grouped the way Telegram's own picker groups them. */
 .a-emoji {
@@ -1167,8 +1319,8 @@ button.a-user:hover .at-semibold { color: var(--index); }
   z-index: 20;
   top: calc(100% + 3px);
   left: 0;
-  width: 268px;
-  max-height: 280px;
+  width: 296px;
+  max-height: 340px;
   overflow-y: auto;
   padding: 8px;
   background: var(--plate);
@@ -1177,7 +1329,7 @@ button.a-user:hover .at-semibold { color: var(--index); }
 }
 .a-emoji__group + .a-emoji__group { margin-top: 10px; }
 .a-emoji__label { font-size: 12px; color: var(--ink-2); margin-bottom: 4px; }
-.a-emoji__grid { display: grid; grid-template-columns: repeat(6, 1fr); }
+.a-emoji__grid { display: grid; grid-template-columns: repeat(7, 1fr); }
 .a-emoji button {
   height: 34px;
   border-radius: 6px;
@@ -1952,4 +2104,320 @@ button.a-user:hover .at-semibold { color: var(--index); }
   font-size: 11px;
   font-variant-numeric: tabular-nums;
   text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------------
+   Deposit wallets — a list of networks that opens into an editor.
+
+   The page is read far more often than it is edited ("which address is BEP-20
+   on?"), so the default state is one dense row per network and the eight-field
+   form only appears for the row being changed.
+   ------------------------------------------------------------------- */
+.a-grid--2 { grid-template-columns: 1fr 1fr; }
+@media (max-width: 720px) { .a-grid--2 { grid-template-columns: 1fr; } }
+
+/* The one-line tally above the cards: how much is configured, how much of it
+   the watcher actually covers, and whether anything is broken. */
+.a-walletsum {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.a-walletsum b { color: var(--ink); font-weight: var(--font-weight-semibold); }
+.a-walletsum span { display: inline-flex; align-items: center; gap: 5px; }
+.a-walletsum__dot { width: 3px; height: 3px; border-radius: 50%; background: var(--edge); }
+.a-walletsum__manual { color: var(--caution); }
+.a-walletsum__bad {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  padding: 3px 9px;
+  border: 1px solid var(--loss-mark);
+  border-radius: 999px;
+  background: var(--loss-soft);
+  color: var(--loss);
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.a-walletcard--bad { border-color: var(--loss-mark); }
+
+.a-walletbad { display: flex; gap: 10px; align-items: flex-start; color: var(--loss); }
+.a-walletbad > div { flex: 1; }
+.a-walletbad ul { margin: 6px 0 0; padding-left: 16px; color: var(--ink-2); font-size: 13px; }
+.a-walletbad li { margin-top: 3px; }
+.a-walletbad__hint { color: var(--loss); }
+.a-walletwarn__hint { color: var(--caution); }
+.a-walletbad li button {
+  color: var(--index);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Currency header: the ticker as a plate, its two fields, and the bin. */
+.a-wallethead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--hairline);
+}
+.a-wallethead__coin { flex: none; width: 44px; height: 44px; border-radius: 50%; object-fit: contain; }
+.a-wallethead__tick {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--index-soft);
+  color: var(--index);
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.02em;
+}
+.a-wallethead__fields { flex: 1; display: grid; grid-template-columns: 140px 1fr; gap: 12px; min-width: 0; }
+@media (max-width: 720px) {
+  .a-wallethead__fields { grid-template-columns: 1fr; }
+  .a-wallethead__tick { display: none; }
+}
+
+.a-walletrows { display: flex; flex-direction: column; }
+
+.a-walletrow { border-bottom: 1px solid var(--hairline); }
+.a-walletrow.is-open { background: var(--plate-sunk); }
+.a-walletrow.is-bad .a-walletrow__head { box-shadow: inset 3px 0 0 var(--loss-mark); }
+
+.a-walletrow__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  cursor: pointer;
+  text-align: left;
+}
+.a-walletrow__head:hover { background: var(--plate-sunk); }
+.a-walletrow__caret { flex: none; color: var(--ink-2); transition: transform var(--t-fast) var(--ease); }
+.a-walletrow__icon { flex: none; width: 22px; height: 22px; border-radius: 50%; object-fit: contain; }
+.a-walletrow.is-open .a-walletrow__caret { transform: rotate(180deg); }
+.a-walletrow__name { font-weight: var(--font-weight-semibold); min-width: 82px; }
+.a-walletrow__name em { color: var(--ink-2); font-weight: var(--font-weight-regular); }
+/* The address is the field an operator comes here to read, so it gets the
+   slack and stays copyable without opening the row. */
+.a-walletrow__addr { flex: 1; min-width: 0; font-variant-numeric: tabular-nums; }
+.a-walletrow__conf { flex: none; font-size: 12px; font-variant-numeric: tabular-nums; }
+.a-walletrow__bad { flex: none; color: var(--loss); display: inline-flex; }
+
+.a-walletrow__body { display: flex; flex-direction: column; gap: 12px; padding: 4px 16px 16px; }
+.a-walletrow__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 12px;
+  border-top: 1px solid var(--edge);
+}
+
+.a-walletfoot { padding: 8px 10px; }
+
+/* Sticky so "Save wallets" is reachable however long the list grows — the
+   one control on the page that makes any of the edits real. */
+.a-walletbar {
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  margin: 0 -2px;
+  border: 1px solid transparent;
+  border-radius: var(--r-lg);
+  background: var(--field);
+}
+.a-walletbar.is-live { position: sticky; bottom: 0; }
+/* Only once there is something to lose does the bar become an object on the
+   page — otherwise it is just the page background under a button. */
+.a-walletbar.is-dirty {
+  border-color: var(--edge);
+  background: var(--plate);
+  box-shadow: var(--lift);
+}
+.a-walletbar__state { flex: 1; display: flex; align-items: center; gap: 8px; font-size: 13px; min-width: 200px; }
+.a-walletbar__state .at-neg { display: inline-flex; align-items: center; gap: 6px; }
+.a-walletbar__pip {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--caution-mark);
+}
+
+/* ---------------------------------------------------------------------
+   Bot Messages — an index and one writer
+   ---------------------------------------------------------------------
+   Thirteen fixed templates, edited one at a time. Stacking thirteen
+   full-width cards put one short bubble and one Edit button on every
+   1400px row; the index puts the whole set in view at once and gives the
+   writer and its preview the width they actually use.
+   ------------------------------------------------------------------- */
+.a-msglayout {
+  display: grid;
+  grid-template-columns: 272px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.a-msgindex {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 10px;
+  background: var(--plate);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-lg);
+  box-shadow: var(--lift);
+}
+
+.a-msgindex__group { display: flex; flex-direction: column; gap: 2px; }
+.a-msgindex__label { padding: 0 8px 4px; }
+
+.a-msgrow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0 8px;
+  padding: 7px 10px;
+  text-align: left;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.a-msgrow:hover { background: var(--plate-sunk); }
+.a-msgrow--on { border-color: var(--index); background: var(--index-soft); }
+
+.a-msgrow__name {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: var(--font-weight-semibold);
+}
+.a-msgrow--on .a-msgrow__name { color: var(--index); }
+
+/* One line of the message itself, so a row is identified by its copy and
+   not only by a name an operator has to remember the wording behind. */
+.a-msgrow__snip {
+  grid-column: 1;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.a-msgrow--on .a-msgrow__snip { color: var(--index); opacity: 0.78; }
+
+/* Blue: this row no longer sends the shipped copy. Amber: it has edits that
+   are not saved yet — the one state an operator can lose by clicking away. */
+.a-msgrow__dot {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  align-self: center;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--index);
+}
+.a-msgrow__dot--unsaved { background: var(--caution-mark); }
+
+/* Sticky so the writer stays put while the index is scrolled past it — on a
+   short window the list is the taller of the two. */
+.a-msgpane { display: flex; flex-direction: column; position: sticky; top: 16px; }
+
+.a-msgpane__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--hairline);
+}
+.a-msgpane__heading { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.a-msgpane__heading p { max-width: 68ch; }
+
+.a-msgpane__mark {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: var(--r-sm);
+  background: var(--plate-sunk);
+  color: var(--ink-2);
+}
+.a-msgpane__mark--primary { background: var(--index-soft); color: var(--index); }
+.a-msgpane__mark--success { background: var(--gain-soft); color: var(--gain); }
+.a-msgpane__mark--info { background: var(--info-soft); color: var(--info); }
+.a-msgpane__mark--purple { background: var(--index-soft); color: var(--index); }
+
+.a-msgpane__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 20px;
+  padding: 16px 18px;
+}
+/* The writing area is the page's subject, so it takes the slack rather than
+   sitting at a stock height above 400px of nothing. */
+/* Room for the longest shipped message (Payment Incomplete, five lines) plus
+   a few of the operator's own, without opening a void under a one-liner. */
+.a-msgpane .a-rte { display: flex; flex-direction: column; }
+.a-msgpane .a-rte__area { min-height: 172px; max-height: 40vh; }
+.a-msgpane .a-tg-ground { max-height: 40vh; overflow-y: auto; }
+
+.a-msgpane__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 18px;
+  border-top: 1px solid var(--hairline);
+  background: var(--plate-sunk);
+  border-radius: 0 0 var(--r-lg) var(--r-lg);
+}
+
+.a-msgpane__saved {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--gain);
+  animation: a-sweep var(--t-base) var(--ease-out);
+}
+
+/* Below the two-column width the inbox unstacks and the page scrolls again:
+   a 240px index over a full-width writer beats two squeezed columns. */
+@media (max-width: 1180px) {
+  .a-msglayout { grid-template-columns: minmax(0, 1fr); }
+  .a-msgindex { max-height: 260px; }
+  .a-msgpane__body { grid-template-columns: minmax(0, 1fr); }
+  .a-msgpane .a-rte__area { min-height: 140px; }
+}
+
+/* ---- The Telegram bubble, on the ground it is read against ---------- */
+.a-tg-ground {
+  padding: 12px;
+  background: var(--plate-sunk);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-md);
+}
+.a-tg-bubble {
+  padding: 8px 11px;
+  background: var(--plate);
+  border: 1px solid var(--edge);
+  border-radius: 14px 14px 14px 4px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  box-shadow: var(--lift);
 }

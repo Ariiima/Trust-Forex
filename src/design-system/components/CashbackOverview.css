@@ -201,9 +201,22 @@
 
 .ds-cashback-tier-line {
   flex: 1 1 auto;
+  /* Figma's 0.5px stroke. A 0.5px-tall box drops its gradient paint on a
+     fractional y in Chrome, so draw 1px and scale. */
   height: 1px;
-  margin: 0 var(--spacing-4);
-  background: rgba(255, 255, 255, 0.3);
+  transform: scaleY(0.5);
+  /* 984:1471 puts the line ~4.5px above the ring's bottom edge; centred in the
+     32px column it sat at 2px, so lift it. */
+  margin-bottom: 4px;
+  background: #fff;
+}
+/* 984:1471 — the line leaving the current tier reads half-lit; those beyond it
+   dim with the tiers they join. */
+.ds-cashback-tier-line-next {
+  opacity: 0.7;
+}
+.ds-cashback-tier-line-dim {
+  opacity: 0.4;
 }
 
 /* action buttons */

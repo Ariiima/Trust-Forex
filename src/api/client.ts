@@ -72,6 +72,13 @@ export class ApiError extends Error {
   }
 }
 
+/* `?ref=CODE` from a website referral link, read once before the router
+   touches the URL. Not sent to the API: a browser identity cannot follow the
+   visitor into Telegram, so crediting it here would count the same person
+   twice. The Join-channel sheet carries it into `t.me/<bot>?start=CODE`, and
+   the bot's /start is where the credit lands. */
+export const REF = new URLSearchParams(window.location.search).get('ref');
+
 /** GET when `body` is undefined, JSON POST otherwise. */
 async function request<T>(path: string, body?: unknown): Promise<T> {
   const headers: Record<string, string> = {};
@@ -147,6 +154,7 @@ function cache<T>(load: (key: string) => Promise<T>, fallback: T) {
   const seen = new Map<string, T>();
   return {
     peek: (key = '') => seen.get(key),
+    set: (v: T, key = '') => seen.set(key, v),
     get: (key = '') =>
       load(key)
         .catch(() => fallback)
@@ -176,8 +184,15 @@ export interface MeSubscription {
 export interface MeBrokerLink {
   brokerId: string;
   /** 'pending' = account submitted, awaiting admin review;
-   *  'deposit-review' = deposit claimed, awaiting admin review. */
-  state: 'cashback-active' | 'waiting-for-deposit' | 'deposit-review' | 'pending' | 'rejected';
+   *  'deposit-review' = deposit claimed, awaiting admin review;
+   *  'deposit-rejected' = deposit failed review — account still verified. */
+  state:
+    | 'cashback-active'
+    | 'waiting-for-deposit'
+    | 'deposit-review'
+    | 'deposit-rejected'
+    | 'pending'
+    | 'rejected';
   brokerAccountId?: string;
   email?: string;
   totalRebate?: number;
@@ -225,6 +240,10 @@ export interface Me {
 const meCache = cache<Me | null>(() => request<Me>('/me'), null);
 export const cachedMe = () => meCache.peek();
 export const getMe = () => meCache.get();
+/** Other screens read `cachedMe()` fresh on mount — patch the shared cache
+ * (not just local state) whenever a screen learns the server's `me` changed
+ * out of band (broker submit/deposit), so navigating there shows it live. */
+export const setCachedMe = (updater: (m: Me | null) => Me | null) => meCache.set(updater(meCache.peek() ?? null));
 
 /* ---- wallet, referral, offers -------------------------------------------- */
 
@@ -291,12 +310,20 @@ export interface WithdrawResult {
 export const withdraw = (input: { amount: number; currency: string; network: string; address: string }): Promise<WithdrawResult> =>
   requestSoft<WithdrawResult>('/me/withdraw', input);
 
-/** Withdrawal history, newest first — feeds the Earning history sheet. */
-export const getWithdrawals = (): Promise<WithdrawalRecord[]> =>
-  request<{ withdrawals: WithdrawalRecord[] }>('/me/withdrawals').then((r) => r.withdrawals);
+/** Withdrawal history, newest first — feeds the Earning history sheet.
+ *  Warmed at boot (App.tsx) so the sheet opens with its rows already there. */
+const withdrawalsCache = cache<WithdrawalRecord[]>(
+  () => request<{ withdrawals: WithdrawalRecord[] }>('/me/withdrawals').then((r) => r.withdrawals),
+  [],
+);
+export const cachedWithdrawals = () => withdrawalsCache.peek();
+export const getWithdrawals = () => withdrawalsCache.get();
 
 export interface MyReferral {
   code: string;
+  /** The bot's username — what a guest's "Join channel" hop is built from. */
+  bot: string | null;
+  /** `https://t.me/<bot>?start=<code>` — opens the bot, whose /start attributes. */
   botLink: string | null;
   websiteLink: string;
   tier: string;
@@ -306,7 +333,9 @@ export interface MyReferral {
   refEarnings: number;
 }
 
-export const getMyReferral = () => request<MyReferral>('/me/referral');
+const myReferralCache = cache<MyReferral | null>(() => request<MyReferral>('/me/referral'), null);
+export const cachedMyReferral = () => myReferralCache.peek();
+export const getMyReferral = () => myReferralCache.get();
 
 /** One invited user, and what they've earned this account so far. */
 export interface Referral {
@@ -319,21 +348,30 @@ export interface Referral {
 }
 
 /** Per-invitee breakdown for the "Your referrals" list, newest first. */
-export const getReferrals = (): Promise<Referral[]> =>
-  request<{ referrals: Referral[] }>('/me/referrals').then((r) => r.referrals);
+const referralsCache = cache<Referral[]>(() => request<{ referrals: Referral[] }>('/me/referrals').then((r) => r.referrals), []);
+export const cachedReferrals = () => referralsCache.peek();
+export const getReferrals = () => referralsCache.get();
 
 /** One cashback payout, as booked on the ledger. */
 export interface CashbackHistoryEntry {
   broker: string;
+  /** Carried on the row — a private broker is absent from getBrokers(). */
+  brokerName: string;
+  brokerLogo: string | null;
   at: number;
   /** e.g. 20 for 20% — the tier this row was paid at, frozen at write time. */
   ratePct: number;
   amount: number;
 }
 
-/** This user's cashback payouts, newest first — feeds the history sheet. */
-export const getCashbackHistory = (): Promise<CashbackHistoryEntry[]> =>
-  request<{ history: CashbackHistoryEntry[] }>('/me/cashback-history').then((r) => r.history);
+/** This user's cashback payouts, newest first — feeds the history sheet.
+ *  Warmed at boot (App.tsx) so the sheet opens with its rows already there. */
+const cashbackHistoryCache = cache<CashbackHistoryEntry[]>(
+  () => request<{ history: CashbackHistoryEntry[] }>('/me/cashback-history').then((r) => r.history),
+  [],
+);
+export const cachedCashbackHistory = () => cashbackHistoryCache.peek();
+export const getCashbackHistory = () => cashbackHistoryCache.get();
 
 /** Referral + cashback income folded into 7-day buckets, oldest first. */
 export interface WeeklyEarnings {
@@ -344,8 +382,12 @@ export interface WeeklyEarnings {
 }
 
 /** The Earning tab's chart feed — a fixed-size rolling window ending this week. */
-export const getEarningsWeekly = (): Promise<WeeklyEarnings[]> =>
-  request<{ weeks: WeeklyEarnings[] }>('/me/earnings-weekly').then((r) => r.weeks);
+const earningsWeeklyCache = cache<WeeklyEarnings[]>(
+  () => request<{ weeks: WeeklyEarnings[] }>('/me/earnings-weekly').then((r) => r.weeks),
+  [],
+);
+export const cachedEarningsWeekly = () => earningsWeeklyCache.peek();
+export const getEarningsWeekly = () => earningsWeeklyCache.get();
 
 /** Validate a campaign discount code before checkout commits to it. */
 export const checkDiscount = (code: string, planId?: string) =>
@@ -371,7 +413,14 @@ export interface BrokerPreview {
   referralCodeOn?: boolean;
   referralCode?: string;
   details?: Record<string, string>;
+  requireEmail?: boolean;
+  requireUserId?: boolean;
 }
+
+/** Admin-editable copy for one broker-flow decision (Manage user flow →
+ * Status message) — `title` is the short label safe to show in a banner;
+ * `message` carries `{name}`/`{broker}` placeholders and is Telegram-DM-only. */
+export interface FlowMessage { key: string; title: string; from: string; chip: string; message: string }
 
 export interface ApiBroker {
   id: string;
@@ -380,22 +429,15 @@ export interface ApiBroker {
   status: string;
   rank: number | null;
   shareRate: number;
+  /** Admin-uploaded logo as a ready-to-use data URL; undefined until one is set. */
+  logoUrl?: string;
   preview: BrokerPreview | null;
+  flow: FlowMessage[];
 }
 
 const brokersCache = cache<ApiBroker[]>(() => request<{ brokers: ApiBroker[] }>('/brokers').then((r) => r.brokers), []);
 export const cachedBrokers = () => brokersCache.peek();
 export const getBrokers = () => brokersCache.get();
-
-export interface BrokerDetailPayload {
-  broker: ApiBroker;
-  preview: BrokerPreview | null;
-  flow: { key: string; title: string; from: string; chip: string; message: string }[];
-}
-
-const brokerCache = cache<BrokerDetailPayload | null>((id) => request<BrokerDetailPayload>(`/brokers/${id}`), null);
-export const cachedBroker = (id: string) => brokerCache.peek(id);
-export const getBroker = (id: string) => brokerCache.get(id);
 
 /* Both verification calls answer with the refreshed broker links, so the
  * screen can update `me` in place instead of refetching the whole read. */

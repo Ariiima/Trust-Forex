@@ -10,14 +10,24 @@
  * Rows are stored snake_case and mapped to the camelCase shapes in
  * src/admin/data.ts at the edge, so the client types are the contract.
  */
-import { randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
+import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 import { connect } from './sqlite.mjs';
 import { PAYMENT_SCHEMA } from './db.mjs';
 import { LEDGER_SCHEMA, openLedger, PLAN_DAYS, TIER_PCT } from './ledger.mjs';
 import { CAMPAIGN_SCHEMA, openCampaigns } from './campaigns.mjs';
+import { computeSeries } from './series.mjs';
+import { fmtDay, fmtTime, fmtStamp, wallMs } from './tz.mjs';
+export { GRAINS, seriesNames } from './series.mjs';
+
+/** Where the Mini App and the dashboard live. The apex 301s here, so old
+ *  `trustforex.net/?ref=` links still work — but every link we mint is direct. */
+export const PUBLIC_URL = process.env.TF_PUBLIC_URL ?? 'https://app.trustforex.net';
 
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000; // 12h; admins re-auth daily
 const SCRYPT_KEYLEN = 64;
+const round2 = (n) => Math.round(n * 100) / 100;
+/** n of d as a one-decimal percentage; 0 when there is nothing to divide by. */
+const pctOf = (n, d) => (d ? Number(((n / d) * 100).toFixed(1)) : 0);
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS admins (
@@ -28,6 +38,15 @@ CREATE TABLE IF NOT EXISTS admin_sessions (
   token TEXT PRIMARY KEY, admin_id INTEGER NOT NULL, expires_at INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS idx_sessions_expiry ON admin_sessions(expires_at);
 
+-- Bearer keys for programmatic callers (the MCP server, i.e. an AI agent).
+-- Only the sha256 of the key is kept: a 256-bit random secret has nothing to
+-- brute-force, so scrypt here would only cost 100ms on every agent call.
+-- scope is the blast radius: read | write | money, see API_SCOPES.
+CREATE TABLE IF NOT EXISTS admin_api_keys (
+  id TEXT PRIMARY KEY, name TEXT NOT NULL, prefix TEXT NOT NULL,
+  hash TEXT NOT NULL UNIQUE, scope TEXT NOT NULL,
+  created_at INTEGER NOT NULL, last_used_at INTEGER);
+
 CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY, name TEXT NOT NULL, plan TEXT NOT NULL, email TEXT,
   broker_id TEXT, status TEXT NOT NULL, last_action_at TEXT,
@@ -36,16 +55,6 @@ CREATE TABLE IF NOT EXISTS users (
   -- to fabricate this column from the row index.
   broker TEXT);
 CREATE INDEX IF NOT EXISTS idx_users_status ON users(status);
-
-CREATE TABLE IF NOT EXISTS activity (
-  id TEXT PRIMARY KEY, user_id TEXT NOT NULL, at TEXT NOT NULL, activity TEXT NOT NULL,
-  category TEXT NOT NULL, amount REAL, signed INTEGER DEFAULT 0);
-CREATE INDEX IF NOT EXISTS idx_activity_user ON activity(user_id, category);
-
-CREATE TABLE IF NOT EXISTS user_summary (
-  user_id TEXT PRIMARY KEY, cashback_net REAL, cashback_sale REAL,
-  ref_invited INTEGER, ref_active INTEGER, ref_plan REAL, ref_cashback REAL,
-  ref_revenue REAL, ref_earnings REAL);
 
 -- drafted_payment and unreviewed are NOT stored: they are counts of rows in
 -- rebate_drafts and review_queue, so storing them would let the card disagree
@@ -102,11 +111,6 @@ CREATE TABLE IF NOT EXISTS events (
   id TEXT PRIMARY KEY, title TEXT NOT NULL, description TEXT, icon TEXT,
   date TEXT, created_at INTEGER NOT NULL);
 
-CREATE TABLE IF NOT EXISTS referral_rows (
-  id TEXT PRIMARY KEY, name TEXT, plan TEXT, invited INTEGER,
-  plan_count INTEGER, plan_pct REAL, cashback_count INTEGER, cashback_pct REAL,
-  revenue REAL, revenue_shared REAL, revenue_net REAL);
-
 CREATE TABLE IF NOT EXISTS referral_campaigns (
   id TEXT PRIMARY KEY, name TEXT, status TEXT, link_code TEXT, invited INTEGER,
   plan_count INTEGER, plan_total INTEGER, cashback_count INTEGER, cashback_total INTEGER,
@@ -122,15 +126,6 @@ CREATE TABLE IF NOT EXISTS signal_results (
   id TEXT PRIMARY KEY, period TEXT, range_label TEXT, total INTEGER, sl INTEGER,
   tp1 INTEGER, tp2 INTEGER, tp3 INTEGER, tp4 INTEGER, status TEXT,
   published_at TEXT, published_time TEXT, ord INTEGER);
-
--- Chart data at its finest grain: one row per (dataset, dimension, day). The
--- dimension is what the on-chart filters select (a broker id, a plan, a referral
--- campaign); every coarser view is aggregated from these rows at read time, so a
--- filter or a granularity change is a real query rather than a relabelled chart.
-CREATE TABLE IF NOT EXISTS series (
-  name TEXT NOT NULL, dim TEXT NOT NULL, day TEXT NOT NULL, vals TEXT NOT NULL,
-  PRIMARY KEY (name, dim, day));
-CREATE INDEX IF NOT EXISTS idx_series_range ON series(name, day);
 
 CREATE TABLE IF NOT EXISTS campaign_list_members (
   list_id TEXT NOT NULL, campaign_id TEXT NOT NULL,
@@ -166,6 +161,35 @@ function passwordMatches(password, salt, expected) {
   return want.length === actual.length && timingSafeEqual(actual, want);
 }
 
+/* What a bearer key may reach. */
+export const API_SCOPES = ['read', 'write', 'money'];
+const keyHash = (key) => createHash('sha256').update(key).digest('hex');
+
+/* Routes that move money or hand out paid time. A key reaches these only at
+   scope `money`, so an agent misreading a table cannot mark a withdrawal sent.
+   Two of these paths (`gateways`, `extra-grants`) also answer GET; reading is
+   not moving, so the method check below is what keeps the gate on the verb
+   rather than on the noun. */
+const MONEY_PATHS = /^\/(withdrawals\/[\w-]+\/(mark-sent|reject)|unmatched\/[\w-]+\/attribute|payments\/[\w-]+\/confirm|rebate-drafts\/publish-all|brokers\/[\w-]+\/rebate-drafts\/publish|gateways|extra-grants)$/;
+
+/**
+ * What a bearer key may NOT do, in one place — the dispatcher applies it once,
+ * so every route is covered and route 73 is covered the day it is added.
+ * A cookie session (a human at the dashboard) is never denied here.
+ * Returns an error code, or null to allow.
+ */
+export function keyDenial(session, method, path) {
+  if (!session.viaKey) return null;
+  // A key never mints or revokes a key. Without this line `read` becomes
+  // `money` in two calls, and every other rule here is decoration.
+  if (path.startsWith('/api-keys')) return 'cookie_session_required';
+  if (session.scope === 'read' && method !== 'GET') return 'read_only_key';
+  // A GET never moves money. Gating the noun rather than the verb hid the
+  // deposit-wallet list and the grant history from every non-money key.
+  if (session.scope !== 'money' && method !== 'GET' && MONEY_PATHS.test(path)) return 'money_scope_required';
+  return null;
+}
+
 function cookieValue(req, name) {
   const raw = req.headers.cookie;
   if (!raw) return null;
@@ -177,84 +201,36 @@ function cookieValue(req, name) {
 }
 
 
-/* ---------------------------------------------------------------------
- * Chart aggregation
- *
- * Every dataset is stored per day per dimension. Rolling that up correctly
- * needs three distinct rules, and getting them wrong is what makes a dashboard
- * quietly lie:
- *
- *   stocks  — a level (users on the books). Sums ACROSS dimensions, but takes
- *             the LAST day ACROSS time. Adding Monday's headcount to Tuesday's
- *             would report double the users.
- *   flows   — an amount accrued in a period (revenue, renewals). Sums across
- *             both.
- *   ratios  — never averaged. Percentages are recomputed from their own
- *             numerator and denominator after those have been aggregated,
- *             because the mean of daily rates is not the rate of the period.
- * ------------------------------------------------------------------- */
-
-const SERIES_SPEC = {
-  broker: {
-    stocks: ['activeUsers', 'pendingUsers', 'cashbackUsers'],
-    flows: ['grossRebate', 'sharedCashback', 'netRevenue'],
-    ratios: {},
-  },
-  subscription: {
-    stocks: ['totalSubscribers'],
-    flows: ['renewals', 'reactivations', 'netRevenue', 'renewalsDue', 'lapsed'],
-    ratios: { renewalRate: ['renewals', 'renewalsDue'], reactivationRate: ['reactivations', 'lapsed'] },
-    // Denominators the chart never plots on their own.
-    internal: ['renewalsDue', 'lapsed'],
-  },
-  /* The referral funnel, in the order it actually happens:
-       introduced  — people whose own referral link has brought in at least one
-                     user. They are referrers, not referrals.
-       invited     — everyone those referrers brought in. Always the larger of
-                     the two: one referrer accounts for several invitees.
-       activeUsers — the invited accounts that are actually active.
-     Plan and Cashback are shares of ACTIVE users, not of invited: an account
-     that never activated cannot have bought a plan, so counting it in the
-     denominator understates conversion for every campaign equally.
-
-     Both conversions are STOCKS, like the denominator they divide by. "How
-     many active users hold a plan" is a count at a moment, not something that
-     accrues — as a flow it summed a week of daily counts over a single day's
-     active users and reported rates in the hundreds of percent. A ratio is
-     only meaningful when both sides aggregate the same way. */
-  referral: {
-    stocks: ['introduced', 'invited', 'activeUsers', 'planConversions', 'cashbackConversions'],
-    flows: ['revenue', 'revenueShared', 'revenueNet'],
-    ratios: {
-      planRate: ['planConversions', 'activeUsers'],
-      cashbackRate: ['cashbackConversions', 'activeUsers'],
-    },
-    internal: ['planConversions', 'cashbackConversions'],
-  },
-  'signal-spark': { stocks: [], flows: ['value'], ratios: {} },
-};
-
-export const seriesNames = () => Object.keys(SERIES_SPEC);
-
 /** The four states "Manage user flow → Status message" edits, seeded for every
- *  broker so the tab never opens empty. An admin still has to write the real
- *  copy; this is only the scaffolding the four icons render against. */
+ *  broker so the tab never opens empty. This is the live copy written for
+ *  Xchief in production, promoted to the default so every other broker and
+ *  every broker added later starts from it. `old` is the seed it replaced —
+ *  a row still holding that untouched gets upgraded at boot, hand-written
+ *  copy is never overwritten. */
 const FLOW_DEFAULTS = [
   {
     key: 'rejected', title: 'Registration Rejected', from: 'Sent when a registration request is declined',
-    chip: 'rejected', message: 'Hi {name}, we could not approve your registration with {broker}. Please double-check your details and try again.',
+    chip: 'rejected',
+    message: '<b>❌ Registration Rejected</b><br><br>Your registration with {broker} broker was rejected because the Email or User ID may be incorrect, or the registration could not be found, so please review your details and try again.',
+    old: 'Hi {name}, we could not approve your registration with {broker}. Please double-check your details and try again.',
   },
   {
     key: 'waiting-deposit', title: 'Waiting for Deposit', from: 'Sent when registration is approved and a deposit is required',
-    chip: 'waiting', message: 'Hi {name}, your registration with {broker} is approved. Make your first deposit to start earning cashback.',
+    chip: 'waiting',
+    message: '<b>⏳ Waiting for Deposit</b><br><br>Your registration with {broker} broker has been confirmed; please make a deposit to prepare your account for trading and activate your Cashback Earning.',
+    old: 'Hi {name}, your registration with {broker} is approved. Make your first deposit to start earning cashback.',
   },
   {
-    key: 'rejected-deposit', title: 'Deposit Rejected', from: 'Sent when a submitted deposit fails review',
-    chip: 'rejected', message: 'Hi {name}, we could not verify your deposit with {broker}. Please check the amount and try again.',
+    key: 'rejected-deposit', title: 'Deposit confirmation failed', from: 'Sent when a submitted deposit fails review',
+    chip: 'rejected',
+    message: '<b>❌ Deposit Verification Rejected</b><br><br>Your deposit with {broker} broker could not be verified; please check your account and ensure that a deposit has been made so you can start trading and activate your Cashback Earning.',
+    old: 'Hi {name}, we could not verify your deposit with {broker}. Please check the amount and try again.',
   },
   {
-    key: 'approved', title: 'Approved', from: 'Sent when registration and deposit are both approved',
-    chip: 'approved', message: "Hi {name}, you're all set! Your account with {broker} is active and earning cashback.",
+    key: 'approved', title: 'Deposit confirmed', from: 'Sent when registration and deposit are both approved',
+    chip: 'approved',
+    message: '<b>✅ Cashback Activated</b><br><br>Your deposit with {broker} broker has been confirmed and your account is ready for trading; Cashback is calculated and credited weekly based on your plan’s share percentage.',
+    old: "Hi {name}, you're all set! Your account with {broker} is active and earning cashback.",
   },
 ];
 
@@ -269,159 +245,143 @@ const FLOW_DEFAULTS = [
  */
 export const MESSAGE_TEMPLATES = [
   {
+    key: 'bot_welcome', name: 'Welcome (/start)', group: 'General',
+    hint: "The bot's reply to /start — the first thing anyone sees, including everyone arriving on a referral or campaign link.",
+    vars: ['name'],
+    body: '<b>Welcome to Trust Forex, {name} 👋</b><br><br>Explore Forex signal plans, review transparently presented results, and choose a subscription for VIP Channel access with the Cashback and Referral benefits available through your account.',
+  },
+  /* One message, not six. The days / rate / balance / overpaid / VIP-link lines
+     only apply sometimes; renderTemplate drops a line whose token came through
+     empty, so they live here as {tokens} an admin can reword or move — which
+     five separate `payment_confirmed_*` keys made impossible. */
+  {
     key: 'payment_confirmed', name: 'Payment Confirmed', group: 'Payments',
-    hint: "Sent the instant an order's payment is confirmed on-chain.",
-    vars: ['plan', 'amount', 'currency'],
-    body: 'Payment confirmed — <b>{plan}</b> is active.\n{amount} received in {currency}.',
+    hint: "Sent the instant an order's payment is confirmed on-chain — renewals included. The balance, overpayment and VIP-link lines delete themselves when they don't apply, so keep each on its own line.",
+    vars: ['plan', 'days', 'pct', 'total', 'currency', 'amount', 'earning_amount', 'overpaid_amount', 'link'],
+    body: '<b>✅ Payment Completed</b><br><br>'
+      + 'Your {plan} subscription is confirmed for {days} days with a {pct} Cashback &amp; Referral Rate.<br><br>'
+      + '▫️Plan Price: {total}<br>'
+      + '▫️Amount Paid: {amount} {currency}<br>'
+      + '▫️Paid from Earning Balance: {earning_amount}<br>'
+      + '▫️Overpaid Amount Added to Earning Balance: {overpaid_amount}<br><br>'
+      + 'Join VIP Channel: {link}',
   },
   {
     key: 'payment_partial_refund', name: 'Order Expired — Partial Refund', group: 'Payments',
     hint: 'Sent when an order expires after a partial payment; the amount paid is credited to earning balance.',
     vars: ['amount'],
-    body: 'Your order expired with a partial payment.\n{amount} was added to your earning balance in the app.',
+    body: '<b>⌛️ Order Expired</b><br><br>Your recent order has expired, but the {amount} you paid has been added to your Earning Balance for future use.',
   },
   {
     key: 'payment_incomplete', name: 'Payment Incomplete', group: 'Payments',
     hint: 'Sent when an on-chain transfer arrives short of the order total.',
     vars: ['received', 'due', 'remaining', 'currency', 'network', 'address'],
-    body: '⚠️ Payment incomplete — we received <b>{received} {currency}</b> of {due} {currency}.\n'
-      + 'Send the remaining <b>{remaining} {currency}</b> ({network}) to:\n<code>{address}</code>\n'
-      + 'or reopen the app to continue your order.',
-  },
-  {
-    key: 'subscription_reminder', name: 'Expiry Reminder', group: 'Subscription',
-    hint: 'Sent 3 days before a subscription ends.',
-    vars: ['plan', 'days'],
-    body: 'Your <b>{plan}</b> subscription ends in {days}.\nRenew to keep VIP signal access and your cashback tier.',
+    body: '<b>\u26A0\uFE0F Payment Incomplete</b><br><br>'
+      + 'We received {received} {currency} of the {due} {currency} required.<br><br>'
+      + 'Please send the exact remaining amount using the same wallet and network as your previous payment to activate your subscription.<br><br>'
+      + '▫️<u>Amount to Send</u>: {remaining} {currency}<br>'
+      + '▫️<u>Payment Network</u>: {network}<br>'
+      + '▫️<u>Payment Wallet</u>: {address}',
   },
   {
     key: 'subscription_lapsed', name: 'Subscription Lapsed', group: 'Subscription',
     hint: "Sent the moment a subscription's term ends and access is revoked.",
     vars: ['plan'],
-    body: 'Your <b>{plan}</b> subscription has ended. Your cashback and referral share are back to the 10% base rate until you renew.',
+    body: '<b>🔄 Subscription Expired</b><br><br>'
+      + 'Your {plan} subscription has ended, and your Cashback &amp; Referral Rate is now back to the <u>Base Rate (10%)</u>.<br><br>'
+      + 'Renew whenever you’re ready to <u>restore VIP Channel access</u> and continue enjoying the benefits and Cashback &amp; Referral Rate included in your chosen plan.',
+  },
+  {
+    key: 'cashback_earned', name: 'Cashback Paid', group: 'Earnings',
+    hint: 'Sent when a cashback cycle is published — one message per broker that paid them.',
+    vars: ['amount', 'broker'],
+    body: '<b>💰 Cashback Paid</b><br><br>Your Cashback of <b>{amount}</b> from {broker} broker has been added to your Earning Balance.',
+  },
+  {
+    key: 'referral_earned', name: 'Referral Earnings', group: 'Earnings',
+    hint: 'Sent to the inviter each time one of their invitees earns them a share — a plan they bought, or their weekly cashback.',
+    vars: ['amount', 'name', 'source'],
+    body: '<b>🤝 Referral Paid</b><br><br>Your Referral reward of <b>{amount}</b> from user {name} has been added to your Earning Balance.',
   },
   {
     key: 'withdrawal_sent', name: 'Withdrawal Sent', group: 'Withdrawals',
     hint: 'Sent once a withdrawal is broadcast on-chain.',
     vars: ['amount', 'currency', 'network', 'txid'],
-    body: '✅ Withdrawal sent — {amount} {currency} ({network})\ntx {txid}',
+    body: '<b>✅ Withdrawal Completed Successfully</b><br><br>Your withdrawal of {amount} in {currency} via the {network} network has been completed.',
   },
   {
     key: 'withdrawal_manual', name: 'Withdrawal Processing Manually', group: 'Withdrawals',
     hint: 'Sent when a withdrawal is parked for manual review — over caps, an RPC error, or a crash mid-send.',
     vars: [],
-    body: 'Your withdrawal is being processed manually — you will be notified when it is sent.',
+    body: '<b>⏳ Withdrawal Request Submitted Successfully</b><br><br>Your withdrawal request has been received and is now being processed; you will be notified once it is completed.',
+  },
+  {
+    key: 'withdrawal_rejected', name: 'Withdrawal Rejected', group: 'Withdrawals',
+    hint: 'Sent when an admin rejects a withdrawal request. The reason is typed by hand in the Reject dialog; the amount goes straight back to the earning balance it was frozen from.',
+    vars: ['amount', 'reason'],
+    body: '<b>⚠️ Withdrawal Request Rejected</b><br><br>'
+      + 'Your withdrawal request could not be completed, and {amount} has been returned to your Earning Balance.<br><br>'
+      + 'ℹ️ <u>Rejection Reason</u>: {reason}',
   },
 ];
 
 /** {token} substitution, unknown tokens left as-is so a typo shows rather than
- *  vanishes. Pure — no db, no admin.mjs state — so every send site can import
- *  it without opening a connection, which matters for the ones under test. */
+ *  vanishes. A token the caller *did* pass but left empty takes its whole line
+ *  with it — that is how one Payment Confirmed message can carry the overpaid /
+ *  balance / VIP-link lines that only apply sometimes, instead of six separate
+ *  templates. Lines split on <br> (what the editor writes) and on \n alike.
+ *  Pure — no db, no admin.mjs state — so every send site can import it without
+ *  opening a connection, which matters for the ones under test. */
 export function renderTemplate(body, vars = {}) {
-  return String(body ?? '').replace(/\{(\w+)\}/g, (m, k) => (k in vars ? String(vars[k]) : m));
-}
-
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-/** How many days a full bucket holds, used to spot a partial one. */
-const GRAIN_DAYS = { daily: 1, weekly: 7, cycle: 7, monthly: 28, quarterly: 90 };
-
-export const GRAINS = Object.keys(GRAIN_DAYS);
-
-/** Bucket key + human label for a YYYY-MM-DD day at the requested grain. */
-function bucketOf(day, grain) {
-  const [y, m, d] = day.split('-').map(Number);
-  if (grain === 'monthly') return { key: `${y}-${m}`, label: `${MONTHS[m - 1]} ${y}` };
-  if (grain === 'daily') return { key: day, label: `${MONTHS[m - 1]} ${d}` };
-  if (grain === 'quarterly') {
-    const quarter = Math.floor((m - 1) / 3) + 1;
-    return { key: `${y}-Q${quarter}`, label: `Q${quarter} ${y}` };
+  const parts = String(body ?? '').split(/(<br\s*\/?>|\n)/i); // [line, sep, line, sep, …, line]
+  let out = '';
+  for (let i = 0; i < parts.length; i += 2) {
+    let blank = false;
+    const line = parts[i].replace(/\{(\w+)\}/g, (m, k) => {
+      if (!(k in vars)) return m;
+      if (vars[k] === '' || vars[k] === null || vars[k] === undefined) { blank = true; return ''; }
+      return String(vars[k]);
+    });
+    if (!blank) out += line + (parts[i + 1] ?? '');
   }
-
-  // Weekly and cycle both snap back to the Monday that owns this day: a
-  // cashback payout cycle IS one Monday-to-Sunday week. They differ only in
-  // how the bucket is named — a cycle is read as the span it paid out for,
-  // so it carries both ends rather than just its first day.
-  const date = new Date(Date.UTC(y, m - 1, d));
-  const monday = new Date(date);
-  monday.setUTCDate(date.getUTCDate() - ((date.getUTCDay() + 6) % 7));
-  const key = monday.toISOString().slice(0, 10);
-  if (grain !== 'cycle') {
-    return { key, label: `${MONTHS[monday.getUTCMonth()]} ${monday.getUTCDate()}` };
-  }
-  const sunday = new Date(monday);
-  sunday.setUTCDate(monday.getUTCDate() + 6);
-  const end = monday.getUTCMonth() === sunday.getUTCMonth()
-    ? `${sunday.getUTCDate()}`
-    : `${MONTHS[sunday.getUTCMonth()]} ${sunday.getUTCDate()}`;
-  return { key, label: `${MONTHS[monday.getUTCMonth()]} ${monday.getUTCDate()}–${end}` };
-}
-
-/**
- * Roll stored day rows into chart points.
- * `rows` must already be filtered to the wanted dimensions and date range.
- */
-function aggregate(name, rows, grain) {
-  const spec = SERIES_SPEC[name];
-  if (!spec) return [];
-  const measures = [...spec.stocks, ...spec.flows];
-
-  // 1. Collapse dimensions: same day, different brokers -> one day.
-  const days = new Map();
-  for (const row of rows) {
-    const vals = JSON.parse(row.vals);
-    const day = days.get(row.day) ?? Object.fromEntries(measures.map((k) => [k, 0]));
-    for (const k of measures) day[k] += vals[k] ?? 0;
-    days.set(row.day, day);
-  }
-
-  // 2. Collapse days into buckets: flows accumulate, stocks take the last day.
-  //    `size` tracks how many days landed in each bucket so a partial one can
-  //    be recognised in step 3.
-  const buckets = new Map();
-  for (const day of [...days.keys()].sort()) {
-    const { key, label } = bucketOf(day, grain);
-    const bucket = buckets.get(key)
-      ?? { label, _days: 0, ...Object.fromEntries(measures.map((k) => [k, 0])) };
-    bucket._days += 1;
-    for (const k of spec.flows) bucket[k] += days.get(day)[k];
-    for (const k of spec.stocks) bucket[k] = days.get(day)[k];
-    buckets.set(key, bucket);
-  }
-
-  // Drop a leading or trailing bucket that only caught part of its period.
-  // A week holding two days of revenue is not a low week, it is an artefact of
-  // where the range happens to start, and plotting it reads as a crash.
-  const ordered = [...buckets.values()];
-  const full = GRAIN_DAYS[grain] ?? 7;
-  while (ordered.length > 1 && ordered[0]._days < full) ordered.shift();
-  while (ordered.length > 1 && ordered[ordered.length - 1]._days < full) ordered.pop();
-
-  // 3. Derive ratios from the aggregated components, then drop the internals.
-  //    Money is rounded here, once: summing 120 daily floats otherwise surfaces
-  //    as $4827.160000000001 in a tooltip.
-  return ordered.map((bucket) => {
-    const point = { label: bucket.label };
-    for (const k of measures) point[k] = Math.round(bucket[k] * 100) / 100;
-    for (const [key, [num, den]] of Object.entries(spec.ratios)) {
-      point[key] = bucket[den] ? Number(((bucket[num] / bucket[den]) * 100).toFixed(1)) : 0;
-    }
-    for (const k of spec.internal ?? []) delete point[k];
-    return point;
-  });
+  return out.replace(/(?:<br\s*\/?>|\s)+$/i, ''); // no dangling break where the last line dropped
 }
 
 /* ---------------------------------------------------------------------
  * Store
  * ------------------------------------------------------------------- */
 
+/**
+ * `users.user_no` for an account id — the only user identifier operators ever
+ * see. `users.id` (`tg<telegram id>` for Mini App accounts) is a key, not a
+ * label; showing it leaked a raw Telegram id into half the tables.
+ *
+ * ponytail: one lookup per row. Every one of these lists is capped in the
+ * hundreds and the DB is a local file; join `user_no` into the queries if a
+ * list ever gets big.
+ */
+let userNoStmt;
+export function userNoOf(id) {
+  if (!id) return null;
+  userNoStmt ??= connect().prepare('SELECT user_no FROM users WHERE id = ?');
+  return userNoStmt.get(String(id))?.user_no ?? null;
+}
+
+/** payments/withdrawals carry a Telegram id, not a users.id. */
+let userNoByTgStmt;
+export function userNoOfTelegram(tgId) {
+  if (tgId == null) return null;
+  userNoByTgStmt ??= connect().prepare('SELECT user_no FROM users WHERE telegram_id = ?');
+  return userNoByTgStmt.get(Number(tgId))?.user_no ?? null;
+}
+
 /** payouts.mjs `withdrawals` row -> the shape the dashboard's Money screen
  *  reads, shared by the list and the mark-sent mutation so a click never has
  *  to reconcile two different row shapes for the same table. */
 function toWithdrawalRow(r) {
   return {
-    id: r.id, userId: r.user_id, name: r.name ?? null,
-    at: new Date(r.created_at).toISOString().slice(0, 16).replace('T', ' · '),
+    id: r.id, userId: r.user_id, name: r.name ?? null, userNo: userNoOf(r.user_id),
+    at: fmtStamp(r.created_at),
     amount: r.amount_usd, fee: r.fee_usd, currency: r.currency, network: r.network,
     address: r.address, status: r.status, txid: r.txid ?? undefined,
   };
@@ -431,7 +391,7 @@ export function openAdminDb(path) {
   const db = connect(path);
   // Lazy: prepared on first real call, not here — see the `withdrawals` /
   // `markWithdrawalSent` comment below for why.
-  let withdrawalRequestsStmt, markWithdrawalSentStmt, readWithdrawalStmt;
+  let withdrawalRequestsStmt, markWithdrawalSentStmt, rejectWithdrawalStmt, readWithdrawalStmt, openWithdrawalsStmt;
   db.exec(SCHEMA);
   // `orders` may not exist yet — this module can load before openDb() runs, and
   // the ledger reconciles against it. Both schemas are CREATE IF NOT EXISTS.
@@ -475,6 +435,9 @@ export function openAdminDb(path) {
   // log. Epoch ms, unlike joined_at's date-only string: activity needs same-day
   // resolution, signup doesn't.
   addColumn('users', 'last_seen', 'INTEGER');
+  // Demo-seed leftovers: never written by the product, dropped where they exist.
+  db.exec('DROP TABLE IF EXISTS series; DROP TABLE IF EXISTS referral_rows; '
+    + 'DROP TABLE IF EXISTS user_summary; DROP TABLE IF EXISTS activity');
   db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_telegram ON users(telegram_id) WHERE telegram_id IS NOT NULL');
   db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_refcode ON users(ref_code) WHERE ref_code IS NOT NULL');
   db.exec('CREATE INDEX IF NOT EXISTS idx_users_referrer ON users(referred_by)');
@@ -539,6 +502,17 @@ export function openAdminDb(path) {
   const ledger = openLedger(db);
   const campaigns = openCampaigns(db);
 
+  /** A bearer key's session, or null. Defined out here so `sessionFor` needs no `this`. */
+  const keySession = (req) => {
+    const key = /^Bearer\s+(tfk_[\w-]+)$/.exec(req.headers.authorization ?? '')?.[1];
+    if (!key) return null;
+    const row = q.apiKeyByHash.get(keyHash(key));
+    if (!row) return null;
+    q.touchApiKey.run(nowMs(), row.id);
+    // `username` lands in the same `by:` audit columns a human's actions do.
+    return { adminId: null, username: `key:${row.name}`, viaKey: true, scope: row.scope };
+  };
+
   // Every statement compiled once, at open.
   const q = {
     adminByName: db.prepare('SELECT * FROM admins WHERE username = ?'),
@@ -549,7 +523,32 @@ export function openAdminDb(path) {
     deleteSession: db.prepare('DELETE FROM admin_sessions WHERE token = ?'),
     sweepSessions: db.prepare('DELETE FROM admin_sessions WHERE expires_at < ?'),
 
-    users: db.prepare('SELECT * FROM users ORDER BY rowid'),
+    insertApiKey: db.prepare(`INSERT INTO admin_api_keys
+      (id, name, prefix, hash, scope, created_at) VALUES (?, ?, ?, ?, ?, ?)`),
+    apiKeyByHash: db.prepare('SELECT * FROM admin_api_keys WHERE hash = ?'),
+    apiKeys: db.prepare('SELECT id, name, prefix, scope, created_at, last_used_at FROM admin_api_keys ORDER BY created_at DESC'),
+    deleteApiKey: db.prepare('DELETE FROM admin_api_keys WHERE id = ?'),
+    touchApiKey: db.prepare('UPDATE admin_api_keys SET last_used_at = ? WHERE id = ?'),
+
+    // users.total_rebate/last_month_rebate are seeded to 0 at signup and never
+    // touched again — publishAll only bumps `rebates`. Compute both live from
+    // the tables that actually move, same as the Active-users tab does.
+    //
+    // One row per (user, broker): a user can submit to several brokers, and
+    // review_queue is the table that actually carries that pair. The LEFT JOIN
+    // keeps a single broker-less row for a user with no decided request yet.
+    users: db.prepare(`SELECT u.*,
+        rq.broker_id AS link_broker_id, rq.broker_account_id AS link_broker_account_id,
+        rq.decision AS link_decision, rq.email AS link_email,
+        rq.requested_at AS link_action_at,
+        (SELECT COALESCE(SUM(total_rebate), 0) FROM rebates
+          WHERE user_id = u.id AND (rq.broker_id IS NULL OR broker_id = rq.broker_id)) AS live_total_rebate,
+        (SELECT COALESCE(SUM(amount), 0) FROM ledger
+          WHERE user_id = u.id AND kind = 'cashback' AND at >= ?
+            AND (rq.broker_id IS NULL OR broker_id = rq.broker_id)) AS live_last_month_rebate
+      FROM users u
+      LEFT JOIN review_queue rq ON rq.user_id = u.id AND rq.decision IS NOT NULL
+      ORDER BY u.rowid, rq.rowid`),
     user: db.prepare('SELECT * FROM users WHERE id = ?'),
     userByTelegram: db.prepare('SELECT * FROM users WHERE telegram_id = ?'),
     /* Per-user lookups for the Mini App. The admin's own screens read these
@@ -558,7 +557,6 @@ export function openAdminDb(path) {
     subscriber: db.prepare('SELECT * FROM subscribers WHERE id = ?'),
     myRebates: db.prepare('SELECT * FROM rebates WHERE user_id = ?'),
     myReviews: db.prepare('SELECT * FROM review_queue WHERE user_id = ? ORDER BY rowid'),
-    myReferralRow: db.prepare('SELECT * FROM referral_rows WHERE id = ?'),
     /* plan 'none' — a brand-new account has not bought anything, and seeding it
        as Silver put a tier badge (and a 15% rate) on someone who has never
        paid. The column is display only; the rate comes from ledger.tierOf. */
@@ -579,27 +577,40 @@ export function openAdminDb(path) {
       SUM(status = 'active') AS active,
       SUM(status = 'pending') AS pending,
       SUM(status = 'rejected') AS rejected FROM users`),
-    activity: db.prepare('SELECT * FROM activity WHERE user_id = ? ORDER BY rowid'),
-    summary: db.prepare('SELECT * FROM user_summary WHERE user_id = ?'),
 
     // drafted_payment / unreviewed are counted here rather than stored, so the
     // card can never drift from the tables it summarises.
-    brokers: db.prepare(`SELECT b.*,
+    brokers: db.prepare(`SELECT b.*, bp.doc AS preview_doc,
         (SELECT COUNT(*) FROM rebate_drafts d WHERE d.broker_id = b.id) AS drafted_payment,
         (SELECT COUNT(*) FROM review_queue r WHERE r.broker_id = b.id AND r.decision IS NULL) AS unreviewed,
         -- Headcounts are counted, not stored, for the same reason as the two
         -- above: a card that disagrees with the table under it is a bug report.
-        (SELECT COUNT(*) FROM rebates rb WHERE rb.broker_id = b.id) AS live_active,
-        (SELECT COUNT(*) FROM review_queue r WHERE r.broker_id = b.id AND r.decision IS NULL) AS live_pending
-      FROM brokers b ORDER BY (b.rank IS NULL), b.rank, b.rowid`),
-    broker: db.prepare(`SELECT b.*,
+        -- Both read the same review_queue.decision the user rows render from
+        -- (approved -> Active, waiting/undecided -> Pending). Counting the
+        -- the rebates table instead kept a demoted user in the Active tally,
+        -- so the card said 2/0 over a list showing 1 active + 1 pending.
+        (SELECT COUNT(*) FROM review_queue r WHERE r.broker_id = b.id AND r.decision = 'approved') AS live_active,
+        (SELECT COUNT(*) FROM review_queue r WHERE r.broker_id = b.id
+           AND (r.decision IS NULL OR r.decision = 'waiting')) AS live_pending,
+        -- Not active + pending: a rejected link is still a row in the list.
+        (SELECT COUNT(*) FROM review_queue r WHERE r.broker_id = b.id) AS live_users
+      FROM brokers b LEFT JOIN broker_preview bp ON bp.broker_id = b.id
+      ORDER BY (b.rank IS NULL), b.rank, b.rowid`),
+    broker: db.prepare(`SELECT b.*, bp.doc AS preview_doc,
         (SELECT COUNT(*) FROM rebate_drafts d WHERE d.broker_id = b.id) AS drafted_payment,
         (SELECT COUNT(*) FROM review_queue r WHERE r.broker_id = b.id AND r.decision IS NULL) AS unreviewed,
         -- Headcounts are counted, not stored, for the same reason as the two
         -- above: a card that disagrees with the table under it is a bug report.
-        (SELECT COUNT(*) FROM rebates rb WHERE rb.broker_id = b.id) AS live_active,
-        (SELECT COUNT(*) FROM review_queue r WHERE r.broker_id = b.id AND r.decision IS NULL) AS live_pending
-      FROM brokers b WHERE b.id = ?`),
+        -- Both read the same review_queue.decision the user rows render from
+        -- (approved -> Active, waiting/undecided -> Pending). Counting the
+        -- the rebates table instead kept a demoted user in the Active tally,
+        -- so the card said 2/0 over a list showing 1 active + 1 pending.
+        (SELECT COUNT(*) FROM review_queue r WHERE r.broker_id = b.id AND r.decision = 'approved') AS live_active,
+        (SELECT COUNT(*) FROM review_queue r WHERE r.broker_id = b.id
+           AND (r.decision IS NULL OR r.decision = 'waiting')) AS live_pending,
+        -- Not active + pending: a rejected link is still a row in the list.
+        (SELECT COUNT(*) FROM review_queue r WHERE r.broker_id = b.id) AS live_users
+      FROM brokers b LEFT JOIN broker_preview bp ON bp.broker_id = b.id WHERE b.id = ?`),
     insertBroker: db.prepare(`INSERT INTO brokers
       (id, name, color, status, rank, active_users, pending_users, share_rate, updated_at)
       VALUES (?, ?, ?, ?, ?, 0, 0, ?, ?)`),
@@ -607,11 +618,16 @@ export function openAdminDb(path) {
     // `brokers` here is "brokers with money to publish", not the platform's
     // broker count — this bar exists to answer "is there anything to pay out",
     // and a broker sitting at zero drafts is not part of that answer.
+    // Both halves of the bar describe THIS cycle only — the gross the operator
+    // typed on the pending drafts, and the users' tier slice of it. Published
+    // cycles drop out (their gross lives in cashback_cycles). It used to sum
+    // `rebates.total_rebate`, the users' net, so it read $0 next to a $30 draft.
     brokerTotals: db.prepare(`SELECT
-      (SELECT COALESCE(SUM(total_rebate), 0) FROM rebates) AS total_rebate,
+      (SELECT COALESCE(SUM(last_week_rebate), 0) FROM rebate_drafts) AS total_rebate,
       (SELECT COALESCE(SUM(shared_rebate), 0) FROM rebate_drafts) AS drafted,
       (SELECT COUNT(DISTINCT broker_id) FROM rebate_drafts) AS brokers`),
-    setBrokerOrder: db.prepare('UPDATE brokers SET rank = ?, status = ? WHERE id = ?'),
+    setBrokerOrder: db.prepare('UPDATE brokers SET rank = ?, status = ?, updated_at = ? WHERE id = ?'),
+    touchBroker: db.prepare('UPDATE brokers SET updated_at = ? WHERE id = ?'),
     deleteBroker: db.prepare('DELETE FROM brokers WHERE id = ?'),
     deleteBrokerPreview: db.prepare('DELETE FROM broker_preview WHERE broker_id = ?'),
     deleteBrokerFlowMessages: db.prepare('DELETE FROM flow_messages WHERE broker_id = ?'),
@@ -631,9 +647,24 @@ export function openAdminDb(path) {
     payments: db.prepare(`SELECT o.*,
         EXISTS (SELECT 1 FROM ledger l WHERE l.key = 'order:' || o.id) AS booked
       FROM orders o ORDER BY o.created_at DESC LIMIT 500`),
+    /* The watcher's "I won't guess" pile. Unresolved first, then the audit
+       trail of what was already attributed or dismissed. */
+    unmatchedTxs: db.prepare(`SELECT * FROM unmatched_txs
+      ORDER BY (resolution IS NOT NULL), COALESCE(tx_at, seen_at) DESC LIMIT 200`),
+    /* Candidates for manual attribution: still open, already has an invoice.
+       `username` comes off the order row — the two id spaces don't join by
+       string-building 'tg' || user_id (see ledger.userIdForTelegram). */
+    openOrders: db.prepare(`SELECT * FROM orders
+      WHERE status IN ('pending','submitted') AND amount_crypto IS NOT NULL
+      ORDER BY created_at DESC LIMIT 200`),
 
     cycles: db.prepare('SELECT * FROM cashback_cycles ORDER BY rowid'),
+    /* Undecided only: a row parked on waiting-for-deposit is owed by the user,
+       not by us, and comes back here on its own when they confirm the deposit
+       (confirmBrokerDeposit -> reopenReview clears the decision). */
     reviewQueue: db.prepare("SELECT * FROM review_queue WHERE decision IS NULL ORDER BY rowid"),
+    countOpenReviews: db.prepare('SELECT COUNT(*) AS n FROM review_queue WHERE decision IS NULL'),
+    countOpenUnmatched: db.prepare('SELECT COUNT(*) AS n FROM unmatched_txs WHERE resolution IS NULL'),
     setDecision: db.prepare('UPDATE review_queue SET decision = ? WHERE id = ?'),
     reviewRow: db.prepare('SELECT * FROM review_queue WHERE id = ?'),
     reviewByUserBroker: db.prepare('SELECT * FROM review_queue WHERE user_id = ? AND broker_id = ?'),
@@ -645,6 +676,8 @@ export function openAdminDb(path) {
        time so the queue sorts by when the admin actually got the request. */
     reopenReview: db.prepare(`UPDATE review_queue SET email = ?, broker_account_id = ?,
       requested_at = ?, last_status = ?, decision = NULL WHERE id = ?`),
+    /* Marks the deposit phase once the account passes — see decideReview. */
+    setLastStatus: db.prepare('UPDATE review_queue SET last_status = ? WHERE id = ?'),
     setUserBrokerContact: db.prepare(`UPDATE users SET email = ?, broker = ?, status = 'pending',
       last_action_at = ? WHERE id = ?`),
 
@@ -666,19 +699,18 @@ export function openAdminDb(path) {
     insertGrant: db.prepare(`INSERT INTO extra_grants
       (id, added_at, added_time, extra_days, eligible_before, eligible_time, affected, message, notify, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`),
-    // Eligibility is the whole point of the "purchased before" field.
-    eligibleCount: db.prepare(`SELECT COUNT(*) AS n FROM subscribers
-      WHERE status = 'active' AND (? = '' OR purchased_at <= ?)`),
-    eligibleIds: db.prepare(`SELECT id FROM subscribers
-      WHERE status = 'active' AND (? = '' OR purchased_at <= ?)`),
+    // Eligibility is the whole point of the "purchased before" field: the
+    // latest purchase instant (ledger row; midnight UTC of the legacy date
+    // column for rows booked without one) is before the cutoff. Both `?` take
+    // the same epoch ms, or null for "everyone active".
+    eligibleCount: db.prepare(`SELECT COUNT(*) AS n ${ELIGIBLE_SQL}`),
+    eligibleIds: db.prepare(`SELECT s.id, u.telegram_id ${ELIGIBLE_SQL}`),
 
     events: db.prepare('SELECT * FROM events ORDER BY created_at DESC'),
     insertEvent: db.prepare('INSERT INTO events (id, title, description, icon, date, created_at) VALUES (?, ?, ?, ?, ?, ?)'),
     updateEvent: db.prepare('UPDATE events SET title = ?, description = ?, icon = ?, date = ? WHERE id = ?'),
     deleteEvent: db.prepare('DELETE FROM events WHERE id = ?'),
 
-    referralRows: db.prepare(`SELECT r.*, u.user_no FROM referral_rows r
-      LEFT JOIN users u ON u.id = r.id ORDER BY r.invited DESC`),
     /* The referral table, derived. `revenue` is what the invitees netted US;
        `revenue_shared` is what we handed back to the inviter, read off their
        own ledger rows rather than recomputed from a rate — the rate can change
@@ -696,12 +728,35 @@ export function openAdminDb(path) {
       FROM users u
       WHERE EXISTS (SELECT 1 FROM users i WHERE i.referred_by = u.id)
       ORDER BY invited DESC`),
-    referralCampaigns: db.prepare('SELECT * FROM referral_campaigns ORDER BY rowid'),
+    /* The activity columns are counted from the invitees tagged with the
+       campaign (users.ref_campaign) and their ledger rows — the stored
+       invited / plan_… / cashback_… / revenue_… columns were inserted as 0 and
+       never written again. Same definitions as liveReferralRows, plus the
+       "(total)" figures: purchases and payouts, not just people. */
+    referralCampaigns: db.prepare(`SELECT c.*,
+        (SELECT COUNT(*) FROM users i WHERE i.ref_campaign = c.id) AS invited,
+        (SELECT COUNT(*) FROM users i JOIN subscribers s ON s.id = i.id
+          WHERE i.ref_campaign = c.id) AS plan_count,
+        (SELECT COUNT(*) FROM ledger l JOIN users i ON i.id = l.user_id
+          WHERE i.ref_campaign = c.id AND l.kind = 'subscription') AS plan_total,
+        (SELECT COUNT(DISTINCT l.user_id) FROM ledger l JOIN users i ON i.id = l.user_id
+          WHERE i.ref_campaign = c.id AND l.kind = 'cashback' AND l.amount > 0) AS cashback_count,
+        (SELECT COUNT(*) FROM ledger l JOIN users i ON i.id = l.user_id
+          WHERE i.ref_campaign = c.id AND l.kind = 'cashback' AND l.amount > 0) AS cashback_total,
+        (SELECT COALESCE(SUM(l.revenue - l.amount), 0) FROM ledger l JOIN users i ON i.id = l.user_id
+          WHERE i.ref_campaign = c.id AND l.kind IN ('subscription', 'cashback')) AS revenue,
+        (SELECT COALESCE(SUM(l.amount), 0) FROM ledger l JOIN users i ON i.id = l.ref_user_id
+          WHERE i.ref_campaign = c.id AND l.kind = 'referral') AS revenue_shared
+      FROM referral_campaigns c ORDER BY c.rowid`),
     insertReferralCampaign: db.prepare(`INSERT INTO referral_campaigns
       (id, name, status, link_code, invited, plan_count, plan_total, cashback_count, cashback_total,
        revenue, revenue_shared, revenue_net, plan_share, cashback_share, website_link, bot_link, end_date, doc)
       VALUES (?, ?, ?, ?, 0, 0, 0, 0, 0, 0, 0, 0, ?, ?, ?, ?, ?, ?)`),
     setReferralCampaignStatus: db.prepare('UPDATE referral_campaigns SET status = ? WHERE id = ?'),
+    refCampaignByCode: db.prepare('SELECT id FROM referral_campaigns WHERE link_code = ?'),
+    codelessCampaigns: db.prepare("SELECT id FROM referral_campaigns WHERE link_code IS NULL OR link_code = ''"),
+    setCampaignLinkCode: db.prepare('UPDATE referral_campaigns SET link_code = ? WHERE id = ?'),
+    liveCampaignDocs: db.prepare("SELECT id, doc FROM referral_campaigns WHERE status = 'active'"),
     updateReferralCampaign: db.prepare(`UPDATE referral_campaigns
       SET name = ?, link_code = ?, plan_share = ?, cashback_share = ?, end_date = ?, doc = ? WHERE id = ?`),
 
@@ -731,10 +786,6 @@ export function openAdminDb(path) {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`),
     deleteSignal: db.prepare('DELETE FROM signal_results WHERE id = ?'),
 
-    seriesRows: db.prepare(`SELECT dim, day, vals FROM series
-      WHERE name = ? AND day >= ? AND day <= ? ORDER BY day`),
-    seriesDims: db.prepare('SELECT DISTINCT dim FROM series WHERE name = ? ORDER BY dim'),
-    setSeries: db.prepare('INSERT OR REPLACE INTO series (name, dim, day, vals) VALUES (?, ?, ?, ?)'),
 
     messageTemplateRow: db.prepare('SELECT * FROM message_templates WHERE key = ?'),
     insertMessageTemplate: db.prepare('INSERT OR IGNORE INTO message_templates (key, body, updated_at) VALUES (?, ?, ?)'),
@@ -743,11 +794,15 @@ export function openAdminDb(path) {
   };
 
   const nowMs = () => Date.now();
+  /* Audit-row key suffix: unique per event so a repeated decision is a second
+     row, not an INSERT OR IGNORE no-op (ms alone collides in tests and in
+     back-to-back clicks). */
+  const auditStamp = () => `${nowMs()}-${randomBytes(2).toString('hex')}`;
   /** Stamp a launch: last_seen for the "active in the last N days" snapshots,
    *  daily_actives for the day-by-day trend. Called on every ensureUser(). */
   const touchActivity = (userId, now = nowMs()) => {
     q.touchLastSeen.run(now, userId);
-    q.markDailyActive.run(new Date(now).toISOString().slice(0, 10), userId);
+    q.markDailyActive.run(fmtDay(now), userId);
   };
 
   /** INSERT OR IGNORE, so calling this on a broker that already has some or
@@ -759,13 +814,34 @@ export function openAdminDb(path) {
   // seeded or hand-added, past or future — the table shipped with nothing
   // ever writing to it, so "Status message" opened empty for every broker.
   for (const row of db.prepare('SELECT id FROM brokers').all()) seedFlowMessages(row.id);
+  // The Xchief copy became the default (FLOW_DEFAULTS). Every broker still
+  // holding the seed it replaced gets moved onto it; anything an admin typed
+  // is left exactly as they typed it.
+  for (const d of FLOW_DEFAULTS) {
+    db.prepare('UPDATE flow_messages SET message=? WHERE key=? AND message=?').run(d.message, d.key, d.old);
+  }
 
   // Same idea for the bot's transactional messages: INSERT OR IGNORE so a
   // template an admin has already edited is never overwritten by a restart,
   // and a template added to MESSAGE_TEMPLATES later still shows up seeded.
   for (const t of MESSAGE_TEMPLATES) q.insertMessageTemplate.run(t.key, t.body, nowMs());
+  /* Payment Confirmed absorbed the five add-on rows it used to append — one
+     editable message now, with the sometimes-lines dropping themselves. Move
+     every earlier seed onto it and delete the add-ons; a payment_confirmed an
+     admin rewrote by hand matches none of these and is left alone. */
+  db.prepare(`UPDATE message_templates SET body=? WHERE key='payment_confirmed' AND body IN (?, ?)`)
+    .run(MESSAGE_TEMPLATES.find((t) => t.key === 'payment_confirmed').body,
+      'Payment confirmed — <b>{plan}</b> is active.\n{amount} received in {currency}.',
+      'Payment confirmed — <b>{plan}</b> is active.\nSubscription total: {total}\n{amount} received in {currency}.');
+  db.prepare(`DELETE FROM message_templates WHERE key LIKE 'payment\\_confirmed\\_%' ESCAPE '\\'`).run();
+  // Expiry reminders are a campaign trigger now ("Remaining Subscription"), not a fixed message.
+  db.prepare(`DELETE FROM message_templates WHERE key='subscription_reminder'`).run();
+  // Manual payouts carry no txid; drop the old seed's "tx {txid}" line where it's still untouched.
+  db.prepare(`UPDATE message_templates SET body=? WHERE key='withdrawal_sent' AND body=?`)
+    .run(MESSAGE_TEMPLATES.find((t) => t.key === 'withdrawal_sent').body,
+      '✅ Withdrawal sent — {amount} {currency} ({network})\ntx {txid}');
 
-  return {
+  const store = {
     db,
     q,
     /** The money spine and the campaign engine, exposed for the routes and jobs.
@@ -800,10 +876,33 @@ export function openAdminDb(path) {
       if (token) q.deleteSession.run(token);
     },
 
-    /** Session row for a request, or null when absent/expired. */
+    /* ---- API keys ----
+       The plaintext is returned exactly once, at creation; only its sha256 is
+       stored, so a lost key is reminted rather than recovered. */
+
+    createApiKey(name, scope) {
+      const key = `tfk_${randomBytes(32).toString('base64url')}`;
+      const row = {
+        id: `k${randomBytes(6).toString('hex')}`,
+        name, prefix: key.slice(0, 12), scope, createdAt: nowMs(), lastUsedAt: null,
+      };
+      q.insertApiKey.run(row.id, name, row.prefix, keyHash(key), scope, row.createdAt);
+      return { ...row, key };
+    },
+
+    apiKeys: () => q.apiKeys.all().map((r) => ({
+      id: r.id, name: r.name, prefix: r.prefix, scope: r.scope,
+      createdAt: r.created_at, lastUsedAt: r.last_used_at,
+    })),
+
+    revokeApiKey: (id) => q.deleteApiKey.run(id).changes > 0,
+
+    /** Session row for a request, or null when absent/expired.
+     *  A cookie is a human at the dashboard; a bearer key is a program, and
+     *  carries `viaKey`/`scope` so the dispatcher can narrow what it reaches. */
     sessionFor(req) {
       const token = cookieValue(req, 'tf_admin');
-      if (!token) return null;
+      if (!token) return keySession(req);
       const row = q.session.get(token);
       if (!row) return null;
       if (row.expires_at < nowMs()) {
@@ -815,30 +914,15 @@ export function openAdminDb(path) {
 
     /* ---- reads ---- */
 
-    users: () => q.users.all().map(toUser),
+    /* `users.plan` is a signup-time snapshot ('none' for every Mini App
+       account) and never moves again. The tier badge must be the LIVE tier,
+       same as user() and the rebate tables serve. */
+    users: () => q.users.all(Date.now() - 30 * 86400000)
+      .map((r) => ({ ...toUser(r), plan: ledger.tierOf(r.id) })),
 
-    /**
-     * Every per-user figure, derived from the ledger.
-     *
-     * ponytail: falls back to the seeded `user_summary` row for a user who has
-     * no ledger history at all, so the demo data still renders. Delete the
-     * fallback — and the table — once seed.mjs writes ledger rows.
-     */
-    booksFor(id) {
-      const l = ledger.summaryFor(id);
-      if (l.hasLedger) return l;
-      const s = q.summary.get(id);
-      if (!s) return l;
-      return {
-        ...l,
-        cashbackNet: s.cashback_net ?? 0,
-        cashbackPaid: s.cashback_sale ?? 0,
-        refInvited: s.ref_invited ?? 0,
-        refActive: s.ref_active ?? 0,
-        refRevenue: s.ref_revenue ?? 0,
-        refEarnings: s.ref_earnings ?? 0,
-      };
-    },
+    /** Every per-user figure, derived from the ledger. */
+    booksFor: (id) => ledger.summaryFor(id),
+
 
     user(id) {
       const row = q.user.get(id);
@@ -852,13 +936,8 @@ export function openAdminDb(path) {
           cashback: b.refCashbackCount ?? 0, revenue: b.refRevenue, earnings: b.refEarnings,
         },
         wallet: ledger.wallet(id),
-        /* The timeline the walkthrough asked to simplify: one row per real
-           state change, straight off the ledger, instead of the generated
-           activity feed. Falls back to `activity` for seeded users. */
-        activity: (() => {
-          const rows = ledger.timeline(id);
-          return rows.length ? rows.map(toLedgerRow) : q.activity.all(id).map(toActivity);
-        })(),
+        /* The timeline: one row per real state change, straight off the ledger. */
+        activity: ledger.timeline(id).map(toLedgerRow),
       };
     },
     /**
@@ -878,7 +957,7 @@ export function openAdminDb(path) {
       }
       const id = `tg${tg.id}`;
       const name = [tg.first_name, tg.last_name].filter(Boolean).join(' ') || tg.username || id;
-      q.insertTelegramUser.run(id, name, tg.id, new Date().toISOString().slice(0, 10));
+      q.insertTelegramUser.run(id, name, tg.id, fmtDay());
       ledger.append({ userId: id, kind: 'signup', detail: 'Started the bot', key: `start:${id}` });
       if (startParam) ledger.attribute(id, startParam);
       touchActivity(id);
@@ -900,9 +979,34 @@ export function openAdminDb(path) {
     miniAppUser(id) {
       const sub = q.subscriber.get(id);
       const b = this.booksFor(id);
-      const ref = q.myReferralRow.get(id);
       const now = Date.now();
       const tier = ledger.tierOf(id, now);
+      // A row still in the review queue outranks nothing — it is a broker the
+      // user has submitted but that has no rebates yet. An 'approved' row is
+      // skipped: approval created the rebates row below, which is the live
+      // relationship. last_status carries the phase — a queue row whose last
+      // status is a Deposit one is past account verification.
+      const reviewOverrides = q.myReviews.all(id).filter((r) => r.decision !== 'approved').map((r) => {
+        const depositPhase = (r.last_status ?? '').startsWith('Deposit');
+        const state = r.decision == null
+          ? (depositPhase ? 'deposit-review' : 'pending')
+          : r.decision === 'waiting' ? 'waiting-for-deposit'
+            // A rejected deposit goes back to "make a deposit", not to the
+            // resubmit-account path — the account itself already passed.
+            : depositPhase ? 'deposit-rejected' : 'rejected';
+        return {
+          brokerId: r.broker_id, state,
+          brokerAccountId: r.broker_account_id, email: r.email,
+          lastStatus: r.last_status, requestedAt: r.requested_at,
+        };
+      });
+      // An admin can reject/waitlist a user who was already approved and
+      // earning — that rewrites this same review_queue row's decision but
+      // never touches the rebates row it created, so the rebates row alone
+      // can't tell "still active" from "approved once, since reverted". The
+      // fresher review decision wins the broker's displayed step; the
+      // rebates row (and its money history) is untouched either way.
+      const overriddenBrokerIds = new Set(reviewOverrides.map((r) => r.brokerId));
       return {
         /** The tier the user is actually earning at, and its rate. */
         tier: { id: tier, pct: TIER_PCT[tier] * 100 },
@@ -951,34 +1055,18 @@ export function openAdminDb(path) {
              a payout rate. */
           share: { planPct: TIER_PCT[tier] * 100, cashbackPct: TIER_PCT[tier] * 100 },
           /* Conversion, kept separate and named for what it is. */
-          conversion: ref ? { planPct: ref.plan_pct, cashbackPct: ref.cashback_pct } : null,
+          conversion: b.refInvited
+            ? { planPct: pctOf(b.refPlanCount, b.refInvited), cashbackPct: pctOf(b.refCashbackCount, b.refInvited) }
+            : null,
         },
         /** One entry per broker this user has any relationship with. */
         brokers: [
-          ...q.myRebates.all(id).map((r) => ({
+          ...q.myRebates.all(id).filter((r) => !overriddenBrokerIds.has(r.broker_id)).map((r) => ({
             brokerId: r.broker_id, state: 'cashback-active',
             brokerAccountId: r.broker_account_id, email: r.email,
             totalRebate: r.total_rebate, sharedRebate: r.shared_rebate,
           })),
-          // A row still in the review queue outranks nothing — it is a broker
-          // the user has submitted but that has no rebates yet. An 'approved'
-          // row is skipped: approval created the rebates row above, which is
-          // the live relationship. last_status carries the phase — a queue row
-          // whose last status is a Deposit one is past account verification.
-          ...q.myReviews.all(id).filter((r) => r.decision !== 'approved').map((r) => {
-            const depositPhase = (r.last_status ?? '').startsWith('Deposit');
-            const state = r.decision == null
-              ? (depositPhase ? 'deposit-review' : 'pending')
-              : r.decision === 'waiting' ? 'waiting-for-deposit'
-                // A rejected deposit goes back to "make a deposit", not to the
-                // resubmit-account path — the account itself already passed.
-                : depositPhase ? 'waiting-for-deposit' : 'rejected';
-            return {
-              brokerId: r.broker_id, state,
-              brokerAccountId: r.broker_account_id, email: r.email,
-              lastStatus: r.last_status, requestedAt: r.requested_at,
-            };
-          }),
+          ...reviewOverrides,
         ],
       };
     },
@@ -997,11 +1085,11 @@ export function openAdminDb(path) {
     analytics(now = nowMs(), trendDays = 30) {
       const DAY = 86_400_000;
       const since = (ms) => q.activeSince.get(now - ms).n;
-      const from = new Date(now - (trendDays - 1) * DAY).toISOString().slice(0, 10);
+      const from = fmtDay(now - (trendDays - 1) * DAY);
       const byDay = new Map(q.dailyActiveCounts.all(from).map((r) => [r.day, r.n]));
       const daily = [];
       for (let i = trendDays - 1; i >= 0; i -= 1) {
-        const day = new Date(now - i * DAY).toISOString().slice(0, 10);
+        const day = fmtDay(now - i * DAY);
         daily.push({ day, active: byDay.get(day) ?? 0 });
       }
       return {
@@ -1023,21 +1111,24 @@ export function openAdminDb(path) {
         || `broker-${randomBytes(3).toString('hex')}`;
       if (q.broker.get(id)) return undefined; // ids are derived from the name, so collisions are real duplicates
       const rank = status === 'public' ? q.maxRank.get().n + 1 : null;
-      q.insertBroker.run(id, name, color, status, rank, shareRate, new Date().toISOString().slice(0, 10));
+      q.insertBroker.run(id, name, color, status, rank, shareRate, new Date().toISOString());
       seedFlowMessages(id);
       return toBroker(q.broker.get(id));
     },
     /**
-     * Full delete, not a status change. Refuses a broker that still has any
-     * live relationship — active/pending users or an undrafted payout — so
-     * deleting never silently orphans rebate history; stop it first (status
-     * 'stopped') to wind those down, then delete once it's actually empty.
+     * Full delete, not a status change. Refuses a broker with anything still
+     * actionable — an open review request or a drafted-but-unpublished
+     * payout — so deleting never silently drops work in flight. Settled
+     * rebate history (`live_active`) does NOT block: nothing ever clears a
+     * `rebates` row except this delete, so requiring it to be zero first
+     * would make any broker with rebate history permanently undeletable.
+     * The delete itself cascades those rows away.
      * Returns 'ok' | 'in_use' | 'not_found'.
      */
     deleteBroker(id) {
       const b = q.broker.get(id);
       if (!b) return 'not_found';
-      if (b.live_active > 0 || b.live_pending > 0 || b.drafted_payment > 0) return 'in_use';
+      if (b.unreviewed > 0 || b.drafted_payment > 0) return 'in_use';
       db.exec('BEGIN');
       try {
         q.deleteBrokerPreview.run(id);
@@ -1058,8 +1149,9 @@ export function openAdminDb(path) {
       db.exec('BEGIN');
       try {
         let rank = 0;
+        const now = new Date().toISOString();
         for (const { id, status } of order) {
-          q.setBrokerOrder.run(status === 'public' ? ++rank : null, status, id);
+          q.setBrokerOrder.run(status === 'public' ? ++rank : null, status, now, id);
         }
         db.exec('COMMIT');
       } catch (err) {
@@ -1072,7 +1164,10 @@ export function openAdminDb(path) {
       const row = q.preview.get(brokerId);
       return row ? JSON.parse(row.doc) : undefined;
     },
-    setPreview: (brokerId, doc) => q.setPreview.run(brokerId, JSON.stringify(doc)),
+    setPreview: (brokerId, doc) => {
+      q.setPreview.run(brokerId, JSON.stringify(doc));
+      q.touchBroker.run(new Date().toISOString(), brokerId);
+    },
 
     flowMessages: (brokerId) => q.flowMessages.all(brokerId).map(toFlowMessage),
     setFlowMessage: (brokerId, key, message) => q.setFlowMessage.run(message, brokerId, key).changes > 0,
@@ -1113,34 +1208,108 @@ export function openAdminDb(path) {
       return withdrawalRequestsStmt.all().map(toWithdrawalRow);
     },
 
+    /** The three queues that need a human, for the sidebar's badges. Counts
+     *  only — the pages themselves do the real reads. */
+    alerts() {
+      let withdrawals = 0;
+      try {
+        openWithdrawalsStmt ??= db.prepare(
+          "SELECT COUNT(*) AS n FROM withdrawals WHERE status IN ('queued','sending','manual')");
+        withdrawals = openWithdrawalsStmt.get().n;
+      } catch {
+        // payouts.mjs creates that table in startPayouts(), which an admin-only
+        // process (or a test) never runs. No table = nothing owed, not a 500.
+      }
+      return {
+        reviews: q.countOpenReviews.get().n,
+        unmatched: q.countOpenUnmatched.get().n,
+        withdrawals,
+        campaignBrokers: campaignsNeedingBrokerReview(
+          q.brokers.all().map((b) => b.id),
+          q.liveCampaignDocs.all().map((r) => JSON.parse(r.doc || '{}')),
+        ),
+      };
+    },
+
     /** Admin has paid a `manual`/`queued` row by hand — record it as sent and
      *  tell the user, the same as the automated path in payouts.mjs would.
      *  Returns the same shape `withdrawals()` rows have (plus `tgUserId`, for
      *  the caller to notify), or null if it was already resolved — no
      *  double-notify on a second click. */
-    markWithdrawalSent(id, txid) {
+    markWithdrawalSent(id) {
       markWithdrawalSentStmt ??= db.prepare(
-        `UPDATE withdrawals SET status='sent', txid=?, error=NULL, updated_at=?
+        `UPDATE withdrawals SET status='sent', error=NULL, updated_at=?
          WHERE id=? AND status IN ('queued','sending','manual')`,
       );
       readWithdrawalStmt ??= db.prepare('SELECT * FROM withdrawals WHERE id = ?');
-      const res = markWithdrawalSentStmt.run(txid || null, nowMs(), id);
+      const res = markWithdrawalSentStmt.run(nowMs(), id);
       if (res.changes === 0) return null;
       const row = readWithdrawalStmt.get(id);
+      return { ...toWithdrawalRow(row), tgUserId: row.tg_user_id };
+    },
+
+    /** Admin refused a withdrawal. `enqueueWithdrawal` debited the balance the
+     *  moment the request was made (that is the freeze that stops a user
+     *  queueing the same money twice), so rejecting has to hand it back —
+     *  keyed on the withdrawal id, so a double click credits once. Same
+     *  null-if-already-resolved contract as markWithdrawalSent. */
+    rejectWithdrawal(id, reason) {
+      rejectWithdrawalStmt ??= db.prepare(
+        `UPDATE withdrawals SET status='refunded', error=?, updated_at=?
+         WHERE id=? AND status IN ('queued','sending','manual')`,
+      );
+      readWithdrawalStmt ??= db.prepare('SELECT * FROM withdrawals WHERE id = ?');
+      const res = rejectWithdrawalStmt.run(String(reason), nowMs(), id);
+      if (res.changes === 0) return null;
+      const row = readWithdrawalStmt.get(id);
+      ledger.creditRefund({
+        userId: row.user_id, amountUsd: row.amount_usd, orderId: id,
+        detail: 'Rejected withdrawal returned to balance',
+      });
       return { ...toWithdrawalRow(row), tgUserId: row.tg_user_id };
     },
 
     /** Money arriving. Reads `orders` directly — one file, so no bridge. */
     payments: () => q.payments.all().map((r) => ({
       id: r.id, userId: r.user_id, username: r.username, planId: r.plan_id,
+      userNo: userNoOfTelegram(r.user_id),
       amountUsd: r.amount_usd, currency: r.currency, network: r.network,
       txid: r.txid, status: r.status,
-      confirmedAt: r.confirmed_at ? new Date(r.confirmed_at).toISOString().slice(0, 16).replace('T', ' · ') : null,
+      confirmedAt: r.confirmed_at ? fmtStamp(r.confirmed_at) : null,
       booked: r.booked === 1,
     })),
 
+    /* Money that arrived but could not be attributed to an order on its own —
+       the watcher's escalation to a human. See unmatched_txs in db.mjs. */
+    unmatchedTxs: () => q.unmatchedTxs.all().map((r) => ({
+      txid: r.txid, chain: r.chain, currency: r.currency, network: r.network,
+      address: r.address, sender: r.sender, amount: r.amount, decimals: r.decimals,
+      reason: r.reason, at: r.tx_at ?? r.seen_at,
+      resolution: r.resolution, orderId: r.order_id, resolvedBy: r.resolved_by, resolvedAt: r.resolved_at,
+    })),
+
+    /** Open orders an unmatched transfer could belong to, for the picker. */
+    openOrders: () => q.openOrders.all().map((r) => ({
+      id: r.id, userId: r.user_id, username: r.username, planId: r.plan_id,
+      amountUsd: r.amount_usd, currency: r.currency, network: r.network,
+      amountCrypto: r.amount_crypto, paidUnits: r.paid_units, createdAt: r.created_at,
+    })),
+
     cycles: () => q.cycles.all().map(toCycle),
-    reviewQueue: () => q.reviewQueue.all().map(toReview),
+    reviewQueue: () => q.reviewQueue.all()
+      .map((r) => ({ ...toReview(r), plan: ledger.tierOf(r.user_id) })),
+
+    /** A `rebates` row means "this (user,broker) link is live and earning" —
+     *  true until an admin's later decision walks it back to waiting/rejected.
+     *  That doesn't delete the row (it would zero out the admin's running
+     *  rebate total, which the ledger — not this row — is the real record
+     *  of), so the row alone can't tell "still active" from "approved once,
+     *  since reverted". Whatever review_queue.decision says now wins. */
+    liveRebateLink(userId, brokerId) {
+      if (!q.rebate.get(brokerId, userId)) return false;
+      const row = q.reviewByUserBroker.get(userId, brokerId);
+      return !row || row.decision == null || row.decision === 'approved';
+    },
 
     /**
      * The Mini App's "Submit account" — a broker-account verification request.
@@ -1149,24 +1318,33 @@ export function openAdminDb(path) {
      * earning cashback) | 'pending' (already under review / account already
      * verified) | 'missing_account' (first submit needs the broker user id).
      */
-    submitBrokerRequest({ userId, brokerId, email, brokerAccountId }) {
-      if (q.rebate.get(brokerId, userId)) return 'active';
+    submitBrokerRequest({ userId, brokerId, email, brokerAccountId, needAccountId = true }) {
+      if (this.liveRebateLink(userId, brokerId)) return 'active';
       const existing = q.reviewByUserBroker.get(userId, brokerId);
       if (existing && existing.decision !== 'rejected') return 'pending';
-      const at = new Date(nowMs()).toISOString().slice(0, 16).replace('T', ' · ');
+      const at = fmtStamp(nowMs());
       db.exec('BEGIN');
       try {
+        let reviewId = existing?.id;
         if (existing) {
           const last = (existing.last_status ?? '').startsWith('Deposit')
             ? 'Deposit rejected' : 'Registration rejected';
           q.reopenReview.run(email, brokerAccountId || existing.broker_account_id, at, last, existing.id);
         } else {
-          if (!brokerAccountId) { db.exec('ROLLBACK'); return 'missing_account'; }
+          if (needAccountId && !brokerAccountId) { db.exec('ROLLBACK'); return 'missing_account'; }
           const user = q.user.get(userId);
-          q.insertReview.run(`rv${randomBytes(4).toString('hex')}`, userId,
-            user?.name ?? userId, user?.plan ?? 'none', brokerId, at, email, brokerAccountId, 'No account');
+          reviewId = `rv${randomBytes(4).toString('hex')}`;
+          q.insertReview.run(reviewId, userId,
+            user?.name ?? userId, user?.plan ?? 'none', brokerId, at, email ?? '', brokerAccountId ?? '', 'No account');
         }
         q.setUserBrokerContact.run(email, brokerId, at, userId);
+        // The other half of the audit trail: the request itself, not just our
+        // decision on it. Zero-amount, so no chart counts it as money.
+        ledger.append({
+          userId, kind: 'cashback', amount: 0, revenue: 0, brokerId,
+          key: `review:${reviewId}:${auditStamp()}:submitted`,
+          detail: `${q.broker.get(brokerId)?.name ?? brokerId} request submitted`,
+        });
         db.exec('COMMIT');
       } catch (err) {
         db.exec('ROLLBACK');
@@ -1181,7 +1359,7 @@ export function openAdminDb(path) {
      * being retried); anything else is a no-op with a name.
      */
     confirmBrokerDeposit({ userId, brokerId }) {
-      if (q.rebate.get(brokerId, userId)) return 'active';
+      if (this.liveRebateLink(userId, brokerId)) return 'active';
       const row = q.reviewByUserBroker.get(userId, brokerId);
       if (!row) return 'not_found';
       const depositPhase = (row.last_status ?? '').startsWith('Deposit');
@@ -1189,7 +1367,7 @@ export function openAdminDb(path) {
         : row.decision === 'rejected' && depositPhase ? 'Deposit rejected'
           : null;
       if (!from) return row.decision == null ? 'pending' : 'not_found';
-      const at = new Date(nowMs()).toISOString().slice(0, 16).replace('T', ' · ');
+      const at = fmtStamp(nowMs());
       q.reopenReview.run(row.email, row.broker_account_id, at, from, row.id);
       return 'ok';
     },
@@ -1201,9 +1379,18 @@ export function openAdminDb(path) {
       const row = q.reviewRow.get(id);
       if (!row) return false;
       const status = { approved: 'active', rejected: 'rejected', waiting: 'pending' }[decision];
+      /* The deposit phase is where a reject means "your deposit didn't check
+         out": the user was told to deposit and hasn't been approved since. An
+         ALREADY-APPROVED row is not in it — that user's deposit passed, so
+         rejecting them is a registration rejection that walks the link all
+         the way back, not a deposit we failed to verify. */
+      const depositPhase = (row.last_status ?? '').startsWith('Deposit') && row.decision !== 'approved';
       db.exec('BEGIN');
       try {
         q.setDecision.run(decision, id);
+        // last_status is what carries the phase into the next decision.
+        if (decision !== 'rejected' && !depositPhase) q.setLastStatus.run('Deposit required', id);
+        if (decision === 'rejected' && !depositPhase) q.setLastStatus.run('Registration rejected', id);
         if (row.user_id) {
           q.setUserStatus.run(status, row.user_id);
           /* An approval also opens the cashback relationship: without a
@@ -1212,10 +1399,13 @@ export function openAdminDb(path) {
           if (decision === 'approved') {
             q.ensureRebate.run(row.broker_id, row.user_id, row.name, row.plan, row.email, row.broker_account_id);
           }
+          /* The stamp keeps re-decisions of the same row distinct (the key is
+             INSERT OR IGNORE'd), and stays BEFORE the decision so series.mjs's
+             `review:…:<decision>` match still reads it. */
           ledger.append({
             userId: row.user_id, kind: 'cashback', amount: 0, revenue: 0,
-            brokerId: row.broker_id, key: `review:${id}:${decision}`,
-            detail: `Broker request ${decision}`,
+            brokerId: row.broker_id, key: `review:${id}:${auditStamp()}:${decision}`,
+            detail: `${q.broker.get(row.broker_id)?.name ?? row.broker_id} request ${decision}`,
           });
         }
         db.exec('COMMIT');
@@ -1225,7 +1415,7 @@ export function openAdminDb(path) {
       }
       const flowKey = decision === 'approved' ? 'approved'
         : decision === 'waiting' ? 'waiting-deposit'
-          : (row.last_status ?? '').startsWith('Deposit') ? 'rejected-deposit' : 'rejected';
+          : depositPhase ? 'rejected-deposit' : 'rejected';
       return {
         flowKey,
         telegramId: row.user_id ? q.user.get(row.user_id)?.telegram_id ?? null : null,
@@ -1234,8 +1424,28 @@ export function openAdminDb(path) {
       };
     },
 
-    rebates: (brokerId) => q.rebates.all(brokerId).map(toRebate),
-    drafts: (brokerId) => q.drafts.all(brokerId).map(toDraft),
+    /** Same decision, addressed by (user, broker) instead of a queue row id —
+     *  what the "Recent users" table needs since it never shows review_queue ids.
+     *  Same phase rule as the queue: a verified account stays verified, so a
+     *  reject after "waiting for deposit" is a deposit rejection. */
+    decideReviewForUser(userId, brokerId, decision) {
+      const row = q.reviewByUserBroker.get(userId, brokerId);
+      return row ? this.decideReview(row.id, decision) : false;
+    },
+
+    /* `rebates.plan` is a snapshot taken when the row was created, so it goes
+       stale the moment a user upgrades. The share is the LIVE tier — the same
+       one addDraft and publishing use — so serve that, not the column. */
+    // A demoted user (approved, then walked back to waiting/rejected) must
+    // drop out of the draft list — a stale rebates row would otherwise still
+    // let the admin draft a weekly cut for someone who isn't currently live.
+    rebates(brokerId) {
+      return q.rebates.all(brokerId)
+        .filter((r) => this.liveRebateLink(r.user_id, brokerId))
+        .map((r) => ({ ...toRebate(r), plan: ledger.tierOf(r.user_id) }));
+    },
+    drafts: (brokerId) => q.drafts.all(brokerId)
+      .map((r) => ({ ...toDraft(r), plan: ledger.tierOf(r.user_id) })),
     /**
      * Draft one user's cut of what a broker paid us this week.
      *
@@ -1249,12 +1459,13 @@ export function openAdminDb(path) {
       if (!base) return undefined;
       const tier = ledger.tierOf(userId);
       const shared = Math.round(lastWeekRebate * TIER_PCT[tier] * 100) / 100;
-      const now = new Date();
-      const actionDate = `${now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
-        + ` · ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+      const actionDate = fmtStamp();
       q.upsertDraft.run(brokerId, userId, lastWeekRebate, shared, actionDate);
       return {
-        ...toRebate(base), lastWeekRebate, sharedRebate: shared, actionDate,
+        // `plan: tier`, not toRebate's stale `rebates.plan` snapshot — the
+        // client merges this reply over its row, so the column would drag the
+        // badge back to whatever tier the user had when the row was created.
+        ...toRebate(base), plan: tier, lastWeekRebate, sharedRebate: shared, actionDate,
         tier, tierPct: TIER_PCT[tier] * 100,
       };
     },
@@ -1278,31 +1489,43 @@ export function openAdminDb(path) {
       }));
     },
     grants: () => q.grants.all().map(toGrant),
+    /** How many active subscribers a grant with this cutoff (epoch ms | null) would reach. */
+    eligibleCount: (beforeMs) => q.eligibleCount.get(beforeMs, beforeMs).n,
     /**
      * Bulk extra days. The frames only recorded the grant; this applies it —
      * every eligible subscriber's expiry moves and each one gets a ledger row,
      * so the grant shows up in their timeline and in the days-left column.
      * Returns the recipients so the caller can send the custom message.
+     * `purchasedBefore` is epoch ms (already resolved from Tehran wall clock)
+     * or null; the display strings are derived here so every row reads in
+     * Tehran time no matter where the operator sits.
      */
     addGrant(grant) {
       const id = `g${randomBytes(6).toString('hex')}`;
-      const before = grant.purchasedBefore ?? '';
+      const before = grant.purchasedBefore ?? null;
       const eligible = q.eligibleIds.all(before, before);
       const note = `+${grant.extraDays} days (bulk grant)`;
+      const now = nowMs();
+      const saved = {
+        id, addedAt: fmtDay(now), addedTime: fmtTime(now), extraDays: grant.extraDays,
+        eligibleBefore: before == null ? '—' : fmtDay(before),
+        eligibleTime: before == null ? '—' : fmtTime(before),
+        affected: eligible.length, message: grant.message ?? '', notify: !!grant.notify,
+      };
       db.exec('BEGIN');
       try {
         for (const row of eligible) ledger.grantDays(row.id, grant.extraDays, note);
         q.insertGrant.run(
-          id, grant.addedAt, grant.addedTime, grant.extraDays,
-          grant.eligibleBefore, grant.eligibleTime, eligible.length,
-          grant.message ?? '', grant.notify ? 1 : 0, nowMs(),
+          id, saved.addedAt, saved.addedTime, saved.extraDays,
+          saved.eligibleBefore, saved.eligibleTime, saved.affected,
+          saved.message, saved.notify ? 1 : 0, now,
         );
         db.exec('COMMIT');
       } catch (err) {
         db.exec('ROLLBACK');
         throw err;
       }
-      return { id, ...grant, affected: eligible.length, recipients: eligible.map((r) => r.id) };
+      return { ...saved, recipients: eligible.map((r) => r.telegram_id).filter(Boolean) };
     },
 
     events: () => q.events.all().map(toEvent),
@@ -1314,27 +1537,32 @@ export function openAdminDb(path) {
     updateEvent: (id, e) => q.updateEvent.run(e.title, e.description ?? '', e.icon ?? 'info', e.date ?? '', id).changes > 0,
     deleteEvent: (id) => q.deleteEvent.run(id).changes > 0,
 
-    /** ponytail: seeded `referral_rows` are the fallback while no real
-     *  attribution exists yet. Drop the table once the seed writes users. */
-    referralRows() {
-      const live = q.liveReferralRows.all();
-      if (!live.length) return q.referralRows.all().map(toReferralRow);
-      const round2 = (n) => Math.round(n * 100) / 100;
-      const pct = (n, d) => (d ? Number(((n / d) * 100).toFixed(1)) : 0);
-      return live.map((r) => ({
-        id: r.id, name: r.name, plan: r.plan, userNo: r.user_no, invited: r.invited,
-        planCount: r.plan_count, planPct: pct(r.plan_count, r.invited),
-        cashbackCount: r.cashback_count, cashbackPct: pct(r.cashback_count, r.invited),
-        revenue: round2(r.revenue),
-        revenueShared: round2(r.revenue_shared),
-        revenueNet: round2(r.revenue - r.revenue_shared),
-      }));
-    },
+    referralRows: () => q.liveReferralRows.all().map((r) => ({
+      id: r.id, name: r.name, plan: r.plan, userNo: r.user_no, invited: r.invited,
+      planCount: r.plan_count, planPct: pctOf(r.plan_count, r.invited),
+      cashbackCount: r.cashback_count, cashbackPct: pctOf(r.cashback_count, r.invited),
+      revenue: round2(r.revenue),
+      revenueShared: round2(r.revenue_shared),
+      revenueNet: round2(r.revenue - r.revenue_shared),
+    })),
     referralCampaigns: () => q.referralCampaigns.all().map(toReferralCampaign),
+
+    /** A campaign's link code, unique against both other campaigns and the
+     *  users' own referral codes — `ledger.attribute` reads one namespace for
+     *  both, and a collision would hand a campaign's arrivals to a user. */
+    newLinkCode() {
+      let code;
+      do {
+        code = randomBytes(4).toString('hex');
+      } while (q.refCampaignByCode.get(code) || db.prepare('SELECT 1 FROM users WHERE ref_code = ?').get(code));
+      return code;
+    },
     addReferralCampaign(c) {
       const id = `rc${randomBytes(6).toString('hex')}`;
       q.insertReferralCampaign.run(
-        id, c.name, 'active', c.linkCode ?? null,
+        // No code, no link: the editor never sent one, so every campaign was
+        // created with a null code and an empty Copy box.
+        id, c.name, 'active', c.linkCode || this.newLinkCode(),
         c.planShare ?? 0, c.cashbackShare ?? 0,
         c.websiteLink ?? '', c.botLink ?? '', c.endDate ?? '',
         // The whole record, same as addCampaign. `c.doc` only ever existed as a
@@ -1342,12 +1570,12 @@ export function openAdminDb(path) {
         // own — the broker display order, the excluded list — was dropped here.
         JSON.stringify(c),
       );
-      return { id, ...c, status: 'active' };
+      return this.referralCampaigns().find((r) => r.id === id);
     },
     setReferralCampaignStatus: (id, status) => q.setReferralCampaignStatus.run(status, id).changes > 0,
     updateReferralCampaign(id, c) {
       return q.updateReferralCampaign.run(
-        c.name, c.linkCode ?? null, c.planShare ?? 0, c.cashbackShare ?? 0,
+        c.name, c.linkCode || this.newLinkCode(), c.planShare ?? 0, c.cashbackShare ?? 0,
         c.endDate ?? '', JSON.stringify(c), id,
       ).changes > 0;
     },
@@ -1400,47 +1628,94 @@ export function openAdminDb(path) {
     },
     deleteSignal: (id) => q.deleteSignal.run(id).changes > 0,
 
-    seriesDims: (name) => q.seriesDims.all(name).map((r) => r.dim),
+    /** Chart points, replayed live from the ledger — see series.mjs. */
+    series: (name, opts) => computeSeries(db, name, opts),
+
     /**
-     * @param dims  dimension ids to include; empty/omitted means all of them
-     * @param from/to  YYYY-MM-DD, inclusive
-     * @param grain  'daily' | 'weekly' | 'monthly'
+     * The referral campaign whose broker list a user should be seeing, parsed,
+     * or null for everyone else.
+     *
+     * "Live" is status `active` and an end date that has not passed — which is
+     * also how a campaign lets its people go: pausing, stopping, deleting or
+     * running past the end date all fall through to the public list, and
+     * reopening (or extending) it takes them back, because the tag on the user
+     * is never cleared.
      */
-    series(name, { dims, from = '0000-00-00', to = '9999-99-99', grain = 'weekly' } = {}) {
-      let rows = q.seriesRows.all(name, from, to);
-      if (dims?.length) {
-        const wanted = new Set(dims);
-        rows = rows.filter((r) => wanted.has(r.dim));
-      }
-      return aggregate(name, rows, grain);
-    },
-    setSeries(name, dim, points) {
-      db.exec('BEGIN');
-      try {
-        for (const { day, ...values } of points) q.setSeries.run(name, dim, day, JSON.stringify(values));
-        db.exec('COMMIT');
-      } catch (err) {
-        db.exec('ROLLBACK');
-        throw err;
-      }
+    liveCampaignFor(userId) {
+      const c = ledger.refCampaignFor(userId);
+      if (!c || c.status !== 'active') return null;
+      if (c.end_date && c.end_date < fmtDay()) return null;
+      return JSON.parse(c.doc || '{}');
     },
   };
+
+  /* Campaigns created before link codes were generated have none, so their
+     Copy boxes are empty and their links attribute nobody. One code each,
+     once. */
+  for (const r of q.codelessCampaigns.all()) q.setCampaignLinkCode.run(store.newLinkCode(), r.id);
+
+  return store;
+}
+
+/**
+ * The broker catalogue as one campaign's users see it: the campaign's own
+ * order, its badge overrides, its excluded brokers gone, and a private broker
+ * shown when the campaign lists it (the whole point of a private broker on a
+ * partner's list). Anything the campaign never mentioned — a broker added
+ * after it was built — keeps its own settings and sits at the end.
+ */
+export function campaignBrokerList(brokers, doc) {
+  const display = doc?.display ?? [];
+  const excluded = new Set(doc?.excluded ?? []);
+  const at = new Map(display.map((d, i) => [d.brokerId, i]));
+  const badge = new Map(display.map((d) => [d.brokerId, d]));
+  const END = Number.MAX_SAFE_INTEGER;
+  return brokers
+    .filter((b) => !excluded.has(b.id) && (at.has(b.id) || b.status !== 'private'))
+    .sort((a, b) => ((at.get(a.id) ?? END) - (at.get(b.id) ?? END)) || ((a.rank ?? 0) - (b.rank ?? 0)))
+    .map((b) => {
+      const d = badge.get(b.id);
+      // Only a listed broker's badge is overridden — an unlisted one keeps the
+      // badge its own preview carries.
+      if (!d || !b.preview) return b;
+      return {
+        ...b,
+        preview: {
+          ...b.preview,
+          badgeOn: d.badgeOn, badgeText: d.badgeText, badgeColor: d.badgeColor,
+        },
+      };
+    });
+}
+
+/** Brokers an active campaign has never been told about — the count behind the
+ *  "check the new broker's place in your campaigns" notification. */
+export function campaignsNeedingBrokerReview(brokerIds, docs) {
+  return docs.filter((doc) => {
+    const known = new Set([...(doc.display ?? []).map((d) => d.brokerId), ...(doc.excluded ?? [])]);
+    return brokerIds.some((id) => !known.has(id));
+  }).length;
 }
 
 /* ---------------------------------------------------------------------
  * Row -> client shape
  * ------------------------------------------------------------------- */
 
+// A row from q.users carries at most one review_queue link (link_broker_id);
+// { approved: 'active', rejected: 'rejected', waiting: 'pending' } is the same
+// map decideReview uses to turn a decision into a status.
+const LINK_STATUS = { approved: 'active', rejected: 'rejected', waiting: 'pending' };
 const toUser = (r) => ({
-  id: r.id, name: r.name, plan: r.plan, email: r.email, brokerId: r.broker_id, broker: r.broker,
+  id: r.id, name: r.name, plan: r.plan, email: r.link_email || r.email,
+  brokerId: r.link_broker_account_id ?? r.broker_id, broker: r.link_broker_id ?? r.broker,
   userNo: r.user_no, telegramId: r.telegram_id ?? null,
-  status: r.status, lastActionAt: r.last_action_at || '—',
-  totalRebate: r.total_rebate, lastMonthRebate: r.last_month_rebate, joinedAt: r.joined_at,
-});
-
-const toActivity = (r) => ({
-  id: r.id, at: r.at, activity: r.activity, category: r.category,
-  amount: r.amount, signed: r.signed === 1,
+  status: r.link_decision ? LINK_STATUS[r.link_decision] : r.status,
+  // Every per-row field comes off the link when there is one: `users.email` /
+  // `.status` / `.last_action_at` are one-per-account, so a user with three
+  // broker links would otherwise show the same three cells on all three rows.
+  lastActionAt: r.link_action_at ?? r.last_action_at ?? '—',
+  totalRebate: r.live_total_rebate ?? r.total_rebate, lastMonthRebate: r.live_last_month_rebate ?? r.last_month_rebate,
+  joinedAt: r.joined_at,
 });
 
 /** Which tab of the user timeline a ledger kind belongs under. */
@@ -1454,7 +1729,7 @@ const LEDGER_CATEGORY = {
  *  the table renders an em dash rather than a misleading $0.00. */
 const toLedgerRow = (r) => ({
   id: `l${r.id}`,
-  at: new Date(r.at).toISOString().slice(0, 16).replace('T', ' · '),
+  at: fmtStamp(r.at),
   activity: r.detail || r.kind,
   category: LEDGER_CATEGORY[r.kind] ?? 'Subscription',
   amount: r.amount || null,
@@ -1463,12 +1738,16 @@ const toLedgerRow = (r) => ({
 
 const toBroker = (r) => ({
   id: r.id, name: r.name, color: r.color, status: r.status, rank: r.rank,
-  // Live counts win; the stored columns only still answer for seeded brokers
-  // that have no rebate or queue rows of their own yet.
-  activeUsers: r.live_active || r.active_users || 0,
-  pendingUsers: r.live_pending || r.pending_users || 0,
+  // Counted live off review_queue — the stored active_users/pending_users
+  // columns are seed leftovers and 0 approved is a real answer, not a miss.
+  activeUsers: r.live_active ?? 0,
+  pendingUsers: r.live_pending ?? 0,
+  totalUsers: r.live_users ?? 0,
   draftedPayment: r.drafted_payment, unreviewed: r.unreviewed,
   shareRate: r.share_rate, updatedAt: r.updated_at,
+  // The logo lives in the preview doc, not its own column — pull it along so
+  // list/detail rows can show it without a second fetch per broker.
+  logoUrl: r.preview_doc ? JSON.parse(r.preview_doc).logoUrl : undefined,
 });
 
 const toFlowMessage = (r) => ({ key: r.key, title: r.title, from: r.from_state, chip: r.chip, message: r.message });
@@ -1481,12 +1760,13 @@ const toCycle = (r) => ({
 
 const toReview = (r) => ({
   id: r.id, userId: r.user_id, name: r.name, plan: r.plan, brokerId: r.broker_id,
+  userNo: userNoOf(r.user_id),
   requestedAt: r.requested_at, email: r.email, brokerAccountId: r.broker_account_id,
   lastStatus: r.last_status,
 });
 
 const toRebate = (r) => ({
-  userId: r.user_id, name: r.name, plan: r.plan, email: r.email,
+  userId: r.user_id, name: r.name, plan: r.plan, email: r.email, userNo: userNoOf(r.user_id),
   brokerAccountId: r.broker_account_id, totalRebate: r.total_rebate,
   lastWeekRebate: r.last_week_rebate, sharedRebate: r.shared_rebate,
 });
@@ -1503,7 +1783,7 @@ const toDraft = (r) => ({
  *  length when either end is missing, and never reports less than what is
  *  still left (an admin day-grant extends the term without a new purchase). */
 function totalDaysOf(sub) {
-  const bought = sub.purchased_at ? Date.parse(`${sub.purchased_at}T00:00:00Z`) : NaN;
+  const bought = sub.purchased_at ? wallMs(`${sub.purchased_at}T00:00`) ?? NaN : NaN;
   /* Floor, not round: `purchased_at` is a date (midnight), so the span runs a
      part-day long and rounding up would leave a brand-new term reading 90 of
      91 — a ring that is never quite full on the day you paid. */
@@ -1517,10 +1797,19 @@ function totalDaysOf(sub) {
 }
 
 const toSubscriber = (r) => ({
-  id: r.id, name: r.name, plan: r.plan, purchasedAt: r.purchased_at, lastActionAt: r.last_action_at,
+  id: r.id, name: r.name, plan: r.plan, userNo: userNoOf(r.id), purchasedAt: r.purchased_at, lastActionAt: r.last_action_at,
   lastActionTime: r.last_action_time, daysLeft: r.days_left,
   totalPaid: r.total_paid, status: r.status,
 });
+
+/* Kept as a name the rest of the code already imports; the zone itself now
+   lives in tz.mjs and is operator-settable. */
+export const tehranMs = wallMs;
+
+const ELIGIBLE_SQL = `FROM subscribers s LEFT JOIN users u ON u.id = s.id
+  WHERE s.status = 'active' AND (? IS NULL OR COALESCE(
+    (SELECT MAX(l.at) FROM ledger l WHERE l.user_id = s.id AND l.kind = 'subscription'),
+    strftime('%s', s.purchased_at) * 1000) < ?)`;
 
 const toGrant = (r) => ({
   id: r.id, addedAt: r.added_at, addedTime: r.added_time, extraDays: r.extra_days,
@@ -1528,13 +1817,6 @@ const toGrant = (r) => ({
 });
 
 const toEvent = (r) => ({ id: r.id, title: r.title, description: r.description, icon: r.icon, date: r.date });
-
-const toReferralRow = (r) => ({
-  id: r.id, name: r.name, plan: r.plan, userNo: r.user_no, invited: r.invited,
-  planCount: r.plan_count, planPct: r.plan_pct,
-  cashbackCount: r.cashback_count, cashbackPct: r.cashback_pct,
-  revenue: r.revenue, revenueShared: r.revenue_shared, revenueNet: r.revenue_net,
-});
 
 const toReferralCampaign = (r) => ({
   /* Spread first, so the real columns below win. Without this the doc-only
@@ -1545,9 +1827,16 @@ const toReferralCampaign = (r) => ({
   id: r.id, name: r.name, status: r.status, linkCode: r.link_code, invited: r.invited,
   planCount: r.plan_count, planTotal: r.plan_total,
   cashbackCount: r.cashback_count, cashbackTotal: r.cashback_total,
-  revenue: r.revenue, revenueShared: r.revenue_shared, revenueNet: r.revenue_net,
+  revenue: round2(r.revenue), revenueShared: round2(r.revenue_shared),
+  revenueNet: round2(r.revenue - r.revenue_shared),
   planShare: r.plan_share, cashbackShare: r.cashback_share,
-  websiteLink: r.website_link, botLink: r.bot_link, endDate: r.end_date,
+  /* Derived, not stored: the columns were only ever written with the empty
+     strings the editor sent, and the bot username can change under a campaign
+     that outlives it. */
+  websiteLink: r.link_code ? `${PUBLIC_URL}/?ref=${r.link_code}` : '',
+  botLink: r.link_code && process.env.TF_BOT_USERNAME
+    ? `https://t.me/${process.env.TF_BOT_USERNAME}?start=${r.link_code}` : '',
+  endDate: r.end_date,
 });
 
 const toCampaign = (r) => ({ ...JSON.parse(r.doc), id: r.id, name: r.name, status: r.status });
@@ -1568,5 +1857,39 @@ if (process.argv[1] && import.meta.url === `file://${process.argv[1]}`) {
   console.assert(renderTemplate(null, { a: 1 }) === '', 'no body renders as empty string, never throws');
   console.assert(new Set(MESSAGE_TEMPLATES.map((t) => t.key)).size === MESSAGE_TEMPLATES.length,
     'every message template key is unique');
-  console.log('admin.mjs: renderTemplate ok');
+
+  /* An empty token takes its line, and only its line — the whole reason
+     Payment Confirmed is one message instead of six. */
+  const lines = 'Paid: {amount}<br>Balance: {bal}<br>Link: {link}';
+  console.assert(renderTemplate(lines, { amount: '$10', bal: '', link: 'x' }) === 'Paid: $10<br>Link: x',
+    'an empty token drops its own line, the ones around it survive');
+  console.assert(renderTemplate(lines, { amount: '$10', bal: '$2', link: '' }) === 'Paid: $10<br>Balance: $2',
+    'a dropped last line leaves no dangling <br>');
+  console.assert(renderTemplate('a\n{x}\nb', { x: '' }) === 'a\nb', '\\n splits lines too, not just <br>');
+  console.assert(renderTemplate('Hi {name} — {gone}', { name: 'Alex', gone: '' }) === '',
+    'a line is all-or-nothing: one empty token takes the filled tokens on that line with it');
+
+  /* The campaign broker list: order, exclusion, private brokers, badges, and
+     where a broker nobody has told the campaign about ends up. */
+  const B = (id, status = 'public', rank = 0) => ({ id, status, rank, preview: { badgeOn: false, badgeText: '', badgeColor: '' } });
+  const all = [B('a', 'public', 3), B('b', 'public', 1), B('c', 'private'), B('d', 'public', 2)];
+  const doc = {
+    display: [
+      { brokerId: 'c', badgeOn: true, badgeText: 'Exclusive', badgeColor: '#144CCD' },
+      { brokerId: 'a', badgeOn: false, badgeText: '', badgeColor: '' },
+    ],
+    excluded: ['b'],
+  };
+  const view = campaignBrokerList(all, doc);
+  console.assert(view.map((b) => b.id).join(',') === 'c,a,d',
+    'campaign order first, excluded gone, an unlisted broker last');
+  console.assert(view[0].preview.badgeText === 'Exclusive', 'a listed private broker shows with its campaign badge');
+  console.assert(campaignBrokerList(all, {}).map((b) => b.id).join(',') === 'b,d,a',
+    'no display doc: public brokers by their own rank, private still hidden');
+  console.assert(campaignsNeedingBrokerReview(['a', 'b', 'c', 'd'], [doc]) === 1,
+    'a broker the campaign has never heard of needs a look');
+  console.assert(campaignsNeedingBrokerReview(['a', 'b', 'c'], [doc]) === 0,
+    'every broker either displayed or excluded is settled');
+
+  console.log('admin.mjs: renderTemplate + campaign broker list ok');
 }

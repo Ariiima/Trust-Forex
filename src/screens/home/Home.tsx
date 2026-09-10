@@ -63,21 +63,21 @@ const PROMO_START: Record<Subscription, number> = { active: 1, expired: 2, none:
 
 
 const CHART_PEAK_X = 155; // px within the 296-wide plot — default crosshair position
-const CHART_W = 296; // svg is a fixed 296x164 box, so viewBox units are px
-const CHART_TOP = 40; // .scr-home-chart is 204 tall, svg (164) sits flush to the bottom
+const CHART_W = 296; // svg is a fixed 296x204 box, so viewBox units are px
+const CHART_TOP = 0; // svg fills .scr-home-chart (204): 100% sits at the top, so a max reads as a max
 const TIP_GAP = 8;
 const TIP_W = 124; // .scr-home-tooltip
 
 /** x of point i of n — point-to-edge across the plot. */
 const chartXAt = (i: number, n: number) => (n > 1 ? (i / (n - 1)) * CHART_W : CHART_W / 2);
 
-const CHART_H = 164;
+const CHART_H = 204;
 /* Hit rate -> plot height, on a fixed 0..100% axis with room for the marker's
    radius at either end. Fixed, not fitted to the visible range: the three tiles
    directly above the chart report these same percentages, and an axis that
    restretched per tab would draw the same 62% week as a peak in one and a
    trough in the next. */
-const CHART_PAD = 12;
+const CHART_PAD = 8; // marker radius 6 + stroke
 const yForRate = (rate: number) =>
   CHART_H - CHART_PAD - (Math.max(0, Math.min(100, rate)) / 100) * (CHART_H - 2 * CHART_PAD);
 
@@ -245,8 +245,8 @@ function HeroMessage({
 
 /* ---- signal performance --------------------------------------------------- */
 function SignalCard(): ReactNode {
-  const [tp, setTp] = useState<string>('TP1');
-  const [period, setPeriod] = useState<Period>('Monthly');
+  const [tp, setTp] = useState<string>('TP2');
+  const [period, setPeriod] = useState<Period>('Weekly');
   const [results, setResults] = useState<SignalResult[]>(() => cachedSignals() ?? []);
   useEffect(() => {
     if (cachedSignals()) return;
@@ -392,14 +392,14 @@ function SignalCard(): ReactNode {
         {!buckets.length && (
           <span className="scr-home-chart-empty">No published results yet</span>
         )}
-        <svg className="scr-home-chart-svg" viewBox="0 0 296 164" fill="none" preserveAspectRatio="none">
+        <svg className="scr-home-chart-svg" viewBox={`0 0 ${CHART_W} ${CHART_H}`} fill="none" preserveAspectRatio="none">
           <defs>
             <linearGradient id="scr-home-chart-fill" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stopColor="#144CCD" stopOpacity="0.33" />
               <stop offset="1" stopColor="#144CCD" stopOpacity="0" />
             </linearGradient>
           </defs>
-          <path d={`${line} L ${CHART_W} 164 L 0 164 Z`} fill="url(#scr-home-chart-fill)" />
+          <path d={`${line} L ${CHART_W} ${CHART_H} L 0 ${CHART_H} Z`} fill="url(#scr-home-chart-fill)" />
           <path d={line} stroke="#144CCD" strokeWidth={1.5} strokeLinejoin="round" strokeLinecap="round" />
           {/* No dot per point: same rule as the earnings chart — a dot on every
               bucket competed with the crosshair for "you are here" and left the
@@ -494,6 +494,19 @@ function ChoosePlanSection({
     subscription === 'none' ? 'gold' : null,
   );
 
+  // A picked row can expand below the fold, so nudge it fully into view —
+  // but only on an actual pick, not the no-subscription frame's initial
+  // Gold selection (that one should render where it lands, not auto-scroll).
+  const sectionRef = useRef<HTMLElement>(null);
+  const justPicked = useRef(false);
+  useEffect(() => {
+    if (!justPicked.current) return;
+    justPicked.current = false;
+    sectionRef.current
+      ?.querySelector('.scr-home-plan-expanded')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, [selected]);
+
   // Any scroll or tap outside the info button dismisses the callout. Capture
   // phase because the scroll happens on an inner element, not on document.
   const infoRef = useRef<HTMLButtonElement>(null);
@@ -521,7 +534,7 @@ function ChoosePlanSection({
   }, [tipOpen]);
 
   return (
-    <section className="scr-home-card scr-home-plans">
+    <section className="scr-home-card scr-home-plans" ref={sectionRef}>
       <div className="scr-home-plans-head">
         <h2 className="scr-home-card-title">Choose your plan</h2>
         <button
@@ -555,7 +568,14 @@ function ChoosePlanSection({
             onContinue={() => onNavigate?.(`checkout?plan=${plan.id}`)}
           />
         ) : (
-          <PlanRow key={plan.id} plan={plan} onClick={() => setSelected(plan.id)} />
+          <PlanRow
+            key={plan.id}
+            plan={plan}
+            onClick={() => {
+              justPicked.current = true;
+              setSelected(plan.id);
+            }}
+          />
         ),
       )}
     </section>

@@ -17,7 +17,7 @@
  * customer sees should not have to translate.
  */
 import { useMemo, useState } from 'react';
-import { api, type SignalResult } from '../data';
+import { api, fmtDay, fmtTime, type SignalResult } from '../data';
 import { useAsync } from '../useAsync';
 import {
   AnimatePresence, Button, Card, Cell2, Confirm, EmptyState, Icon, IconButton, Modal, Reading, Readings,
@@ -28,6 +28,10 @@ import { Sparkline } from '../ui/Chart';
 import {
   LEVELS, rateOf, reached, recentWeeks, totals, type Counts, type Level, type Week,
 } from './results-math';
+// Same bucketing the Mini App's own Signal performance card plots from —
+// reusing it (not a parallel weeks-based approximation) is what keeps this
+// tab's numbers and labels identical to what a customer sees.
+import { bucketsFor, OVERVIEW, PERIODS, type Period } from '../../screens/home/signal-buckets';
 
 type Outcome = Level | 'sl';
 
@@ -41,15 +45,6 @@ const OUTCOMES: { id: Outcome; label: string; short: string; tone: 'gain' | 'los
 
 /** Risk:reward per take-profit level — fixed by the signal methodology. */
 const RR: Record<Level, string> = { tp1: 'RR 1:0.5', tp2: 'RR 1:1', tp3: 'RR 1:2', tp4: 'RR 1:3' };
-
-/** How many weeks each period tab reads back over. Matches the Mini App. */
-const PERIOD_WEEKS = { weekly: 4, monthly: 12, yearly: 48 } as const;
-const PERIOD_LABEL = {
-  weekly: 'Last 4 weeks overview',
-  monthly: 'Last 12 weeks overview',
-  yearly: 'Last 48 weeks overview',
-} as const;
-type Period = keyof typeof PERIOD_WEEKS;
 
 function Pip({ outcome, size = 24 }: { outcome: Outcome; size?: number }) {
   const o = OUTCOMES.find((x) => x.id === outcome)!;
@@ -81,7 +76,7 @@ export default function Results() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<SignalResult | null>(null);
   const [tp, setTp] = useState<Level>('tp1');
-  const [period, setPeriod] = useState<Period>('weekly');
+  const [period, setPeriod] = useState<Period>('Monthly'); // Home's own default
 
   const rows = edits ?? loaded ?? [];
   const loading = loaded === undefined;
@@ -91,9 +86,8 @@ export default function Results() {
      week that already has a row reuses that row's id, so saving edits it
      rather than filing a second result for the same seven days.
      Matched by id first (`w<monday>`, stable and unique regardless of the
-     label) — a handful of times a year two different weeks now share the
-     same "Month · Week 1" text (see results-math.ts's weekOf), and matching
-     by that text alone would have handed one week's saved row to the other. */
+     label), with the period text as a fallback for rows saved before an id
+     scheme change — see results-math.ts's weekOf. */
   const weeks = useMemo(() => {
     const byId = new Set(rows.map((r) => r.id));
     const byPeriod = new Map(rows.map((r) => [r.period, r.id]));
@@ -165,23 +159,18 @@ export default function Results() {
   const published = rows.filter((r) => r.status === 'published');
   const overall = totals(published);
 
-  /* The chart plots the selected level's hit rate per week, oldest first, over
-     however many weeks the period tab asks for. `rows` arrives newest-first. */
-  const plot = useMemo(() => {
-    const window = published.slice(0, PERIOD_WEEKS[period]).reverse();
-    return window.map((r) => ({
-      label: r.period,
-      range: r.range,
-      total: r.total,
-      reached: reached(r, tp),
-      rate: Number(rateOf(reached(r, tp), r.total).toFixed(1)),
-    }));
-  }, [published, period, tp]);
-
-  const span = totals(published.slice(0, PERIOD_WEEKS[period]));
-  const spanReached = published
-    .slice(0, PERIOD_WEEKS[period])
-    .reduce((n, r) => n + reached(r, tp), 0);
+  /* One point per week / month / quarter — the same fold bucketsFor does for
+     the Mini App's own Signal performance card, oldest first. The overview
+     tiles are a separate, fixed window (4 weeks / 3 months / 12 months,
+     OVERVIEW) regardless of how many points the chart draws. */
+  const plot = useMemo(() => bucketsFor(published, period, tp), [published, period, tp]);
+  const ov = OVERVIEW[period];
+  const ovBuckets = useMemo(
+    () => (ov.fold === period ? plot : bucketsFor(published, ov.fold, tp)).slice(-ov.n),
+    [published, plot, ov, period, tp],
+  );
+  const spanTotal = ovBuckets.reduce((n, b) => n + b.total, 0);
+  const spanReached = ovBuckets.reduce((n, b) => n + b.reached, 0);
 
   const save = (result: SignalResult, status: 'draft' | 'published') => {
     const saved: SignalResult = {
@@ -250,11 +239,11 @@ export default function Results() {
         </div>
 
         <div className="a-overview">
-          <span className="a-overview__title">{PERIOD_LABEL[period]}</span>
+          <span className="a-overview__title">{ov.label}</span>
           <div className="a-overview__stats">
             <div>
               <span className="a-overview__label">Total signals</span>
-              <span className="a-overview__value">{loading ? <Skeleton width={36} height={20} /> : fmtNum(span.total)}</span>
+              <span className="a-overview__value">{loading ? <Skeleton width={36} height={20} /> : fmtNum(spanTotal)}</span>
             </div>
             <div>
               <span className="a-overview__label">{tp.toUpperCase()} reached</span>
@@ -263,7 +252,7 @@ export default function Results() {
             <div>
               <span className="a-overview__label">{tp.toUpperCase()} hit rate</span>
               <span className="a-overview__value at-pos">
-                {loading ? <Skeleton width={36} height={20} /> : (span.total ? fmtPct(rateOf(spanReached, span.total), 1) : '—')}
+                {loading ? <Skeleton width={36} height={20} /> : (spanTotal ? fmtPct(rateOf(spanReached, spanTotal), 1) : '—')}
               </span>
             </div>
           </div>
@@ -276,7 +265,7 @@ export default function Results() {
           <Skeleton height={168} radius={12} />
         ) : plot.length ? (
           <Sparkline
-            data={plot}
+            data={plot.map(({ label, total, reached, rate }) => ({ label, total, reached, rate }))}
             xKey="label"
             yKey="rate"
             height={168}
@@ -299,11 +288,7 @@ export default function Results() {
         )}
 
         <Tabs
-          items={[
-            { id: 'weekly', label: 'Weekly' },
-            { id: 'monthly', label: 'Monthly' },
-            { id: 'yearly', label: 'Yearly' },
-          ] satisfies TabItem<Period>[]}
+          items={PERIODS.map((p) => ({ id: p, label: p })) satisfies TabItem<Period>[]}
           value={period}
           onChange={setPeriod}
           sub
@@ -361,12 +346,9 @@ export default function Results() {
   );
 }
 
-/* Dates the operator reads back, not ISO stamps — these sit next to
-   "May 11, 2024" rows that came from the seed in the same format. */
-const todayLabel = () =>
-  new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-const timeLabel = () =>
-  new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+/* The one system clock — same zone the server stamps everything else in. */
+const todayLabel = () => fmtDay();
+const timeLabel = () => fmtTime();
 
 /* ---------------------------------------------------------------------
  * Add result

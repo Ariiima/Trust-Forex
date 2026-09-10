@@ -18,16 +18,19 @@
  * a double payment.
  */
 import { randomBytes } from 'node:crypto';
+import { fmtDay, fmtTime } from './tz.mjs';
 
 /** Share of our revenue the user keeps, by live subscription tier. */
 export const TIER_PCT = { none: 0.1, silver: 0.15, gold: 0.2, diamond: 0.3 };
 
 /** Plan duration. From the catalogue in src/screens/plans/plans-data.ts. */
-export const PLAN_DAYS = { silver: 30, gold: 90, diamond: 365 };
+// ponytail: TESTING VALUES — real terms are silver 30 / gold 90 / diamond 365.
+export const PLAN_DAYS = { silver: 1, gold: 2, diamond: 3 };
 
 const DAY_MS = 86_400_000;
 
 /** Kinds that represent real income to us; the rest are wallet or timeline rows. */
+const warned = new Set();
 const REVENUE_KINDS = "('subscription','cashback','referral')";
 
 export const LEDGER_SCHEMA = `
@@ -51,7 +54,17 @@ CREATE INDEX IF NOT EXISTS idx_ledger_cycle ON ledger(cycle_id);
 `;
 
 const round2 = (n) => Math.round(n * 100) / 100;
-const today = (ms) => new Date(ms).toISOString().slice(0, 10);
+const today = (ms) => fmtDay(ms);
+
+/* Called the moment money lands in someone's earning balance:
+     { kind: 'referral', telegramId, amount, fromName, from }  an invitee's cut
+     { kind: 'cashback', telegramId, amount, broker }          a published cycle
+   Module-level rather than per-instance because every module that calls
+   openAdminDb() gets its own ledger object and either can book (a sale
+   confirming, a cycle published from the dashboard). notify.mjs registers the
+   sender; the ledger itself stays Telegram-free and self-checkable. */
+let earningNotifier = null;
+export const setEarningNotifier = (fn) => { earningNotifier = fn; };
 
 export function openLedger(db) {
   const q = {
@@ -91,26 +104,25 @@ export function openLedger(db) {
     user: db.prepare('SELECT * FROM users WHERE id = ?'),
     userByTelegram: db.prepare('SELECT * FROM users WHERE telegram_id = ?'),
     userByRefCode: db.prepare('SELECT * FROM users WHERE ref_code = ?'),
+    userByNo: db.prepare('SELECT * FROM users WHERE user_no = ?'),
     setReferrer: db.prepare('UPDATE users SET referred_by = ?, ref_campaign = ? WHERE id = ? AND referred_by IS NULL'),
     setRefCode: db.prepare('UPDATE users SET ref_code = ? WHERE id = ?'),
     setUserPlan: db.prepare('UPDATE users SET plan = ?, last_action_at = ? WHERE id = ?'),
 
     subscriber: db.prepare('SELECT * FROM subscribers WHERE id = ?'),
     upsertSubscriber: db.prepare(`INSERT INTO subscribers
-        (id, name, plan, purchased_at, last_action_at, expires_at, total_paid, status)
-      VALUES (?, ?, ?, ?, ?, ?, ?, 'active')
+        (id, name, plan, purchased_at, last_action_at, last_action_time, expires_at, total_paid, status)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active')
       ON CONFLICT(id) DO UPDATE SET
         plan = excluded.plan, purchased_at = excluded.purchased_at,
-        last_action_at = excluded.last_action_at, expires_at = excluded.expires_at,
+        last_action_at = excluded.last_action_at,
+        last_action_time = excluded.last_action_time, expires_at = excluded.expires_at,
         total_paid = COALESCE(subscribers.total_paid, 0) + excluded.total_paid,
         status = 'active'`),
     extendSubscriber: db.prepare('UPDATE subscribers SET expires_at = ?, status = ? WHERE id = ?'),
     due: db.prepare(`SELECT s.*, u.telegram_id FROM subscribers s
       JOIN users u ON u.id = s.id
       WHERE s.status = 'active' AND s.expires_at IS NOT NULL AND s.expires_at <= ?`),
-    expiring: db.prepare(`SELECT s.*, u.telegram_id FROM subscribers s
-      JOIN users u ON u.id = s.id
-      WHERE s.status = 'active' AND s.expires_at BETWEEN ? AND ?`),
     activeSubs: db.prepare(`SELECT * FROM subscribers WHERE status = 'active'`),
 
     /* Confirmed payments not yet in the books. The Mini App's `orders` and the
@@ -149,9 +161,12 @@ export function openLedger(db) {
       WHERE i.referred_by = ?
       GROUP BY i.id ORDER BY i.joined_at DESC`),
 
-    /* This user's own cashback payouts, newest first — the cashback history sheet. */
+    /* This user's own cashback payouts, newest first — the cashback history sheet.
+       `amount > 0` because review decisions book a zero-amount cashback row as
+       their audit trail (admin.decideReview); those are not payouts and showed
+       up in the sheet as 0% / $0.00 rows. */
     cashbackHistory: db.prepare(`SELECT broker_id, at, tier, amount FROM ledger
-      WHERE user_id = ? AND kind = 'cashback' ORDER BY at DESC`),
+      WHERE user_id = ? AND kind = 'cashback' AND amount > 0 ORDER BY at DESC`),
   };
 
   /** Live tier. Reads the clock, never a stored plan column — an expired
@@ -165,6 +180,17 @@ export function openLedger(db) {
 
   const pctOf = (userId, now) => TIER_PCT[tierOf(userId, now)];
 
+  /** Tell the user their balance moved. Never lets a message fail the money —
+   *  publishAll calls this inside its transaction. */
+  function tellEarner(userId, payload) {
+    if (!earningNotifier) return;
+    try {
+      earningNotifier({ telegramId: q.user.get(userId)?.telegram_id ?? null, ...payload });
+    } catch (err) {
+      console.error('[ledger] earning notify failed:', err.message);
+    }
+  }
+
   /** Append one row. Returns false when `key` has already been booked. */
   function append({ userId, kind, detail = '', amount = 0, revenue = 0, tier = null,
     brokerId = null, refUserId = null, cycleId = null, key = null, at = Date.now() }) {
@@ -173,17 +199,17 @@ export function openLedger(db) {
   }
 
   /**
-   * Pay the inviter their share of what we netted on `userId`.
-   *
-   * The cut comes out of OUR net, not the gross: the invitee has already taken
-   * their own tier's slice, and paying the inviter off the gross would hand out
-   * up to 60% of a trade between the two of them.
+   * Pay the inviter their tier% of `base` — what the invitee just earned us
+   * (a subscription: the plan price) or was just paid (cashback: the invitee's
+   * own tier slice, NOT our retained net — 2026-08-16 a $100 rebate paid the
+   * silver invitee $15 and the gold inviter 20% × $85 = $17; the rule is
+   * 20% × $15 = $3, the inviter rides on the invitee's cashback).
    *
    * A campaign link overrides the inviter's tier with the campaign's negotiated
    * share — that is the whole point of giving a partner a dedicated link.
    */
-  function payReferral({ userId, net, kind, key, at = Date.now() }) {
-    if (net <= 0) return 0;
+  function payReferral({ userId, base, kind, key, at = Date.now() }) {
+    if (base <= 0) return 0;
     const user = q.user.get(userId);
     const inviter = user?.referred_by;
     if (!inviter || inviter === userId) return 0;
@@ -196,13 +222,22 @@ export function openLedger(db) {
       if (share != null) pct = share > 1 ? share / 100 : share;
     }
 
-    const amount = round2(net * pct);
+    const amount = round2(base * pct);
     if (amount <= 0) return 0;
-    append({
+    const inviteeRef = user.user_no != null ? `#${user.user_no}` : userId;
+    const booked = append({
       userId: inviter, kind: 'referral', amount, revenue: 0,
       tier: tierOf(inviter, at), refUserId: userId, at, key: `${key}:ref`,
-      detail: `Referral share from ${user.name ?? userId}`,
+      // ponytail: an inviter only ever sees their invitee's operator id, never
+      // a name — same identity the "Your referrals" list shows (referralsFor).
+      detail: `Referral share from ${inviteeRef}`,
     });
+    // Only on a first booking — the key makes re-sweeps free, and a message is not.
+    if (booked) {
+      tellEarner(inviter, {
+        kind: 'referral', amount, fromName: inviteeRef, from: kind,
+      });
+    }
     return amount;
   }
 
@@ -226,7 +261,7 @@ export function openLedger(db) {
     },
 
     /**
-     * Record who sent this user, from a `startapp=` / `?ref=` payload. The code
+     * Record who sent this user, from a `/start` or `startapp=` payload. The code
      * is either another user's referral code or a referral campaign's link
      * code. First writer wins — attribution never moves once set, so a later
      * link cannot steal an existing inviter's earnings.
@@ -243,14 +278,20 @@ export function openLedger(db) {
           userId, kind: 'signup', detail: `Invited by ${inviter.name ?? inviter.id}`,
           refUserId: inviter.id, key: `signup:${userId}`,
         });
+        console.log(`[referral] ${userId} invited by ${inviter.id} (code ${code})`);
         return { inviter: inviter.id };
       }
 
       const campaign = q.refCampaignByCode.get(code);
       if (campaign) {
-        // A campaign may be tied to a user's referral code, or run in-house —
-        // in which case there is no inviter to pay and only the tag is kept.
-        const owner = campaign.link_code && q.userByRefCode.get(campaign.link_code)?.id;
+        /* A campaign may belong to an account — the User ID typed into the
+           editor, stored by user number — or run in-house, in which case
+           there is no inviter to pay and only the tag is kept. It used to
+           look the owner up by the campaign's own link code, which is a
+           user's referral code and never a campaign's, so every campaign
+           was in-house and no share was ever paid. */
+        const ownerNo = JSON.parse(campaign.doc || '{}').ownerUserNo;
+        const owner = ownerNo != null ? q.userByNo.get(ownerNo)?.id ?? null : null;
         q.setReferrer.run(owner ?? null, campaign.id, userId);
         append({
           userId, kind: 'signup', detail: `Joined via campaign ${campaign.name}`,
@@ -258,7 +299,20 @@ export function openLedger(db) {
         });
         return { campaign: campaign.id, inviter: owner ?? null };
       }
+      // Neither a user's code nor a campaign's — the one line that answers
+      // "I used my link and nothing showed up" from the journal. Once per
+      // user+code: ensureUser retries this on every request of a session.
+      if (!inviter && !warned.has(`${userId}:${code}`)) {
+        warned.add(`${userId}:${code}`);
+        console.warn(`[referral] unknown code ${code} from ${userId}`);
+      }
       return null;
+    },
+
+    /** The referral campaign a user arrived through, row or null. */
+    refCampaignFor(userId) {
+      const id = q.user.get(userId)?.ref_campaign;
+      return id ? q.refCampaign.get(id) ?? null : null;
     },
 
     /**
@@ -281,10 +335,10 @@ export function openLedger(db) {
       if (!booked) return null; // already in the books
 
       q.upsertSubscriber.run(
-        userId, user?.name ?? userId, planId, today(at), today(at), expires, amountUsd,
+        userId, user?.name ?? userId, planId, today(at), today(at), fmtTime(at), expires, amountUsd,
       );
       q.setUserPlan.run(planId, today(at), userId);
-      payReferral({ userId, net: amountUsd, kind: 'subscription', key, at });
+      payReferral({ userId, base: amountUsd, kind: 'subscription', key, at });
       return { expiresAt: expires, plan: planId };
     },
 
@@ -342,7 +396,11 @@ export function openLedger(db) {
     publishAll({ cycleId, name, range, brokerId, at = Date.now() } = {}) {
       const drafts = brokerId ? q.draftsFor.all(brokerId) : q.draftsAll.all();
       if (!drafts.length) return { published: 0, gross: 0, shared: 0 };
-      const id = cycleId ?? `cy-${today(at)}`;
+      /* Per-publish id, not per-day: the ledger key is `cash:<cycle>:<broker>:<user>`,
+         so a day-scoped default made every publish after the first a silent no-op
+         for anyone already paid that day. Double-click safety comes from the
+         drafts being deleted inside this same transaction, not from the key. */
+      const id = cycleId ?? `cy-${at}`;
       let gross = 0;
       let shared = 0;
 
@@ -357,20 +415,22 @@ export function openLedger(db) {
             detail: `${d.broker_name} cashback`,
           });
           if (!booked) continue;
+          // One message per broker paid, not one per cycle — the amount a user
+          // is told about is the one they can find in their cashback history.
+          tellEarner(d.user_id, {
+            kind: 'cashback', amount: d.shared_rebate, broker: d.broker_name,
+          });
           gross += d.last_week_rebate;
           shared += d.shared_rebate;
           q.bumpRebate.run(d.shared_rebate, d.last_week_rebate, d.shared_rebate, d.broker_id, d.user_id);
-          payReferral({
-            userId: d.user_id, net: d.last_week_rebate - d.shared_rebate,
-            kind: 'cashback', key, at,
-          });
+          payReferral({ userId: d.user_id, base: d.shared_rebate, kind: 'cashback', key, at });
         }
         if (brokerId) q.clearBrokerDrafts.run(brokerId); else q.clearAllDrafts.run();
         q.insertCycle.run(
           id, name ?? `Cycle ${today(at)}`, range ?? today(at),
           round2(gross), round2(shared), round2(gross - shared),
           new Set(drafts.map((d) => d.user_id)).size,
-          new Date(at).toISOString().slice(0, 16).replace('T', ' '),
+          `${fmtDay(at)} ${fmtTime(at)}`,
         );
         db.exec('COMMIT');
       } catch (err) {
@@ -396,11 +456,6 @@ export function openLedger(db) {
         });
       }
       return rows;
-    },
-
-    /** Active subscriptions falling due inside the window — for reminders. */
-    expiringWithin(ms, now = Date.now()) {
-      return q.expiring.all(now, now + ms);
     },
 
     /**
@@ -571,7 +626,7 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
       last_action_at TEXT, referred_by TEXT, ref_campaign TEXT, ref_code TEXT, telegram_id INTEGER,
       user_no INTEGER, joined_at TEXT);
     CREATE TABLE subscribers (id TEXT PRIMARY KEY, name TEXT, plan TEXT, purchased_at TEXT,
-      last_action_at TEXT, expires_at INTEGER, days_left INTEGER, total_paid REAL, status TEXT);
+      last_action_at TEXT, last_action_time TEXT, expires_at INTEGER, days_left INTEGER, total_paid REAL, status TEXT);
     CREATE TABLE brokers (id TEXT PRIMARY KEY, name TEXT);
     CREATE TABLE rebates (broker_id TEXT, user_id TEXT, total_rebate REAL,
       last_week_rebate REAL, shared_rebate REAL, PRIMARY KEY (broker_id, user_id));
@@ -580,7 +635,7 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
     CREATE TABLE cashback_cycles (id TEXT PRIMARY KEY, name TEXT, range_label TEXT,
       gross_rebate REAL, shared_cashback REAL, net_revenue REAL, cashback_users INTEGER, published_at TEXT);
     CREATE TABLE referral_campaigns (id TEXT PRIMARY KEY, name TEXT, status TEXT,
-      link_code TEXT, plan_share REAL, cashback_share REAL);
+      link_code TEXT, plan_share REAL, cashback_share REAL, end_date TEXT, doc TEXT);
     CREATE TABLE orders (id TEXT PRIMARY KEY, user_id INTEGER, plan_id TEXT,
       amount_usd REAL, status TEXT, confirmed_at INTEGER, balance_used REAL);
   `);
@@ -605,16 +660,21 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
   assert.equal(L.pctOf('u2', T0), 0.2);
   assert.equal(L.creditSubscription({ userId: 'u2', planId: 'gold', amountUsd: 550, orderId: 'o1', at: T0 }), null,
     'the same order must never be booked twice');
+  assert.equal(db.prepare('SELECT last_action_time FROM subscribers WHERE id = ?').get('u2').last_action_time,
+    fmtTime(T0), 'the subscriber row carries the clock time, not just the day');
 
-  // 3. Expiry drops the tier immediately — 90 days of Gold, then nothing.
-  assert.equal(L.tierOf('u2', T0 + 89 * DAY_MS), 'gold', 'still inside the 90-day term');
-  const afterExpiry = T0 + 91 * DAY_MS;
+  // 3. Expiry drops the tier immediately — the Gold term, then nothing.
+  const goldMs = PLAN_DAYS.gold * DAY_MS;
+  assert.equal(L.tierOf('u2', T0 + goldMs - 1), 'gold', 'still inside the term');
+  const afterExpiry = T0 + goldMs + DAY_MS;
   assert.equal(L.tierOf('u2', afterExpiry), 'none', 'lapsed the moment the term ended');
   assert.equal(L.expireDue(afterExpiry).length, 1);
   assert.equal(L.tierOf('u2', afterExpiry), 'none');
 
-  // 4. Cashback splits on the tier, and the inviter is paid out of OUR net.
+  // 4. Cashback splits on the tier, and the inviter is paid off the INVITEE'S cut.
   db.prepare('UPDATE users SET referred_by = ? WHERE id = ?').run('u1', 'u2');
+  const told = [];
+  setEarningNotifier((e) => told.push(e));
   // The inviter's own tier is read at payout time, so it has to be live first.
   L.creditSubscription({ userId: 'u1', planId: 'diamond', amountUsd: 1700, orderId: 'o3', at: T0 });
   L.creditSubscription({ userId: 'u2', planId: 'gold', amountUsd: 550, orderId: 'o2', at: T0 });
@@ -624,9 +684,21 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
   assert.equal(cycle.gross, 100);
   assert.equal(cycle.shared, 20);
   assert.equal(L.wallet('u2').balance, 20, 'invitee keeps their 20%');
-  // Our net on the cashback row is 80; the Diamond inviter takes 30% of that.
-  // Plus 30% of the 550 subscription we booked for u2 above.
-  assert.equal(L.wallet('u1').balance, round2(80 * 0.3 + 550 * 0.3));
+  // The invitee was paid 20; the Diamond inviter takes 30% of THAT (6), not
+  // 30% of our 80 net. Plus 30% of the 550 subscription we booked for u2 above.
+  assert.equal(L.wallet('u1').balance, round2(20 * 0.3 + 550 * 0.3));
+
+  // 4b. Everyone whose balance moved is told once: the invitee for their
+  // cashback, the inviter for both of their cuts — and never again on a re-run,
+  // because the notice hangs off the keyed append, not off the call.
+  assert.deepEqual(told.filter((t) => t.kind === 'referral').map((t) => t.from).sort(),
+    ['cashback', 'subscription']);
+  assert.equal(told.filter((t) => t.kind === 'cashback').length, 1, 'the invitee is told about their own cashback');
+  assert.equal(told.every((t) => t.amount > 0), true);
+  L.creditSubscription({ userId: 'u2', planId: 'gold', amountUsd: 550, orderId: 'o2', at: T0 });
+  L.publishAll({ cycleId: 'cy1', at: T0 });
+  assert.equal(told.length, 3, 'a re-run must not message anyone twice');
+  setEarningNotifier(null);
 
   // 4a. The Mini App's own reads: referral list split plan vs cashback, this
   // user's cashback payouts, and the weekly-bucketed chart feed.
@@ -634,13 +706,19 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
   assert.equal(refs.length, 1, 'u1 has exactly one invitee');
   assert.equal(refs[0].id, 'u2', 'no user_no on this fixture — falls back to the raw id');
   assert.equal(refs[0].plan, round2(550 * 0.3), 'referral share from the subscription, not the cashback');
-  assert.equal(refs[0].cashback, round2(80 * 0.3), 'referral share from the cashback, keyed cash:');
+  assert.equal(refs[0].cashback, round2(20 * 0.3), 'referral share from the cashback, keyed cash:');
 
   const cbHistory = L.cashbackHistoryFor('u2');
   assert.equal(cbHistory.length, 1);
   assert.equal(cbHistory[0].broker, 'exness');
   assert.equal(cbHistory[0].ratePct, 20, 'gold tier, frozen on the row');
   assert.equal(cbHistory[0].amount, 20, 'the invitee\'s own 20% share, not our net');
+
+  // A review decision books a zero-amount cashback row (admin.decideReview) —
+  // audit trail, not a payout, so the history sheet must not list it.
+  L.append({ userId: 'u2', kind: 'cashback', amount: 0, revenue: 0, brokerId: 'exness',
+    key: 'review:1:approved', detail: 'Broker request approved' });
+  assert.equal(L.cashbackHistoryFor('u2').length, 1, 'zero-amount audit rows stay out of the sheet');
 
   const weekly = L.weeklyEarnings('u2', 4, T0 + DAY_MS);
   assert.equal(weekly.length, 4);
@@ -653,6 +731,38 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
     .run('exness', 'u2', 100, 20, 'now');
   L.publishAll({ cycleId: 'cy1', at: T0 });
   assert.equal(L.wallet('u2').balance, 20, 'replayed cycle must be a no-op');
+
+  // 5a. …but a SECOND publish the same day is a real second payout, not a replay
+  //     of the first — the default cycle id must not collapse to one per day.
+  //     (u1 here so the balances asserted below stay on their own arithmetic.)
+  db.prepare('INSERT INTO rebate_drafts VALUES (?, ?, ?, ?, ?)')
+    .run('exness', 'u1', 100, 30, 'now');
+  const u1Before = L.wallet('u1').balance;
+  const again = L.publishAll({ at: T0 + 1000 });
+  assert.equal(again.published, 1, 'the fresh draft publishes');
+  assert.equal(L.wallet('u1').balance, round2(u1Before + 30), 'second publish credits again');
+
+  // 5b. A referral campaign pays its owner — the account whose user number was
+  //      typed into the editor, at the campaign's own share, not the owner's
+  //      tier. The owner used to be looked up by the campaign's link code (a
+  //      user's referral code, never a campaign's), so nobody was ever paid.
+  db.prepare('INSERT INTO users (id, name, plan, status, user_no) VALUES (?, ?, \'none\', \'active\', ?)')
+    .run('owner', 'Partner', 1000);
+  db.prepare('INSERT INTO users (id, name, plan, status) VALUES (?, ?, \'none\', \'active\')')
+    .run('joined', 'Arrived on the link');
+  db.prepare('INSERT INTO referral_campaigns (id, name, status, link_code, plan_share, cashback_share, doc) VALUES (?, ?, ?, ?, ?, ?, ?)')
+    .run('rc1', 'Partner push', 'active', 'abc123', 50, 0, JSON.stringify({ ownerUserNo: 1000 }));
+  assert.deepEqual(L.attribute('joined', 'abc123'), { campaign: 'rc1', inviter: 'owner' });
+  L.creditSubscription({ userId: 'joined', planId: 'gold', amountUsd: 550, orderId: 'oc1', at: T0 });
+  assert.equal(L.wallet('owner').balance, round2(550 * 0.5),
+    "the campaign's 50%, not the owner's own tier rate");
+
+  // A house campaign — no User ID — tags the arrival and pays nobody.
+  db.prepare('INSERT INTO users (id, name, plan, status) VALUES (?, ?, \'none\', \'active\')')
+    .run('joined2', 'House arrival');
+  db.prepare('INSERT INTO referral_campaigns (id, name, status, link_code, plan_share, cashback_share, doc) VALUES (?, ?, ?, ?, ?, ?, ?)')
+    .run('rc2', 'House', 'active', 'def456', 50, 0, '{}');
+  assert.deepEqual(L.attribute('joined2', 'def456'), { campaign: 'rc2', inviter: null });
 
   // 6. A withdrawal cannot overdraw.
   assert.equal(L.withdraw('u2', 50).error, 'insufficient_funds');

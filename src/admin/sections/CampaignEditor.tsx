@@ -6,7 +6,7 @@
  * every section now sits on one scrollable page.
  */
 import { useId, useRef, useState, type ChangeEvent, type RefObject } from 'react';
-import { api, type MarketingCampaign, type PlanId } from '../data';
+import { api, fmtDay, fmtTime, type MarketingCampaign, type PlanId } from '../data';
 import { useAsync } from '../useAsync';
 import {
   AnimatePresence, Button, Card, Checkbox, Confirm, DateInput, Field, Icon, MultiSelect,
@@ -191,7 +191,7 @@ function CroppedImage({
   );
 }
 
-type FieldKey = 'name' | 'audience' | 'userType' | 'trigger' | 'message';
+type FieldKey = 'name' | 'audience' | 'userType' | 'trigger' | 'offer' | 'message';
 
 export function CampaignEditor({
   draft, editing, onCancel, onPublish,
@@ -295,6 +295,7 @@ export function CampaignEditor({
   const audienceRef = useRef<HTMLDivElement>(null);
   const userTypeRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
+  const offerRef = useRef<HTMLDivElement>(null);
   const messageRef = useRef<HTMLDivElement>(null);
 
   /** Marks every incomplete section, then scrolls to the first one — so a
@@ -307,12 +308,17 @@ export function CampaignEditor({
     }
     if (!types.length) next.userType = 'Select at least one user type.';
     if (triggerN < 0) next.trigger = 'Timing trigger cannot be negative.';
+    // The server refuses this too (public_code_required) — a public offer with
+    // no code would send "Your code:" followed by nothing.
+    if (offerOn && (Number(discount) || 0) > 0 && codeType === 'public' && !publicCode.trim()) {
+      next.offer = 'Enter the public code, or switch to unique codes.';
+    }
     if (isBlank(message)) next.message = 'Enter the message to send the user.';
     setErrors(next);
 
     const order: [FieldKey, RefObject<HTMLDivElement | null>][] = [
       ['name', nameRef], ['audience', audienceRef], ['userType', userTypeRef],
-      ['trigger', triggerRef], ['message', messageRef],
+      ['trigger', triggerRef], ['offer', offerRef], ['message', messageRef],
     ];
     const first = order.find(([key]) => next[key]);
     first?.[1].current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -357,8 +363,8 @@ export function CampaignEditor({
       openRate: draft.openRate ?? null,
       codeSent: draft.codeSent ?? null,
       codeUsedRate: draft.codeUsedRate ?? null,
-      createdAt: draft.createdAt ?? now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      createdTime: draft.createdTime ?? now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      createdAt: draft.createdAt ?? fmtDay(now.getTime()),
+      createdTime: draft.createdTime ?? fmtTime(now.getTime()),
     };
   };
 
@@ -538,11 +544,13 @@ export function CampaignEditor({
         </div>
       </Card>
 
+      <div ref={offerRef}>
       <Card>
         <div className="a-row">
           <StepHead n={6} title="Offer / Discount" />
           <Toggle checked={offerOn} onChange={setOfferOn} label={<span className="a-spacer at-13">Enable Offer</span>} />
         </div>
+        {errors.offer && <p className="at-13 at-neg" role="alert" style={{ marginTop: 8 }}>{errors.offer}</p>}
         <div className="a-col" style={{ marginTop: 12, opacity: offerOn ? 1 : 0.5 }}>
           <span className="at-13 at-semibold">Code Type</span>
           <label className="a-row" style={{ gap: 8, alignItems: 'flex-start' }}>
@@ -589,6 +597,7 @@ export function CampaignEditor({
           </Field>
         </div>
       </Card>
+      </div>
 
       <div ref={messageRef}>
         <Card>
@@ -640,7 +649,7 @@ export function CampaignEditor({
                   <img src={messageImage} alt="" style={{ width: '100%', borderRadius: 8, marginBottom: 8, display: 'block' }} />
                 )}
                 <div
-                  className="at-13"
+                  className="at-13 a-tg-preview"
                   style={{ lineHeight: '19px', color: 'var(--ink)' }}
                   dangerouslySetInnerHTML={{
                     __html: message
@@ -709,7 +718,7 @@ export function CampaignEditor({
         <StepHead
           n={10}
           title="Resend, Usage & Expiry"
-          sub="Define how often this campaign can be sent to a user and how many times the offer can be used."
+          sub="A campaign reaches a user once per occurrence of its trigger (a renewal is a new “subscription started”). Cap that here, or cap how often one user redeems the offer."
         />
         <div className="a-grid" style={{ gridTemplateColumns: '1fr 1fr 1fr', marginTop: 12 }}>
           <label className={`a-optioncard${limit === 'none' ? ' a-optioncard--on' : ''}`}>
@@ -717,7 +726,7 @@ export function CampaignEditor({
             <span className="a-event__icon" style={{ background: '#7c3aed', color: '#fff' }}><Icon name="infinity" size={18} /></span>
             <span className="a-cell2" style={{ flex: 1 }}>
               <span className="at-14 at-semibold">No Limit</span>
-              <span>Preferred for notification use.</span>
+              <span>Sends every time the trigger recurs. Preferred for notification use.</span>
             </span>
           </label>
           <label className={`a-optioncard${limit === 'send' ? ' a-optioncard--on' : ''}`}>
@@ -725,7 +734,7 @@ export function CampaignEditor({
             <span className="a-event__icon" style={{ background: '#2563eb', color: '#fff' }}><Icon name="send" size={18} /></span>
             <span className="a-cell2" style={{ flex: 1 }}>
               <span className="at-14 at-semibold">Send Limit <span className="at-muted">(per user)</span></span>
-              <span>Limit how many times this campaign can be sent to a user.</span>
+              <span>Limit how many times this campaign can be sent to a user, across recurrences.</span>
             </span>
             <Select value={sendLimit} onChange={setSendLimit} options={LIMIT_OPTIONS} disabled={limit !== 'send'} style={{ width: 170 }} />
           </label>
@@ -734,7 +743,7 @@ export function CampaignEditor({
             <span className="a-event__icon" style={{ background: '#16a34a', color: '#fff' }}><Icon name="user-check" size={18} /></span>
             <span className="a-cell2" style={{ flex: 1 }}>
               <span className="at-14 at-semibold">Usage Limit <span className="at-muted">(per user)</span></span>
-              <span>Limit how many times the offer can be used by a user.</span>
+              <span>Limit how many times the offer can be redeemed by a user. Sends are not capped.</span>
             </span>
             <Select value={usageLimit} onChange={setUsageLimit} options={LIMIT_OPTIONS} disabled={limit !== 'usage'} style={{ width: 170 }} />
           </label>

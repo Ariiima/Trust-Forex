@@ -1,6 +1,7 @@
 import exnessLogoUrl from '../../assets/brokers/exness-logo.png';
 import xmLogoUrl from '../../assets/broker/xm-logo.png';
 import icMarketsLogoUrl from '../../assets/brokers/ic-markets-logo.png';
+import type { FlowMessage, MeBrokerLink } from '../../api/client';
 
 /**
  * Broker catalogue shared by the Cashback dashboard (`Cashback.tsx`) and
@@ -30,11 +31,37 @@ export interface BrokerBanner {
   title: string;
 }
 
+/** A link's server state, once the admin has actually decided it, maps to the
+ * flow-message key carrying that decision's admin-edited banner text (Manage
+ * user flow → Status message). States with no decision yet (pending,
+ * deposit-review) have no entry — those banners keep their fixed "in
+ * progress" copy, there's nothing an admin wrote for them to show. */
+const FLOW_KEY_FOR_STATE: Partial<Record<MeBrokerLink['state'], string>> = {
+  rejected: 'rejected',
+  'waiting-for-deposit': 'waiting-deposit',
+  'cashback-active': 'approved',
+  'deposit-rejected': 'rejected-deposit',
+};
+
+/** Admin's own title for this link state, falling back to `fallback` when the
+ * broker has no flow rows yet (pre-seed data) or the state has no decision. */
+export function flowTitle(
+  flow: readonly FlowMessage[] | undefined,
+  linkState: MeBrokerLink['state'] | undefined,
+  fallback: string,
+): string {
+  const key = linkState && FLOW_KEY_FOR_STATE[linkState];
+  return (key && flow?.find((f) => f.key === key)?.title) || fallback;
+}
+
 export interface HistoryRow {
   broker: BrokerId;
   date: string;
   rate: string;
   amount: string;
+  /** From the API row — a private broker never appears in getBrokers(). */
+  name?: string;
+  logo?: string | null;
 }
 
 /**

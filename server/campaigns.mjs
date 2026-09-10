@@ -12,12 +12,17 @@
  *   3. timing trigger — an anchor event happened, and the configured offset has
  *      since elapsed ("7 days after starting the bot", "3 days before expiry")
  *
- * Firing writes a `campaign_sends` row (PK'd on campaign+user, so a campaign
- * reaches each person once) and, when the campaign carries an offer, mints a
- * unique single-user discount code. Delivery itself is the caller's job — this
- * module never talks to Telegram, so it stays runnable in a test.
+ * Firing writes (or bumps) the user's `campaign_sends` row and, when the
+ * campaign carries an offer, mints a unique single-user discount code. A
+ * campaign fires once per OCCURRENCE of its trigger — a renewal is a new
+ * "subscription started", the next expiry a new "3 days before" — with the
+ * "Send Limit" (one/two/three per user) capping how many of those a person
+ * gets. Delivery itself is the caller's job — this module never talks to
+ * Telegram, so it stays runnable in a test. server/campaigns.e2e.test.mjs
+ * drives the whole thing through the real server.
  */
 import { randomBytes } from 'node:crypto';
+import { wallMs } from './tz.mjs';
 
 export const CAMPAIGN_SCHEMA = `
 CREATE TABLE IF NOT EXISTS discount_codes (
@@ -43,11 +48,17 @@ CREATE TABLE IF NOT EXISTS campaign_opens (
 `;
 
 const UNIT_MS = {
+  second: 1_000, seconds: 1_000,
+  minute: 60_000, minutes: 60_000,
   hour: 3_600_000, hours: 3_600_000,
   day: 86_400_000, days: 86_400_000,
   week: 604_800_000, weeks: 604_800_000,
   month: 2_592_000_000, months: 2_592_000_000,
 };
+
+/** The limit dropdown stores words ("one", "two", "three"); older docs may hold numbers. */
+const WORD_N = { one: 1, two: 2, three: 3 };
+const capOf = (v) => WORD_N[String(v ?? '').toLowerCase()] ?? (Number(v) || 0);
 
 const offsetMs = (n, unit) => (Number(n) || 0) * (UNIT_MS[String(unit ?? 'day').toLowerCase()] ?? UNIT_MS.day);
 
@@ -73,12 +84,27 @@ const TYPE_GROUPS = {
 const dayMs = (s) => {
   if (!s) return null;
   const str = String(s).trim();
+  /* "2026-08-15 · 12:34" (review_queue.requested_at) keeps its time; a bare
+     date is that day's midnight — hour/minute triggers need the real instant
+     when one is recorded. Both are wall clock in the system zone (tz.mjs),
+     which is what wrote them. */
+  const stamped = /^(\d{4}-\d{2}-\d{2}) · (\d{2}:\d{2})/.exec(str);
+  if (stamped) return wallMs(`${stamped[1]}T${stamped[2]}`);
   const iso = /^\d{4}-\d{2}-\d{2}/.exec(str);
-  const t = Date.parse(iso ? `${iso[0]}T00:00:00Z` : str);
+  if (iso) return wallMs(`${iso[0]}T00:00`);
+  const t = Date.parse(str);
   return Number.isNaN(t) ? null : t;
 };
 
 export function openCampaigns(db) {
+  /* Per-user resend support: `n` counts how many times this campaign has
+     reached this user, `due_at` is the trigger instant of the latest send —
+     the "occurrence" it fired for. Added in place; rows from before carry
+     n = 1 and no due_at. */
+  const cols = new Set(db.prepare('PRAGMA table_info(campaign_sends)').all().map((c) => c.name));
+  if (!cols.has('n')) db.exec('ALTER TABLE campaign_sends ADD COLUMN n INTEGER NOT NULL DEFAULT 1');
+  if (!cols.has('due_at')) db.exec('ALTER TABLE campaign_sends ADD COLUMN due_at INTEGER');
+
   const q = {
     users: db.prepare('SELECT * FROM users'),
     user: db.prepare('SELECT * FROM users WHERE id = ?'),
@@ -96,30 +122,39 @@ export function openCampaigns(db) {
     /* Referral relationship: an invitee who has ever subscribed is active, one
        who has not is still pending. */
     invitees: db.prepare(`SELECT u.id, u.joined_at,
+        (SELECT MIN(at) FROM ledger l WHERE l.user_id = u.id AND l.kind = 'signup') AS signed_at,
         (SELECT COUNT(*) FROM subscribers s WHERE s.id = u.id AND s.status = 'active') AS active
-      FROM users u WHERE u.referred_by = ? ORDER BY u.joined_at`),
+      FROM users u WHERE u.referred_by = ? ORDER BY u.rowid`),
+    signedAt: db.prepare(`SELECT MIN(at) AS at FROM ledger WHERE user_id = ? AND kind = 'signup'`),
 
     lastLedger: db.prepare(`SELECT at FROM ledger WHERE user_id = ? AND kind = ?
       ORDER BY at DESC LIMIT 1`),
-    anyLedger: db.prepare('SELECT 1 FROM ledger WHERE user_id = ? AND kind = ? LIMIT 1'),
+    /* Real money only: decideReview logs every broker decision (approved,
+       rejected, waiting) as a zero-amount 'cashback' activity row, which must
+       not read as "has received cashback". */
+    anyCashback: db.prepare(`SELECT 1 FROM ledger WHERE user_id = ? AND kind = 'cashback'
+      AND (amount > 0 OR revenue > 0) LIMIT 1`),
 
     campaigns: db.prepare(`SELECT * FROM campaigns WHERE status = 'active'`),
-    sent: db.prepare('SELECT 1 FROM campaign_sends WHERE campaign_id = ? AND user_id = ?'),
-    send: db.prepare(`INSERT OR IGNORE INTO campaign_sends (campaign_id, user_id, at, code, delivered)
-      VALUES (?, ?, ?, ?, 0)`),
+    sent: db.prepare('SELECT n, at, due_at FROM campaign_sends WHERE campaign_id = ? AND user_id = ?'),
+    send: db.prepare(`INSERT OR IGNORE INTO campaign_sends (campaign_id, user_id, at, code, delivered, n, due_at)
+      VALUES (?, ?, ?, ?, 0, 1, ?)`),
+    resend: db.prepare(`UPDATE campaign_sends SET n = n + 1, at = ?, code = ?, delivered = 0, due_at = ?
+      WHERE campaign_id = ? AND user_id = ?`),
     markDelivered: db.prepare('UPDATE campaign_sends SET delivered = 1 WHERE campaign_id = ? AND user_id = ?'),
     undelivered: db.prepare(`SELECT s.*, u.telegram_id, c.doc FROM campaign_sends s
       JOIN users u ON u.id = s.user_id
       JOIN campaigns c ON c.id = s.campaign_id
       WHERE s.delivered = 0`),
-    sendCount: db.prepare('SELECT COUNT(*) AS n FROM campaign_sends WHERE campaign_id = ?'),
-    codeCount: db.prepare('SELECT COUNT(*) AS n FROM campaign_sends WHERE campaign_id = ? AND code IS NOT NULL'),
+    sendCount: db.prepare('SELECT COALESCE(SUM(n), 0) AS n FROM campaign_sends WHERE campaign_id = ?'),
+    codeCount: db.prepare('SELECT COUNT(*) AS n FROM discount_codes WHERE campaign_id = ?'),
 
     /* The campaign table's figures, every one of them counted rather than
        stored. `delivered = 1` is deliberate: a send that Telegram rejected
        was never in front of anybody and must not dilute the open rate. */
     stats: db.prepare(`SELECT
-        (SELECT COUNT(*) FROM campaign_sends WHERE campaign_id = c.id AND delivered = 1) AS sent,
+        (SELECT COALESCE(SUM(CASE WHEN delivered = 1 THEN n ELSE n - 1 END), 0)
+           FROM campaign_sends WHERE campaign_id = c.id) AS sent,
         (SELECT COUNT(*) FROM campaign_opens WHERE campaign_id = c.id) AS opened,
         (SELECT COUNT(*) FROM discount_codes WHERE campaign_id = c.id) AS codes,
         (SELECT COUNT(*) FROM discount_codes WHERE campaign_id = c.id AND used_at IS NOT NULL) AS codes_used
@@ -139,10 +174,13 @@ export function openCampaigns(db) {
     brokerByNameOrId: db.prepare('SELECT id FROM brokers WHERE name = ? OR id = ?'),
 
     campaignById: db.prepare('SELECT doc FROM campaigns WHERE id = ?'),
-    usedCodeCount: db.prepare('SELECT COUNT(*) AS n FROM discount_codes WHERE campaign_id = ? AND used_at IS NOT NULL'),
-    /* A public code is never burned (shared by design), so its redemptions
-       are the confirmed orders that carried it. */
-    usedPublicCount: db.prepare('SELECT COUNT(*) AS n FROM orders WHERE discount_code = ? AND confirmed_at IS NOT NULL'),
+    usedCodeCount: db.prepare(`SELECT COUNT(*) AS n FROM discount_codes
+      WHERE campaign_id = ? AND user_id = ? AND used_at IS NOT NULL`),
+    /* A public code is never burned (shared by design), so one person's
+       redemptions of it are their confirmed orders that carried it.
+       orders.user_id is the Telegram id, hence the join. */
+    usedPublicCount: db.prepare(`SELECT COUNT(*) AS n FROM orders o JOIN users u ON u.telegram_id = o.user_id
+      WHERE o.discount_code = ? AND u.id = ? AND o.confirmed_at IS NOT NULL`),
 
     /* For the in-app card's expiry: has every code this campaign ever minted
        run out? `openEnded` (a code with no expiry) or `n = 0` (nothing minted
@@ -175,10 +213,13 @@ export function openCampaigns(db) {
     const off = offsetMs(campaign.triggerN ?? 7, campaign.triggerUnit ?? 'day');
     const last = (kind) => q.lastLedger.get(userId, kind)?.at ?? null;
     const plus = (t) => (t == null ? null : t + off);
+    // The signup row holds the exact instant; joined_at is date-only.
+    const started = () => q.signedAt.get(userId)?.at ?? dayMs(user.joined_at);
+    const joined = (i) => i.signed_at ?? dayMs(i.joined_at);
 
     switch (campaign.triggerType) {
       case 'After Start Robot':
-        return plus(dayMs(user.joined_at));
+        return plus(started());
       case 'After Subscription Started':
         return plus(last('subscription') ?? dayMs(state.sub?.purchased_at));
       case 'After Subscription Expired':
@@ -189,23 +230,25 @@ export function openCampaigns(db) {
         return plus(dayMs(q.pendingBrokerAt.get(userId)?.requested_at));
       case 'No Cashback Received':
         // Fires only while the thing it is waiting for still has not happened.
-        return q.anyLedger.get(userId, 'cashback') ? null : plus(dayMs(user.joined_at));
+        return q.anyCashback.get(userId) ? null : plus(started());
       case 'After Pending Referral': {
         const pending = state.invitees.find((i) => !i.active);
-        return plus(dayMs(pending?.joined_at));
+        return pending ? plus(joined(pending)) : null;
       }
-      case 'Last Referral Joined':
-        return plus(dayMs(state.invitees.at(-1)?.joined_at));
+      case 'Last Referral Joined': {
+        const lastOne = state.invitees.at(-1);
+        return lastOne ? plus(joined(lastOne)) : null;
+      }
       case 'After Active Referral': {
         const active = state.invitees.find((i) => i.active);
-        return plus(dayMs(active?.joined_at));
+        return active ? plus(joined(active)) : null;
       }
       case 'Last Active Referral': {
         const active = state.invitees.filter((i) => i.active).at(-1);
-        return plus(dayMs(active?.joined_at));
+        return active ? plus(joined(active)) : null;
       }
       default:
-        return plus(dayMs(user.joined_at));
+        return plus(started());
     }
   }
 
@@ -223,8 +266,10 @@ export function openCampaigns(db) {
       // An axis with nothing ticked is not a filter on that axis.
       if (wanted[axis].length && !wanted[axis].includes(state[axis])) return false;
     }
-    // The plan chips only narrow the "Active Subscriber" branch.
-    if (state.subscription === 'active' && wanted.subscription.includes('active')
+    // The plan chips narrow the subscriber branches (active or expired — the
+    // lapsed plan is still on the row); a user with no subscription has no plan
+    // to narrow by.
+    if (state.subscription !== 'none' && wanted.subscription.includes(state.subscription)
       && Array.isArray(campaign.audiencePlans) && campaign.audiencePlans.length
       && !campaign.audiencePlans.includes(state.plan)) return false;
     return true;
@@ -350,26 +395,30 @@ export function openCampaigns(db) {
         const startsAt = dayMs(campaign.startDate);
         const endsAt = dayMs(campaign.endDate);
         if (startsAt && now < startsAt) continue;
-        if (endsAt && now > endsAt) continue;
-        /* "Send Limit" caps how many people the campaign ever reaches; count
-           live so a limit lowered after some sends still holds. A usage limit
-           does not gate sending — racing to redeem is its whole point. */
-        const sendCap = campaign.limitType === 'Send Limit' ? Number(campaign.sendLimit) || 0 : 0;
-        let sent = sendCap ? q.sendCount.get(campaign.id).n : 0;
-        if (sendCap && sent >= sendCap) continue;
+        // The end date is a day the campaign still runs on, not the day it stops.
+        if (endsAt && now >= endsAt + UNIT_MS.day) continue;
+        /* A campaign fires for a user once per occurrence of its trigger — a
+           renewal is a new "subscription started", the next expiry a new
+           "3 days before". "Send Limit" caps how many of those a user gets
+           ("Two times per user"); "No Limit" (notifications) and "Usage
+           Limit" (the cap is on redemptions instead) leave that open. */
+        const perUser = campaign.limitType === 'Send Limit' ? capOf(campaign.sendLimit) || 1 : Infinity;
 
         for (const user of users) {
-          if (sendCap && sent >= sendCap) break;
-          if (q.sent.get(campaign.id, user.id)) continue;
+          const prev = q.sent.get(campaign.id, user.id);
+          if (prev && prev.n >= perUser) continue;
           if (!matchesAudience(campaign, user)) continue;
           const state = stateOf(user.id, now);
           if (!matchesTypes(campaign, state)) continue;
           const due = dueAt(campaign, user.id, state, user);
           if (due == null || due > now) continue;
+          // Same occurrence as the last send (rows from before due_at existed
+          // count their send time): nothing new has happened.
+          if (prev && due <= (prev.due_at ?? prev.at)) continue;
 
           const code = mintCode(campaign, user.id, now);
-          q.send.run(campaign.id, user.id, now, code);
-          sent += 1;
+          if (prev) q.resend.run(now, code, due, campaign.id, user.id);
+          else q.send.run(campaign.id, user.id, now, code, due);
           fired.push({ campaignId: campaign.id, userId: user.id, code, telegramId: user.telegram_id });
         }
       }
@@ -404,16 +453,19 @@ export function openCampaigns(db) {
       if (row.used_at) return { error: 'code_used' };
       if (row.expires_at && row.expires_at <= now) return { error: 'code_expired' };
       if (row.user_id && row.user_id !== userId) return { error: 'not_your_code' };
-      /* "Usage Limit" caps redemptions campaign-wide — first come, first
-         served. Checked here so a capped-out code fails at checkout, before
-         an order is priced against it. */
+      /* "Usage Limit" caps how many times one person redeems this campaign's
+         offer ("One time per user"): their burned unique codes plus, for a
+         public code, their confirmed orders that carried it. Checked here so
+         a capped-out code fails at checkout, before an order is priced.
+         ponytail: open (unconfirmed) orders don't count, so a user can hold
+         several discounted invoices at once; only confirmations are capped. */
       const docRow = q.campaignById.get(row.campaign_id);
       const doc = docRow ? JSON.parse(docRow.doc) : null;
-      if (doc?.limitType === 'Usage Limit') {
-        const cap = Number(doc.usageLimit) || 0;
+      if (doc?.limitType === 'Usage Limit' && userId) {
+        const cap = capOf(doc.usageLimit);
         if (cap) {
-          const used = q.usedCodeCount.get(row.campaign_id).n
-            + (row.user_id ? 0 : q.usedPublicCount.get(row.code).n);
+          const used = q.usedCodeCount.get(row.campaign_id, userId).n
+            + (row.user_id ? 0 : q.usedPublicCount.get(row.code, userId).n);
           if (used >= cap) return { error: 'limit_reached' };
         }
       }

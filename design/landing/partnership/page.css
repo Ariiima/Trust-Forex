@@ -1,0 +1,204 @@
+/* TrustForex Broker Partnership — page rules over the Cashback system (../cb8/style.css → base.css → ../shared/scale.css).
+   Structure, sizes and layout are the Broker Partnership wireframe's ("Broker Partnership.html", 2026-09-09); the treatment
+   is cb8's: the blue field, one Meaning-style block, the three "how it works" pages as held cards on glass, the pilot card
+   on the blue, glass questions, and the request form on the closing ground with the footer inside it. The form posts to
+   app.trustforex.net/api/partnership (page.js). The page is for brokers, not traders: no App CTA anywhere but the nav. */
+
+/* ---------- 1 · the hero: the wireframe's sizes, centred, the one CTA ---------- */
+#hero .display{font-size:var(--text-display-pitch);line-height:.91;letter-spacing:-.072em;max-width:1040px;margin-bottom:30px}
+#hero .lede{font-size:var(--text-lede-pitch);max-width:760px;margin-bottom:36px}
+.h2{font-size:var(--text-title-pitch);line-height:.99;letter-spacing:-.058em;margin-bottom:22px}
+.copy{max-width:610px}
+
+
+/* ---------- the two chapters: the wireframe's one chapter size for both (it draws both dark; the closing one is the
+     light hand-off into the blue request page, as cb8's "Ready to activate?") ---------- */
+.chapter .h2,.chapter-2 .h2{font-size:var(--text-chapter-pitch);line-height:.98;letter-spacing:-.062em;max-width:1064px}   /* the wireframe's 980 was drawn in the system font; Inter needs ~8% more for the same breaks (README) */
+
+/* ---------- 01–03 · how it works: the wireframe's 1.08fr / .92fr (visual never under 430), 78 apart ---------- */
+.glass .mech-grid{grid-template-columns:minmax(0,1.08fr) minmax(430px,.92fr);column-gap:78px}
+.mech-copy h3{font-size:var(--text-title-how);line-height:.98;letter-spacing:-.06em;max-width:650px;margin-bottom:24px}
+.mech-copy p{max-width:600px}
+.mech-copy .page-number{margin-bottom:26px;font-size:var(--text-small);letter-spacing:.12em}   /* the wireframe's story number */
+.glass .panel{width:100%;max-width:520px;justify-self:end;padding:14px;border-radius:24px}
+.bmark{width:48px;height:48px;flex:none;display:grid;place-items:center;border:1px solid rgba(255,255,255,.45);border-radius:50%;background:rgba(255,255,255,.1);color:#fff}
+.bmark svg{width:23px;height:23px}
+
+/* 01 · the sponsor row and the two protected points, each with an icon tile and a touch of colour (blue for
+   activity, the TP green for the protected relationship) and the wireframe's badge at the right */
+.glass .protected{display:grid;gap:12px}
+.glass .sponsor{min-height:84px;padding:16px 18px;display:flex;align-items:center;gap:16px;border-radius:16px}
+.sponsor small{display:block;margin-bottom:4px;font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.62)}
+.sponsor strong{font-size:var(--text-row-title);letter-spacing:-.02em}
+.glass .how-point{min-height:100px;padding:15px 16px 15px 18px;display:grid;grid-template-columns:44px minmax(0,1fr) 102px;gap:14px;align-items:center;border-radius:16px}
+.glass .point-icon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;padding:0;--streak:.16}
+.how-point>div{min-width:0}
+.how-point strong{display:block;font-size:var(--text-ui);line-height:1.35}
+.how-point>div>span{display:block;margin-top:5px;font-size:var(--text-label);line-height:1.45;color:rgba(255,255,255,.8)}
+.how-point b{width:102px;height:46px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.4);border-radius:11px;text-align:center;
+  font:var(--weight-strong) var(--text-micro)/1.35 var(--sans);letter-spacing:.04em;text-transform:uppercase;color:#fff}
+.glass .how-point:nth-of-type(1){--tint:rgba(38,104,224,.42);--tint2:rgba(20,70,190,.3);--rim:rgba(130,178,255,.55)}
+.glass .how-point:nth-of-type(2){--tint:rgba(46,178,134,.26);--tint2:rgba(20,90,70,.3);--rim:rgba(150,230,190,.45)}
+
+/* 02 · the access condition reads as a control (the calculator's rule): two glass buttons, the chosen one white,
+   the rule and its three steps swapping with a cross-fade — never a count or a slide */
+.glass .access{padding:8px}
+.access-switch{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px}
+.access-switch .tile{min-height:52px;border-radius:16px;font-size:var(--text-meta);font-weight:var(--weight-strong);color:rgba(255,255,255,.82);
+  transition:background-color .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease),transform .25s var(--ease)}
+.access-switch .tile:hover{transform:translateY(-1px)}
+.access-switch .tile[aria-pressed=true]{background:#fff;border-color:#fff;color:var(--navy);box-shadow:inset 0 0 0 1px #fff,0 12px 24px -14px rgba(255,255,255,.6)}
+.access-switch .tile:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:2px}
+.access-state{border:1px solid rgba(255,255,255,.22);border-radius:17px;overflow:hidden}
+.access-summary{padding:25px 24px;border-bottom:1px solid rgba(255,255,255,.22)}
+.access-summary strong{display:block;font-size:var(--text-empty);line-height:1.2;letter-spacing:-.035em;color:#fff}
+.access-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr)}
+.access-step{min-height:112px;padding:20px 18px;border-right:1px solid rgba(255,255,255,.22)}
+.access-step:last-child{border-right:0}
+.access-step i{width:26px;height:26px;display:grid;place-items:center;margin-bottom:13px;border:1px solid rgba(255,255,255,.5);border-radius:50%;
+  font:var(--weight-strong) var(--text-nano)/1 var(--sans);font-style:normal;color:#fff}
+.access-step.done i{border-color:var(--success);background:rgba(72,212,138,.18);color:var(--success)}
+.access-step i svg{width:12px;height:12px}
+.access-step span{display:block;font-size:var(--text-label);line-height:1.35;color:rgba(255,255,255,.82)}
+.swap{animation:xf .28s var(--ease)}   /* cb8's estimate cross-fade */
+html.reduce .swap,html.reduce .access-switch .tile:hover{animation:none;transform:none}
+
+/* 03 · the Mini App preview: the broker on the blue tile, the campaign centred, the next action as the one white button */
+.glass .app-shell{display:grid;gap:12px}
+.glass .app-broker{min-height:86px;padding:16px 20px;display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:center;border-radius:16px;
+  --tint:rgba(38,104,224,.5);--tint2:rgba(20,70,190,.36);--rim:rgba(130,178,255,.6)}
+.app-broker .bmark{width:44px;height:44px}
+.app-broker strong{display:block;font-size:var(--text-panel-title)}
+.app-broker span{display:block;margin-top:3px;font-size:var(--text-label);color:rgba(255,255,255,.75)}
+.glass .app-campaign{padding:31px 24px 24px;text-align:center;border-radius:16px}
+.campaign-icon{width:58px;height:58px;margin:0 auto 20px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.4);border-radius:18px;background:rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
+.campaign-icon .ico{width:24px;height:24px}
+.glass .app-campaign h4{max-width:360px;margin:0 auto 11px;font-size:var(--text-campaign);line-height:1.03;letter-spacing:-.045em;font-weight:var(--weight-strong);color:#fff;text-wrap:balance}   /* .glass .tile h4 (style.css) sets 15px; same specificity, later wins */
+.app-campaign>p{max-width:330px;margin:0 auto 26px;font-size:var(--text-meta);line-height:1.5;color:rgba(255,255,255,.8)}
+.app-action{min-height:52px;padding:0 17px;display:flex;align-items:center;justify-content:space-between;gap:18px;border-radius:14px;background:#fff;color:var(--navy);text-align:left}
+.glass .app-action strong{font-size:var(--text-small);color:var(--navy)}   /* over .glass .tile strong's white */
+.app-action svg{width:18px;height:18px;flex:none}
+
+/* ---------- 2 · use cases: the wireframe's .9fr / 1.1fr split, 76 apart; three rows in one white card ---------- */
+#cases .grid2{grid-template-columns:minmax(0,.9fr) minmax(500px,1.1fr);gap:76px}
+#cases .grid2>div:first-child{max-width:520px}
+.case-list{width:100%;max-width:590px;justify-self:end;padding:0;border-radius:24px}   /* no overflow clip: the glass frame sits 14px outside the box */
+.case-row{min-height:108px;padding:22px 24px;display:grid;grid-template-columns:48px minmax(0,1fr);gap:18px;align-items:center;border-bottom:1px solid var(--line)}
+.case-row:last-child{border-bottom:0}
+.case-icon{width:48px;height:48px;display:grid;place-items:center;border:1px solid var(--line);border-radius:15px;background:var(--paper);color:var(--accent)}
+.case-row h3{margin:0;font-size:var(--text-row-title);line-height:1.25;letter-spacing:-.025em;font-weight:var(--weight-strong);color:var(--navy)}
+.case-row p{margin:6px 0 0;font-size:var(--text-meta);line-height:1.45;color:var(--muted)}
+
+/* ---------- 7 · the pilot: .screen-paper (cb8/style.css); the card on the blue with its own light ---------- */
+.pilot-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,.92fr);gap:90px;align-items:center}
+.pilot-copy .h2{max-width:560px}
+.pilot-copy .copy{margin-bottom:32px}
+.pilot-card{position:relative;overflow:hidden;padding:26px;border-radius:var(--radius-card);background:var(--blue);color:#fff;
+  box-shadow:0 24px 48px -30px rgba(var(--rgb-shadow),.5)}
+.pilot-card>.rayfield{border-radius:inherit}
+.pilot-card>:not(.rayfield){position:relative;z-index:1}
+.pilot-card .rayfield.k i,.pilot-card .tile::after{animation-timeline:--ground}   /* the arcs and the tile streaks travel with the page */
+.pilot-head{min-height:58px;margin:-2px 0 22px;padding-bottom:16px;display:grid;grid-template-columns:42px 1fr auto;gap:13px;align-items:center;border-bottom:1px solid rgba(255,255,255,.22)}
+.pilot-head .bmark{width:42px;height:42px}
+.pilot-head .bmark svg{width:20px;height:20px}
+.pilot-head strong{display:block;font-size:var(--text-ui)}
+.pilot-head span{display:block;margin-top:3px;font-size:var(--text-label);color:rgba(255,255,255,.7)}
+/* "Ready to configure": the calculator's live pill, its dot pulsing */
+.ready{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid rgba(255,255,255,.34);border-radius:999px;background:rgba(255,255,255,.14);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
+  font:var(--weight-strong) var(--text-micro)/1 var(--sans);color:#fff;white-space:nowrap}
+.ready i{width:8px;height:8px;border-radius:50%;background:var(--success);animation:live-pulse 1.8s var(--ease) infinite}
+html.reduce .ready i{animation:none}
+.pilot-card h3{max-width:420px;margin:0 0 26px;font-size:var(--text-pilot);line-height:1.04;letter-spacing:-.045em;font-weight:var(--weight-strong);color:#fff;text-wrap:balance}
+.pilot-path{list-style:none;margin:0;padding:0 0 0 46px;position:relative}
+.pilot-path::before{content:'';position:absolute;left:15px;top:15px;bottom:15px;width:1px;background:rgba(255,255,255,.28)}
+.pilot-step{position:relative;min-height:68px;padding-bottom:18px}
+.pilot-step:last-child{min-height:44px;padding-bottom:0}
+.pilot-step>i{position:absolute;left:-46px;top:0;width:31px;height:31px;display:grid;place-items:center;border-radius:12px;font-style:normal;--streak:.16}
+.pilot-step>i .ico{width:17px;height:17px}
+.pilot-step>span{display:block;margin-bottom:5px;font-size:var(--text-micro);color:rgba(255,255,255,.65)}
+.pilot-step strong{display:block;font-size:var(--text-panel-title);line-height:1.35;font-weight:var(--weight-strong)}
+.pilot-offer{margin-top:23px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pilot-offer .tile{min-height:78px;padding:15px 16px;display:flex;flex-direction:column;justify-content:center;border-radius:16px}
+.pilot-offer b{display:block;font-size:var(--text-small);line-height:1.35;font-weight:var(--weight-strong);color:var(--label,#fff)}
+.pilot-offer small{display:block;margin-top:4px;font-size:var(--text-micro);line-height:1.4;color:rgba(255,255,255,.72)}
+.glass .pilot-fee{--tint:rgba(46,178,134,.26);--tint2:rgba(20,90,70,.3);--rim:rgba(150,230,190,.45)}   /* no fee: the TP green */
+
+/* ---------- 8 · the questions: the wireframe's column and answer size ---------- */
+.faq-wrap{max-width:920px}
+.faq-a p{font-size:var(--text-body)}
+
+/* ---------- 10 · the request: the wireframe's .8fr / 1.2fr grid, 88 apart, the copy pinned beside the form ---------- */
+#final{padding-top:calc(var(--nav-h) + 60px)}
+.request-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,.8fr) minmax(520px,1.2fr);gap:88px;align-items:start;padding-bottom:110px}
+.request-copy{position:sticky;top:calc(var(--nav-h) + 36px)}
+.request-copy .h2{max-width:570px;color:#fff}
+.request-copy .copy{color:rgba(255,255,255,.78)}
+.form-card{padding:28px;border-radius:24px;background:#fff;color:var(--ink);box-shadow:0 34px 70px -30px rgba(var(--rgb-shadow),.8)}
+.fld-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.fld{display:block;margin-bottom:12px;padding:10px 14px 9px;border:1px solid var(--line);border-radius:13px;background:var(--paper);
+  transition:border-color .18s var(--ease),box-shadow .18s var(--ease)}
+.fld-grid .fld{margin-bottom:0}
+.fld:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--rgb-900),.12)}
+.fld>span{display:block;margin-bottom:2px;font:var(--weight-heavy) var(--text-micro)/1.5 var(--sans);letter-spacing:.04em;color:var(--muted)}
+.fld input,.fld textarea{width:100%;border:0;outline:0;border-radius:0;background:transparent;padding:2px 0 0;font:var(--weight-body) var(--text-ui)/1.5 var(--sans);color:var(--ink)}
+.fld input{min-height:25px}
+.fld textarea{min-height:88px;resize:vertical}
+.fld input::placeholder,.fld textarea::placeholder{color:var(--line-strong)}
+.fset{border:0;padding:0;margin:8px 0 20px;min-width:0}
+.fset legend{display:block;width:100%;margin-bottom:10px;padding:0;font:var(--weight-heavy) var(--text-label)/1.5 var(--sans);letter-spacing:.04em;color:var(--body)}
+.contact-toggle{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:5px;border:1px solid var(--line);border-radius:999px;background:var(--paper)}
+.contact-toggle label,.goal-grid label{position:relative;cursor:pointer}
+.contact-toggle input,.goal-grid input{position:absolute;opacity:0;pointer-events:none}
+.contact-toggle span{min-height:calc(var(--control-height) - 8px);border-radius:999px;display:grid;place-items:center;font-size:var(--text-meta);font-weight:var(--weight-strong);color:var(--muted);
+  transition:background-color .2s var(--ease),color .2s var(--ease)}
+.contact-toggle input:checked+span{background:var(--navy);color:#fff}
+.contact-toggle input:focus-visible+span,.goal-grid input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.goal-grid span{min-height:52px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--paper);display:flex;align-items:center;gap:10px;
+  font-size:var(--text-small);font-weight:var(--weight-strong);line-height:1.3;color:var(--body);transition:background-color .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease)}
+.goal-grid span::before{content:'';width:17px;height:17px;flex:0 0 17px;display:grid;place-items:center;border:1px solid var(--line-strong);border-radius:50%;background:#fff;
+  font:900 10px/1 var(--sans);color:var(--navy)}
+.goal-grid label:hover span{border-color:var(--line-strong)}
+.goal-grid input:checked+span{background:var(--navy);border-color:var(--navy);color:#fff}
+.goal-grid input:checked+span::before{content:'✓';border-color:#fff}
+.send{width:100%;margin-top:4px}
+/* the button sits on the white card, not on the blue: navy, not the glass capsule */
+.form-card .btn-solid{background:var(--navy);color:#fff;border-color:var(--navy);backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none}
+.form-card .btn-solid:hover{background:var(--accent);border-color:var(--accent)}
+.form-card .btn-solid[disabled]{opacity:.6;pointer-events:none}
+.form-error{margin:0 0 12px;font-size:var(--text-meta);line-height:1.45;color:var(--danger)}
+.form-success{display:none;min-height:420px;place-items:center;text-align:center}
+.form-card.sent>form{display:none}
+.form-card.sent .form-success{display:grid}
+.success-mark{width:48px;height:48px;margin:0 auto 18px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:var(--success-bg)}
+.form-success h3{margin:0 0 9px;font-size:var(--text-received);line-height:1.2;letter-spacing:-.04em;font-weight:var(--weight-strong);color:var(--navy)}
+.form-success p{max-width:390px;margin:0 auto;font-size:var(--text-ui);color:var(--muted)}
+
+/* ---------- laptops and phones ---------- */
+@media (max-width:1023px){
+  #cases .grid2,.pilot-grid,.request-grid{grid-template-columns:1fr;gap:42px}
+  .case-list,.glass .panel{max-width:none;justify-self:stretch}
+  .glass .mech-grid{grid-template-columns:1fr;column-gap:42px}   /* base resets .mech-grid at (0,1,0); this rule outranks it */
+  .request-copy{position:static}
+}
+@media (max-width:560px){
+  #hero .display{font-size:52px}#hero .lede{font-size:16px}.h2{font-size:41px}.copy{font-size:16px}
+  .chapter .h2,.chapter-2 .h2{font-size:43px}
+  .mech-copy h3{font-size:43px}.mech-copy p{font-size:16px}
+  .glass .how-point{padding:14px;grid-template-columns:40px minmax(0,1fr);gap:12px}.glass .point-icon{width:40px;height:40px}
+  .how-point b{grid-column:2;justify-self:start;width:auto;height:auto;padding:7px 10px}   /* the badge drops under the text: the wireframe has no icon column to share the width with */
+  .access-switch,.access-steps{grid-template-columns:1fr}
+  .access-step{min-height:76px;border-right:0;border-bottom:1px solid rgba(255,255,255,.22);display:flex;align-items:center;gap:12px}
+  .access-step:last-child{border-bottom:0}.access-step i{margin:0;flex:0 0 auto}
+  .glass .app-campaign{padding:27px 18px 18px}
+  .case-row{min-height:0;padding:20px;grid-template-columns:42px 1fr;gap:14px}.case-icon{width:42px;height:42px}.case-row h3{font-size:16px}
+  .pilot-card{padding:24px}.pilot-head{grid-template-columns:40px 1fr}.pilot-head>b{grid-column:2;width:max-content}.pilot-offer{grid-template-columns:1fr}
+  .faq-q{font-size:17px}.faq-a p{font-size:15px;padding-right:10px}
+  .fld-grid,.goal-grid{grid-template-columns:1fr}.form-card{padding:18px;border-radius:18px}.send{min-height:52px}
+  .hero-center .btn,.pilot-copy .btn{width:100%}
+}
+
+/* tabular figures widen Inter's letters ~2% (cb8's body rule); off for the page, kept where numbers line up */
+body{font-variant-numeric:normal}
+.access-steps,.form-card{font-variant-numeric:tabular-nums}

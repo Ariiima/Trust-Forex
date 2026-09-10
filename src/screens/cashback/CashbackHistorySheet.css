@@ -9,13 +9,13 @@
 .ds-sheet.scr-history-sheet {
   display: flex;
   flex-direction: column;
-  /* 684px is right (measured: viewport-776 minus sheet-top-92). The 80vh
-     fallback isn't: this app never renders the 852px Figma frame's OS/
-     Telegram chrome, so its own viewport IS the cropped 776px, and
-     80vh=620.8 was wrongly winning the min() and shrinking the sheet.
-     90vh=698 clears 684px so the fallback only bites on genuinely short
-     viewports. */
-  max-height: min(684px, 90vh);
+  /* The frame says 684 (viewport-776 minus sheet-top-92), but every tall
+     sheet in the app is 635 (withdraw history, change currency, both about
+     sheets) and the client wants one height for all of them — 635 wins over
+     the frame. height, not max-height: the sheet keeps it whether it holds
+     20 rows, 2, or the empty state. */
+  height: 635px;
+  max-height: 100%;
   /* This sheet has its own head (below), not the shared drag-handle +
      8px-top of BottomSheet's default — measured on cashback-history.png the
      title's ink starts 35px under the sheet's white top edge, with no

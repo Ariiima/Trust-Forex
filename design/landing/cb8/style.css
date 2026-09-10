@@ -1,0 +1,414 @@
+/* Main Cashback page — liquid glass treatment over base.css and grounds.css.
+   What changes: the CTAs on blue are glass capsules; the white chart on every blue block
+   sits in a thick glass frame; the white pages get a soft field
+   so their cards can frost; and the blue grounds carry a faint grid — real refraction needs
+   structure behind the glass, a smooth halo bends invisibly. The refraction itself is one SVG
+   feDisplacementMap (#liquid in index.html) in backdrop-filter, Chromium only; every other
+   engine gets the same glass without the bend. The data stays opaque white — the founder's
+   "white chart" — so figures never sit on a translucent ground. */
+@import url('base.css?v=a74899bb');
+
+/* ---------- structure behind the glass: a faint grid in every blue ground ---------- */
+.rayfield.k::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:
+  repeating-linear-gradient(0deg,rgba(var(--rgb-200),.075) 0 1px,transparent 1px 48px),
+  repeating-linear-gradient(90deg,rgba(var(--rgb-200),.075) 0 1px,transparent 1px 48px)}
+
+/* ponytail: the nav is cb5's plain strip — no glass override here (founder, 2026-09-05) */
+
+/* ---------- CTAs on blue: glass capsules ---------- */
+.on-dark .btn-solid{background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.38);
+  backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);
+  box-shadow:0 12px 30px -12px rgba(var(--rgb-shadow),.6),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(var(--rgb-shadow),.12)}
+.on-dark .btn-solid:hover{background:rgba(255,255,255,.3);border-color:rgba(255,255,255,.6);color:#fff}
+
+/* ---------- the white chart in a thick glass frame ---------- */
+/* Two pseudos behind the card's content, both at negative z inside the card's own stacking
+   context, painted in tree order: ::before is the frame (14px proud of the card, the ground
+   showing through it bent and frosted), ::after is the card's white ground. The card itself
+   has NO background — if it did, the frame's backdrop would include the white edge and the
+   displacement would bend it into a torn paper outline. */
+.block .panel,.screen-paper .panel{position:relative;isolation:isolate;background:transparent;border-color:transparent;box-shadow:0 30px 60px -28px rgba(var(--rgb-shadow),.8)}
+.block .panel::before,.screen-paper .panel::before{content:'';position:absolute;inset:-14px;z-index:-1;border-radius:calc(var(--radius) + 14px);
+  background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.34);
+  backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(var(--rgb-shadow),.16)}
+.block .panel::before,.screen-paper .panel::before{backdrop-filter:url(#liquid) blur(2px) saturate(160%)}
+.block .panel::after,.screen-paper .panel::after{content:'';position:absolute;inset:0;z-index:-1;border-radius:var(--radius);background:#fff}
+/* on a paper screen (.screen-paper) the same frame takes the calculator's paper rim below — "glassy right side" (founder, 2026-09-10) */
+
+
+/* ---------- the white pages: a soft field, so their cards have something to frost ---------- */
+/* Every white screen, not just these two: over flat #fff glass has nothing to bend and reads as
+   a solid white pill (founder, 2026-09-05 — "in some places it goes white"). The field is what
+   makes it glass. */
+.screen>.wrap{position:relative;z-index:1}
+#activation,#faq,.screen-paper{background:var(--paper)}   /* .screen-paper: a section on paper carrying Activation's field and beam — the record layout's ground on every page */
+#activation::before,#faq::before,.screen-paper::before,.screen-blue::before,.chapter-2::before,#calculator .block::before{content:'';position:absolute;inset:0;pointer-events:none;background:
+  radial-gradient(46% 56% at 10% -4%,rgba(var(--rgb-300),.42),transparent 70%),
+  radial-gradient(40% 52% at 94% 104%,rgba(var(--rgb-200),.5),transparent 70%),
+  repeating-linear-gradient(0deg,rgba(var(--rgb-300),.10) 0 1px,transparent 1px 48px),
+  repeating-linear-gradient(90deg,rgba(var(--rgb-300),.10) 0 1px,transparent 1px 48px)}
+/* the field dies out before the screen's edge. Each screen's corner glow was clipped flat at the
+   seam and met the next screen's glow on a hard line — two cut-off shadows colliding (founder,
+   2026-09-05). Masked, not repositioned, so the glows keep their place and just never reach the seam. */
+#activation::before,#faq::before,.screen-paper::before,.screen-blue::before,.chapter-2::before{
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent);
+  mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent)}
+.pstep{background:rgba(255,255,255,.58);border-color:rgba(255,255,255,.95);
+  backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%)}
+.pstep.last{background:var(--blue);border-color:var(--blue);backdrop-filter:none;-webkit-backdrop-filter:none}
+/* both neighbours are white: start on the calculator's #fff, peak, land on activation's paper */
+.chapter-2{background:linear-gradient(180deg,#fff,var(--p-100) 55%,var(--paper))}
+
+/* ---------- the effect must be defeatable ---------- */
+@media (prefers-reduced-transparency:reduce){
+  .on-dark .btn-solid,.block .panel::before,.screen-paper .panel::before,.pstep,.glass .panel,.glass .tile{backdrop-filter:none;-webkit-backdrop-filter:none}
+  .on-dark .btn-solid{background:#fff;color:var(--navy)}
+  .pstep{background:#fff}
+}
+@supports not (backdrop-filter:blur(1px)){
+  .on-dark .btn-solid{background:#fff;color:var(--navy)}
+  .pstep{background:#fff}
+}
+@media (max-width:1023px){
+  .block .panel::before,.screen-paper .panel::before{inset:-10px;border-radius:calc(var(--radius) + 10px)}
+}
+
+/* ---------- the chapter hands the page over, instead of cutting it (founder, 2026-09-05) ----------
+   Three things across the chapter's own exit, all on its view timeline, so they read as one move:
+     · the blue ground fades out evenly — the whole field becomes white, not a band of it;
+     · a white ramp grows up from the section's bottom edge, so that edge is already pure white
+       while the rest is still blue and the boundary with the page below is never a line;
+     · the sentence goes a beat ahead of the ground, so it never sits white on white.
+   ponytail: the ramp is an animated background-size on a bottom-anchored gradient — background-
+   image itself does not interpolate (it swaps at 50%), only its size and position do. */
+@supports (animation-timeline:view()){
+  html.snap #chapter-1{background:transparent}          /* the rayfield is then the only blue */
+  html.snap #chapter-1 .rayfield{animation:chapter-clear linear both;animation-timeline:--ground;animation-range:exit 0% exit 82%}
+  html.snap #chapter-1 .wrap{animation:chapter-clear linear both;animation-timeline:--ground;animation-range:exit 8% exit 62%}
+  html.snap #chapter-1::after{animation:chapter-hand-off linear both;animation-timeline:--ground;animation-range:exit}
+}
+/* the ramp grows by scaleY from the bottom edge, not by background-size: same picture, but a
+   transform stays on the compositor while a growing background repaints the whole screen every
+   scrolled frame (2026-09-07 frame trace: the chapter hop was the jankiest on the page) */
+#chapter-1::after{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,0),#fff);transform:scaleY(0);transform-origin:bottom}
+@keyframes chapter-hand-off{to{transform:scaleY(1)}}
+@keyframes chapter-clear{to{opacity:0}}
+
+/* ---------- 9 · ESTIMATE, turned inside out (founder, 2026-09-05) ----------
+   01–04 and the calculator made five blue blocks in a row. This one keeps the block and swaps
+   its two grounds: the block is paper, carrying the white pages' soft field, and the form is the
+   blue card. The inputs stay white — what you type is still read off white. */
+#calculator .block{background:var(--paper);color:var(--ink);--grad:var(--grad-blue);box-shadow:0 24px 48px -30px rgba(var(--rgb-shadow),.3)}
+#calculator{z-index:1}   /* its block's shadow runs past the screen's edge; the chapter below must not cut it */
+#calculator .block > .rayfield{display:none}                 /* that ground WAS the blue */
+#calculator .block .h2{color:var(--navy)}
+#calculator .block .copy{color:var(--body)}
+/* the glass frame now sits on paper, so it takes the nav's paper treatment: a dark-tinted rim,
+   its highlight in white and its shade in shadow */
+#calculator .panel::after{background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,.14) 46%,rgba(255,255,255,.04) 52%,transparent 62%) no-repeat 100% 0/220% 100%,var(--blue);
+  animation:panel-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%}
+@keyframes panel-light{from{background-position:100% 0}to{background-position:0 0}}
+html.reduce #calculator .panel::after{animation:none}
+#calculator .panel::before,.screen-paper .panel::before{background:rgba(var(--rgb-900),.08);border-color:rgba(var(--rgb-shadow),.14);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(var(--rgb-shadow),.1)}
+/* everything in the form that was ink on white is now light on blue; the fields themselves are not */
+#calculator .field label,#calculator .field legend,#calculator .estimate small{color:rgba(255,255,255,.72)}
+#calculator .field select,#calculator .field input{border-color:transparent}
+#calculator .level{border-color:rgba(255,255,255,.24)}
+#calculator .level b{color:#fff}
+#calculator .level span{color:rgba(255,255,255,.68)}
+#calculator .level[aria-pressed=true]{border-color:#fff;background:rgba(255,255,255,.14)}
+#calculator .estimate{background:rgba(255,255,255,.12)}   /* the wireframe's grey band, on the blue panel */
+#calculator .estimate strong{color:#fff}
+#calculator .estimate strong em{color:rgba(255,255,255,.6)}
+#calculator .broker-rules{color:var(--p-200)}
+
+/* the dot rail goes (founder, 2026-09-05) — the deck snaps to a screen on its own, and the rail
+   was the only chrome sitting over the blocks. ponytail: hidden here rather than cut out of the
+   shared cb5 main.js, which still builds it for cb5–cb7. */
+#rail{display:none}
+
+/* ---------- 01 arrives as a dissolve, not as a rectangle (founder, 2026-09-05) ----------
+   The wash above only fixed half of it: the chapter turned to white and then a hard-edged blue
+   block slid up over that white — the same blue/white cut, now on the incoming side. m1's entry
+   is the very same scroll span as the chapter's exit (adjacent viewport-tall screens), so fading
+   the block in across it makes the two one cross-fade: the blue is never fully gone and no edge
+   ever travels. m2–m4 keep sliding, they arrive over a blue block, not over white. */
+@supports (animation-timeline:view()){
+  html.snap #m1 .block{animation:stack-in linear both,block-in linear both,cover step-end both;
+    animation-timeline:--m1,--m1,--m2;animation-range:entry,entry 0% entry 55%,entry 99% entry 100%}
+}
+@keyframes block-in{from{opacity:0}to{opacity:1}}
+html.reduce #m1 .block{animation:none}
+
+/* ---------- the fact strip: a sheet of the same glass, and a loop that never runs out ----------
+   Glass over the hero's ground rather than a tinted band; four facts across, one screen wide, so
+   the row reads as four columns instead of a ticker of arbitrary width; and three copies of that
+   row shifted by exactly one, so the two behind the visible one always cover the viewport — with
+   two copies the tail ran out and the strip showed empty (founder, 2026-09-05). */
+.fact-strip{background:rgba(255,255,255,.10);border-top:1px solid rgba(255,255,255,.26);
+  backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42)}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);width:max(100vw,64rem);flex:none}
+.facts li{padding:24px 12px;text-align:center;color:rgba(255,255,255,.86);
+  border-right:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fact-marquee{animation-name:fact-scroll-3}
+@keyframes fact-scroll-3{to{transform:translateX(-33.3333%)}}
+
+/* ---------- 02 + 04 · the data as one sheet of glass (founder refs 2026-09-07) ----------
+   The white card goes on these two (section.glass): the panel is a translucent deep-blue pane with a
+   light-blue rim; the figures are tinted glass tiles (.tile — blue for the active/balance tile, violet
+   for Diamond, silver and gold the faintest tints, 02's a shade lighter than 04's); rows and labels
+   are white on glass. The light on the glass follows the
+   pointer: main.js writes --mx/--my on the pane and each tile and sets .lit while hovered — a soft
+   specular under the cursor, and each tile's rim brightening as the cursor nears it. No pointer, no
+   light: the glass is at rest. */
+.glass .mech-grid{--gap:var(--content-gap);column-gap:var(--gap)}
+.glass .mech-copy p{color:rgba(255,255,255,.84)}
+.glass .panel{padding:1.75rem;border-radius:22px;border:1px solid rgba(160,196,255,.55);
+  background:linear-gradient(160deg,rgba(var(--rgb-900),.14),rgba(var(--rgb-abyss),.22));
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:0 0 34px rgba(96,156,255,.3),inset 0 1px 0 rgba(255,255,255,.38),inset 0 0 0 1px rgba(160,196,255,.18),inset 0 0 64px rgba(96,156,255,.14),0 30px 60px -28px rgba(var(--rgb-shadow),.8)}
+/* no frame, and no divider between the copy and the pane (founder, 2026-09-07) */
+.glass .panel::before{content:none}
+/* the pane leans a few degrees toward the pointer (main.js writes --tx/--ty, −1…1 from its centre)
+   and eases back when the pointer leaves — following closely while lit, settling slowly after */
+.glass .panel{transform:perspective(1200px) rotateX(calc(var(--ty,0) * -3deg)) rotateY(calc(var(--tx,0) * 3deg));transition:transform .6s var(--ease)}
+.glass .panel.lit{transition-duration:.15s}
+html.reduce .glass .panel{transform:none;transition:none}
+/* the tiles */
+.glass .tile{--tint:rgba(255,255,255,.10);--tint2:rgba(255,255,255,.05);--rim:rgba(255,255,255,.28);
+  position:relative;isolation:isolate;border-radius:16px;color:#fff;border:1px solid var(--rim);
+  background:linear-gradient(150deg,var(--tint),var(--tint2));
+  backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 -1px 0 rgba(var(--rgb-shadow),.22),0 14px 30px -18px rgba(var(--rgb-shadow),.7)}
+#m4 .dash-card{--tint:rgba(38,104,224,.5);--tint2:rgba(20,70,190,.36);--rim:rgba(130,178,255,.6)}
+#m4 .dash-card.ghost{--tint:rgba(124,92,232,.54);--tint2:rgba(72,48,168,.4);--rim:rgba(176,156,255,.55)}
+.glass .tile h4,.glass .rate small{margin:0;font:var(--weight-strong) var(--text-panel-title)/1.2 var(--sans);letter-spacing:0;text-transform:none;opacity:1;color:#fff}
+.glass .tile strong,.glass .rate b{color:#fff;font-weight:700;letter-spacing:var(--tracking-stat)}
+.glass .rate b{font-size:var(--text-number)}
+.glass .tile strong{font-size:var(--text-stat)}
+.glass .dash-card{padding:1.25rem 1.25rem 1.125rem}
+.glass .dash-card strong{margin:.625rem 0 .375rem}
+.glass .dash-card p{opacity:.84}
+.glass .dash-cards,.glass .ladder{gap:1.125rem}
+.glass .dash-cards{margin-bottom:1.375rem}
+.glass .rate{padding:1.25rem 1rem 1.125rem}
+.glass .rate small{margin-bottom:.5rem}
+.glass .p-note{color:rgba(255,255,255,.72);letter-spacing:0;font-weight:var(--weight-body)}
+.glass .dash-row{font-weight:var(--weight-body);color:#fff;border-top-color:rgba(255,255,255,.18)}
+.glass .dash-row b{color:#fff;font-weight:var(--weight-strong)}
+/* the light. The streak is the glass (founder, 2026-09-07: "the previous glass was better"): one
+   across the pane and one across each tile, travelling with the section's own view timeline (the
+   --m2/--m4 the stack already uses) at two speeds, so the light reads as falling on layered glass.
+   Hover is a touch on top of it: a faint specular under the pointer (the radial's alpha is --lit,
+   a registered number so it fades) and each tile's rim lit near the cursor (the tile's ::before —
+   the radial minus its own 1px inset, by mask). A browser without view timelines shows the streak
+   at rest; no pointer, no touch. */
+@property --lit{syntax:'<number>';inherits:true;initial-value:0}
+.glass .panel::after,.glass .tile::after,.glass .tile::before{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none}
+.glass .panel::after,.glass .tile::after{transition:--lit .45s var(--ease);animation:glass-light linear both;animation-range:entry 0% exit 100%}
+.glass .panel::after{background:
+  radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,var(--lit)),transparent 70%) no-repeat 0 0/auto,
+  linear-gradient(115deg,transparent 32%,rgba(255,255,255,.14) 46%,rgba(255,255,255,.04) 52%,transparent 62%) no-repeat 100% 0/220% 100%}
+.glass .tile::after{animation-range:entry 30% exit 70%;background:
+  radial-gradient(180px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,calc(var(--lit) * 1.6)),transparent 70%) no-repeat 0 0/auto,
+  linear-gradient(115deg,transparent 26%,rgba(255,255,255,var(--streak,.24)) 44%,rgba(255,255,255,.06) 51%,transparent 64%) no-repeat 100% 0/260% 100%}
+@keyframes glass-light{from{background-position:0 0,100% 0}to{background-position:0 0,0% 0}}
+.glass .panel.lit{--lit:.08}
+.glass .tile::before{inset:-1px;padding:1px;opacity:0;transition:opacity .45s var(--ease);
+  background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.55),transparent 70%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
+.glass .panel.lit .tile::before{opacity:1}
+#m2 .panel::after,#m2 .tile::after,#m2 .rayfield.k i{animation-timeline:--m2}
+#m4 .panel::after,#m4 .tile::after,#m4 .rayfield.k i{animation-timeline:--m4}
+html.reduce .glass .panel::after,html.reduce .glass .tile::after,html.reduce .glass .tile::before,html.reduce .glass .rayfield.k i{animation:none;transition:none}
+/* the ground: two arcs of light sweeping the corners, on top of the section's own halo */
+.glass .rayfield.k i:nth-child(3),.glass .rayfield.k i:nth-child(4){display:block;background:none;filter:blur(5px);border:4px solid transparent;
+  border-top-color:rgba(255,255,255,.5);border-left-color:rgba(var(--rgb-300),.3)}
+.glass .rayfield.k i:nth-child(3){left:-42%;bottom:-88%;width:120%;height:160%;transform:rotate(-12deg)}
+.glass .rayfield.k i:nth-child(4){right:-46%;top:-70%;width:100%;height:130%;transform:rotate(128deg);border-top-color:rgba(255,255,255,.3)}
+/* and the arcs drift the other way over the same span, so what the frosted tiles show through them changes too */
+.glass .rayfield.k i:nth-child(3),.glass .rayfield.k i:nth-child(4){animation:arc-drift linear both;animation-range:entry 0% exit 100%}
+@keyframes arc-drift{from{translate:0 8%}to{translate:0 -10%}}
+@media (max-width:1023px){
+  #m4 .block > .mech-grid{grid-template-columns:1fr}
+}
+
+/* ---------- 01 · brokers and 03 · factors on the same glass (founder, 2026-09-07: all four) ----------
+   The rows and the two factor cards are tiles like the rest; the panel's own padding replaces the
+   inner padding the white card carried; icons that were brand blue go white, the coloured ones stay. */
+.glass .p-title{color:rgba(255,255,255,.72)}
+.glass .p-broker{gap:1.5rem}
+.glass .p-broker>div{padding:0}
+.glass .p-broker>div+div{border-left-color:rgba(255,255,255,.18);padding-left:1.5rem}
+.glass .broker-option,.glass .route-option{border-radius:12px;color:#fff}
+.glass .factors{padding:0;gap:1.125rem}
+.glass .factor h4{color:#fff}
+.glass .factor p{color:rgba(255,255,255,.78)}
+.glass .ico:not(.ico-success):not(.ico-warning){stroke:#fff}
+#m1 .panel::after,#m1 .tile::after,#m1 .rayfield.k i{animation-timeline:--m1}
+#m3 .panel::after,#m3 .tile::after,#m3 .rayfield.k i{animation-timeline:--m3}
+@media (max-width:1023px){
+  .glass .p-broker>div+div{border-left:0;padding-left:0;border-top:1px solid rgba(255,255,255,.18);padding-top:1.5rem}
+}
+
+/* each section's rays are its own — size, place, angle and weight (founder, 2026-09-07). The lit
+   edge is the ellipse's top border, so rotate(~180deg) turns a ∩ into a ∪. 04 keeps the pair above. */
+#m1 .rayfield.k i:nth-child(3){left:-34%;bottom:-66%;width:86%;height:114%;transform:rotate(-8deg);border-width:5px;filter:blur(8px);border-top-color:rgba(255,255,255,.42)}   /* stays left of the pane */
+#m1 .rayfield.k i:nth-child(4){right:-22%;top:-58%;width:62%;height:86%;transform:rotate(152deg);border-width:2px;filter:blur(3px);border-top-color:rgba(255,255,255,.38);border-left-color:transparent}
+#m2 .rayfield.k i:nth-child(3){left:-56%;top:-40%;width:126%;height:150%;transform:rotate(-24deg);border-width:3px;filter:blur(4px);border-top-color:rgba(255,255,255,.44)}
+#m2 .rayfield.k i:nth-child(4){right:-34%;bottom:-24%;width:112%;height:120%;transform:rotate(178deg);border-width:6px;filter:blur(10px);border-top-color:rgba(255,255,255,.22);border-left-color:transparent}
+#m3 .rayfield.k i:nth-child(3){left:-70%;top:-30%;width:110%;height:200%;transform:rotate(-36deg);border-width:3px;filter:blur(5px);border-top-color:rgba(255,255,255,.4);border-left-color:rgba(var(--rgb-300),.18)}
+#m3 .rayfield.k i:nth-child(4){right:-30%;bottom:-100%;width:120%;height:140%;transform:rotate(8deg);border-width:5px;filter:blur(7px);border-top-color:rgba(255,255,255,.3)}
+
+/* ---------- readability (founder, 2026-09-07: 01 "readability is reduced") ----------
+   Rows and cards read at base size and weight, on deep-blue glass rather than pale frost — white
+   text wants a dark ground — and under a quieter streak. Silver keeps its pale tint, it is the one
+   tile whose name is its colour. */
+.glass .tile{--tint:rgba(var(--rgb-900),.34);--tint2:rgba(var(--rgb-abyss),.34);--rim:rgba(160,196,255,.42)}
+.glass .broker-option,.glass .route-option{--streak:.12;font-size:var(--text-small);font-weight:var(--weight-body)}
+.glass .factor{--streak:.12}
+.glass .factor p,.glass .p-note{color:rgba(255,255,255,.84)}
+.glass .p-title{font-size:var(--text-ui);color:rgba(255,255,255,.9)}
+
+/* ---------- 02 · the tiers in their own metals (founder ref 2026-09-07) ----------
+   Bronze for Standard, silver, gold, and Diamond in violet — each tile's glass, rim and label carry
+   the tier's colour, the figure stays white. Labels uppercase, as in the reference. */
+.glass [data-tier=standard],#calculator [data-tier=standard]{--tint:rgba(200,128,88,.4);--tint2:rgba(120,70,48,.36);--rim:rgba(236,176,136,.5);--label:#F1C4A6}
+.glass [data-tier=silver],#calculator [data-tier=silver]{--tint:rgba(204,218,238,.3);--tint2:rgba(118,144,184,.26);--rim:rgba(228,238,250,.55);--label:#EDF3FB}
+.glass [data-tier=gold],#calculator [data-tier=gold]{--tint:rgba(210,172,86,.4);--tint2:rgba(124,96,40,.36);--rim:rgba(240,208,130,.55);--label:#F3D896}
+.glass [data-tier=diamond],#calculator [data-tier=diamond]{--tint:rgba(138,96,224,.42);--tint2:rgba(76,48,150,.38);--rim:rgba(196,166,250,.55);--label:#DFD0FA}
+.glass .rate small{text-transform:uppercase;letter-spacing:.08em;font-size:var(--text-micro);font-weight:var(--weight-body);color:var(--label)}
+/* 01: room for "Partner broker" on one line at base size */
+.glass .p-broker{grid-template-columns:1fr 1.15fr}
+.glass .broker-option{white-space:nowrap}
+
+/* ---------- 03 · the icon sits left of its title; each factor a breath of colour (founder, 2026-09-08) ----------
+   Warm for the account, green for volume (its icon's own success green), as 04's cards carry blue and
+   violet — but "very, very light": a quarter of the tier tints, fading into the same deep blue. */
+.glass .factor{display:grid;grid-template-columns:auto 1fr;column-gap:.75rem;align-items:center;align-content:start}
+.glass .factor h4{margin:0}
+.glass .factor p{grid-column:1/-1}
+.glass .factor:nth-child(1){--tint:rgba(214,140,80,.24);--rim:rgba(240,196,150,.42)}
+.glass .factor:nth-child(2){--tint:rgba(46,178,134,.24);--rim:rgba(150,230,190,.42)}
+
+/* ---------- the light travels every screen (founder, 2026-09-08) ----------
+   The glass panes had it; now every ground carries one soft diagonal band that crosses the screen as
+   the screen crosses the viewport, in the palette's own light: white on the blue grounds, pale blue on
+   the paper pages, the pane streak on the calculator's blue form. Blue grounds use the rayfield's spare
+   fourth <i> (the rayfield already clips), paper screens an ::after clipped on x.
+   ponytail: a transform on a plain layer, not background-position — the compositor moves it, nothing repaints. */
+#hero .rayfield.k i:nth-child(4),#chapter-1 .rayfield.k i:nth-child(4),#final .rayfield.k i:nth-child(4),
+#chapter-2::after,#activation::after,#faq::after,.screen-paper::after{display:block;position:absolute;inset:0;z-index:1;border-radius:0;filter:none;pointer-events:none;
+  background:linear-gradient(115deg,transparent 36%,var(--beam,rgba(255,255,255,.11)) 47%,var(--beam-tail,rgba(255,255,255,.03)) 53%,transparent 64%);
+  animation:ground-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%}
+/* the timeline is the screen's, named (a held screen's is its .hold box — base.css): the layers sit under
+   overflow:hidden boxes (the rayfield, the block, the chapter), and an anonymous view() would take that box
+   for its scroller and never move */
+#hero,#calculator,#activation,#faq,#final,.screen-paper{view-timeline-name:--ground}
+#chapter-2::after,#activation::after,#faq::after,.screen-paper::after{content:'';z-index:0;--beam:rgba(var(--rgb-200),.5);--beam-tail:rgba(var(--rgb-300),.1);
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent),linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);-webkit-mask-composite:source-in;
+  mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent),linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);mask-composite:intersect}
+  /* the beam dies out before every edge of its layer: top/bottom as the field does (two paper pages abut, and a band cut at
+     the seam read as a break), left/right because a diagonal gradient leaves the layer's sides lit and they showed as vertical
+     lines on a wide screen (founder, 2026-09-08) */
+/* the paper beam is a 40%-wide band that travels inside its screen (150% of its own width = the far edge), so
+   nothing ever hangs past the section and the QA's sideways-overflow check stays green */
+#chapter-2::after,#activation::after,#faq::after,.screen-paper::after{inset:0 auto 0 0;width:40%;animation-name:paper-light;
+  background:linear-gradient(115deg,transparent 18%,var(--beam) 50%,transparent 82%)}
+@keyframes paper-light{from{transform:translateX(150%)}to{transform:translateX(0)}}
+@keyframes ground-light{from{transform:translateX(70%)}to{transform:translateX(-70%)}}
+html.reduce .rayfield.k i:nth-child(4),html.reduce #chapter-2::after,html.reduce #activation::after,html.reduce #faq::after,html.reduce .screen-paper::after{animation:none}
+
+/* ---------- a mechanic on white (founder, 2026-09-10: Results' Signals half first, then Referral's opening card) ----------
+   `.mech.white`: the block is white, its ground gone, the copy ink, the pane the one blue thing — solid, since a
+   translucent deep-blue pane over white is a grey wash under white figures. --grad rides with the white. */
+.mech.white .block{background:#fff;color:var(--ink);--grad:var(--grad-blue)}
+.mech.white .block>.rayfield{display:none}
+.mech.white .block :is(.h2,.mech-copy h3){color:var(--navy)}
+.mech.white .block :is(.mech-copy p,.copy){color:var(--body)}
+.mech.white .page-number{border-color:rgba(var(--rgb-deep),.22);background:rgba(var(--rgb-900),.06);color:var(--navy)}
+.mech.white .page-number b{color:var(--accent)}
+.mech.white .page-number i{color:var(--navy)}
+.mech.white .panel{background:var(--blue);backdrop-filter:none;-webkit-backdrop-filter:none}
+/* the card behind dims through the stack's veil, but a white card under 45% black is mud — a light shade */
+html.snap .mech.white .block::after{animation-name:stack-back-paper}
+@keyframes stack-back-paper{to{opacity:.18}}
+
+/* ---------- the calculator reads as a control, not another record (founder, 2026-09-08) ----------
+   After four screens of tables the form has to say "touch me": a live dot pulsing in its corner, the
+   four levels in their tier metals (02's tints), the fields as frosted iOS-style wells with a hover and a
+   focus ring, the estimate band and the rules link on the same glass. */
+#calculator .live{position:absolute;top:-13px;right:18px;z-index:1;display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border-radius:999px;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.34);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
+  font:var(--weight-label) var(--text-micro)/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.8)}
+#calculator .live i{width:8px;height:8px;border-radius:50%;background:var(--success);animation:live-pulse 1.8s var(--ease) infinite}
+@keyframes live-pulse{0%{box-shadow:0 0 0 0 rgba(52,199,123,.6)}70%,100%{box-shadow:0 0 0 9px rgba(52,199,123,0)}}
+#calculator .field select,#calculator .field input{color:#fff;color-scheme:dark;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);
+  backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -1px 0 rgba(var(--rgb-shadow),.18);transition:background-color .25s var(--ease),border-color .25s var(--ease)}
+#calculator .field select:hover,#calculator .field input:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.45)}
+#calculator .field select:focus-visible,#calculator .field input:focus-visible,#calculator .level:focus-visible,#calculator .broker-rules:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:2px}
+#calculator .level{border-color:var(--rim);background:linear-gradient(150deg,var(--tint),var(--tint2));
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3);
+  transition:transform .25s var(--ease),border-color .25s var(--ease),box-shadow .25s var(--ease)}
+#calculator .level b{color:var(--label)}
+#calculator .level:hover{transform:translateY(-1px)}
+#calculator .level[aria-pressed=true]{border-color:#fff;background:linear-gradient(150deg,var(--tint),var(--tint2));box-shadow:inset 0 0 0 1px #fff,0 12px 24px -14px var(--rim)}
+#calculator .estimate{border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+#calculator .broker-rules{display:flex;margin:14px 0 0 auto;min-height:40px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.34);
+  background:rgba(255,255,255,.14);color:#fff;font-size:var(--text-ui);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5);transition:background-color .3s var(--ease)}
+#calculator .broker-rules:hover{background:rgba(255,255,255,.3);border-color:rgba(255,255,255,.6)}
+#calculator .broker-rules:hover .ext{transform:rotate(0)}   /* the same sloped arrow as every other CTA, straightening on hover (founder, 2026-09-08) */
+html.reduce #calculator .live i,html.reduce #calculator .level:hover{animation:none;transform:none}
+
+/* ---------- the display headings' two gradients (founder, 2026-09-10: "this exact gradient across all pages") ----------
+   Blue text on paper takes the "Ready to activate?" run; white text on a blue ground takes the referral chapter's
+   light run. Clipped on each word's <i> — the reveal transforms those, and a clipped background on the parent
+   cannot see through a composited child — so the runs are vertical: a diagonal would restart on every word.
+   The clip is the box: at line-height 1 and tight tracking the ink hangs past it on every side and vanished
+   (founder, 2026-09-08), so the <i> and the word's own overflow box both grow the same way. */
+:root{--grad-blue:linear-gradient(180deg,rgb(var(--rgb-600)) 0%,var(--p-900) 50%,color-mix(in srgb,var(--p-pressed),var(--p-deep) 30%) 100%);   /* the foot a step toward deep — "only a little darker, only its bottom" (founder, 2026-09-10) */
+      --grad-light:linear-gradient(180deg,var(--p-400) 0%,#fff 42%,#fff 58%,var(--p-400) 100%);
+      --grad:var(--grad-blue)}   /* --grad is the run a heading takes. It inherits, so every rule that paints a ground sets it beside
+                                    its background (#hero, .chapter, .block, #final … light; .chapter-2, #calculator .block, a paper
+                                    .block … blue) and a heading follows whatever actually paints under it — never a screen class.
+                                    The heading keeps its colour (white on blue, navy on paper): _qa/headings.mjs checks the two agree. */
+.screen-dark,.on-dark{--grad:var(--grad-light)}
+:is(.display,.h2,h3).words .w i,:is(.display,.h2):not(.words){background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+:is(.display,.h2,h3).words :is(.w,.w i){padding:.14em .12em .18em;margin:-.14em -.12em -.18em}
+
+/* the page number's "0" and the heading's capital share a left edge in ink, not in boxes: the capital
+   carries a side bearing four times the digit's at that size (founder, 2026-09-08: "align vertically") */
+.mech-copy .page-number{margin-left:.2em}
+
+/* ---------- the wireframe's layout, measured back in (founder, 2026-09-08: "same width, height, boldness, size") ----------
+   Sizes and weights are the wireframe's again (scale.css: title/strong 700, display 720, labels 800 — and
+   the 01–04 rows, options and notes back at their 12/11/10px, weight 400), and the blue blocks now span the
+   full 1200 wrap with the 28px gutter inside them, so every column is the width the wireframe drew. */
+@media (min-width:1256px){.fill>.wrap{padding:0}}
+
+/* ---------- 12 · the questions on glass (founder, 2026-09-08) ---------- */
+.faq-list{border-top:0;display:grid;gap:10px}
+.faq-item{border:1px solid rgba(255,255,255,.95);border-radius:18px;background:rgba(255,255,255,.58);padding:0 22px;
+  backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);
+  box-shadow:inset 0 1px 0 #fff,0 18px 40px -30px rgba(var(--rgb-shadow),.3);transition:background-color .3s var(--ease)}
+.faq-item:hover,.faq-item.open{background:rgba(255,255,255,.8)}
+.faq-a p{margin-bottom:20px}
+@media (prefers-reduced-transparency:reduce){.faq-item{background:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}}
+
+/* ---------- back to top (founder, 2026-09-08) ----------
+   A round button in the corner once the hero is behind (main.js marks html.past-hero); navy on the paper
+   pages, the CTA glass on the blue ones. Click = the deck's own transition to screen 0. */
+.to-top{position:fixed;right:28px;bottom:28px;z-index:40;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
+  color:#fff;background:var(--navy);border:1px solid rgba(255,255,255,.3);box-shadow:0 12px 30px -12px rgba(var(--rgb-shadow),.6);
+  opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .35s var(--ease),transform .35s var(--ease),background-color .3s var(--ease)}
+.to-top svg{width:18px;height:18px}
+html.past-hero .to-top{opacity:1;transform:none;pointer-events:auto}
+html.past-hero .to-top:hover{transform:translateY(-2px)}
+html.dark-now .to-top{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.38);backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%)}
+html.reduce .to-top{transition:none}

@@ -89,18 +89,13 @@ export function mondayOf(d: Date): Date {
  *
  * A week is never split. Ownership starts from the same rule ISO week-
  * numbering uses — the week's Thursday (day 4 of 7, so it always falls on
- * the majority side) — but a month never shows a Week 5: since a Thursday
- * only lands on day 29-31 of its month when that week's Sunday has already
- * rolled into the next month, a would-be 5th week is just the next month's
- * Week 1 instead (Jul 27–Aug 2 is "August · Week 1", not "July · Week 5").
- *
- * This can't be made driftless AND collision-free at once — 52 weeks never
- * divides evenly into 12 months — so roughly 4-5 times a year the pushed
- * week and the next month's own first week both read "Week 1"; the date
- * range under each label (Jul 27–Aug 2 vs Aug 3–9) is what tells them apart.
- * The alternative, cascading every later week in the month to make room,
- * drifts the labels away from the real calendar by a full month within a
- * year (see git history) — worse than the rare double "Week 1".
+ * the majority side) — and the label is just that Thursday's own month and
+ * week-of-month. A month with five Thursdays (Jul 2026: 2, 9, 16, 23, 30)
+ * reads "Week 5" rather than being pushed into the next month's "Week 1" —
+ * this used to roll over instead, which saved months from ever showing a
+ * Week 5 but meant the pushed week and the next month's real first week both
+ * read "Month · Week 1", told apart only by the date range underneath.
+ * Week 5 is rarer to read but never collides with anything.
  */
 export function weekOf(monday: Date): Week {
   const start = mondayOf(monday);
@@ -109,14 +104,10 @@ export function weekOf(monday: Date): Week {
   const owner = new Date(start);
   owner.setUTCDate(owner.getUTCDate() + 3);
 
-  let n = Math.floor((owner.getUTCDate() - 1) / 7) + 1;
+  const n = Math.floor((owner.getUTCDate() - 1) / 7) + 1;
   // `period` never carries a year (see below), so wrapping December -> January
-  // here needs no year tracking of its own.
-  let ownerMonth = owner.getUTCMonth();
-  if (n === 5) {
-    n = 1;
-    ownerMonth = (ownerMonth + 1) % 12;
-  }
+  // needs no year tracking of its own.
+  const ownerMonth = owner.getUTCMonth();
   const sameMonth = start.getUTCMonth() === end.getUTCMonth();
   const sameYear = start.getUTCFullYear() === end.getUTCFullYear();
 

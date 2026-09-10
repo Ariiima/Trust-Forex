@@ -42,10 +42,10 @@ const TIERS: readonly { key: CashbackPlan; label: string }[] = [
  * other rates are placeholders and should be overridden via the `rate` prop.
  */
 const PLAN_DEFAULTS: Record<CashbackPlan, { name: string; duration: string; rate: string }> = {
-  standard: { name: 'standard plan', duration: '1 month', rate: '10%' },
-  silver: { name: 'silver plan', duration: '1 month', rate: '15%' },
-  gold: { name: 'gold plan', duration: '3 months', rate: '20%' },
-  diamond: { name: 'diamond plan', duration: '12 months', rate: '30%' },
+  standard: { name: 'standard plan', duration: '1 Month', rate: '10%' },
+  silver: { name: 'silver plan', duration: '1 Month', rate: '15%' },
+  gold: { name: 'gold plan', duration: '3 Months', rate: '20%' },
+  diamond: { name: 'diamond plan', duration: '12 Months', rate: '30%' },
 };
 
 export interface CashbackOverviewProps {
@@ -153,7 +153,13 @@ export function CashbackOverview({
               </span>
               <span className="ds-cashback-tier-label">{tier.label}</span>
             </div>
-            {i < TIERS.length - 1 ? <span className="ds-cashback-tier-line" /> : null}
+            {i < TIERS.length - 1 ? (
+              <span
+                className={`ds-cashback-tier-line${
+                  i === activeIndex ? ' ds-cashback-tier-line-next' : i > activeIndex ? ' ds-cashback-tier-line-dim' : ''
+                }`}
+              />
+            ) : null}
           </div>
         ))}
       </div>

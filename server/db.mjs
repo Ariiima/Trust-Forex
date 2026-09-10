@@ -13,12 +13,27 @@ CREATE TABLE IF NOT EXISTS orders (
   status TEXT NOT NULL DEFAULT 'pending', txid TEXT, confirmations INTEGER DEFAULT 0,
   detected_at INTEGER, confirmed_at INTEGER, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS seen_txs (txid TEXT PRIMARY KEY, order_id TEXT);
+-- Transfers into a gateway wallet the watcher refused to attribute by itself:
+-- a wrong amount with two or more live orders on that wallet (whose is it?),
+-- with none at all, or an amount too large to be a payment attempt. A
+-- wrong-amount transfer carries no identity — one shared address, no memo, and
+-- the sender is usually an exchange hot wallet — so a human decides. Resolved
+-- rows are kept as the audit trail for who attributed what.
+CREATE TABLE IF NOT EXISTS unmatched_txs (
+  txid TEXT PRIMARY KEY, chain TEXT, currency TEXT, network TEXT, address TEXT, sender TEXT,
+  amount_raw TEXT NOT NULL, decimals INTEGER NOT NULL, amount TEXT NOT NULL,
+  reason TEXT, seen_at INTEGER NOT NULL, tx_at INTEGER,
+  resolution TEXT, order_id TEXT, resolved_by TEXT, resolved_at INTEGER);
 -- One row per (user, flag) the user has "used up" — currently the once-only
 -- referral/cashback preview pages. Server-side so it survives reinstalls and
 -- follows the account across devices, unlike localStorage.
 CREATE TABLE IF NOT EXISTS user_flags (
   user_id INTEGER NOT NULL, flag TEXT NOT NULL, set_at INTEGER NOT NULL,
   PRIMARY KEY (user_id, flag));
+-- One VIP invite link per Telegram user, reused (edited, not reminted) across
+-- purchases, resubscriptions and manual "join" taps — see telegram.mjs groupInvite.
+CREATE TABLE IF NOT EXISTS group_invites (
+  user_id INTEGER PRIMARY KEY, link TEXT NOT NULL, set_at INTEGER NOT NULL);
 `;
 
 const EXPIRY_MS = 40 * 60 * 1000;
@@ -70,6 +85,9 @@ export function openDb(path) {
     setBalanceUsed: db.prepare('UPDATE orders SET balance_used = ? WHERE id = ?'),
     flags: db.prepare('SELECT flag FROM user_flags WHERE user_id = ?'),
     setFlag: db.prepare('INSERT OR IGNORE INTO user_flags (user_id, flag, set_at) VALUES (?, ?, ?)'),
+    groupInvite: db.prepare('SELECT link FROM group_invites WHERE user_id = ?'),
+    setGroupInvite: db.prepare(`INSERT INTO group_invites (user_id, link, set_at) VALUES (?, ?, ?)
+      ON CONFLICT(user_id) DO UPDATE SET link=excluded.link, set_at=excluded.set_at`),
   };
 
   const getOrder = (id) => stmts.byId.get(id);
@@ -86,6 +104,16 @@ export function openDb(path) {
     /** Idempotent — re-marking an already-set flag is a no-op. */
     setFlag(userId, flag) {
       stmts.setFlag.run(userId, flag, Date.now());
+    },
+
+    /** This user's standing VIP invite link, if one has ever been minted. */
+    getGroupInvite(userId) {
+      return stmts.groupInvite.get(userId)?.link ?? null;
+    },
+
+    /** Upsert — one row per user, overwritten on every renewal. */
+    setGroupInvite(userId, link) {
+      stmts.setGroupInvite.run(userId, link, Date.now());
     },
 
     createOrder({ id, userId, username, planId, billing, amountUsd, balanceUsed = 0 }) {

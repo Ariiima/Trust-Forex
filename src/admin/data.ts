@@ -36,6 +36,19 @@ export interface AdminUser {
   joinedAt: string;
 }
 
+/** The three queues that need a human. Drives the sidebar badges and the
+ *  Notifications page — nothing here is stored, they're live counts. */
+export interface Alerts {
+  /** Broker-account submissions with no decision yet. */
+  reviews: number;
+  /** Withdrawals still queued/sending/manual — money we owe and haven't sent. */
+  withdrawals: number;
+  /** Transfers the watcher parked because nothing identified the payer. */
+  unmatched: number;
+  /** Active referral campaigns holding a broker nobody has placed in their list. */
+  campaignBrokers: number;
+}
+
 export interface Analytics {
   totalUsers: number;
   activeToday: number;
@@ -72,6 +85,8 @@ export interface Broker {
   id: string;
   name: string;
   color: string;
+  /** Data URL of the uploaded logo, read off the broker's preview doc. */
+  logoUrl?: string;
   status: BrokerStatus;
   /** The broker's cut of a rebate, 0–1. Drives the shared-rebate column. */
   shareRate: number;
@@ -79,6 +94,8 @@ export interface Broker {
   rank: number | null;
   activeUsers: number;
   pendingUsers: number;
+  /** Every link on this broker — rejected ones included, unlike active+pending. */
+  totalUsers: number;
   draftedPayment: number;
   unreviewed: number;
   updatedAt: string;
@@ -90,14 +107,81 @@ export interface WithdrawalRow {
   id: string;
   userId: string;
   name: string | null;
+  /** `users.user_no` — the only user identifier operators are shown. */
+  userNo: number | null;
   at: string;
   amount: number;
   fee: number;
   currency: string;
   network: string;
   address: string;
-  status: 'queued' | 'sending' | 'manual' | 'sent';
+  /** `refunded` is a rejected request — the money went back to the balance. */
+  status: 'queued' | 'sending' | 'manual' | 'sent' | 'refunded';
   txid?: string;
+}
+
+/** Why the watcher would not attribute a transfer by itself. `ambiguous` is
+ *  the one that matters: a wrong amount with 2+ orders live on that wallet, so
+ *  nothing in the transfer says whose it is. */
+export type UnmatchedReason = 'ambiguous' | 'no_live_order' | 'predates_order' | 'too_large';
+
+/** A transfer that reached a gateway wallet but not an order. */
+export interface UnmatchedTx {
+  txid: string;
+  chain: string;
+  currency: string | null;
+  network: string | null;
+  address: string;
+  /** Usually an exchange hot wallet, not the buyer — informational only. */
+  sender: string | null;
+  /** Decimal string, never a float. */
+  amount: string;
+  decimals: number;
+  reason: UnmatchedReason;
+  at: number;
+  resolution: 'attributed' | 'ignored' | null;
+  orderId: string | null;
+  resolvedBy: string | null;
+  resolvedAt: number | null;
+}
+
+/** An open order an unmatched transfer could be attributed to. */
+export interface OpenOrder {
+  id: string;
+  userId: number | null;
+  username: string | null;
+  planId: string;
+  amountUsd: number;
+  currency: string | null;
+  network: string | null;
+  amountCrypto: string | null;
+  /** Base-unit string of what has already arrived, or null for nothing yet. */
+  paidUnits: string | null;
+  createdAt: number;
+}
+
+/** gateways.json, as edited from the Wallets page. */
+export interface GatewayNetwork {
+  network: string;
+  address: string;
+  chain?: string;
+  rpc?: string;
+  tokenContract?: string;
+  memo?: string;
+  decimals: number;
+  requiredConfirmations: number;
+  /** No chain adapter covers it — confirmation is admin-only. */
+  manualOnly?: boolean;
+}
+
+export interface Gateway {
+  currency: string;
+  name: string;
+  networks: GatewayNetwork[];
+}
+
+export interface GatewaysDoc {
+  gateways: Gateway[];
 }
 
 /** Money arriving. Straight off the `orders` table the watcher confirms. */
@@ -105,6 +189,8 @@ export interface PaymentRow {
   id: string;
   userId: number | null;
   username: string | null;
+  /** `users.user_no` — the only user identifier operators are shown. */
+  userNo: number | null;
   planId: string;
   amountUsd: number;
   currency: string | null;
@@ -133,6 +219,8 @@ export interface ReviewRequest {
   id: string;
   userId: string;
   name: string;
+  /** `users.user_no` — the only user identifier operators are shown. */
+  userNo: number | null;
   plan: PlanId;
   brokerId: string;
   requestedAt: string;
@@ -144,7 +232,10 @@ export interface ReviewRequest {
 export interface RebateRow {
   userId: string;
   name: string;
-  plan: PlanId;
+  /** `users.user_no` — the only user identifier operators are shown. */
+  userNo: number | null;
+  /** Live tier, not the stored snapshot — 'none' once a subscription lapses. */
+  plan: PlanId | 'none';
   email: string;
   brokerAccountId: string;
   totalRebate: number;
@@ -190,6 +281,8 @@ export interface Subscriber {
   id: string;
   name: string;
   plan: PlanId;
+  /** `users.user_no` — the only user identifier operators are shown. */
+  userNo: number | null;
   /** YYYY-MM-DD — what an extra-day grant's "purchased before" tests. */
   purchasedAt: string | null;
   lastActionAt: string;
@@ -262,6 +355,9 @@ export interface ReferralCampaign {
   /** The account this campaign belongs to, by user number. Optional: a
       house campaign belongs to nobody. Doc-stored, like the fields above. */
   ownerUserNo?: number | null;
+  /** Which revenue the owner's share is taken from. One per campaign — the
+      editor's toggle switches the single percentage field between them. */
+  shareKind?: 'plan' | 'cashback';
 }
 
 export interface MarketingCampaign {
@@ -333,6 +429,20 @@ export interface MarketingCampaign {
   usageLimit?: string;
 }
 
+/** What a bearer key may reach. `write` runs the dashboard but cannot move money. */
+export type ApiScope = 'read' | 'write' | 'money';
+
+export interface ApiKey {
+  id: string;
+  name: string;
+  /** First 12 characters — enough to tell two keys apart, useless as a secret. */
+  prefix: string;
+  scope: ApiScope;
+  createdAt: number;
+  /** Epoch ms of the last request this key made, or null if it never has. */
+  lastUsedAt: number | null;
+}
+
 export interface CampaignList {
   id: string;
   name: string;
@@ -382,7 +492,7 @@ export interface BrokerTotals {
 export interface MessageTemplate {
   key: string;
   name: string;
-  group: 'Payments' | 'Subscription' | 'Withdrawals';
+  group: 'General' | 'Payments' | 'Subscription' | 'Earnings' | 'Withdrawals';
   hint: string;
   /** {tokens} this message's send site actually fills in. */
   vars: string[];
@@ -431,9 +541,28 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-const get = <T,>(path: string) => request<T>(path);
-const write = <T,>(method: string, path: string, body?: unknown) =>
-  request<T>(path, { method, body: body === undefined ? undefined : JSON.stringify(body) });
+/**
+ * ponytail: 30s in-memory memo of GETs, dropped whole on any write.
+ * Broker logos ride along in the JSON as base64 data URLs, so every section
+ * switch used to re-download them. Short TTL beats per-endpoint invalidation;
+ * if a page ever needs a guaranteed-fresh read, call `api.refresh()` first.
+ */
+const memo = new Map<string, { at: number; p: Promise<unknown> }>();
+const TTL_MS = 20_000;  // under the sidebar's 30s alert poll, so that poll never memo-hits
+
+const get = <T,>(path: string): Promise<T> => {
+  const hit = memo.get(path);
+  if (hit && Date.now() - hit.at < TTL_MS) return hit.p as Promise<T>;
+  const p = request<T>(path).catch((err) => { memo.delete(path); throw err; });
+  memo.set(path, { at: Date.now(), p });
+  return p;
+};
+
+const write = <T,>(method: string, path: string, body?: unknown) => {
+  memo.clear();
+  return request<T>(path, { method, body: body === undefined ? undefined : JSON.stringify(body) })
+    .finally(() => memo.clear());
+};
 
 /* =====================================================================
  * API
@@ -445,6 +574,12 @@ export const api = {
   login: (username: string, password: string) =>
     write<{ username: string }>('POST', '/login', { username, password }),
   logout: () => write<void>('POST', '/logout'),
+
+  /** Drop the GET memo — for a pull-to-refresh style reload. */
+  refresh: () => memo.clear(),
+
+  /* ---- sidebar badges ---- */
+  alerts: () => get<Alerts>('/alerts'),
 
   /* ---- users ---- */
   users: () => get<AdminUser[]>('/users'),
@@ -487,20 +622,56 @@ export const api = {
   withdrawals: () => get<WithdrawalRow[]>('/withdrawals'),
   /** Record a `manual`/`queued` row as paid by hand — there's no hot wallet
    *  configured yet, so this is the only path any withdrawal completes through. */
-  markWithdrawalSent: (id: string, txid: string) =>
-    write<{ withdrawal: WithdrawalRow }>('POST', `/withdrawals/${id}/mark-sent`, { txid }),
+  markWithdrawalSent: (id: string) =>
+    write<{ withdrawal: WithdrawalRow }>('POST', `/withdrawals/${id}/mark-sent`),
+  /** Refuse it instead: the frozen amount returns to the user's earning
+   *  balance and `reason` is what the bot's rejection DM quotes. */
+  rejectWithdrawal: (id: string, reason: string) =>
+    write<{ withdrawal: WithdrawalRow }>('POST', `/withdrawals/${id}/reject`, { reason }),
   payments: () => get<PaymentRow[]>('/payments'),
+  /** Settle a still-open order by hand, for money the watcher can't see. */
+  confirmPayment: (id: string) =>
+    write<{ result: 'confirmed' | 'partial' }>('POST', `/payments/${id}/confirm`),
+
+  /* ---- unmatched transfers ---- */
+  unmatched: () => get<{ transfers: UnmatchedTx[]; openOrders: OpenOrder[] }>('/unmatched'),
+  /** Books the transfer against an order, through the same code the watcher
+   *  uses. 409 with an `error` when the order is closed or on another network. */
+  attributeUnmatched: (txid: string, orderId: string) =>
+    write<{ result: 'confirmed' | 'partial' }>('POST', `/unmatched/${txid}/attribute`, { orderId }),
+  ignoreUnmatched: (txid: string) => write<void>('POST', `/unmatched/${txid}/ignore`),
+
+  /* ---- system clock ---- */
+  settings: () => get<{ tz: string }>('/settings'),
+  saveSettings: (tz: string) => write<{ tz: string }>('PUT', '/settings', { tz }),
+
+  /* ---- API keys ---- */
+  apiKeys: () => get<ApiKey[]>('/api-keys'),
+  /** The one response that carries the plaintext key. It is never readable again. */
+  createApiKey: (name: string, scope: ApiScope) =>
+    write<ApiKey & { key: string }>('POST', '/api-keys', { name, scope }),
+  revokeApiKey: (id: string) => write<void>('DELETE', `/api-keys/${id}`),
+
+  /* ---- deposit wallets ---- */
+  gateways: () => get<GatewaysDoc>('/gateways'),
+  saveGateways: (doc: GatewaysDoc) => write<GatewaysDoc>('PUT', '/gateways', doc),
 
   cashbackCycles: () => get<CashbackCycle[]>('/cashback-cycles'),
   reviewQueue: () => get<ReviewRequest[]>('/review-queue'),
   decideReview: (id: string, decision: 'approved' | 'waiting' | 'rejected') =>
     write<void>('POST', `/review-queue/${id}/decision`, { decision }),
+  /* Same decision from the "Recent users" table, which only has a user + broker id. */
+  decideReviewForUser: (userId: string, brokerId: string, decision: 'approved' | 'waiting' | 'rejected') =>
+    write<void>('POST', `/users/${userId}/decision`, { brokerId, decision }),
 
   /* ---- subscription ---- */
   subscribers: () => get<Subscriber[]>('/subscribers'),
   extraGrants: () => get<ExtraGrant[]>('/extra-grants'),
-  addExtraGrant: (grant: Partial<ExtraGrant> & {
-    extraDays: number; purchasedBefore?: string; message?: string; notify?: boolean;
+  /** `before` is Tehran wall clock (YYYY-MM-DDTHH:mm); empty = every active subscriber. */
+  eligibleCount: (before: string) =>
+    get<{ count: number }>(`/extra-grants/eligible?before=${encodeURIComponent(before)}`).then((r) => r.count),
+  addExtraGrant: (grant: {
+    extraDays: number; purchasedBefore: string; message: string; notify: boolean;
   }) => write<ExtraGrant>('POST', '/extra-grants', grant),
 
   /* ---- events ---- */
@@ -562,3 +733,22 @@ export const api = {
 };
 
 export type Api = typeof api;
+
+/* ---------------------------------------------------------------------
+ * The system clock, dashboard side
+ *
+ * The server renders every stored stamp in the configured zone; these are for
+ * the handful of values the dashboard formats itself (a "now" it just wrote,
+ * an ISO `updated_at`). Same zone, same shape — `YYYY-MM-DD · HH:mm`.
+ * ------------------------------------------------------------------- */
+
+let tz = 'Asia/Tehran';
+/** Called once at boot. Until it resolves, formatting falls back to the default. */
+export const loadTz = () => api.settings().then((s) => { tz = s.tz; }).catch(() => {});
+export const currentTz = () => tz;
+
+export const fmtDay = (ms: number = Date.now()) =>
+  new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(ms);
+export const fmtTime = (ms: number = Date.now()) =>
+  new Intl.DateTimeFormat('en-GB', { timeZone: tz, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(ms);
+export const fmtStamp = (ms: number = Date.now()) => `${fmtDay(ms)} · ${fmtTime(ms)}`;

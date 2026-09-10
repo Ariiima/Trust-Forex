@@ -7,24 +7,27 @@
  *  - **Rates.** CoinGecko, 60s cache, stablecoins pinned to 1. A failed lookup
  *    refuses the order rather than guessing — a wrong rate is a wrong price.
  *  - **Unique amounts.** Many users pay the same wallet, so each live order
- *    gets its own amount, dithered in the last three decimals. That amount IS
- *    the identifier the watcher matches on, so it must be unique among every
- *    non-final order sharing a (currency, network, address).
+ *    gets its own amount, dithered in the last decimals (cents, for
+ *    stablecoins). That amount IS the identifier the watcher matches on, so
+ *    it must be unique among every non-final order sharing a
+ *    (currency, network, address).
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, renameSync } from 'node:fs';
 import { randomInt } from 'node:crypto';
 import { canonicalAmount, findGateway } from './db.mjs';
 
 const GATEWAYS_PATH = new URL('./gateways.json', import.meta.url);
 
-/** Display decimals per currency — the dither occupies the last three. */
-const DISPLAY_DECIMALS = { USDT: 4, USDC: 4, DAI: 4, BTC: 8, ETH: 8, BNB: 8, SOL: 6, TRX: 6, TON: 6 };
+/** Display decimals per currency. Stablecoins stop at cents: every exchange
+ *  withdrawal form accepts 2 decimals, and a payer typing "199.93" is far
+ *  likelier to get it right than "199.9337". */
+const DISPLAY_DECIMALS = { USDT: 2, USDC: 2, DAI: 2, BTC: 8, ETH: 8, BNB: 8, SOL: 6, TRX: 6, TON: 6 };
 
 /** USD price per plan — mirror of `checkoutPrice` in src/screens/plans/plans-data.ts.
  *  The server prices every order from this table; the client's amountUsd is
  *  display-only, because a price taken from the request body is a price the
  *  sender picked. */
-export const PLAN_PRICES = { silver: 2, gold: 499, diamond: 1699 }; // ponytail: silver at $2 for testing, revert before launch
+export const PLAN_PRICES = { silver: 2, gold: 3, diamond: 4 }; // ponytail: testing prices, revert to 499/1699/etc before launch
 
 /** CoinGecko ids. Stablecoins are absent on purpose: they are pinned to 1. */
 const COINGECKO_IDS = {
@@ -43,6 +46,58 @@ export function loadGateways() {
   } catch {
     return { gateways: [] };
   }
+}
+
+/** Chains the watcher has an adapter for. Anything else must be `manualOnly`,
+ *  or its orders sit pending forever with no path to confirmed. */
+export const CHAINS = ['evm', 'btc', 'tron', 'sol', 'ton'];
+
+/**
+ * Validate a gateways document from the admin's Wallets page. Returns an error
+ * string, or null when it is safe to write. Strict on purpose: this file is
+ * where user money is sent, and a typo'd address is unrecoverable.
+ */
+export function validateGateways(doc) {
+  if (!doc || !Array.isArray(doc.gateways)) return 'gateways_must_be_array';
+  const seen = new Set();
+  for (const g of doc.gateways) {
+    if (typeof g?.currency !== 'string' || !g.currency.trim()) return 'currency_required';
+    if (seen.has(g.currency)) return `duplicate_currency:${g.currency}`;
+    seen.add(g.currency);
+    if (!Array.isArray(g.networks) || !g.networks.length) return `no_networks:${g.currency}`;
+    const nets = new Set();
+    for (const n of g.networks) {
+      const at = `${g.currency}/${n?.network}`;
+      if (typeof n?.network !== 'string' || !n.network.trim()) return 'network_required';
+      if (nets.has(n.network)) return `duplicate_network:${at}`;
+      nets.add(n.network);
+      if (typeof n.address !== 'string' || n.address.trim().length < 20) return `invalid_address:${at}`;
+      if (!Number.isInteger(n.decimals) || n.decimals < 0 || n.decimals > 24) return `invalid_decimals:${at}`;
+      if (!Number.isInteger(n.requiredConfirmations) || n.requiredConfirmations < 0) return `invalid_confirmations:${at}`;
+      if (!n.manualOnly) {
+        if (!CHAINS.includes(n.chain)) return `invalid_chain:${at}`;
+        if (n.chain === 'evm' && !n.rpc) return `rpc_required:${at}`;
+      }
+      if (n.rpc && !/^https:\/\//.test(n.rpc)) return `rpc_must_be_https:${at}`;
+    }
+  }
+  return null;
+}
+
+/**
+ * Overwrite gateways.json. Write-then-rename so a crash mid-write can never
+ * leave a truncated file — `loadGateways` falling back to `{gateways: []}`
+ * would take the whole payment flow down. Keeps `_comment` if present.
+ */
+export function saveGateways(doc) {
+  const err = validateGateways(doc);
+  if (err) throw new Error(err);
+  const current = loadGateways();
+  const next = { ...(current._comment ? { _comment: current._comment } : {}), gateways: doc.gateways };
+  const tmp = new URL('./gateways.json.tmp', import.meta.url);
+  writeFileSync(tmp, `${JSON.stringify(next, null, 2)}\n`);
+  renameSync(tmp, GATEWAYS_PATH);
+  return next;
 }
 
 /**
@@ -71,19 +126,25 @@ export async function usdRate(currency) {
 /**
  * A crypto amount nobody else is currently waiting on.
  *
- * The dither is added, never subtracted, so the user is never asked for less
- * than the plan costs. `amountTaken` is checked against live orders on the same
- * address, because that is the set the watcher will be matching within.
+ * The dither is SUBTRACTED, so a $200 plan reads 199.xx — a hair under the
+ * price rather than over it, which is easier to ask a payer to send exactly.
+ * We eat at most one cent-slot's worth (≤ $0.99 on stablecoins). Only when the
+ * amount is too small to subtract from (a sub-dollar balance remainder) does
+ * the dither go up instead. `amountTaken` is checked against live orders on
+ * the same address, because that is the set the watcher will be matching within.
  */
 export function uniqueAmount({ amountUsd, rate, currency, network, address, db }) {
   const decimals = DISPLAY_DECIMALS[currency] ?? 6;
   const step = 10 ** -decimals;
   const base = amountUsd / rate;
+  // ponytail: 99 slots per wallet on stablecoins (999 on the rest). Enough until
+  // ~50 people are mid-checkout on one wallet at once; per-order addresses after that.
+  const slots = decimals <= 2 ? 99 : 999;
+  const rounded = Math.ceil(base / step) * step;
+  const dir = rounded > slots * step ? -1 : 1;
 
   for (let attempt = 0; attempt < 50; attempt += 1) {
-    // Round the base UP to the display precision, then dither the last 3 places.
-    const rounded = Math.ceil(base / step) * step;
-    const candidate = canonicalAmount((rounded + randomInt(1, 1000) * step).toFixed(decimals));
+    const candidate = canonicalAmount((rounded + dir * randomInt(1, slots + 1) * step).toFixed(decimals));
     if (!db.amountTaken(currency, network, address, candidate)) return candidate;
   }
   throw new Error('amount_collision');

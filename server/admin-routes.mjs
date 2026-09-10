@@ -7,8 +7,12 @@
  * There is no dev bypass — this endpoint exposes every user, payment and
  * payout in the system.
  */
-import { GRAINS, openAdminDb, renderTemplate } from './admin.mjs';
+import { API_SCOPES, GRAINS, keyDenial, openAdminDb, renderTemplate, tehranMs } from './admin.mjs';
 import { sendMessage, appButton } from './telegram.mjs';
+import { loadGateways, saveGateways, validateGateways } from './orders.mjs';
+import { getTz, setTz, validTz } from './tz.mjs';
+import { attributeUnmatched, confirmOrderManually, ignoreUnmatched } from './watcher.mjs';
+import * as notify from './notify.mjs';
 
 const MAX_BODY = 4 * 1024 * 1024; // in-app card images arrive as data URLs
 
@@ -86,7 +90,29 @@ const cookie = (token, maxAge) =>
  * `p` holds the pattern's capture groups; `body` is parsed only for writes.
  * ------------------------------------------------------------------- */
 
+/** What makes a campaign doc unsendable. The editor checks the same things. */
+function campaignError(body) {
+  if (typeof body.name !== 'string' || !body.name.trim()) return 'name_required';
+  // A public-code offer with no code would mint nothing and send "Your code:" with a blank.
+  if (body.codeType === 'public' && Number(body.discountValue) > 0 && !String(body.publicCode ?? '').trim()) {
+    return 'public_code_required';
+  }
+  return null;
+}
+
 /* /login is handled ahead of this table — it is the one route without a session. */
+/* The broker's own status message for a decision ("Manage user flow"),
+   fire-and-forget: a Telegram hiccup must not undo a decision that is
+   already committed, and sendMessage no-ops without a bot token. */
+function sendDecisionDM(decided) {
+  if (!decided.telegramId) return;
+  const flow = store.flowMessages(decided.brokerId).find((m) => m.key === decided.flowKey);
+  if (!flow?.message) return;
+  void sendMessage(decided.telegramId, renderTemplate(flow.message, {
+    name: decided.userName ?? '', broker: decided.brokerName,
+  }), appButton());
+}
+
 const ROUTES = [
   ['POST', /^\/logout$/, (req, res, _p, _b, session) => {
     store.logout(session?.token);
@@ -94,6 +120,9 @@ const ROUTES = [
   }],
 
   ['GET', /^\/session$/, (req, res, _p, _b, session) => ok(res, { username: session.username })],
+
+  /* Sidebar badges: the open review / withdrawal / unmatched counts, polled. */
+  ['GET', /^\/alerts$/, (req, res) => ok(res, store.alerts())],
 
   /* ---- users ---- */
   ['GET', /^\/users$/, (req, res) => ok(res, store.users())],
@@ -106,6 +135,16 @@ const ROUTES = [
   ['PATCH', /^\/users\/([\w-]+)$/, (req, res, p, body) => {
     if (!['active', 'pending', 'rejected'].includes(body.status)) return bad(res, 'invalid_status');
     return store.setUserStatus(p[1], body.status) ? ok(res) : missing(res);
+  }],
+  /* "Recent users" row action — same decision as the review queue, addressed
+     by (user, broker) since that table has no queue-row id to work with. */
+  ['POST', /^\/users\/([\w-]+)\/decision$/, (req, res, p, body) => {
+    if (!['approved', 'waiting', 'rejected'].includes(body.decision)) return bad(res, 'invalid_decision');
+    if (!body.brokerId) return bad(res, 'broker_required');
+    const decided = store.decideReviewForUser(p[1], body.brokerId, body.decision);
+    if (!decided) return missing(res);
+    sendDecisionDM(decided);
+    return ok(res);
   }],
 
   /* ---- brokers ---- */
@@ -193,56 +232,123 @@ const ROUTES = [
   /* Admin paid a manual withdrawal by hand (there is no hot wallet configured
      yet — every row lands here, not just RPC failures) and records it as
      sent. Same user-facing copy the automated path would have sent. */
-  ['POST', /^\/withdrawals\/([\w-]+)\/mark-sent$/, (req, res, p, body) => {
-    const row = store.markWithdrawalSent(p[1], typeof body.txid === 'string' ? body.txid.trim() : '');
+  ['POST', /^\/withdrawals\/([\w-]+)\/mark-sent$/, (req, res, p) => {
+    const row = store.markWithdrawalSent(p[1]);
     if (!row) return missing(res);
     const { tgUserId, ...withdrawal } = row;
     if (tgUserId) {
       void sendMessage(tgUserId, renderTemplate(store.messageTemplate('withdrawal_sent'), {
         amount: `$${(withdrawal.amount - withdrawal.fee).toFixed(2)}`, currency: withdrawal.currency, network: withdrawal.network,
-        txid: withdrawal.txid || '—',
       }));
+    }
+    return ok(res, { withdrawal });
+  }],
+  /* Refused instead: the frozen balance goes back (store.rejectWithdrawal) and
+     the user is told why, in the admin's own words. */
+  ['POST', /^\/withdrawals\/([\w-]+)\/reject$/, (req, res, p, body) => {
+    const reason = String(body.reason ?? '').trim();
+    if (!reason) return bad(res, 'reason_required');
+    const row = store.rejectWithdrawal(p[1], reason);
+    if (!row) return missing(res);
+    const { tgUserId, ...withdrawal } = row;
+    if (tgUserId) {
+      void sendMessage(tgUserId, renderTemplate(store.messageTemplate('withdrawal_rejected'), {
+        amount: `$${withdrawal.amount.toFixed(2)}`, reason,
+      }), appButton());
     }
     return ok(res, { withdrawal });
   }],
   /* Confirmed on-chain payments, which the dashboard previously had no window
      into at all — the orders table lives in the same file. */
   ['GET', /^\/payments$/, (req, res) => ok(res, store.payments())],
+  /* Settle an open order by hand — money the watcher will never see. Same
+     creditPartial() path as everything else, so nothing settles differently. */
+  ['POST', /^\/payments\/([\w-]+)\/confirm$/, async (req, res, p) => {
+    const out = await confirmOrderManually({
+      db: store.db, notify, templates: store.messageTemplate, loadGateways, orderId: p[1],
+    });
+    return out.error ? send(res, 409, { error: out.error }) : ok(res, out);
+  }],
+  /* ---- unmatched transfers ----
+     Money that landed in a gateway wallet with a wrong amount while two or more
+     orders were live on it. The amount is the only identity a payment carries,
+     so the watcher refuses to guess and parks it here (see watcher.mjs). */
+  ['GET', /^\/unmatched$/, (req, res) => ok(res, {
+    transfers: store.unmatchedTxs(),
+    openOrders: store.openOrders(),
+  })],
+  /* Books the transfer through the same creditPartial() the watcher uses —
+     same tolerance, same DM, same overpayment refund. Nothing about a
+     hand-attributed payment settles differently from an automatic one. */
+  ['POST', /^\/unmatched\/([\w-]+)\/attribute$/, async (req, res, p, body, session) => {
+    if (typeof body.orderId !== 'string' || !body.orderId) return bad(res, 'order_required');
+    const out = await attributeUnmatched({
+      db: store.db, notify, templates: store.messageTemplate, loadGateways,
+      txid: p[1], orderId: body.orderId, by: session.username,
+    });
+    return out.error ? send(res, 409, { error: out.error }) : ok(res, out);
+  }],
+  /* Not a payment — an unrelated deposit into the wallet. Marks it seen so the
+     watcher stops re-parking it on every tick. */
+  ['POST', /^\/unmatched\/([\w-]+)\/ignore$/, (req, res, p, _b, session) => {
+    const out = ignoreUnmatched({ db: store.db, txid: p[1], by: session.username });
+    return out.error ? send(res, 409, { error: out.error }) : ok(res);
+  }],
+
+  /* ---- deposit wallets ----
+     gateways.json, edited from the dashboard instead of by hand over SSH.
+     orders.mjs re-reads the file per request, so a save takes effect on the
+     next order with no restart. */
+  ['GET', /^\/gateways$/, (req, res) => ok(res, loadGateways())],
+  ['PUT', /^\/gateways$/, (req, res, _p, body) => {
+    const err = validateGateways(body);
+    if (err) return bad(res, err);
+    try {
+      return ok(res, saveGateways(body));
+    } catch (e) {
+      return send(res, 500, { error: `write_failed:${e.message}` });
+    }
+  }],
+
+  /* ---- system clock ----
+     One zone for every date the server writes or renders. Changing it changes
+     how new stamps read; strings already written keep the zone they were cut in. */
+  ['GET', /^\/settings$/, (req, res) => ok(res, { tz: getTz() })],
+  ['PUT', /^\/settings$/, (req, res, _p, body) => {
+    if (!validTz(body.tz)) return bad(res, 'invalid_timezone');
+    return ok(res, { tz: setTz(body.tz) });
+  }],
+
   ['GET', /^\/review-queue$/, (req, res) => ok(res, store.reviewQueue())],
   ['POST', /^\/review-queue\/([\w-]+)\/decision$/, (req, res, p, body) => {
     if (!['approved', 'waiting', 'rejected'].includes(body.decision)) return bad(res, 'invalid_decision');
     const decided = store.decideReview(p[1], body.decision);
     if (!decided) return missing(res);
-    /* The broker's own status message for this transition ("Manage user flow"),
-       fire-and-forget: a Telegram hiccup must not undo a decision that is
-       already committed, and sendMessage no-ops without a bot token. */
-    if (decided.telegramId) {
-      const flow = store.flowMessages(decided.brokerId).find((m) => m.key === decided.flowKey);
-      if (flow?.message) {
-        void sendMessage(decided.telegramId, renderTemplate(flow.message, {
-          name: decided.userName ?? '', broker: decided.brokerName,
-        }), appButton());
-      }
-    }
+    sendDecisionDM(decided);
     return ok(res);
   }],
 
   /* ---- subscription ---- */
   ['GET', /^\/subscribers$/, (req, res) => ok(res, store.subscribers())],
   ['GET', /^\/extra-grants$/, (req, res) => ok(res, store.grants())],
+  // Preview for the modal: `before` is Tehran wall clock (YYYY-MM-DDTHH:mm), empty = everyone active.
+  ['GET', /^\/extra-grants\/eligible$/, (req, res, _p, _b, _s, url) =>
+    ok(res, { count: store.eligibleCount(tehranMs(url.searchParams.get('before'))) })],
   ['POST', /^\/extra-grants$/, (req, res, _p, body) => {
     const days = Number(body.extraDays);
     if (!Number.isInteger(days) || days < 1) return bad(res, 'invalid_days');
-    ok(res, store.addGrant({
-      purchasedBefore: typeof body.purchasedBefore === 'string' ? body.purchasedBefore : '',
-      addedAt: body.addedAt ?? new Date().toDateString(),
-      addedTime: body.addedTime ?? '',
+    const grant = store.addGrant({
+      purchasedBefore: tehranMs(body.purchasedBefore),
       extraDays: days,
-      eligibleBefore: body.eligibleBefore ?? '',
-      eligibleTime: body.eligibleTime ?? '',
       message: body.message,
       notify: !!body.notify,
-    }));
+    });
+    /* Fire-and-forget like sendDecisionDM: the days are already booked, and
+       sendMessage no-ops without a bot token. */
+    if (grant.notify && grant.message?.trim()) {
+      for (const tgId of grant.recipients) void sendMessage(tgId, grant.message, appButton());
+    }
+    ok(res, grant);
   }],
 
   /* ---- events ---- */
@@ -284,11 +390,13 @@ const ROUTES = [
      brand-new campaign reporting "1,240 sent" was the frames' placeholder. */
   ['GET', /^\/campaigns\/([\w-]+)\/stats$/, (req, res, p) => ok(res, store.campaignEngine.stats(p[1]))],
   ['POST', /^\/campaigns$/, (req, res, _p, body) => {
-    if (typeof body.name !== 'string' || !body.name.trim()) return bad(res, 'name_required');
+    const err = campaignError(body);
+    if (err) return bad(res, err);
     ok(res, store.addCampaign(body));
   }],
   ['PUT', /^\/campaigns\/([\w-]+)$/, (req, res, p, body) => {
-    if (typeof body.name !== 'string' || !body.name.trim()) return bad(res, 'name_required');
+    const err = campaignError(body);
+    if (err) return bad(res, err);
     if (!store.updateCampaign(p[1], body)) return missing(res);
     store.setCampaignLists(p[1], Array.isArray(body.lists) ? body.lists : []);
     ok(res, { ...body, id: p[1] });
@@ -324,8 +432,22 @@ const ROUTES = [
   ['DELETE', /^\/signals\/([\w-]+)$/, (req, res, p) =>
     (store.deleteSignal(p[1]) ? ok(res) : missing(res))],
 
+  /* ---- API keys ----
+     Bearer keys for programmatic callers — the MCP server, i.e. an AI agent.
+     Cookie-only by the rule in the dispatcher: a key can never mint a key. */
+  ['GET', /^\/api-keys$/, (req, res) => ok(res, store.apiKeys())],
+  ['POST', /^\/api-keys$/, (req, res, _p, body) => {
+    const name = String(body.name ?? '').trim();
+    if (!name) return bad(res, 'name_required');
+    const scope = body.scope ?? 'write';
+    if (!API_SCOPES.includes(scope)) return bad(res, 'invalid_scope');
+    // The only response that ever carries the plaintext.
+    return ok(res, store.createApiKey(name, scope));
+  }],
+  ['DELETE', /^\/api-keys\/([\w-]+)$/, (req, res, p) =>
+    (store.revokeApiKey(p[1]) ? ok(res) : missing(res))],
+
   /* ---- chart series ---- */
-  ['GET', /^\/series\/([\w-]+)\/dims$/, (req, res, p) => ok(res, store.seriesDims(p[1]))],
   ['GET', /^\/series\/([\w-]+)$/, (req, res, p, _b, _s, url) => {
     const grain = url.searchParams.get('grain') ?? 'weekly';
     if (!GRAINS.includes(grain)) return bad(res, 'invalid_grain');
@@ -340,6 +462,9 @@ const ROUTES = [
 ];
 
 const WRITE_METHODS = new Set(['POST', 'PUT', 'PATCH']);
+
+/** [method, pattern source] for every route — the MCP server's endpoint list. */
+export const routeList = () => ROUTES.map(([method, pattern]) => [method, pattern.source]);
 
 /**
  * Handle a request if it targets /api/admin. Returns false when it does not,
@@ -370,6 +495,15 @@ export async function handleAdmin(req, res, url) {
 
   const session = store.sessionFor(req);
   if (!session) return send(res, 401, { error: 'unauthorized' }), true;
+
+  /* Every write a key makes, and every refusal — a refused write is the line
+     you most want when something looks wrong.
+     ponytail: stdout is journald on the box, greppable, no audit table. */
+  const denied = keyDenial(session, req.method, path);
+  if (session.viaKey && (denied || req.method !== 'GET')) {
+    console.log('[apikey]', session.username, req.method, path, denied ?? '');
+  }
+  if (denied) return send(res, 403, { error: denied }), true;
 
   for (const [method, pattern, handler] of ROUTES) {
     if (method !== req.method) continue;

@@ -17,10 +17,14 @@
          Scoped to before the mount (main.tsx adds `booted`): a route that
          renders nothing for a frame would otherwise flash this blue mid-app. -->
     <style>body:not(.booted) #root:empty{background:#144CCD}</style>
-    <!-- defer: a render-blocking script here holds the first paint hostage to
-         telegram.org's latency. Deferred classic scripts still run in document
-         order, i.e. before the module below, so window.Telegram is there. -->
-    <script defer src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Self-hosted copy of https://telegram.org/js/telegram-web-app.js:
+         telegram.org is unreachable from many of our users' networks (an
+         in-Telegram proxy does not cover the WebView), and without it the app
+         sees no window.Telegram and treats a real Telegram user as a Guest —
+         no identity, no start_param, no referral. Refresh with
+         `curl -o public/telegram-web-app.js https://telegram.org/js/telegram-web-app.js`.
+         defer: still runs in document order, i.e. before the module below. -->
+    <script defer src="/telegram-web-app.js"></script>
   </head>
   <body>
     <div id="root"></div>

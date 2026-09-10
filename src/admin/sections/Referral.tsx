@@ -1,12 +1,13 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   api, type CampaignStatus, type Grain, type ReferralCampaign, type ReferralRow,
 } from '../data';
 import { useAsync } from '../useAsync';
 import {
   AnimatePresence, BrokerLogo, Button, Card, Cell2, Checkbox, ColorSwatches, Confirm, DateInput,
-  EmptyState, Field, Icon, MultiSelect, PlanGlyph, Select, StatusChip,
-  Sweep, Tabs, TextInput, DragList, fmtNum, fmtPct, fmtUsd, type TabItem,
+  EmptyState, Field, Icon, MultiSelect, Select, StatusChip, Toggle,
+  Sweep, Tabs, TextInput, UserCell, DragList, fmtNum, fmtPct, fmtUsd, type TabItem,
 } from '../ui';
 import { DataTable, type Column } from '../ui/DataTable';
 import { LineChart, type Series } from '../ui/Chart';
@@ -48,7 +49,9 @@ const REFERRAL_GRAINS: { value: Grain; label: string }[] = [
 const ALL_REFERRALS = 'all';
 
 export default function Referral() {
-  const [tab, setTab] = useState<Tab>('overview');
+  // ?tab=campaigns is how the notification links straight to the campaign list.
+  const [params] = useSearchParams();
+  const [tab, setTab] = useState<Tab>(params.get('tab') === 'campaigns' ? 'campaigns' : 'overview');
   // null = closed, '' = creating, an id = editing that campaign.
   const [editing, setEditing] = useState<string | null>(null);
 
@@ -99,7 +102,16 @@ function Overview() {
 
 
   const columns: Column<ReferralRow>[] = [
-    { id: 'user', header: 'User', render: (r) => <UserWithPlan row={r} />, sort: (r) => r.name },
+    {
+      id: 'user',
+      header: 'User',
+      /* Name over the account number — the number belongs to the user, not to a
+         column of its own, and an operator reads the two together. */
+      render: (r) => (
+        <UserCell name={r.name} userNo={r.userNo} plan={r.plan} userId={r.id} />
+      ),
+      sort: (r) => r.name,
+    },
     { id: 'invited', header: 'Invited Users', align: 'right', render: (r) => fmtNum(r.invited), sort: (r) => r.invited },
     {
       id: 'plan',
@@ -156,20 +168,6 @@ function Overview() {
   );
 }
 
-/** Name over the account number — the number belongs to the user, not to a
- *  column of its own, and an operator reads the two together. */
-function UserWithPlan({ row }: { row: ReferralRow }) {
-  return (
-    <span className="a-user">
-      <PlanGlyph plan={row.plan} />
-      <span className="a-cell2">
-        <span className="at-semibold">{row.name}</span>
-        <span>{row.userNo != null ? `#${row.userNo}` : '—'}</span>
-      </span>
-    </span>
-  );
-}
-
 /* ---------------------------------------------------------------------
  * Campaign overview
  * ------------------------------------------------------------------- */
@@ -212,20 +210,22 @@ function CampaignOverview({
       header: 'Plan',
       group: 'Referral Activity',
       align: 'center',
-      render: (c) => <Cell2 top={<b>{c.planCount} ({c.planTotal})</b>} bottom={fmtPct((c.planCount / c.planTotal) * 100)} />,
+      render: (c) => <Cell2 top={<b>{c.planCount} ({c.planTotal})</b>} bottom={fmtPct(c.planTotal ? (c.planCount / c.planTotal) * 100 : 0)} />,
     },
     {
       id: 'cashback',
       header: 'Cashback',
       group: 'Referral Activity',
       align: 'center',
-      render: (c) => <Cell2 top={<b>{c.cashbackCount} ({c.cashbackTotal})</b>} bottom={fmtPct((c.cashbackCount / c.cashbackTotal) * 100)} />,
+      render: (c) => <Cell2 top={<b>{c.cashbackCount} ({c.cashbackTotal})</b>} bottom={fmtPct(c.cashbackTotal ? (c.cashbackCount / c.cashbackTotal) * 100 : 0)} />,
     },
     { id: 'revenue', header: 'Revenue', group: 'Revenue Activity', align: 'right', render: (c) => fmtUsd(c.revenue), sort: (c) => c.revenue },
     { id: 'shared', header: 'Revenue Shared', group: 'Revenue Activity', align: 'right', render: (c) => <span className="at-neg">-{fmtUsd(Math.abs(c.revenueShared))}</span> },
     { id: 'net', header: 'Revenue Net', group: 'Revenue Activity', align: 'right', render: (c) => <span className="at-pos">{fmtUsd(c.revenueNet)}</span> },
-    { id: 'planShare', header: 'Plan', group: 'Share Percentage', align: 'center', render: (c) => `${c.planShare}%` },
-    { id: 'cbShare', header: 'Cashback', group: 'Share Percentage', align: 'center', render: (c) => `${c.cashbackShare}%` },
+    /* A campaign shares one of the two, so the other reads as a dash rather
+       than a 0% that looks like a rate somebody typed. */
+    { id: 'planShare', header: 'Plan', group: 'Share Percentage', align: 'center', render: (c) => (c.planShare ? `${c.planShare}%` : <span className="at-muted">—</span>) },
+    { id: 'cbShare', header: 'Cashback', group: 'Share Percentage', align: 'center', render: (c) => (c.cashbackShare ? `${c.cashbackShare}%` : <span className="at-muted">—</span>) },
   ];
 
   return (
@@ -375,8 +375,10 @@ function CreateCampaign({ campaignId, onBack }: { campaignId?: string; onBack: (
 
   const [name, setName] = useState('');
   const [ownerNo, setOwnerNo] = useState('');
-  const [planShare, setPlanShare] = useState('');
-  const [cashbackShare, setCashbackShare] = useState('');
+  /* One share per campaign: the toggle beside User ID says which revenue it
+     comes out of, and the single field below carries the percentage. */
+  const [shareCashback, setShareCashback] = useState(false);
+  const [share, setShare] = useState('');
   const [endDate, setEndDate] = useState('');
   const [display, setDisplay] = useState<DisplayRow[] | null>(null);
   const [excluded, setExcluded] = useState<string[]>([]);
@@ -390,8 +392,11 @@ function CreateCampaign({ campaignId, onBack }: { campaignId?: string; onBack: (
     setHydrated(true);
     setName(existing.name);
     setOwnerNo(existing.ownerUserNo != null ? String(existing.ownerUserNo) : '');
-    setPlanShare(String(existing.planShare));
-    setCashbackShare(String(existing.cashbackShare));
+    // Campaigns saved before the toggle carry both numbers; whichever is set wins.
+    const cashback = existing.shareKind ? existing.shareKind === 'cashback'
+      : Boolean(existing.cashbackShare && !existing.planShare);
+    setShareCashback(cashback);
+    setShare(String((cashback ? existing.cashbackShare : existing.planShare) || ''));
     setEndDate(existing.endDate ?? '');
     if (existing.display) setDisplay(existing.display);
     if (existing.excluded) setExcluded(existing.excluded);
@@ -418,11 +423,15 @@ function CreateCampaign({ campaignId, onBack }: { campaignId?: string; onBack: (
        Sending `doc: {...}` buried these one level down, so the broker display,
        the excluded list and the owner were written and then never read — the
        editor reopened empty every time. */
+    /* No owner, no share: the links still count arrivals and still scope the
+       broker list, but there is nobody to pay. */
+    const pct = owner ? Number(share) || 0 : 0;
     const payload = {
       name: name.trim(),
       linkCode: existing?.linkCode ?? null,
-      planShare: Number(planShare) || 0,
-      cashbackShare: Number(cashbackShare) || 0,
+      shareKind: (shareCashback ? 'cashback' : 'plan') as 'cashback' | 'plan',
+      planShare: shareCashback ? 0 : pct,
+      cashbackShare: shareCashback ? pct : 0,
       endDate,
       display: rows,
       excluded,
@@ -487,22 +496,27 @@ function CreateCampaign({ campaignId, onBack }: { campaignId?: string; onBack: (
                   : 'Leave empty for a house campaign that belongs to no account.'
             }
           >
-            <TextInput value={ownerNo} onChange={setOwnerNo} placeholder="e.g. 1000" />
-          </Field>
-          <Field label="Plan Revenue Share">
-            <span className="a-row" style={{ gap: 8, flexWrap: 'nowrap' }}>
-              <span className="a-event__icon" style={{ background: '#e7edfa', color: 'var(--primary-colors-900)' }}>
-                <Icon name="award" size={18} />
-              </span>
-              <TextInput value={planShare} onChange={setPlanShare} placeholder="Enter percentage" type="number" suffix="%" />
+            <span className="a-row" style={{ gap: 12, flexWrap: 'nowrap' }}>
+              <TextInput value={ownerNo} onChange={setOwnerNo} placeholder="e.g. 1000" />
+              <Toggle checked={shareCashback} onChange={setShareCashback} label={<span className="at-13">Share cashback</span>} />
             </span>
           </Field>
-          <Field label="Cashback Revenue Share">
+          <Field
+            label={shareCashback ? 'Cashback Revenue Share' : 'Plan Revenue Share'}
+            hint={owner
+              ? `${owner.name} earns this share of every ${shareCashback ? 'cashback payout' : 'plan'} bought by someone who joined on this campaign's link.`
+              : 'Enter a User ID above to share revenue with an account.'}
+          >
             <span className="a-row" style={{ gap: 8, flexWrap: 'nowrap' }}>
-              <span className="a-event__icon" style={{ background: '#e9f9f1', color: '#16a34a' }}>
-                <Icon name="briefcase" size={18} />
+              <span
+                className="a-event__icon"
+                style={shareCashback
+                  ? { background: '#e9f9f1', color: '#16a34a' }
+                  : { background: '#e7edfa', color: 'var(--primary-colors-900)' }}
+              >
+                <Icon name={shareCashback ? 'briefcase' : 'award'} size={18} />
               </span>
-              <TextInput value={cashbackShare} onChange={setCashbackShare} placeholder="Enter percentage" type="number" suffix="%" />
+              <TextInput value={share} onChange={setShare} placeholder="Enter percentage" type="number" suffix="%" disabled={!owner} />
             </span>
           </Field>
           <Field label="End Date" optional>
@@ -525,7 +539,7 @@ function CreateCampaign({ campaignId, onBack }: { campaignId?: string; onBack: (
               const b = brokerOf(r.brokerId);
               return (
                 <>
-                  <BrokerLogo name={b?.name ?? r.brokerId} color={b?.color} />
+                  <BrokerLogo name={b?.name ?? r.brokerId} logo={b?.logoUrl} color={b?.color} />
                   <span className="at-14 at-semibold" style={{ flex: 1 }}>{b?.name ?? r.brokerId}</span>
                   <span style={{ width: 60 }}>
                     {/* Turning the badge off clears both halves, so no row can
@@ -593,7 +607,7 @@ function CreateCampaign({ campaignId, onBack }: { campaignId?: string; onBack: (
                     onClick={() => include(id)}
                     aria-label={`Show ${b.name} again`}
                   />
-                  <BrokerLogo name={b.name} color={b.color} />
+                  <BrokerLogo name={b.name} logo={b.logoUrl} color={b.color} />
                   <span className="at-14 at-semibold" style={{ flex: 1 }}>{b.name}</span>
                   <StatusChip status={b.status} />
                 </div>

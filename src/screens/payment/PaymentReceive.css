@@ -133,6 +133,25 @@
   height: 148px;
 }
 
+.scr-receive-qr-wrap {
+  position: relative;
+  width: 148px;
+  height: 148px;
+}
+
+/* White plate behind the coin so it reads against the QR's dark modules
+   instead of colliding with them — matches the quiet-zone padding above. */
+.scr-receive-qr-coin {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--base-color-white);
+  padding: 6px;
+  box-sizing: content-box;
+}
+
 .scr-receive-rows {
   display: flex;
   flex-direction: column;

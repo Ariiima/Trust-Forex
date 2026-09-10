@@ -4,11 +4,11 @@ import usdt from '../../assets/crypto/usdt.png';
 import sol from '../../assets/crypto/sol.png';
 import usdc from '../../assets/crypto/usdc.png';
 import eth from '../../assets/crypto/eth.png';
-import bnbSmartChain from '../../assets/crypto/bnb-smart-chain.png';
+import bnbSmartChain from '../../assets/crypto/bnb-smart-chain.svg';
 import tron from '../../assets/crypto/tron.png';
 import ethereumErc20 from '../../assets/crypto/ethereum-erc20.png';
 import solana from '../../assets/crypto/solana.png';
-import ton from '../../assets/crypto/ton.png';
+import ton from '../../assets/crypto/ton.svg';
 
 /**
  * Display metadata for the live payment options served by GET /api/gateways,
@@ -60,6 +60,17 @@ export function currencyOptions(gateways: Gateway[]): CurrencyOption[] {
     }
     return [{ id: g.currency, symbol: g.currency, name: meta.name, icon: meta.icon }];
   });
+}
+
+/** Icon for a currency code, e.g. for stamping the coin over a QR center. */
+export function currencyIcon(currency: string | undefined): string | undefined {
+  return currency ? CURRENCY_META[currency]?.icon : undefined;
+}
+
+/** Icon for a network string, e.g. for listing wallets in the admin. Undefined
+ *  where the app has no art for it — the picker falls back to the coin's own. */
+export function networkIcon(network: string | undefined): string | undefined {
+  return network ? NETWORK_META[network]?.icon : undefined;
 }
 
 /** Networks of one gateway currency → picker rows. Unknown networks keep the

@@ -9,8 +9,11 @@ import cashbackEmoji from './assets/emoji/cashback.json?url'
 import homeExpiredEmoji from './assets/emoji/home-expired.json?url'
 import homeEmoji from './assets/emoji/home.json?url'
 import referralEmoji from './assets/emoji/referral.json?url'
-import { ApiError, cachedGateways, createOrder, getFlags, getGateways, getMe, getPromos, getSignals, selectGateway } from './api/client'
-import type { Gateway } from './api/client'
+import {
+  ApiError, cachedGateways, createOrder, getBrokers, getCashbackHistory, getEarningsWeekly, getFlags, getGateways, getMe,
+  getMyReferral, getPromos, getReferrals, getSignals, getWithdrawals, selectGateway,
+} from './api/client'
+import type { Gateway, Promo } from './api/client'
 import Home from './screens/home/Home'
 import ChoosePlan from './screens/plans/ChoosePlan'
 import Checkout from './screens/plans/Checkout'
@@ -25,6 +28,7 @@ import EarningMain from './screens/earning/EarningMain'
 import WithdrawCurrency from './screens/earning/WithdrawCurrency'
 import WithdrawAmount from './screens/earning/WithdrawAmount'
 import Splash from './screens/splash/Splash'
+import NotifySheet from './screens/home/NotifySheet'
 import HomeSkeleton from './screens/home/HomeSkeleton'
 
 const TAB_ROUTES: Partial<Record<NavigationTab, string>> = {
@@ -60,7 +64,9 @@ function useSlideNav() {
 
 function HomeRoute() {
   const nav = useSlideNav()
+  const [q] = useSearchParams()
   return (
+    <>
     <Home
       /* `checkout?plan=gold` — the picked plan rides along so checkout doesn't
          fall back to its silver default. */
@@ -70,6 +76,8 @@ function HomeRoute() {
       }}
       onTabChange={(tab) => TAB_ROUTES[tab] && nav(TAB_ROUTES[tab])}
     />
+    <NotifySheet force={q.get('sheet') === 'notify'} />
+    </>
   )
 }
 
@@ -303,42 +311,47 @@ function WithdrawAmountQ() {
    against it, covering the field being filled in. `is-typing` on <body> is what
    index.css hides them by.
 
-   focusin/focusout rather than visualViewport geometry: an editable element
-   holding focus IS the "keyboard is up" signal, and it needs no threshold to
-   guess at. A hardware keyboard hides the bar too, which costs nothing.
+   The signal is the visual viewport shrinking while an editable element holds
+   focus — that IS "the on-screen keyboard is up". Focus alone is not enough: on
+   a desktop or laptop (Telegram Desktop, a browser tab) a focused field brings
+   no keyboard, and hiding the CTA there just loses the button. Focus is still
+   the exit signal: focusout drops the class at once instead of waiting for the
+   keyboard's close animation to report a resize.
 
-   Telegram's in-app keyboard can dismiss (swipe-down / system "done") without
-   blurring the field, so focusout never fires and the bar stays hidden until
-   a stray tap elsewhere. visualViewport resize is the fallback signal for
-   "keyboard closed while still focused": once it's back to full height, drop
-   the class even if focus never left. */
+   Telegram's in-app keyboard can also dismiss (swipe-down / system "done")
+   without blurring the field, so focusout never fires; the same resize
+   listener catches that — back to full height, class off, focus or not.
+
+   The baseline is re-read from every resize that happens with no field
+   focused, so an expand(), a rotation or Telegram's own sheet growing does
+   not leave a stale "full" height that later reads as a keyboard. Not live
+   window.innerHeight: Telegram's WebView shrinks that along with the keyboard
+   too, so the diff would never show. */
 function useTypingClass(): void {
   useEffect(() => {
     const editable = (el: EventTarget | null) =>
       el instanceof HTMLElement &&
       (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
-    const on = (e: FocusEvent) => editable(e.target) && document.body.classList.add('is-typing');
     // Guard on the incoming element too: moving between two fields fires
     // focusout before focusin, which would flicker the bar back for a frame.
     const off = (e: FocusEvent) =>
       !editable(e.relatedTarget) && document.body.classList.remove('is-typing');
-    document.addEventListener('focusin', on);
     document.addEventListener('focusout', off);
 
     const vv = window.visualViewport;
-    // Baseline captured once, at mount — Telegram's WebView resizes
-    // window.innerHeight along with the keyboard too, so comparing against
-    // *live* innerHeight never shows a diff and this never fires.
-    const fullHeight = vv?.height ?? window.innerHeight;
+    let fullHeight = vv?.height ?? window.innerHeight;
     const onResize = () => {
       if (!vv) return;
-      const shrunk = fullHeight - vv.height > 100;
-      document.body.classList.toggle('is-typing', shrunk && editable(document.activeElement));
+      if (!editable(document.activeElement)) {
+        fullHeight = vv.height;
+        document.body.classList.remove('is-typing');
+        return;
+      }
+      document.body.classList.toggle('is-typing', fullHeight - vv.height > 100);
     };
     vv?.addEventListener('resize', onResize);
 
     return () => {
-      document.removeEventListener('focusin', on);
       document.removeEventListener('focusout', off);
       vv?.removeEventListener('resize', onResize);
       document.body.classList.remove('is-typing');
@@ -405,6 +418,7 @@ function preloadImage(url: string): Promise<void> {
   img.src = url
   return img.decode().catch(() => {})
 }
+const decodePromos = (ps: Promo[]) => Promise.all(ps.map((p) => p.image && preloadImage(p.image)))
 
 function Boot({ children }: { children: ReactNode }) {
   const still = useReducedMotion()
@@ -416,7 +430,7 @@ function Boot({ children }: { children: ReactNode }) {
       // What home reads. Everything else is a tab away, i.e. its own fetch.
       getMe(),
       getSignals(),
-      getPromos('subscription'),
+      getPromos('subscription').then(decodePromos),
       // Same list for everyone, so warming it here means the payment flow's
       // `scr-route-hold` blank frame never has to show mid-transition.
       getGateways(),
@@ -425,6 +439,28 @@ function Boot({ children }: { children: ReactNode }) {
       // tab this session hits their `scr-route-hold` frame for a full
       // round trip — near-white (#F1F1F1), so it reads as a blank flash.
       getFlags(),
+      // The whole broker catalogue, preview + flow copy included (small,
+      // shared by everyone) — so opening a broker detail page never has its
+      // own fetch to wait on, and never shows placeholder specs. Its admin-
+      // uploaded logos ride along as data URLs: decoded here too, or the
+      // first broker card still pops in logo-less.
+      getBrokers().then((bs) => Promise.all(bs.map((b) => b.logoUrl && preloadImage(b.logoUrl)))),
+      // Cashback/Referral tabs' own promo sections — 'subscription' above only
+      // covers Home. Unwarmed, first tap into either tab shows an empty
+      // carousel until this lands. Same decode treatment for their art.
+      getPromos('cashback').then(decodePromos),
+      getPromos('referral').then(decodePromos),
+      // Referral tab's own code/links and invitee list — unwarmed, first tap
+      // into Referral shows empty copy rows/list for a round trip.
+      getMyReferral(),
+      getReferrals(),
+      // Earning tab's weekly chart — unwarmed, first tap shows a synthetic
+      // flat placeholder series until this lands.
+      getEarningsWeekly(),
+      // The two history sheets — unwarmed, each opens on a blank list for a
+      // round trip (a visible beat on a phone).
+      getCashbackHistory().then((h) => Promise.all(h.map((e) => e.brokerLogo && preloadImage(e.brokerLogo)))),
+      getWithdrawals(),
       /* Every animated emoji in the app, parsed into memory while the splash is
          up: ~280KB of Lottie JSON, paid for here once, after which the screens
          that use them mount instantly instead of each showing a skeleton. */

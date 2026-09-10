@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { api, type BrokerPreview, type DraftRebate, type FlowMessage, type RebateRow } from '../data';
+import { api, type AdminUser, type BrokerPreview, type DraftRebate, type FlowMessage, type RebateRow } from '../data';
 import { useAsync } from '../useAsync';
 import {
   AnimatePresence, BrokerLogo, Button, Card, Cell2, Confirm, CopyValue, EmptyState, Field,
   Icon, IconButton, RichText, StatusChip, Sweep, Tabs,
-  UserCell, fmtUsd, type TabItem,
+  UserCell, fmtUsd, type PlanId, type TabItem,
 } from '../ui';
 import { DataTable, type Column } from '../ui/DataTable';
 import { BrokerForm, badgeIncomplete } from './BrokerForm';
@@ -28,7 +28,7 @@ export default function BrokerManage() {
     {
       id: 'all',
       label: 'All users',
-      count: broker ? (broker.activeUsers + broker.pendingUsers).toLocaleString() : undefined,
+      count: broker?.totalUsers.toLocaleString(),
     },
     { id: 'active', label: 'Active users', count: broker?.activeUsers.toLocaleString() },
     { id: 'flow', label: 'Manage user flow' },
@@ -41,7 +41,7 @@ export default function BrokerManage() {
       .then(() => nav('/brokers'))
       .catch((err) => {
         setDeleteError(err?.message === 'broker_in_use'
-          ? 'This broker still has active or pending users, or a payout waiting to publish — clear those first.'
+          ? 'This broker still has a pending review request or a payout waiting to publish — clear those first.'
           : 'Could not delete. Try again.');
         setDeleting(false);
       });
@@ -54,7 +54,7 @@ export default function BrokerManage() {
         <Tabs items={tabs} value={tab} onChange={setTab} />
         {broker && (
           <span className="a-row a-spacer" style={{ gap: 8 }}>
-            <BrokerLogo name={broker.name} color={broker.color} size={30} />
+            <BrokerLogo name={broker.name} logo={broker.logoUrl} color={broker.color} size={30} />
             <span className="at-16 at-semibold">{broker.name}</span>
             <StatusChip status={broker.status} />
           </span>
@@ -69,7 +69,7 @@ export default function BrokerManage() {
 
       <Sweep key={tab}>
       {tab === 'all' && <AllUsers brokerId={brokerId} />}
-      {tab === 'active' && <ActiveUsers brokerId={brokerId} shareRate={broker?.shareRate ?? 0.3} />}
+      {tab === 'active' && <ActiveUsers brokerId={brokerId} />}
       {tab === 'flow' && <ManageFlow brokerId={brokerId} />}
       </Sweep>
 
@@ -98,12 +98,28 @@ function AllUsers({ brokerId }: { brokerId: string }) {
   const all = loadedUsers ?? [];
   // Scoped to this broker — the tab is inside a broker, so a platform-wide list
   // would contradict the count in its own header.
-  const users = all.filter((u) => u.broker === brokerId);
+  // Same decision as Brokers → Recent users, kept behind one click so a status
+  // is never changed by a stray click on a read-only list.
+  const [openRow, setOpenRow] = useState<string | null>(null);
+  const [override, setOverride] = useState<Record<string, AdminUser['status']>>({});
+  const users = all
+    .filter((u) => u.broker === brokerId)
+    .map((u) => (override[u.id] ? { ...u, status: override[u.id] } : u));
   const rows = users;
+
+  const decide = (u: AdminUser, outcome: 'approved' | 'waiting' | 'rejected') => {
+    const status = ({ approved: 'active', rejected: 'rejected', waiting: 'pending' } as const)[outcome];
+    setOverride((o) => ({ ...o, [u.id]: status }));
+    setOpenRow(null);
+    api.decideReviewForUser(u.id, brokerId, outcome).catch(() => setOverride((o) => {
+      const { [u.id]: _dropped, ...rest } = o;
+      return rest;
+    }));
+  };
 
   const columns: Column<(typeof users)[number]>[] = [
     // The account number under the name, never users.id — see UserDetail.
-    { id: 'user', header: 'User', render: (u) => <UserCell name={u.name} sub={u.userNo != null ? `#${u.userNo}` : u.id} plan={u.plan} /> },
+    { id: 'user', header: 'User', render: (u) => <UserCell name={u.name} userNo={u.userNo} plan={u.plan} userId={u.id} /> },
     {
       id: 'email',
       header: 'Email / Broker ID',
@@ -112,7 +128,21 @@ function AllUsers({ brokerId }: { brokerId: string }) {
     { id: 'status', header: 'Status', render: (u) => <StatusChip status={u.status} /> },
     { id: 'total', header: 'Total Rebate', align: 'right', render: (u) => (u.totalRebate == null ? <span className="at-muted">—</span> : fmtUsd(u.totalRebate)), sort: (u) => u.totalRebate ?? -1 },
     { id: 'lastMonth', header: 'Last Month Rebate', align: 'right', render: (u) => (u.lastMonthRebate == null ? <span className="at-muted">—</span> : fmtUsd(u.lastMonthRebate)), sort: (u) => u.lastMonthRebate ?? -1 },
-    { id: 'last', header: 'Last action', align: 'right', render: (u) => <Cell2 top={u.lastActionAt.split(' · ')[0]} bottom={u.lastActionAt.split(' · ')[1]} /> },
+    {
+      id: 'actions',
+      header: 'Actions',
+      align: 'right',
+      render: (u) => (openRow !== u.id ? (
+        <Button size="sm" variant="ghost" onClick={() => setOpenRow(u.id)}>Change…</Button>
+      ) : (
+        <span className="a-row" style={{ gap: 8, justifyContent: 'flex-end' }}>
+          <Button size="sm" variant="success" onClick={() => decide(u, 'approved')}>Approve</Button>
+          <Button size="sm" variant="warn" onClick={() => decide(u, 'waiting')}>Waiting for deposit</Button>
+          <Button size="sm" variant="danger" onClick={() => decide(u, 'rejected')}>Reject</Button>
+          <Button size="sm" variant="plain" onClick={() => setOpenRow(null)}>Cancel</Button>
+        </span>
+      )),
+    },
   ];
 
   return (
@@ -135,13 +165,15 @@ function AllUsers({ brokerId }: { brokerId: string }) {
  * Active users → rebate drafting
  * ------------------------------------------------------------------- */
 
-function ActiveUsers({ brokerId, shareRate }: { brokerId: string; shareRate: number }) {
+/** Mirrors ledger.TIER_PCT — the entered figure is already net of the broker's
+ *  own cut, so the split here is the user's plan, not the broker's shareRate. */
+const TIER_PCT: Record<PlanId | 'none', number> = {
+  none: 0.1, standard: 0.1, silver: 0.15, gold: 0.2, diamond: 0.3,
+};
+
+function ActiveUsers({ brokerId }: { brokerId: string }) {
   const loadedRows = useAsync(() => api.rebateRows(brokerId), [brokerId]);
-  // Publishing moves money from drafted into each row's own total, which the
-  // rows query owns — overridden here so publish doesn't leave "Total Rebate"
-  // frozen at its pre-publish figure until the page reloads.
-  const [rowsOverride, setRowsOverride] = useState<RebateRow[] | null>(null);
-  const loaded = rowsOverride ?? loadedRows ?? [];
+  const loaded = loadedRows ?? [];
   const loadedDrafts = useAsync(() => api.rebateDrafts(brokerId), [brokerId]);
   const [amounts, setAmounts] = useState<Record<string, string>>({});
   const [edited, setEdited] = useState<DraftRebate[] | null>(null);
@@ -160,14 +192,21 @@ function ActiveUsers({ brokerId, shareRate }: { brokerId: string; shareRate: num
 
   const shownRows = loaded;
 
-  const entered = (r: RebateRow) => Number(amounts[r.userId] ?? r.lastWeekRebate ?? 0);
-  const shared = (r: RebateRow) => Number((entered(r) * shareRate).toFixed(2));
+  // Each week starts blank — the previous week's figure is history, not a default.
+  const entered = (r: RebateRow) => Number(amounts[r.userId] ?? 0);
+  // A typed 0 is a real week (the user traded nothing) and must be draftable;
+  // only an empty box is "nothing entered", so gate on the text, not the number.
+  const hasAmount = (r: RebateRow) => {
+    const raw = amounts[r.userId]?.trim();
+    return !!raw && Number.isFinite(Number(raw)) && Number(raw) >= 0;
+  };
+  const shared = (r: RebateRow) => Number((entered(r) * (TIER_PCT[r.plan] ?? 0.1)).toFixed(2));
 
   // Optimistic: the row lands in the draft list immediately and the server
   // reply (which owns the share calculation) overwrites it when it arrives.
   const addToDraft = (r: RebateRow) => {
+    if (!hasAmount(r)) return;
     const value = entered(r);
-    if (!value) return;
     const optimistic: DraftRebate = {
       ...r, lastWeekRebate: value, sharedRebate: shared(r), actionDate: 'now',
     };
@@ -180,7 +219,7 @@ function ActiveUsers({ brokerId, shareRate }: { brokerId: string; shareRate: num
 
   const editDraft = (userId: string, value: number) => {
     setDraft((d) => d.map((x) => (x.userId === userId
-      ? { ...x, lastWeekRebate: value, sharedRebate: Number((value * shareRate).toFixed(2)) }
+      ? { ...x, lastWeekRebate: value, sharedRebate: Number((value * (TIER_PCT[x.plan] ?? 0.1)).toFixed(2)) }
       : x)));
     api.addRebateDraft(brokerId, userId, value).catch(() => {});
   };
@@ -205,7 +244,7 @@ function ActiveUsers({ brokerId, shareRate }: { brokerId: string; shareRate: num
     });
 
   const activeColumns: Column<RebateRow>[] = [
-    { id: 'user', header: 'User', render: (r) => <UserCell name={r.name} sub={r.userId} plan={r.plan} /> },
+    { id: 'user', header: 'User', render: (r) => <UserCell name={r.name} userNo={r.userNo} plan={r.plan} userId={r.userId} /> },
     {
       id: 'email',
       header: 'Email Broker ID',
@@ -217,24 +256,37 @@ function ActiveUsers({ brokerId, shareRate }: { brokerId: string; shareRate: num
       header: 'Last Week Rebate',
       align: 'center',
       width: 170,
-      render: (r) => (
-        <input
-          className="a-input"
-          type="number"
-          step="0.01"
-          min="0"
-          value={amounts[r.userId] ?? (r.lastWeekRebate ?? '')}
-          onChange={(e) => setAmounts((a) => ({ ...a, [r.userId]: e.target.value }))}
-          style={{ height: 34, textAlign: 'center' }}
-          aria-label={`Last week rebate for ${r.name}`}
-        />
-      ),
+      // ponytail: once drafted, the draft list's own pencil is the only way to
+      // change the number — two live editors for one value is how they diverge.
+      render: (r) => {
+        // The draft's own figure, not `amounts` — that map is empty after a
+        // reload and the row's stored value stays 0 until publish.
+        const d = draft.find((x) => x.userId === r.userId);
+        return d ? (
+          <span>{fmtUsd(d.lastWeekRebate)}</span>
+        ) : (
+          <input
+            className="a-input"
+            type="number"
+            step="0.01"
+            min="0"
+            value={amounts[r.userId] ?? ''}
+            onChange={(e) => setAmounts((a) => ({ ...a, [r.userId]: e.target.value }))}
+            style={{ height: 34, textAlign: 'center' }}
+            aria-label={`Last week rebate for ${r.name}`}
+          />
+        );
+      },
     },
     {
       id: 'shared',
       header: 'Shared Rebate',
       align: 'right',
-      render: (r) => <span className={shared(r) ? 'at-neg' : undefined}>{fmtUsd(shared(r))}</span>,
+      // Drafted rows quote the draft's own share — the server owns that number.
+      render: (r) => {
+        const v = draft.find((x) => x.userId === r.userId)?.sharedRebate ?? shared(r);
+        return <span className={v ? 'at-neg' : undefined}>{fmtUsd(v)}</span>;
+      },
     },
     {
       id: 'action',
@@ -244,7 +296,7 @@ function ActiveUsers({ brokerId, shareRate }: { brokerId: string; shareRate: num
         <Button
           size="sm"
           variant="success"
-          disabled={!entered(r) || draft.some((d) => d.userId === r.userId)}
+          disabled={!hasAmount(r) || draft.some((d) => d.userId === r.userId)}
           onClick={() => addToDraft(r)}
         >
           {draft.some((d) => d.userId === r.userId) ? 'In draft' : 'Add to Draft'}
@@ -261,7 +313,7 @@ function ActiveUsers({ brokerId, shareRate }: { brokerId: string; shareRate: num
       header: 'User',
       render: (r) => (
         <span className={committed?.userId === r.userId ? 'a-commit' : undefined} style={{ display: 'block' }}>
-          <UserCell name={r.name} sub={r.userId} plan={r.plan} />
+          <UserCell name={r.name} userNo={r.userNo} plan={r.plan} userId={r.userId} />
         </span>
       ),
     },
@@ -327,7 +379,7 @@ function ActiveUsers({ brokerId, shareRate }: { brokerId: string; shareRate: num
     <>
       <Card
         title={`All active users (${shownRows.length})`}
-        subtitle={`Shared rebate is calculated at this broker's ${Math.round(shareRate * 100)}% share.`}
+        subtitle="Shared rebate is each user's own plan share — 10 / 15 / 20 / 30%."
         flush
       >
         <DataTable
@@ -343,20 +395,8 @@ function ActiveUsers({ brokerId, shareRate }: { brokerId: string; shareRate: num
       <Card
         title={`Draft Rebate List (${draft.length})`}
         flush
-        actions={draft.length > 0 && (
-          <Button
-            variant="primary"
-            icon="send"
-            onClick={() => api.publishRebateDrafts(brokerId)
-              .then(() => {
-                setDraft([]);
-                api.rebateRows(brokerId).then(setRowsOverride);
-              })
-              .catch(() => {})}
-          >
-            Publish draft
-          </Button>
-        )}
+        /* ponytail: no per-broker publish — Brokers page's "Publish all" is the
+           only way drafts go out, so a half-published week can't happen. */
       >
         <DataTable
           columns={draftColumns}

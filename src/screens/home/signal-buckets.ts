@@ -21,8 +21,8 @@ export const PERIODS: Period[] = ['Weekly', 'Monthly', 'Yearly'];
     and keep the newest `n` buckets. */
 export const OVERVIEW: Record<Period, { fold: Period; n: number; label: string }> = {
   Weekly: { fold: 'Weekly', n: 4, label: 'Last 4 weeks overview' },
-  Monthly: { fold: 'Monthly', n: 3, label: 'Last 3 months overview' },
-  Yearly: { fold: 'Monthly', n: 12, label: 'Last 12 months overview' },
+  Monthly: { fold: 'Monthly', n: 3, label: 'Last 3 Months overview' },
+  Yearly: { fold: 'Monthly', n: 12, label: 'Last 12 Months overview' },
 };
 
 /* A phone plot is 296px wide: past ~30 points the gaps fall under 10px and the
@@ -75,10 +75,8 @@ export function bucketsFor(results: readonly SignalResult[], period: Period, tp:
     /* An unparseable row still plots, as its own point under its own label:
        dropping a week of published results because someone reworded the period
        string would quietly understate the totals. */
-    // Weekly keys on the row's own date range, not the parsed week number: a
-    // handful of times a year two distinct weeks share one "Month · Week 1"
-    // label (results-math.ts's weekOf, admin side), and keying on the number
-    // would fold two different weeks' counts into a single chart point.
+    // Weekly keys on the row's own date range, not the parsed week number —
+    // cheap insurance against two weeks ever folding into one chart point.
     const key = !p
       ? r.period
       : period === 'Yearly'

@@ -6,7 +6,8 @@
      padding      16 sides, 16 top, 24 bottom
      header row   157 -> 189   (32 = the 16/32 title line box)
      dashed rule  200.5        (1px #E4E4E4, 4 on / 4 off, phase -2)
-     list         217 -> 684   (467 tall, 328 wide incl. a 2px rail)
+     list         217 -> 684   (467 tall, 328 wide incl. a 2px rail —
+                                the rail is live, see useScrollRail)
      CTA          708 -> 752   (44 tall, 328 wide, 24 above and below)
    ===================================================================== */
 
@@ -61,21 +62,26 @@
 }
 
 /* ---- option list ------------------------------------------------------ */
-.scr-chgcur-list {
+/* Cards + the design's 2px rail side by side: 8px clear of the cards + the
+   2px rail is what makes the options 318 wide rather than the 328 body. */
+.scr-chgcur-body {
   flex: 1 1 auto;
   min-height: 0;
+  display: flex;
+  gap: 8px;
+}
+
+.scr-chgcur-list {
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-12);
   margin: 0;
-  /* 8px clear of the cards + the 2px rail: this is what makes the options
-     318 wide rather than the 328 of the scroll area. */
-  padding: 0 10px 0 0;
+  padding: 0;
   list-style: none;
-  overflow-y: scroll;
-  scroll-timeline-name: --scr-chgcur-scroll;
-  scroll-timeline-axis: y;
-  /* The rail below is drawn by hand; the UA bar would double it. */
+  overflow-y: auto;
+  /* The rail beside it is the scrollbar; the UA bar would double it. */
   scrollbar-width: none;
 }
 
@@ -84,47 +90,24 @@
 }
 
 /* Scroll rail — the frame draws a 2px #F1F1F1 track the full height of the
-   viewport with a 200px #E4E4E4 thumb, drawn against the right edge of the
-   sheet's 16px gutter. It is hand-drawn because this Chromium ships overlay
-   scrollbars: ::-webkit-scrollbar reserves no width and paints nothing. */
-.scr-chgcur-sheet::before,
-.scr-chgcur-sheet::after {
-  content: '';
-  position: absolute;
-  top: 76px; /* = the list's own top, 217 on screen */
-  right: var(--spacing-16);
+   list with a #E4E4E4 thumb (200px in the still). Same live rail as the
+   history sheets: thumb height/offset come from useScrollRail, so it moves
+   with the real scroll position instead of being a fixed decoration. */
+.scr-chgcur-rail {
+  position: relative;
+  flex: none;
+  align-self: stretch;
   width: 2px;
   border-radius: var(--radius-infinity);
-}
-
-.scr-chgcur-sheet::before {
-  height: 467px;
   background: var(--bg-colors-container-s);
 }
 
-.scr-chgcur-sheet::after {
-  height: 200px;
+.scr-chgcur-rail-thumb {
+  position: absolute;
+  left: 0;
+  width: 2px;
+  border-radius: var(--radius-infinity);
   background: var(--stroke-colors-default);
-}
-
-/* Drive the thumb off the list's own scroll position where the engine can
-   (Chrome 116+). Guarded: without a scroll timeline `animation` would fall
-   back to the document timeline and snap straight to the end frame. */
-@supports (animation-timeline: scroll()) {
-  .scr-chgcur-sheet {
-    timeline-scope: --scr-chgcur-scroll;
-  }
-
-  .scr-chgcur-sheet::after {
-    animation: scr-chgcur-thumb linear both;
-    animation-timeline: --scr-chgcur-scroll;
-  }
-
-  @keyframes scr-chgcur-thumb {
-    to {
-      transform: translateY(267px); /* 467 track - 200 thumb */
-    }
-  }
 }
 
 /* Same 112 / 116-from-the-third rule as the step-1 picker (1379:6901); the

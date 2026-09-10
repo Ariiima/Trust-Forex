@@ -1,0 +1,99 @@
+/* Landing-page scale. The main Cashback page consumes this file; future pages use the same roles.
+   Every value is copied verbatim from design/reference/wireframe-cashback-v24.html (founder ruling
+   2026-09-07: the wireframe's sizes, exactly). A page never writes a font-size literal — it picks a role. */
+:root {
+  --text-display: clamp(54px, 7.2vw, 92px);         /* hero statement */
+  --text-display-final: clamp(48px, 6vw, 78px);     /* final statement */
+  --text-chapter: clamp(42px, 6vw, 76px);           /* chapter break */
+  --text-chapter-compact: clamp(52px, 7vw, 88px);   /* the short chapter ("Ready to activate?") */
+  --text-title-mech: clamp(48px, 5vw, 68px);        /* mechanics heading */
+  --text-title: clamp(40px, 5vw, 66px);             /* section heading */
+  --text-title-compact: clamp(38px, 4.4vw, 58px);   /* activation heading */
+  --text-estimate: 44px;                            /* calculator result */
+  --text-number: 34px;                              /* share figures */
+  --text-stat: 30px;                                /* dashboard figures */
+  --text-card-title: 24px;                          /* record card title */
+  --text-lede: clamp(18px, 2vw, 23px);              /* hero / final paragraph */
+  --text-mech-copy: 19px;                           /* mechanics paragraph */
+  --text-question: 19px;                            /* FAQ question */
+  --text-copy: 18px;                                /* section paragraph */
+  --text-step: 17px;                                /* activation step */
+  --text-body: 16px;                                /* the browser default the wireframe inherits */
+  --text-panel-title: 15px;                         /* factor / dashboard titles, buttons, FAQ answer, split source */
+  --text-ui: 14px;                                  /* nav, record card copy, panel titles, dashboard values */
+  --text-meta: 13px;                                /* page number, footer, estimate unit */
+  --text-small: 12px;                               /* options, routes, factor / dashboard copy, level names */
+  --text-label: 11px;                               /* fact strip, field labels, notes, step numbers */
+  --text-micro: 10px;                               /* share names, level shares */
+  /* roles added 2026-09-09 for the Results, Referral and About pages — their wireframes' sizes, verbatim
+     (result.html, referall.html, about us.html, all "final") */
+  --text-display-story: clamp(62px, 8.8vw, 112px);  /* About hero */
+  --text-display-support: clamp(30px, 4.2vw, 54px); /* About hero's second line */
+  --text-display-close: clamp(54px, 6.6vw, 88px);   /* Results / Referral final statement */
+  --text-title-story: clamp(40px, 5vw, 64px);       /* About section heading */
+  --text-monogram: clamp(110px, 14vw, 180px);       /* founder monogram */
+  --text-ring: 38px;                                /* win-rate ring, referral rate cells */
+  --text-timer: 31px;                               /* the 15:00 readout */
+  --text-summary-stat: 27px;                        /* referral overview cards */
+  --text-answer: 23px;                              /* average pips answer */
+  --text-empty: 22px;                               /* empty-state title */
+  --text-balance: 21px;                             /* referral balance, founder name */
+  --text-figure: 20px;                              /* breach / bounce values */
+  --text-row-title: 18px;                           /* proof / route / lifetime row titles, target steps, example figures */
+  --text-nano: 9px;                                 /* ring caption, formula label, value index, the page-number's word */
+  --text-destination: clamp(22px, 2.2vw, 28px);     /* "Every route counts" */
+  --text-summary: clamp(23px, 2vw, 28px);           /* "One introduction / One lasting connection" */
+  --text-result: clamp(22px, 2.1vw, 27px);          /* "First Bot Start / Connected to you" */
+  /* roles added 2026-09-09 for the Broker Partnership page (Broker Partnership.html, verbatim) */
+  --text-display-pitch: clamp(56px, 8vw, 96px);     /* Partnership hero */
+  --text-title-pitch: clamp(42px, 5.5vw, 70px);     /* Partnership section heading */
+  --text-chapter-pitch: clamp(44px, 6.4vw, 80px);   /* Partnership chapter breaks */
+  --text-title-how: clamp(44px, 5vw, 66px);         /* the three "how it works" headings */
+  --text-lede-pitch: clamp(19px, 2vw, 23px);        /* Partnership hero paragraph */
+  --text-campaign: clamp(27px, 3vw, 38px);          /* the campaign title in the app preview */
+  --text-pilot: clamp(27px, 2.8vw, 38px);           /* the pilot card's heading */
+  --text-received: 26px;                            /* "Request received" */
+  --weight-support: 650;                            /* About hero's second line */
+  --leading-article: 1.76;                          /* About story paragraphs */
+  --leading-note: 1.7;                              /* founder notes */
+  --leading-vision: 1.72;                           /* vision paragraphs */
+  --weight-body: 400;
+  --weight-label: 500;
+  --weight-strong: 700;
+  --weight-title: 700;
+  --weight-display: 720;                            /* hero / final statement */
+  --weight-heavy: 800;                              /* field labels, step numbers, page numbers, the split source */
+  --leading-display: .95;
+  --leading-chapter: 1;
+  --leading-mech: .99;
+  --leading-title: 1.02;
+  --leading-card: 1.12;
+  --leading-step: 1.25;
+  --leading-body: 1.5;
+  --leading-ui: 1.5;
+  --tracking-display: -.067em;
+  --tracking-mech: -.058em;
+  --tracking-title: -.055em;
+  --tracking-estimate: -.05em;
+  --tracking-stat: -.04em;
+  --tracking-card: -.035em;
+  --space-1: .25rem;
+  --space-2: .5rem;
+  --space-3: .75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  /* layout, also the wireframe's: 1200 wrap, 28 gutters, 92 between copy and visual (78 on Meaning, 64 on Activation) */
+  --content-width: 1200px;
+  --content-gutter: 28px;
+  --content-gap: 92px;
+  --section-space: 5.5rem;
+  --block-space: clamp(2rem, 3.5vw, 3rem);
+  --card-space: 22px;
+  --frame-inset: 1.25rem;
+  --control-height: 2.5rem;   /* 40px — buttons and fields (founder 2026-09-10: "globally less height") */
+  --icon-size: 1.5rem;
+  --radius-card: 28px;
+}

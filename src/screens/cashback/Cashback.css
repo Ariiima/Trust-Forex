@@ -293,6 +293,7 @@
    The strip is removed by a JS timer of the same length (StatusBanner), not by
    animationend — a reduced-motion client never runs this. */
 @media (prefers-reduced-motion: no-preference) {
+  .scr-cashback-broker-banner--error::after,
   .scr-cashback-broker-banner--success::after {
     animation: scr-cashback-drain var(--banner-ms, 5000ms) linear forwards;
   }

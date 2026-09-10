@@ -6,9 +6,11 @@ import './Notification.css';
 
 export type NotificationVariant = 'success' | 'error' | 'warning' | 'info';
 
+// Same glyphs the cashback list's own status banners use (Figma "Notification",
+// 1316:8158) — a failure is a ✕, not an alert-circle, on both screens.
 const VARIANT_ICONS: Record<NotificationVariant, IconName> = {
   success: 'check',
-  error: 'alert-circle',
+  error: 'close',
   warning: 'alert-triangle',
   info: 'info',
 };
@@ -63,7 +65,7 @@ export function Notification({
   return (
     <div className={classes} role={variant === 'error' ? 'alert' : 'status'}>
       <span className="ds-notification-icon">
-        <Icon name={VARIANT_ICONS[variant]} size={20} />
+        <Icon name={VARIANT_ICONS[variant]} size={16} />
       </span>
       <span className="ds-notification-body">
         <span className="ds-notification-title">{title}</span>

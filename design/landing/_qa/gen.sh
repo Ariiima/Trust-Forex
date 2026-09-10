@@ -22,5 +22,12 @@ printf '%s\n' "$OPENROUTER_API_KEY" | ssh "$HOST" "read K; mkdir -p /tmp/tf-cb &
     echo \"retry \$i code=\$code\"; head -c 300 '$NAME.json' 2>/dev/null; echo; sleep 5; \
   done; echo FAIL; exit 1"
 ssh "$HOST" "cat /tmp/tf-cb/$NAME.webp" > "$DIR/$NAME.webp"   # no scp/sftp on this host; cat over ssh
+# A dropped ssh leaves a 0-byte file that renders as nothing and reads as a design choice.
+# The image is still on the server, so say so rather than pretending the run succeeded.
+if [ ! -s "$DIR/$NAME.webp" ]; then
+  rm -f "$DIR/$NAME.webp"
+  echo "TRANSFER FAILED: $NAME is on the server at /tmp/tf-cb/$NAME.webp — re-copy, do not regenerate" >&2
+  exit 1
+fi
 sips -s format png "$DIR/$NAME.webp" --out "$DIR/$NAME.png" >/dev/null
 echo "$DIR/$NAME.webp  ($(sips -g pixelWidth -g pixelHeight "$DIR/$NAME.png" | awk '/pixel/{printf "%s ", $2}'))"

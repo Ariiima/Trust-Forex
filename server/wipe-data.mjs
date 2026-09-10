@@ -20,9 +20,9 @@ import { PAYOUT_SCHEMA } from './payouts.mjs';
 const WIPE_TABLES = [
   'orders', 'seen_txs', 'user_flags', // payment DB
   'ledger', 'withdrawals', // money spine + payouts
-  'users', 'activity', 'user_summary', 'cashback_cycles', 'review_queue',
+  'users', 'cashback_cycles', 'review_queue',
   'rebates', 'rebate_drafts', 'subscribers', 'extra_grants', 'events',
-  'referral_rows', 'referral_campaigns', 'signal_results', 'series',
+  'referral_campaigns', 'signal_results',
   'discount_codes', 'campaign_sends', 'campaign_opens', // per-user campaign activity, not the campaigns themselves
   'admin_sessions', // force re-login everywhere
 ];
@@ -33,7 +33,7 @@ const KEEP_TABLES = [
 ];
 
 const PROMO_CARDS = [
-  { name: 'Summer discount', cardTitle: 'Summer discount', cardDesc: 'Get 20% OFF on 12 month plan' },
+  { name: 'Summer discount', cardTitle: 'Summer discount', cardDesc: 'Get 20% OFF on 12 Month plan' },
   { name: 'Invite & Earn', cardTitle: 'invite friends', cardDesc: 'get 10% from thier deposits' },
   { name: 'Complete tasks', cardTitle: 'Complete tasks', cardDesc: 'Win rewards & get amazing prizes' },
 ];

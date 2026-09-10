@@ -46,13 +46,16 @@ body {
 }
 
 /* ---- typing (App.useTypingClass) --------------------------------------------
-   While a field has focus, everything that floats along the bottom edge gets
-   out of the keyboard's way: the nav bar and every screen's sticky action
-   footer. A sheet's own footer stays — a sheet is already clamped to the
-   visual viewport, and its action is usually the point of the field being
-   filled in, so hiding it would strand the user mid-form. */
+   While the on-screen keyboard is up (App.useTypingClass decides — a focused
+   field on a desktop does not count), everything that floats along the
+   bottom edge gets out of its way: the nav bar and every sticky action footer —
+   page-level AND inside a sheet. The sheet footer used to be exempt, but a
+   sheet clamped to the visual viewport pins its sticky footer right above the
+   keyboard, on top of the very field being typed into (broker submit-account
+   sheet). Every CTA that can share a screen with a focused field must be a
+   <footer> for this rule to catch it — that is the whole contract. */
 body.is-typing .ds-navbar-floating,
-body.is-typing footer:not(.ds-sheet *) {
+body.is-typing footer {
   display: none;
 }
 

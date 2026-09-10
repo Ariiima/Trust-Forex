@@ -21,13 +21,15 @@ interface Promo {
   art: string;
   artRight: number;
   artTop: number;
+  /** A campaign card cropped to the whole slide (admin "In-App Content") — no text overlay. */
+  full?: string;
 }
 
-/* Shown when the campaigns API has nothing for this screen (or isn't reachable
-   — the static deploy has no server). Fixed order left→right in the source:
-   Summer, Invite, Complete. */
-export const PROMOS: readonly Promo[] = [
-  { id: 'summer', bg: '#7A9DFE', tag: 'Special offer', title: 'Summer discount', subtitle: 'Get 20% OFF on 12 month plan', art: promoGiftArt, artRight: -26, artTop: -24 },
+/* Style template only (colour + art) that a campaign card borrows by position
+   — the admin campaign form has no field for either. Not shown as content:
+   with no live campaigns for a section, the carousel renders nothing. */
+const PROMOS: readonly Promo[] = [
+  { id: 'summer', bg: '#7A9DFE', tag: 'Special offer', title: 'Summer discount', subtitle: 'Get 20% OFF on 12 Month plan', art: promoGiftArt, artRight: -26, artTop: -24 },
   { id: 'invite', bg: '#68CB64', tag: 'Invite & Earn', title: 'invite friends', subtitle: 'get 10% from thier deposits', art: promoInviteArt, artRight: -40, artTop: -24 },
   { id: 'tasks', bg: '#FFA202', tag: 'Stay active', title: 'Complete tasks', subtitle: 'Win rewards & get amazing prizes', art: promoTrophyArt, artRight: -40, artTop: -31 },
 ];
@@ -55,6 +57,9 @@ function fromCampaigns(section: PromoSection): Promo[] | undefined {
     title: c.title,
     subtitle: c.subtitle,
     art: c.image ?? PROMOS[i % PROMOS.length].art,
+    // The editor crops the upload to the slide's own 328×110, so with no
+    // title it IS the card; only legacy docs with a title use the text+art layout.
+    full: c.image && !c.title ? c.image : undefined,
   }));
 }
 
@@ -64,14 +69,13 @@ export function PromoCarousel({ start, section }: { start: number; section: Prom
   const [paused, setPaused] = useState(false);
   const still = useReducedMotion();
 
-  /* Built-in slides render immediately and the campaign ones replace them once
-     they land, so the strip is never empty and never flashes. `cachedPromos`
-     means that swap happens once a session, not on every tab switch. */
-  const [slides, setSlides] = useState<readonly Promo[]>(() => fromCampaigns(section) ?? PROMOS);
+  /* Backend campaigns only — no static fallback content. `cachedPromos` means
+     the fetch happens once a session, not on every tab switch. */
+  const [slides, setSlides] = useState<readonly Promo[]>(() => fromCampaigns(section) ?? []);
   useEffect(() => {
     if (cachedPromos(section)) return;
     let live = true;
-    void getPromos(section).then(() => live && setSlides(fromCampaigns(section) ?? PROMOS));
+    void getPromos(section).then(() => live && setSlides(fromCampaigns(section) ?? []));
     return () => {
       live = false;
     };
@@ -126,6 +130,8 @@ export function PromoCarousel({ start, section }: { start: number; section: Prom
     if (el) el.scrollTo({ left: slideLeft(el, i), behavior: still ? 'auto' : 'smooth' });
   };
 
+  if (slides.length === 0) return null;
+
   return (
     /* The dots are a sibling of the scroller, not a child of each slide. Inside
        a slide they belonged to that card and slid off-screen with it, instead
@@ -143,12 +149,18 @@ export function PromoCarousel({ start, section }: { start: number; section: Prom
             keeps moving right instead of rewinding the strip. */}
         {[...slides, slides[0]].map((p, i) => (
           <div className="scr-home-slide" key={`${p.id}-${i}`} style={{ background: p.bg }}>
-            <div className="scr-home-slide-text">
-              <span className="scr-home-slide-tag">{p.tag}</span>
-              <span className="scr-home-slide-title">{p.title}</span>
-              <span className="scr-home-slide-sub">{p.subtitle}</span>
-            </div>
-            <img className="scr-home-slide-art" src={p.art} alt="" width={94} height={110} />
+            {p.full ? (
+              <img className="scr-home-slide-full" src={p.full} alt="" />
+            ) : (
+              <>
+                <div className="scr-home-slide-text">
+                  <span className="scr-home-slide-tag">{p.tag}</span>
+                  <span className="scr-home-slide-title">{p.title}</span>
+                  <span className="scr-home-slide-sub">{p.subtitle}</span>
+                </div>
+                <img className="scr-home-slide-art" src={p.art} alt="" width={94} height={110} />
+              </>
+            )}
           </div>
         ))}
       </div>
@@ -159,7 +171,7 @@ export function PromoCarousel({ start, section }: { start: number; section: Prom
             key={d.id}
             className={'scr-home-dot' + (i === index ? ' scr-home-dot--on' : '')}
             onClick={() => goTo(i)}
-            aria-label={d.title}
+            aria-label={d.title || `Slide ${i + 1}`}
             aria-current={i === index}
           >
             {i === index && sweeping ? (

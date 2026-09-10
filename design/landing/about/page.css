@@ -1,0 +1,101 @@
+/* TrustForex About — page rules over the Cashback system (../cb8/style.css → base.css → ../shared/scale.css).
+   Structure, sizes and layout are the About wireframe's (about us.html, "final", 2026-09-09); the page stays what it
+   is — text, mostly — with cb8's grounds under it: the blue field on the hero, the two dark chapters and the vision,
+   paper and white alternating between. Founder's notes (2026-09-09): keep it simple; the founder section fits one
+   screen, its name and role sit under the portrait with a direct way to LinkedIn. */
+:root{--content-width:1180px}
+
+/* ---------- 1 · the hero: title and its second line, left-aligned ---------- */
+#hero{min-height:78svh;padding-bottom:40px}
+.hero-left{position:relative;z-index:1}
+#hero .display{font-size:var(--text-display-story);line-height:.9;letter-spacing:-.072em;max-width:980px;margin:0;text-align:left}
+.display-support{display:block;max-width:940px;margin:30px 0 0;font-size:var(--text-display-support);line-height:1.04;letter-spacing:-.05em;font-weight:var(--weight-support);color:rgba(255,255,255,.78);text-wrap:balance}
+
+/* ---------- 2–7 · the story: an article page, not a deck — each chapter as tall as its text ---------- */
+.h2{font-size:var(--text-title-story);line-height:1.01;letter-spacing:-.057em;margin-bottom:0}
+html.snap .story,html:not(.snap) .story{min-height:auto;padding:118px 0;justify-content:flex-start}
+.story{background:var(--paper)}
+.story.paper{background:#fff}
+.story-grid{display:grid;grid-template-columns:minmax(280px,.72fr) minmax(470px,1.28fr);gap:106px;align-items:start}
+.story-heading{max-width:470px;position:sticky;top:calc(var(--nav-h) + 28px)}   /* the heading keeps its place while its article scrolls */
+.article{max-width:700px}
+.article p{margin:0;color:var(--body);font-size:var(--text-copy);line-height:var(--leading-article);text-wrap:pretty}
+.article p+p{margin-top:23px}
+.article strong{color:var(--ink);font-weight:var(--weight-display)}
+/* the two dark chapters read as one continuous ground: the field sits on the wrapper, the sections are clear */
+.dark-run{position:relative;background:var(--blue);color:#fff;--grad:var(--grad-light);overflow:hidden}
+.dark-run>.rayfield{position:absolute;inset:0}
+.dark-run .story{background:transparent;position:relative;z-index:1}
+.dark-run .story.second{padding-top:0}
+.dark-run .story.second .story-grid{padding-top:92px}
+.dark-run .h2{color:#fff}
+.dark-run .article p{color:rgba(255,255,255,.78)}
+.dark-run .article strong{color:#fff}
+/* the same light that crosses every screen: pale blue on paper, white on the blue */
+.story:not(.screen-dark){view-timeline-name:--ground}
+.story:not(.screen-dark)::after{content:'';position:absolute;inset:0 auto 0 0;width:40%;z-index:0;pointer-events:none;
+  background:linear-gradient(115deg,transparent 18%,rgba(var(--rgb-200),.5) 50%,transparent 82%);
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent),linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);-webkit-mask-composite:source-in;
+  mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent),linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);mask-composite:intersect;
+  animation:paper-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%}
+.dark-run{view-timeline-name:--ground}
+.dark-run>.rayfield.k i:nth-child(4){display:block;position:absolute;inset:0;z-index:1;border-radius:0;filter:none;pointer-events:none;
+  background:linear-gradient(115deg,transparent 36%,rgba(255,255,255,.11) 47%,rgba(255,255,255,.03) 53%,transparent 64%);
+  animation:ground-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%}
+html.reduce .story::after,html.reduce .dark-run>.rayfield.k i:nth-child(4){animation:none}
+
+/* ---------- 8 · the founder: portrait card on the blue, copy beside it, one screen ---------- */
+#founder{background:var(--paper);padding:70px 0}
+.founder-grid{display:grid;grid-template-columns:minmax(300px,.67fr) minmax(0,1.33fr);gap:92px;align-items:stretch}
+.founder-portrait{position:relative;min-height:470px;padding:32px;border-radius:var(--radius-card);background:var(--blue);color:#fff;display:grid;grid-template-rows:1fr auto;overflow:hidden;
+  box-shadow:0 24px 48px -30px rgba(var(--rgb-shadow),.5)}
+.founder-portrait>.rayfield{border-radius:var(--radius-card)}
+.monogram{position:relative;z-index:1;align-self:center;color:transparent;-webkit-text-stroke:1px rgba(var(--rgb-300),.85);font-size:var(--text-monogram);line-height:.8;letter-spacing:-.1em;font-weight:var(--weight-display)}
+.founder-meta{position:relative;z-index:1;margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,.2);display:flex;justify-content:space-between;align-items:center;gap:16px}
+.founder-meta strong{display:block;font-size:var(--text-balance);letter-spacing:-.025em}
+.founder-meta span{display:block;margin-top:4px;color:rgba(255,255,255,.7);font-size:var(--text-ui)}
+/* the way to LinkedIn: the CTA glass, the mark on it */
+.founder-portrait .linkedin{gap:8px;padding:10px 16px;background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.38);
+  backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);
+  box-shadow:0 12px 30px -12px rgba(var(--rgb-shadow),.6),inset 0 1px 0 rgba(255,255,255,.6);font-size:var(--text-ui);white-space:nowrap}
+.founder-portrait .linkedin:hover{background:rgba(255,255,255,.3);border-color:rgba(255,255,255,.6);color:#fff}
+.founder-portrait .linkedin>svg:first-child{width:18px;height:18px}
+.founder-copy{align-self:center}
+.founder-copy .h2{max-width:720px;margin-bottom:24px}
+.founder-note{max-width:660px;margin:0;color:var(--body);font-size:var(--text-step);line-height:var(--leading-note)}
+.founder-note+.founder-note{margin-top:14px}
+@media (min-width:901px){html.snap #founder{min-height:calc(100svh - var(--nav-h))}}
+
+/* ---------- 9 · the vision: centred on the closing ground, the footer with its risk line and bottom row ---------- */
+#final .h2{color:#fff;max-width:910px;margin:0 auto}
+.vision-inner{max-width:910px;margin:0 auto}
+.vision-copy{max-width:720px;margin:34px auto 38px;color:rgba(255,255,255,.78);font-size:var(--text-copy);line-height:var(--leading-vision);text-align:center;text-wrap:pretty}
+.vision-copy p{margin:0}.vision-copy p+p{margin-top:20px}
+.footer-main{align-items:flex-start}
+.footer-brand strong{display:block;color:#fff;font-size:var(--text-panel-title)}
+.footer-brand p{max-width:560px;margin:11px 0 0;line-height:1.55;font-size:var(--text-small)}
+.footer-bottom{margin-top:29px;padding-top:21px;border-top:1px solid var(--navy-line);display:flex;justify-content:space-between;gap:24px;font-size:var(--text-label);color:rgba(255,255,255,.55)}
+
+/* ---------- laptops and phones ---------- */
+@media (max-width:900px){
+  .story-grid,.founder-grid{grid-template-columns:1fr;gap:48px}
+  .story-heading{max-width:650px;position:static}
+  .article{max-width:760px}
+  .founder-portrait{min-height:390px}
+}
+@media (max-width:680px){
+  :root{--content-gutter:20px}
+  #hero{min-height:auto;padding:86px 0 82px}
+  #hero .display{font-size:clamp(55px,16vw,74px)}
+  html.snap .story,html:not(.snap) .story{padding:76px 0}
+  .dark-run .story.second .story-grid{padding-top:62px}
+  .h2{font-size:clamp(37px,10.5vw,50px)}
+  .story-grid{gap:36px}
+  .article p{font-size:17px;line-height:1.72}.article p+p{margin-top:21px}
+  #founder{padding:76px 0}.founder-grid{gap:40px}.founder-portrait{min-height:330px;padding:27px}.monogram{font-size:128px}.founder-note{font-size:16px}
+  .founder-meta{flex-direction:column;align-items:flex-start}
+  .footer-main{flex-direction:column}.footer-bottom{flex-direction:column}
+}
+
+/* tabular figures widen Inter's letters ~2% (cb8's body rule); the wireframe sets none */
+body{font-variant-numeric:normal}

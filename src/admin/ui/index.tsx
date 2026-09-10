@@ -8,6 +8,7 @@ import {
   type ChangeEvent, type CSSProperties, type ReactNode,
 } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { Link } from 'react-router-dom';
 import { Icon, type IconName } from './Icon';
 
 /* Every `{cond && <Modal/>}` / `{cond && <Confirm/>}` call site wraps itself
@@ -228,6 +229,9 @@ export interface TabItem<T extends string = string> {
   id: T;
   label: string;
   count?: number | string;
+  /** The count is a queue waiting on a human — wear it as the sidebar badge
+   *  does, not as a neutral total. */
+  alert?: boolean;
   icon?: IconName;
 }
 
@@ -247,7 +251,9 @@ export function Tabs<T extends string>({
         >
           {t.icon && <Icon name={t.icon} size={16} />}
           {t.label}
-          {t.count !== undefined && <span className="a-tab__count">{t.count}</span>}
+          {t.count !== undefined && (
+            <span className={`a-tab__count${t.alert ? ' a-tab__count--alert' : ''}`}>{t.count}</span>
+          )}
         </button>
       ))}
     </div>
@@ -269,6 +275,7 @@ const STATUS_TONE: Record<string, ChipTone> = {
   active: 'success', approved: 'success', published: 'success', public: 'success', live: 'success', sent: 'success',
   pending: 'warn', paused: 'warn', draft: 'purple', waiting: 'warn', manual: 'warn', queued: 'info', sending: 'info',
   rejected: 'danger', expired: 'danger', stopped: 'danger', ended: 'danger', failed: 'danger',
+  refunded: 'danger',
   private: 'purple', inactive: 'neutral',
 };
 
@@ -291,25 +298,15 @@ const PLAN_BADGE: Record<PlanId, string> = {
 };
 
 export function PlanGlyph({ plan, size = 28 }: { plan: PlanId | 'none'; size?: number }) {
-  /* No subscription is a real state, and the commonest one — it gets a muted
-     dot rather than a broken image or, worse, somebody else's tier badge. */
-  const badge = PLAN_BADGE[plan as PlanId];
-  if (!badge) {
-    return (
-      <span
-        title="No subscription"
-        style={{
-          width: size, height: size, flex: 'none', borderRadius: '50%',
-          border: '1.5px dashed var(--admin-border)', display: 'inline-block',
-        }}
-      />
-    );
-  }
+  /* 'none' (no / lapsed subscription) is the standard tier in the money rules
+     (ledger.TIER_PCT), so it wears the standard badge. */
+  const badge = PLAN_BADGE[plan === 'none' ? 'standard' : plan] ?? PLAN_BADGE.standard;
+  const label = plan === 'none' ? 'standard' : plan;
   return (
     <img
       src={badge}
-      alt={plan}
-      title={plan}
+      alt={label}
+      title={label}
       width={size}
       height={size}
       style={{ width: size, height: size, objectFit: 'contain', flex: 'none' }}
@@ -334,17 +331,29 @@ export function BrokerLogo({
 }
 
 export function UserCell({
-  name, sub, plan, onClick,
-}: { name: string; sub?: string; plan?: PlanId; onClick?: () => void }) {
+  name, userNo, plan, userId, onClick,
+}: {
+  name: string;
+  /** `users.user_no`, rendered as `#1003`. The one identifier an operator is
+   *  shown anywhere in the dashboard — never `users.id`, never a Telegram id. */
+  userNo?: number | null;
+  plan?: PlanId | 'none';
+  /** `users.id` — makes the cell a link to that account. Every table that has
+   *  the id passes it; an operator reads a name and wants the person. */
+  userId?: string;
+  onClick?: () => void;
+}) {
   const body = (
     <>
       {plan && <PlanGlyph plan={plan} />}
       <span className="a-cell2">
         <span className="at-semibold">{name}</span>
-        {sub && <span>{sub}</span>}
+        <span>{userNo != null ? `#${userNo}` : '—'}</span>
       </span>
     </>
   );
+  // ponytail: new tab — operators keep the list they were reading.
+  if (userId) return <Link to={`/users/${userId}`} className="a-user" target="_blank" rel="noreferrer">{body}</Link>;
   if (!onClick) return <div className="a-user">{body}</div>;
   return (
     <button type="button" className="a-user" onClick={onClick} style={{ textAlign: 'left' }}>
@@ -359,8 +368,14 @@ export function UserCell({
  * text by hand out of a table row is the fiddliest part of the job.
  */
 export function CopyValue({
-  value, label, className = '',
-}: { value: string | null | undefined; label?: string; className?: string }) {
+  value, label, display, className = '',
+}: {
+  value: string | null | undefined; label?: string;
+  /** What to show when the full value is too long to sit in a column — a
+   *  truncated txid or address. The whole `value` is still what gets copied. */
+  display?: ReactNode;
+  className?: string;
+}) {
   const [copied, setCopied] = useState(false);
   if (!value) return <span className="at-muted">—</span>;
   return (
@@ -376,7 +391,7 @@ export function CopyValue({
         });
       }}
     >
-      <span>{value}</span>
+      <span>{display ?? value}</span>
       <Icon name={copied ? 'check' : 'copy'} size={13} />
     </button>
   );
@@ -797,6 +812,17 @@ export function RowMenu({ actions }: { actions: MenuAction[] }) {
  * Modal
  * ------------------------------------------------------------------- */
 
+/* Reference-counted, not save/restore: a Confirm is itself a Modal, so
+   publishing (AddResultModal open, then its "Publish result" Confirm on top)
+   nests two of these. Closing both at once — confirm the publish, which also
+   closes the parent — unmounts them in whatever order their independent exit
+   animations finish, not necessarily LIFO. Save/restore of "the previous
+   value" broke there: if the inner one's cleanup (restoring 'hidden', what
+   it saw on mount) ran after the outer's (restoring ''), the body was left
+   locked with nothing left to unlock it. A count only cares how many modals
+   are still open, so unmount order can't matter. */
+let openModals = 0;
+
 export function Modal({
   title, subtitle, icon, width = 560, onClose, footer, children,
 }: {
@@ -807,9 +833,12 @@ export function Modal({
   // first paint, or the lock (and whatever width it steals back via
   // scrollbar-gutter) lands a frame late and reads as a flash on open.
   useLayoutEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = prev; };
+    if (openModals === 0) document.body.style.overflow = 'hidden';
+    openModals++;
+    return () => {
+      openModals--;
+      if (openModals === 0) document.body.style.overflow = '';
+    };
   }, []);
 
   useEffect(() => {
@@ -963,20 +992,44 @@ export function DragList<T>({
  */
 const STICKERS: { group: string; items: string[] }[] = [
   {
-    group: 'Reactions',
-    items: ['👍', '👎', '❤️', '🔥', '🎉', '👏', '🙏', '💯', '✅', '❌', '⭐', '⚡'],
+    group: 'People & Communication',
+    items: ['🤖', '🙌', '🙏', '👀', '👥', '👤', '👨‍👧‍👧', '👁‍🗨', '📱', '💻', '☎️', '📞',
+      '📳', '📤', '📥', '📧', '📨', '📬', '🔔', '📣'],
   },
   {
-    group: 'Faces',
-    items: ['😀', '😁', '😂', '🤣', '😊', '😍', '🤩', '😎', '🤔', '😐', '😢', '😡'],
+    group: 'Business, Finance & Identity',
+    items: ['💼', '🌍', '🏦', '🏛', '🌐', '💳', '🪪', '💰', '💲', '💱', '🧾', '🧮', '🏷', '🆔'],
   },
   {
-    group: 'Money',
-    items: ['💰', '💵', '💸', '💳', '🏦', '📈', '📉', '📊', '🧾', '🤑', '💎', '🪙'],
+    group: 'Nature, Occasions & Rewards',
+    items: ['🍀', '🎄', '🌹', '☀️', '❤️', '🤍', '💚', '🔥', '⭐️', '⚡️', '🏆', '🎖',
+      '🏅', '🎫', '🎯', '🚀', '💎', '🎁', '🎉', '💯'],
   },
   {
-    group: 'Signals',
-    items: ['🔔', '📣', '🚀', '🎯', '⏰', '📅', '🔒', '🔑', '⚠️', 'ℹ️', '🏆', '🎁'],
+    group: 'Warnings & Restrictions',
+    items: ['🚨', '🚧', '🧨', '🆘', '❌', '⭕️', '⛔️', '🚫', '💢', '📵', '⁉️', '‼️', '❗️', '⚠️', '❎'],
+  },
+  {
+    group: 'Time, Energy & Progress',
+    items: ['⏰', '💡', '🪫', '🔋', '⏳', '♾️', '🔜'],
+  },
+  {
+    group: 'Tools, Security & Access',
+    items: ['🛠', '⚙️', '🧲', '🛎', '🔑', '🔐', '🔒', '🔓'],
+  },
+  {
+    group: 'Data, Files & Information',
+    items: ['📊', '📈', '📉', '📆', '🗂', '🗞', '🔗', '📌', '📍', '🔍', 'ℹ️', '🗑'],
+  },
+  {
+    group: 'Actions, Status & Numbers',
+    items: ['✅', '🆗', '🆕', '🆓', '↩️', '0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣',
+      '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'],
+  },
+  {
+    group: 'Colors & Indicators',
+    items: ['🔴', '🟠', '🟡', '🟢', '🔵', '🟣', '⚫️', '🔺', '🔻', '🔸', '🔹', '🔶', '🔷',
+      '▪️', '▫️', '◾️', '◽️', '◼️', '◻️', '🟥', '🟧', '🟨', '🟩', '🟦', '🟪', '⬛️', '⬜️'],
   },
 ];
 
@@ -997,6 +1050,10 @@ function StickerPicker({ onPick }: { onPick: (sticker: string) => void }) {
   );
 }
 
+/** A `{token}` the message's send site fills in. `hint` is the value it will
+ *  actually carry, shown on hover so the writer knows what they are placing. */
+export type TokenInsert = { label: string; text: string; hint?: string };
+
 /**
  * Toolbar + contenteditable. `document.execCommand` is deprecated but is still
  * the only cross-browser way to toggle inline marks without shipping an editor
@@ -1008,13 +1065,23 @@ export function RichText({
 }: {
   value: string; onChange: (html: string) => void;
   placeholder?: string; maxLength?: number; emoji?: boolean;
-  /** One extra toolbar button that inserts a fixed token — e.g. a campaign's `{code}` variable. */
-  extraInsert?: { label: string; text: string };
+  /** One token this message can insert — e.g. a campaign's `{code}` variable. */
+  extraInsert?: TokenInsert;
   /** Same idea, for a message with several tokens — e.g. a bot message's {plan}/{amount}. */
-  extraInserts?: { label: string; text: string }[];
+  extraInserts?: TokenInsert[];
 }) {
+  // Tokens are data, not formatting, so they get their own strip under the
+  // writing area rather than a seat in the mark toolbar. They also used to be
+  // squashed to 26px by the toolbar's icon-button sizing.
+  const tokens = [...(extraInsert ? [extraInsert] : []), ...(extraInserts ?? [])];
   const ref = useRef<HTMLDivElement>(null);
   const [showEmoji, setShowEmoji] = useState(false);
+  const [inQuote, setInQuote] = useState(false);
+  const [link, setLink] = useState<{ url: string; text: string } | null>(null);
+  // A modal takes the focus, and with it the selection the link would apply
+  // to — both are captured on open and restored on save.
+  const savedRange = useRef<Range | null>(null);
+  const savedAnchor = useRef<HTMLAnchorElement | null>(null);
   const emojiRef = useDismiss(showEmoji, () => setShowEmoji(false));
 
   // Only write into the DOM when the value came from outside; echoing our own
@@ -1037,8 +1104,123 @@ export function RichText({
 
   const len = ref.current?.textContent?.length ?? 0;
 
+  /** The nearest `tag` between the caret and the editor, if any.
+      `queryCommandState` covers bold/italic but has nothing for blockquote or
+      an anchor, and disagrees with itself across browsers on nested blocks. */
+  const caretIn = <T extends HTMLElement>(tag: string): T | null => {
+    let n: Node | null = window.getSelection()?.anchorNode ?? null;
+    while (n && n !== ref.current) {
+      if (n.nodeType === 1 && (n as Element).tagName === tag) return n as T;
+      n = n.parentNode;
+    }
+    return null;
+  };
+  const caretInQuote = () => !!caretIn('BLOCKQUOTE');
+
+  /**
+   * The one toolbar mark that is a block, so it is the one that can be left on
+   * by accident — the button stays lit while the caret is inside a quote and
+   * the same press takes it back out.
+   *
+   * A selection is quoted exactly as far as it reaches, including half a line:
+   * Telegram's quote is a range over the text, not a property of the line, so
+   * `formatBlock` — which can only swallow the whole containing block — quoted
+   * more than was asked for. It stays as the fallback for a bare caret, where
+   * "this line" is the only thing the press can mean.
+   * ponytail: the hand-built wrap costs this edit its place in the native undo
+   * stack, the same trade the link modal makes.
+   */
+  const toggleQuote = () => {
+    const el = ref.current;
+    if (!el) return;
+    el.focus();
+    const open = caretIn<HTMLElement>('BLOCKQUOTE');
+    const sel = window.getSelection();
+    const range = sel && sel.rangeCount ? sel.getRangeAt(0) : null;
+
+    if (open) {
+      open.replaceWith(...Array.from(open.childNodes));
+    } else if (range && !range.collapsed) {
+      const quote = document.createElement('blockquote');
+      quote.appendChild(range.extractContents());
+      range.insertNode(quote);
+      const inside = document.createRange();
+      inside.selectNodeContents(quote);
+      sel?.removeAllRanges();
+      sel?.addRange(inside);
+    } else {
+      document.execCommand('formatBlock', false, 'blockquote');
+    }
+
+    onChange(el.innerHTML);
+    setInQuote(caretInQuote());
+  };
+
+  /** A bare `t.me/trustforex` typed into the field is a relative path to the
+      browser and a dead link inside Telegram; anything without a scheme gets
+      https. */
+  const normalizeUrl = (raw: string) => {
+    const v = raw.trim();
+    if (!v) return '';
+    return /^[a-z][a-z0-9+.-]*:/i.test(v) ? v : `https://${v}`;
+  };
+
+  const openLink = () => {
+    ref.current?.focus();
+    const sel = window.getSelection();
+    savedRange.current = sel && sel.rangeCount ? sel.getRangeAt(0).cloneRange() : null;
+    const a = caretIn<HTMLAnchorElement>('A');
+    savedAnchor.current = a;
+    setLink({ url: a?.getAttribute('href') ?? '', text: a ? a.textContent ?? '' : sel?.toString() ?? '' });
+  };
+
+  /* Written into the DOM rather than through execCommand: createLink cannot
+     set the label text, and cannot edit or unwrap the link already under the
+     caret — the three things this modal exists to do.
+     ponytail: costs this one edit its place in the native undo stack. */
+  const applyLink = (url: string, text: string) => {
+    const el = ref.current;
+    if (!el) return;
+    const href = normalizeUrl(url);
+    const a = savedAnchor.current;
+
+    if (a) {
+      if (href) {
+        a.setAttribute('href', href);
+        if (text.trim()) a.textContent = text.trim();
+      } else {
+        a.replaceWith(...Array.from(a.childNodes));
+      }
+    } else if (href) {
+      el.focus();
+      const sel = window.getSelection();
+      sel?.removeAllRanges();
+      if (savedRange.current) sel?.addRange(savedRange.current);
+      const range = sel?.rangeCount ? sel.getRangeAt(0) : null;
+      if (!range) return;
+      range.deleteContents();
+      const node = document.createElement('a');
+      node.href = href;
+      node.textContent = text.trim() || href;
+      range.insertNode(node);
+      range.setStartAfter(node);
+      range.collapse(true);
+      sel?.removeAllRanges();
+      sel?.addRange(range);
+    }
+
+    onChange(el.innerHTML);
+    setLink(null);
+    savedAnchor.current = null;
+  };
+
   return (
-    <div className="a-rte">
+    // Field wraps its children in a <label>, and a click anywhere inside a
+    // label activates its first labelable descendant — here the Bold button.
+    // So finishing a mouse selection over the text bolded it. Cancelling the
+    // click's default kills that activation; the buttons' own onClick and the
+    // caret placement (which happen on mousedown) are unaffected.
+    <div className="a-rte" onClick={(e) => e.preventDefault()}>
       {/* Telegram renders bold, italic, underline, blockquote and links, and
           nothing else this toolbar could offer — so the toolbar is exactly
           those plus stickers. The list buttons were removed because Telegram
@@ -1050,25 +1232,18 @@ export function RichText({
         <button type="button" onClick={() => exec('underline')} aria-label="Underline"><Icon name="underline" size={16} /></button>
         <button
           type="button"
-          aria-label="Quote"
-          onClick={() => {
-            ref.current?.focus();
-            document.execCommand('formatBlock', false, 'blockquote');
-            onChange(ref.current?.innerHTML ?? '');
-          }}
+          className={inQuote ? 'is-on' : undefined}
+          aria-label={inQuote ? 'Remove quote' : 'Quote'}
+          aria-pressed={inQuote}
+          onClick={toggleQuote}
         >
           <Icon name="quote" size={16} />
         </button>
         <button
           type="button"
-          aria-label="Insert link"
-          onClick={() => {
-            const url = window.prompt('Link URL');
-            if (!url) return;
-            ref.current?.focus();
-            document.execCommand('createLink', false, url);
-            onChange(ref.current?.innerHTML ?? '');
-          }}
+          className={link ? 'is-on' : undefined}
+          aria-label={savedAnchor.current ? 'Edit link' : 'Insert link'}
+          onClick={openLink}
         >
           <Icon name="link" size={16} />
         </button>
@@ -1087,16 +1262,6 @@ export function RichText({
             )}
           </div>
         )}
-        {extraInsert && (
-          <button type="button" className="a-btn a-btn--outline a-btn--sm" onClick={() => insert(extraInsert.text)}>
-            {extraInsert.label}
-          </button>
-        )}
-        {extraInserts?.map((x) => (
-          <button key={x.text} type="button" className="a-btn a-btn--outline a-btn--sm" onClick={() => insert(x.text)}>
-            {x.label}
-          </button>
-        ))}
         {maxLength && <span className="a-rte__count">{len} / {maxLength}</span>}
       </div>
       <div
@@ -1107,6 +1272,19 @@ export function RichText({
         role="textbox"
         aria-multiline="true"
         data-placeholder={placeholder}
+        onKeyUp={() => setInQuote(caretInQuote())}
+        onMouseUp={() => setInQuote(caretInQuote())}
+        onFocus={() => setInQuote(caretInQuote())}
+        onBlur={() => setInQuote(false)}
+        /* A plain click has to keep placing the caret — a link inside an
+           editor is text you are writing, not a link you are following — so
+           opening one takes the modifier every editor uses for it. */
+        onClickCapture={(e) => {
+          const a = (e.target as HTMLElement).closest?.('a');
+          if (!a || !(e.metaKey || e.ctrlKey)) return;
+          e.preventDefault();
+          window.open(a.getAttribute('href') ?? '', '_blank', 'noopener');
+        }}
         onInput={(e) => {
           const el = e.currentTarget;
           if (maxLength && (el.textContent?.length ?? 0) > maxLength) {
@@ -1116,6 +1294,64 @@ export function RichText({
           onChange(el.innerHTML);
         }}
       />
+      {link && (
+        <AnimatePresence>
+          <Modal
+            title={savedAnchor.current ? 'Edit link' : 'Add link'}
+            subtitle="Telegram shows the link text and opens the address behind it."
+            width={460}
+            onClose={() => { setLink(null); savedAnchor.current = null; }}
+            footer={(
+              <>
+                {savedAnchor.current && (
+                  <Button variant="danger" icon="trash" onClick={() => applyLink('', '')}>Remove link</Button>
+                )}
+                <span className="a-spacer" />
+                <Button onClick={() => { setLink(null); savedAnchor.current = null; }}>Cancel</Button>
+                <Button
+                  variant="primary"
+                  icon="check"
+                  disabled={!link.url.trim()}
+                  onClick={() => applyLink(link.url, link.text)}
+                >
+                  {savedAnchor.current ? 'Update link' : 'Add link'}
+                </Button>
+              </>
+            )}
+          >
+            <Field label="Address">
+              <TextInput
+                value={link.url}
+                onChange={(url) => setLink({ ...link, url })}
+                placeholder="t.me/trustforex"
+              />
+            </Field>
+            <Field label="Link text" hint="Leave empty to show the address itself.">
+              <TextInput
+                value={link.text}
+                onChange={(text) => setLink({ ...link, text })}
+                placeholder="Open the app"
+              />
+            </Field>
+          </Modal>
+        </AnimatePresence>
+      )}
+      {tokens.length > 0 && (
+        <div className="a-rte__tokens">
+          <span className="a-rte__tokenlabel">Insert</span>
+          {tokens.map((x) => (
+            <button
+              key={x.text}
+              type="button"
+              className="a-rte__token"
+              title={x.hint ? `Sends as “${x.hint}”` : undefined}
+              onClick={() => insert(x.text)}
+            >
+              {x.label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

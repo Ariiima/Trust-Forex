@@ -7,6 +7,12 @@
    ===================================================================== */
 
 .ds-sheet.scr-about-sheet {
+  display: flex;
+  flex-direction: column;
+  /* 635 + centred body, same as the referral about sheet — see the note in
+     AboutReferralSheet.css. The two stay one anatomy. */
+  height: 635px;
+  max-height: 100%;
   padding: var(--spacing-16) var(--spacing-16) var(--spacing-32);
   border-radius: 16px 16px 0 0;
 }
@@ -48,6 +54,10 @@
 /* ---- about sheet body -------------------------------------------------
    25 down from the rule, in the 261 column centred in the 328 content box. */
 .scr-about-sheet-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   padding: 25px 33.5px 0;
 }
 

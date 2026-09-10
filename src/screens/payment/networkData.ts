@@ -1,4 +1,4 @@
-import bnbSmartChain from '../../assets/crypto/bnb-smart-chain.png';
+import bnbSmartChain from '../../assets/crypto/bnb-smart-chain.svg';
 import tron from '../../assets/crypto/tron.png';
 import ethereumErc20 from '../../assets/crypto/ethereum-erc20.png';
 import polygon from '../../assets/crypto/polygon.png';

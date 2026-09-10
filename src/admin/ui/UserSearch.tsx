@@ -9,7 +9,7 @@
  * Cmd/Ctrl-K opens it, typing filters, Enter takes the first hit.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { api } from '../data';
 import { useAsync } from '../useAsync';
 import { Icon, PlanGlyph } from './index';
@@ -18,22 +18,33 @@ export function UserSearch() {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState('');
   const [active, setActive] = useState(0);
-  const navigate = useNavigate();
   const boxRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Only fetched once the operator actually opens it.
-  const users = useAsync(() => (open ? api.users() : Promise.resolve([])), [open]) ?? [];
+  // Only fetched once the operator actually opens it. api.users() is one row
+  // per (user, broker) — fold to one hit per account, but keep EVERY broker
+  // link's account id and email in that account's search text, so a person who
+  // signed up at two brokers is found by either id or either address.
+  const rawUsers = useAsync(() => (open ? api.users() : Promise.resolve([])), [open]) ?? [];
+  const users = useMemo(() => {
+    const byId = new Map<string, { u: (typeof rawUsers)[number]; text: string }>();
+    for (const u of rawUsers) {
+      const hit = byId.get(u.id) ?? { u, text: `${u.name} ${u.userNo ?? ''}` };
+      /* `brokerId` on a user row is the account id they gave that broker. */
+      hit.text += ` ${u.email ?? ''} ${u.brokerId ?? ''}`;
+      byId.set(u.id, hit);
+    }
+    return [...byId.values()].map((h) => ({ ...h.u, search: h.text.toLowerCase() }));
+  }, [rawUsers]);
 
-  /* Name, account number and email only. The internal `id` is an opaque key in
-     the same numeric shape as the account number, so including it made "1004"
-     also match the accounts whose id merely contains those digits. */
+  /* Name, account number, every broker email and every broker account id. The
+     internal `id` stays out: it is an opaque key in the same numeric shape as
+     the account number, so including it made "1004" also match accounts whose
+     id merely contains those digits. */
   const hits = useMemo(() => {
     const term = q.trim().toLowerCase();
     if (!term) return users.slice(0, 8);
-    return users
-      .filter((u) => `${u.name} ${u.userNo ?? ''} ${u.email ?? ''}`.toLowerCase().includes(term))
-      .slice(0, 8);
+    return users.filter((u) => u.search.includes(term)).slice(0, 8);
   }, [users, q]);
 
   useEffect(() => setActive(0), [q]);
@@ -63,7 +74,7 @@ export function UserSearch() {
   const go = (id: string) => {
     setOpen(false);
     setQ('');
-    navigate(`/users/${id}`);
+    window.open(`#/users/${id}`, '_blank', 'noopener');
   };
 
   return (
@@ -87,7 +98,7 @@ export function UserSearch() {
             <input
               ref={inputRef}
               value={q}
-              placeholder="Name, user number or email…"
+              placeholder="Name, number, email or broker ID…"
               onChange={(e) => setQ(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'ArrowDown') { e.preventDefault(); setActive((i) => Math.min(i + 1, hits.length - 1)); }

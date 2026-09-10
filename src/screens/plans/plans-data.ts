@@ -35,7 +35,7 @@ export const PLANS: readonly Plan[] = [
     id: 'silver',
     name: 'Silver',
     price: '2.00', // ponytail: testing price, mirrors server/orders.mjs PLAN_PRICES.silver — revert both together
-    duration: '1 month',
+    duration: '1 Month',
     badge: badgeSilverUrl,
     boost: '15%',
     checkoutPrice: 2.0,
@@ -43,23 +43,23 @@ export const PLANS: readonly Plan[] = [
   {
     id: 'gold',
     name: 'Gold',
-    price: '499.00',
-    duration: '3 months',
+    price: '3.00', // ponytail: testing price, mirrors server/orders.mjs PLAN_PRICES.gold — revert both together
+    duration: '3 Months',
     badge: badgeGoldUrl,
     boost: '20%',
     tag: { label: 'Most popular', variant: 'popular' },
     highlighted: true,
-    checkoutPrice: 499.0,
+    checkoutPrice: 3.0,
   },
   {
     id: 'diamond',
     name: 'Diamond',
-    price: '1699.00',
-    duration: '12 months',
+    price: '4.00', // ponytail: testing price, mirrors server/orders.mjs PLAN_PRICES.diamond — revert both together
+    duration: '12 Months',
     badge: badgeDiamondUrl,
     boost: '30%',
     tag: { label: 'Best value', variant: 'value' },
-    checkoutPrice: 1699.0,
+    checkoutPrice: 4.0,
   },
 ];
 

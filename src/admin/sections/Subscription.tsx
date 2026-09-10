@@ -138,7 +138,7 @@ function Subscribers() {
     ), [all, segment, plans]);
 
   const columns: Column<Subscriber>[] = [
-    { id: 'user', header: 'User', render: (s) => <UserCell name={s.name} sub={`#${s.id}`} plan={s.plan} /> },
+    { id: 'user', header: 'User', render: (s) => <UserCell name={s.name} userNo={s.userNo} plan={s.plan} userId={s.id} /> },
     { id: 'last', header: 'Last action', render: (s) => <Cell2 top={s.lastActionAt} bottom={s.lastActionTime} />, sort: (s) => `${s.lastActionAt} ${s.lastActionTime}` },
     {
       id: 'days',
@@ -195,6 +195,10 @@ function Subscribers() {
 const DEFAULT_GRANT_MESSAGE =
   'We have added <b>2 extra days</b> to your subscription.<br>Your access has been extended automatically, and the updated expiration date is now reflected in your account.';
 
+/* Every grant time is Tehran wall clock (UTC+03:30, no DST) — the server
+   resolves and formats it; the client only seeds the field with "now" there. */
+const tehranNow = () => new Date(Date.now() + 3.5 * 3_600_000).toISOString().slice(0, 16);
+
 function ExtraSubscriptions() {
   const loadedGrants = useAsync(api.extraGrants);
   const [grants, setGrants] = useState<ExtraGrant[] | null>(null);
@@ -202,24 +206,21 @@ function ExtraSubscriptions() {
   const [confirming, setConfirming] = useState(false);
 
   const [days, setDays] = useState(2);
-  const [before, setBefore] = useState('2025-05-23T10:30');
+  const [before, setBefore] = useState(tehranNow);
   const [notify, setNotify] = useState(true);
   const [message, setMessage] = useState(DEFAULT_GRANT_MESSAGE);
+  const affected = useAsync(() => (open ? api.eligibleCount(before) : Promise.resolve(undefined)), [open, before]);
+  const affectedLabel = affected === undefined ? '…' : `${affected} active ${affected === 1 ? 'subscriber' : 'subscribers'}`;
 
   const list = grants ?? loadedGrants ?? [];
 
   const apply = () => {
     setConfirming(false);
     setOpen(false);
-    const now = new Date();
     api.addExtraGrant({
-      addedAt: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
-      addedTime: now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }),
       extraDays: days,
-      // The server counts eligible subscribers against this date.
-      purchasedBefore: before.split('T')[0] ?? '',
-      eligibleBefore: before.split('T')[0] || '—',
-      eligibleTime: before.split('T')[1] ?? '—',
+      // Tehran wall clock; the server counts eligible subscribers against it.
+      purchasedBefore: before,
       message,
       notify,
     })
@@ -275,6 +276,9 @@ function ExtraSubscriptions() {
                 <DateInput type="datetime-local" value={before} onChange={setBefore} />
               </Field>
             </div>
+            <p className="at-13" style={{ marginTop: 12 }}>
+              Tehran time (UTC+03:30). <b>{affectedLabel}</b> will get {days} extra {days === 1 ? 'day' : 'days'}.
+            </p>
 
             <div className="a-row" style={{ margin: '16px 0 8px' }}>
               <span className="at-13 at-semibold">Telegram message</span>
@@ -292,8 +296,9 @@ function ExtraSubscriptions() {
             title="Apply extra subscription"
             message={(
               <>
-                Are you sure you want to apply this extra subscription? It affects every subscriber
-                who purchased before <b style={{ color: 'var(--ink)' }}>{before.split('T')[0] || '—'}</b>
+                Are you sure you want to apply this extra subscription? It affects{' '}
+                <b style={{ color: 'var(--ink)' }}>{affectedLabel}</b> who purchased before{' '}
+                <b style={{ color: 'var(--ink)' }}>{before.replace('T', ' ') || '—'}</b> Tehran time
                 {notify && ', and sends them a Telegram message'}.
               </>
             )}

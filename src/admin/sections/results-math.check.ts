@@ -62,14 +62,12 @@ eq(weekOf(day('2025-12-29')).range, 'Dec 29, 2025–Jan 4, 2026', 'both years ar
 // Sunday belongs to the week that started six days earlier, not the next one.
 eq(weekOf(mondayOf(day('2026-08-02'))).range, 'Jul 27–Aug 2, 2026', 'Sunday closes its own week');
 
-/* No month ever shows a Week 5: July has five Thursdays in 2026 (2, 9, 16,
-   23, 30), so its would-be fifth week — majority-July by day count — is
-   pushed to be August's first week instead. */
-eq(weekOf(day('2026-07-27')).period, 'August · Week 1', 'no July · Week 5');
+/* July has five Thursdays in 2026 (2, 9, 16, 23, 30), so its fifth week
+   reads "Week 5" rather than being pushed into August's "Week 1" — the two
+   weeks never share a label now. */
+eq(weekOf(day('2026-07-27')).period, 'July · Week 5', 'a month can show a real Week 5');
 eq(weekOf(day('2026-07-20')).period, 'July · Week 4', 'July still keeps its real first four');
-// The trade-off: August's own first week reads the same label, told apart
-// only by the range underneath — see the comment on weekOf for why.
-eq(weekOf(day('2026-08-03')).period, 'August · Week 1', 'August’s own week 1 collides on label, not on range');
+eq(weekOf(day('2026-08-03')).period, 'August · Week 1', 'August’s own week 1 is unambiguous');
 eq(weekOf(day('2026-08-03')).range, 'Aug 3–9, 2026');
 
 deq(

@@ -1,0 +1,98 @@
+/* Grounds, version 5 — the keepers (founder's consolidated brief, 2026-09-05).
+   v2's nine halos (01–09; 10 "Ring", the white circle, dropped) plus the six v1 patterns that
+   survived — Corner bloom, Twin panes, Aurora, Deep pool, Drift, Frosted spotlight (v1's 05,
+   06, 07, 10 excluded) — moved onto v2's palette: a plain #0C2E7B field, v2's halo recipe for
+   the light, and shadows in the same hue for depth. No grain, no black scrim, no near-black
+   base: those were v1's tone, and the tone is what was rejected. Same one-line markup, prefix k:
+     <div class="rayfield k k10" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+   The hero is text-only and centred now, so the light keeps to the corners and the top edge
+   and never puts a white core behind the headline band (roughly 30–70% of the height). */
+:root{
+  --blue:#0C2E7B;--rgb-blue:12,46,123;--rgb-shadow:4,8,26;
+  --halo:radial-gradient(circle,rgba(255,255,255,var(--core,.88)) 0%,rgba(var(--rgb-300),.92) 7%,rgba(var(--rgb-900),1) 22%,rgba(var(--rgb-900),.88) 56%,rgba(var(--rgb-950),.5) 76%,transparent 90%);
+  --shadow:radial-gradient(circle,rgba(var(--rgb-shadow),.9),rgba(var(--rgb-shadow),.42) 46%,transparent 74%);
+  --royal:radial-gradient(circle,rgba(var(--rgb-900),1),rgba(var(--rgb-900),.55) 48%,transparent 74%);
+}
+.rayfield.k{background:var(--blue);overflow:hidden}
+.rayfield.k img{display:none}
+.rayfield.k::before{content:none}
+/* "enhance the background design and depth slightly": one same-hue vignette under the copy
+   and a faint lift along the top edge — the only thing every ground shares */
+.rayfield.k::after{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;background:
+  radial-gradient(110% 84% at 50% 44%,transparent 46%,rgba(var(--rgb-shadow),.36) 100%),
+  linear-gradient(180deg,rgba(255,255,255,.045),transparent 16%)}
+.rayfield.k i{position:absolute;display:none;z-index:0;border-radius:50%;filter:blur(var(--bl,90px));background:var(--halo)}
+
+/* ---- v2, kept as they were ---- */
+/* 01 · One — a single large pale halo high on the left */
+.k01 i:nth-child(1){display:block;left:-6%;top:-28%;width:58%;height:96%}
+/* 02 · Point — one tight white-cored halo top-centre */
+.k02 i:nth-child(1){display:block;left:32%;top:-34%;width:36%;height:64%;--bl:60px;--core:1}
+/* 03 · Pair — pale top-left, deep blue bottom-right */
+.k03 i:nth-child(1){display:block;left:-4%;top:-24%;width:46%;height:80%;--bl:80px}
+.k03 i:nth-child(2){display:block;right:-14%;bottom:-40%;width:48%;height:84%;--bl:110px;--core:.35;
+  background:radial-gradient(circle,rgba(var(--rgb-700),.9),rgba(var(--rgb-900),.92) 34%,rgba(var(--rgb-950),.5) 64%,transparent 84%)}
+/* 04 · Scatter — three small soft halos, none where the words are */
+.k04 i:nth-child(1){display:block;left:4%;top:-14%;width:26%;height:44%;--bl:70px}
+.k04 i:nth-child(2){display:block;left:44%;top:-24%;width:22%;height:40%;--bl:60px;--core:.6}
+.k04 i:nth-child(3){display:block;left:20%;bottom:-24%;width:24%;height:42%;--bl:80px;--core:.5}
+/* 05 · Wash — one immense halo, so diffuse it is almost a tint */
+.k05{background:#081132}
+.k05 i:nth-child(1){display:block;left:-10%;top:-30%;width:90%;height:150%;--bl:140px;--core:.55}
+/* 06 · Rise — light coming up from the bottom-left */
+.k06 i:nth-child(1){display:block;left:-12%;bottom:-46%;width:64%;height:96%;--bl:100px;--core:.7}
+/* 07 · Bar — one elongated halo lying along the top edge */
+.k07 i:nth-child(1){display:block;left:-6%;top:-40%;width:88%;height:66%;--bl:80px;--core:.75;border-radius:50%/60%}
+/* 08 · Corner — a cool halo in the bottom-right only */
+.k08 i:nth-child(1){display:block;right:-16%;bottom:-36%;width:54%;height:90%;--bl:110px;--core:.5;
+  background:radial-gradient(circle,rgba(var(--rgb-200),.9),rgba(var(--rgb-900),.94) 36%,rgba(var(--rgb-950),.45) 66%,transparent 84%)}
+/* 09 · Lamps — two halos stacked on the left edge */
+.k09 i:nth-child(1){display:block;left:-18%;top:-18%;width:40%;height:62%;--bl:70px}
+.k09 i:nth-child(2){display:block;left:-16%;bottom:-20%;width:38%;height:60%;--bl:80px;--core:.6}
+
+/* ---- v1 patterns, on the v2 palette ---- */
+/* 10 · Corner bloom — the OrbitX hero: royal body high-left, a faint grid fading out of the
+   light, one pane catching the far right edge, a shadow answering bottom-right */
+.k10 i:nth-child(1){display:block;left:-12%;top:-36%;width:66%;height:104%;--bl:100px;--core:.7}
+.k10 i:nth-child(2){display:block;z-index:1;inset:0;border-radius:0;filter:none;background:
+  repeating-linear-gradient(0deg,rgba(var(--rgb-200),.055) 0 1px,transparent 1px 62px),
+  repeating-linear-gradient(90deg,rgba(var(--rgb-200),.055) 0 1px,transparent 1px 62px);
+  -webkit-mask-image:radial-gradient(80% 80% at 22% 10%,#000 20%,transparent 100%);mask-image:radial-gradient(80% 80% at 22% 10%,#000 20%,transparent 100%)}
+.k10 i:nth-child(3){display:block;right:-18%;top:-30%;width:42%;height:132%;transform:rotate(16deg);filter:none;z-index:1;border-radius:40px;
+  border:1px solid rgba(255,255,255,.10);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,0) 60%);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:inset 1px 0 0 rgba(255,255,255,.18)}
+.k10 i:nth-child(4){display:block;right:-22%;bottom:-44%;width:62%;height:92%;--bl:120px;background:var(--shadow)}
+
+/* 11 · Twin panes — two frosted planes crossing the corners, light on the top-left one */
+.k11 i:nth-child(1){display:block;left:-4%;top:-22%;width:50%;height:80%;--bl:100px;--core:.75}
+.k11 i:nth-child(2){display:block;right:-10%;bottom:-34%;width:50%;height:84%;--bl:110px;background:var(--shadow)}
+.k11 i:nth-child(3){display:block;left:-12%;top:-34%;width:58%;height:86%;transform:rotate(-14deg);filter:none;z-index:1;border-radius:34px;border:1px solid rgba(255,255,255,.16);
+  background:linear-gradient(120deg,rgba(255,255,255,.12),rgba(255,255,255,.02) 50%,rgba(255,255,255,.05));backdrop-filter:blur(26px) saturate(1.3);-webkit-backdrop-filter:blur(26px) saturate(1.3);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.34),0 50px 100px -50px rgba(var(--rgb-shadow),.8)}
+.k11 i:nth-child(4){display:block;left:54%;top:46%;width:64%;height:84%;transform:rotate(11deg);filter:none;z-index:1;border-radius:34px;border:1px solid rgba(255,255,255,.10);
+  background:linear-gradient(200deg,rgba(255,255,255,.08),rgba(255,255,255,0) 60%);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+
+/* 12 · Aurora — one broad ribbon of pale light along the top, blurred to silk; shadow below */
+.k12 i:nth-child(1){display:block;left:-20%;top:-8%;width:150%;height:30%;transform:rotate(-9deg);--bl:70px;
+  background:linear-gradient(90deg,transparent,rgba(var(--rgb-400),.6) 30%,rgba(255,255,255,.72) 52%,rgba(var(--rgb-900),.7) 78%,transparent)}
+.k12 i:nth-child(2){display:block;left:-10%;top:4%;width:120%;height:13%;transform:rotate(-9deg);--bl:40px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3) 50%,transparent)}
+.k12 i:nth-child(3){display:block;left:-10%;bottom:-44%;width:120%;height:72%;--bl:130px;background:var(--shadow)}
+
+/* 13 · Deep pool — three submerged masses: royal, pale, deep; a soft same-hue vignette */
+.k13 i:nth-child(1){display:block;left:8%;top:14%;width:40%;height:60%;--bl:100px;background:var(--royal)}
+.k13 i:nth-child(2){display:block;left:-6%;top:52%;width:34%;height:50%;--bl:80px;--core:.6}
+.k13 i:nth-child(3){display:block;left:40%;top:-18%;width:30%;height:48%;--bl:90px;background:radial-gradient(circle,rgba(var(--rgb-pressed),.95),rgba(var(--rgb-pressed),.5) 50%,transparent 74%)}
+.k13 i:nth-child(4){display:block;inset:0;border-radius:0;filter:none;z-index:1;background:radial-gradient(70% 76% at 50% 50%,transparent 40%,rgba(var(--rgb-shadow),.6) 100%)}
+
+/* 14 · Drift — four soft masses, two pale, one royal, one shadow, wandering the corners */
+.k14 i:nth-child(1){display:block;left:4%;top:-16%;width:34%;height:52%;--bl:90px;--core:.7}
+.k14 i:nth-child(2){display:block;left:40%;top:-32%;width:34%;height:48%;--bl:100px;background:var(--royal)}
+.k14 i:nth-child(3){display:block;left:-10%;bottom:-30%;width:42%;height:60%;--bl:110px;background:var(--shadow)}
+.k14 i:nth-child(4){display:block;right:-10%;bottom:-28%;width:38%;height:60%;--bl:100px;--core:.45}
+
+/* 15 · Frosted spotlight — one halo high in the frame, the whole field a sheet of glass */
+.k15 i:nth-child(1){display:block;left:22%;top:-36%;width:56%;height:78%;--bl:80px;--core:.9}
+.k15 i:nth-child(2){display:block;left:-12%;bottom:-32%;width:64%;height:70%;--bl:120px;background:var(--shadow)}
+.k15 i:nth-child(3){display:block;inset:5% 5%;border-radius:36px;filter:none;z-index:1;border:1px solid rgba(255,255,255,.14);
+  background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.015) 40%,rgba(255,255,255,.04));backdrop-filter:blur(34px) saturate(1.2);-webkit-backdrop-filter:blur(34px) saturate(1.2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.34),inset 0 0 120px rgba(var(--rgb-400),.08)}
