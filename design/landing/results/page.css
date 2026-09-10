@@ -166,7 +166,7 @@
 @property --sweep{syntax:'<percentage>';inherits:false;initial-value:0%}
 .winrate-body{min-height:0;padding:20px;display:grid}
 .winrate-compare{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.glass .winrate-case{--tint:rgba(72,212,138,.22);--tint2:rgba(72,212,138,.1);--rim:rgba(150,230,190,.3);
+.glass .winrate-case{--tint:rgba(72,212,138,.14);--tint2:rgba(72,212,138,.05);--rim:rgba(150,230,190,.3);--streak:.12;
   min-height:0;padding:14px 16px 16px;display:flex;flex-direction:column;align-items:center;gap:12px;border-radius:16px}
 .winrate-case-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px}
 /* smaller than any type token carries — the one deliberate literal size on the page, for a chip that
@@ -176,16 +176,17 @@
 .glass .winrate-case-head strong{padding:2px 7px;border-radius:999px;background:rgba(72,212,138,.3);
   text-align:center;font-size:9px;line-height:1.5;font-weight:var(--weight-strong);letter-spacing:.04em;color:#fff}
 .winrate-case-head span{color:rgba(255,255,255,.62);font-size:var(--text-nano);font-weight:var(--weight-label);letter-spacing:.01em}
-/* the ring is the card's one real event, so it takes the height the head and equation leave it —
-   no leftover band top or bottom — and its number is sized to that, not to the shared --text-ring token */
-.winrate-ring{position:relative;width:208px;height:208px;border-radius:50%;display:grid;place-content:center;text-align:center}
+/* the case's own row is capped at 364px by the panel's fixed 420px height (grid-template-rows:56px
+   minmax(0,1fr), overflow hidden) — 208px overran that budget once head, gaps and equation were added
+   back in. 172px is sized against that same budget with margin, not against the case's flex box alone. */
+.winrate-ring{position:relative;width:172px;height:172px;border-radius:50%;display:grid;place-content:center;text-align:center}
 /* a faint bloom of the ring's own colour behind it, low enough to read as depth, not a second light source */
-.winrate-ring::after{content:'';position:absolute;inset:-10px;z-index:-1;border-radius:50%;background:radial-gradient(circle,rgba(72,212,138,.14),transparent 65%)}
+.winrate-ring::after{content:'';position:absolute;inset:-8px;z-index:-1;border-radius:50%;background:radial-gradient(circle,rgba(72,212,138,.1),transparent 65%)}
 .winrate-ring::before{content:'';position:absolute;inset:0;border-radius:50%;--sweep:0%;
-  background:conic-gradient(var(--success) 0 var(--sweep),rgba(72,212,138,.16) var(--sweep) 100%);
+  background:conic-gradient(var(--success) 0 var(--sweep),rgba(72,212,138,.14) var(--sweep) 100%);
   -webkit-mask:radial-gradient(circle,transparent 62%,#000 63%);mask:radial-gradient(circle,transparent 62%,#000 63%);transition:--sweep 1.3s var(--ease) .55s}
 .screen.in .winrate-ring::before{--sweep:var(--rate)}
-.glass .winrate-ring strong{font-size:44px;line-height:1;letter-spacing:-.04em;color:#fff}
+.glass .winrate-ring strong{font-size:38px;line-height:1;letter-spacing:-.04em;color:#fff}
 .winrate-ring span{margin-top:6px;color:rgba(255,255,255,.6);font-size:var(--text-nano);font-weight:var(--weight-strong);letter-spacing:.1em}
 .winrate-equation{padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);font-size:var(--text-nano);letter-spacing:.03em}
 
@@ -283,7 +284,8 @@
 .average-answer{display:flex;align-items:baseline;gap:6px;white-space:nowrap}
 .glass .average-answer b{font-size:var(--text-answer);line-height:1;letter-spacing:-.035em}
 .glass .average-answer em{color:#fff;font-size:var(--text-row-title);font-weight:var(--weight-strong);font-style:normal;line-height:1}
-.glass .average-formula:first-child .average-answer b{color:var(--bounce)}.glass .average-formula:last-child .average-answer b{color:var(--breach)}
+.glass .average-formula:first-child .average-answer b,.glass .average-formula:first-child .average-answer em{color:var(--bounce)}
+.glass .average-formula:last-child .average-answer b,.glass .average-formula:last-child .average-answer em{color:var(--breach)}
 .glass .average-formula:first-child{--tint:rgba(72,212,138,.18);--rim:rgba(72,212,138,.42)}
 .glass .average-formula:last-child{--tint:rgba(255,195,0,.16);--rim:rgba(255,195,0,.4)}
 
@@ -344,7 +346,7 @@ html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
   .dark-row{grid-template-columns:58px 1fr auto;gap:10px}.dark-row small{font-size:var(--text-micro)}.dark-state{min-width:auto;padding-inline:8px}
   .target-ladder{padding-inline:12px;gap:7px}.glass .target-step{padding:11px 8px}.glass .target-step b{font-size:var(--text-micro)}
   .winrate-body{padding:12px}.winrate-compare{gap:8px}.glass .winrate-case{min-height:218px;padding:12px 10px 12px;gap:8px}.winrate-case-head{gap:6px}.glass .winrate-case-head strong{padding:2px 6px}
-  .winrate-ring{width:156px;height:156px}.glass .winrate-ring strong{font-size:36px}
+  .winrate-ring{width:128px;height:128px}.glass .winrate-ring strong{font-size:32px}
   .timer-body{padding:16px 14px}.timer-readout{width:118px;height:118px}.window-dot.touch{top:11px}
   .window-run{grid-template-columns:34px minmax(0,1fr) 34px;gap:8px}.window-line{margin:0 7px}
   /* the phone has no room for three labels on one line: the length goes above the two ends */

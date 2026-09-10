@@ -32,6 +32,13 @@ its file is missing. Each icon rests on its last frame, plays once on reveal and
 `data-rest="<frame>"` on a slot picks another resting frame. Chapter sentences take one of six
 gradients via `data-grad="1…6"` on the section (`cb8/style.css`).
 
+Forms on glass use two shared controls, both in `cb8/style.css` and both built on `.tile`:
+`.well` puts one input in its own frosted pane with its label inside it, and `.rate-cell` is the
+tier chooser that the Referral rate rail and the Cashback calculator now share. Size a rail with
+`--cell-h` and `--cell-figure` on the row rather than restyling the cell. `cb8/main.js` turns any
+`<select>` inside a well into the page's own listbox and hides the select behind it as the value,
+so the OS never draws its list; without JS the select is untouched and still works.
+
 QA: `node _qa/screens.mjs <url> <out.png> [w h [frames]]` shoots every screen of a page into one
 sheet (`?check=1` prints CHECK OK/FAIL in the console); `node _qa/lines.mjs <wireframe file> <url>`
 compares every heading's line count and size against a wireframe.

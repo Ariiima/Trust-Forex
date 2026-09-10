@@ -19,7 +19,8 @@ def stamp(path):
         dep = (path.parent / m[1]).resolve()
         assert dep.exists(), f'{m[1]} missing (from {path})'
         return f'{m[1]}?v={digest(dep)}'
-    path.write_text(re.sub(r"([\w./-]+\.(?:css|js))\?v=[^'\")\s]+", sub, text))
+    # newline='\n': the platform default turned every stamped file CRLF on Windows
+    path.write_text(re.sub(r"([\w./-]+\.(?:css|js))\?v=[^'\")\s]+", sub, text), newline='\n')
 
 
 pages = sorted(p.parent for p in ROOT.glob('*/index.html'))

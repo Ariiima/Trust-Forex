@@ -413,20 +413,15 @@ html.reduce .mech.fill .block,html.reduce .mech .block::after{animation:none}
 .field-level{grid-column:1/-1;border:0;padding:0;margin:0;min-width:0}
 .field label,.field legend{display:block;font:var(--weight-heavy) var(--text-label)/var(--leading-ui) var(--sans);letter-spacing:.075em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;padding:0}
 .field select,.field input{min-height:var(--control-height);min-width:0;width:100%;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font:var(--weight-body) var(--text-body)/var(--leading-ui) var(--sans);color:var(--navy)}
-.level-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
-.level{min-height:50px;border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;transition:border-color .25s var(--ease),background-color .25s var(--ease)}
-.level b{display:block;font-size:var(--text-small);font-weight:var(--weight-strong);color:var(--navy)}
-.level span{display:block;margin-top:2px;font-size:var(--text-micro);color:var(--muted)}
-.level[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft)}
 .estimate{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-top:18px;padding:18px 20px;border-radius:13px;background:var(--soft)}
-.estimate small{display:block;margin-bottom:2px;font:var(--weight-strong) var(--text-body)/var(--leading-ui) var(--sans);color:var(--muted)}
-.estimate strong{font-size:var(--text-estimate);line-height:1;font-weight:var(--weight-title);letter-spacing:var(--tracking-estimate);color:var(--navy)}
-.estimate strong em{font-style:normal;font-size:var(--text-meta);font-weight:var(--weight-strong);color:var(--muted)}
+.estimate small{display:block;flex:1 1 auto;min-width:0;margin-bottom:6px;font:var(--weight-heavy) var(--text-label)/var(--leading-ui) var(--sans);letter-spacing:.075em;text-transform:uppercase;color:var(--muted)}
+.estimate strong{flex:0 0 auto;white-space:nowrap;font-size:var(--text-estimate);line-height:1;font-weight:var(--weight-title);letter-spacing:var(--tracking-estimate);color:var(--navy)}
+.estimate strong.long{font-size:var(--text-number)}   /* main.js sets it once the figure passes 7 characters */
+.estimate strong em{margin-left:10px;font-style:normal;font-size:var(--text-meta);font-weight:var(--weight-strong);letter-spacing:.01em;color:var(--muted)}
 .estimate strong.swap{animation:xf .18s var(--ease)}          /* cross-fade, never a count-up */
 @keyframes xf{from{opacity:0}to{opacity:1}}
 html.reduce .estimate strong.swap{animation:none}
-.broker-rules{display:inline-flex;align-items:center;width:max-content;min-height:20px;gap:6px;margin:6px 4px 0 auto;font-size:10.5px;font-weight:var(--weight-label);color:var(--accent)}
-.broker-rules span{font-size:var(--text-small)}
+.broker-rules{display:inline-flex;align-items:center;width:max-content;min-height:20px;gap:5px;margin:6px 4px 0 auto;font-size:var(--text-micro);font-weight:var(--weight-label);color:var(--accent)}
 
 /* ---------- 11 · ACTIVATION ---------- */
 #activation{background:var(--paper)}

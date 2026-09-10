@@ -6,7 +6,7 @@
    feDisplacementMap (#liquid in index.html) in backdrop-filter, Chromium only; every other
    engine gets the same glass without the bend. The data stays opaque white — the founder's
    "white chart" — so figures never sit on a translucent ground. */
-@import url('base.css?v=7bedec09');
+@import url('base.css?v=531b5a2f');
 
 /* ---------- structure behind the glass: a faint grid in every blue ground ---------- */
 .rayfield.k::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:
@@ -62,7 +62,7 @@
 
 /* ---------- the effect must be defeatable ---------- */
 @media (prefers-reduced-transparency:reduce){
-  .on-dark .btn-solid,.block .panel::before,.screen-paper .panel::before,.pstep,.glass .panel,.glass .tile{backdrop-filter:none;-webkit-backdrop-filter:none}
+  .on-dark .btn-solid,.block .panel::before,.screen-paper .panel::before,.pstep,.glass .panel,.glass .tile,#calculator .tile{backdrop-filter:none;-webkit-backdrop-filter:none}
   .on-dark .btn-solid{background:#fff;color:var(--navy)}
   .pstep{background:#fff}
 }
@@ -107,19 +107,17 @@
 #calculator .block .copy{color:var(--body)}
 /* the glass frame now sits on paper, so it takes the nav's paper treatment: a dark-tinted rim,
    its highlight in white and its shade in shadow */
-#calculator .panel::after{background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,.14) 46%,rgba(255,255,255,.04) 52%,transparent 62%) no-repeat 100% 0/220% 100%,var(--blue);
-  animation:panel-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%}
-@keyframes panel-light{from{background-position:100% 0}to{background-position:0 0}}
-html.reduce #calculator .panel::after{animation:none}
+#calculator .panel::after{transition:--lit .45s var(--ease);background:
+  radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,var(--lit)),transparent 70%) no-repeat 0 0/auto,
+  linear-gradient(115deg,transparent 32%,rgba(255,255,255,.14) 46%,rgba(255,255,255,.04) 52%,transparent 62%) no-repeat 100% 0/220% 100%,
+  linear-gradient(var(--blue),var(--blue));
+  animation:glass-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%}
+#calculator .panel.lit{--lit:.08}
+html.reduce #calculator .panel::after{animation:none;transition:none}
 #calculator .panel::before,.screen-paper .panel::before{background:rgba(var(--rgb-900),.08);border-color:rgba(var(--rgb-shadow),.14);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(var(--rgb-shadow),.1)}
 /* everything in the form that was ink on white is now light on blue; the fields themselves are not */
 #calculator .field label,#calculator .field legend,#calculator .estimate small{color:rgba(255,255,255,.72)}
-#calculator .field select,#calculator .field input{border-color:transparent}
-#calculator .level{border-color:rgba(255,255,255,.24)}
-#calculator .level b{color:#fff}
-#calculator .level span{color:rgba(255,255,255,.68)}
-#calculator .level[aria-pressed=true]{border-color:#fff;background:rgba(255,255,255,.14)}
 #calculator .estimate{background:rgba(255,255,255,.12)}   /* the wireframe's grey band, on the blue panel */
 #calculator .estimate strong{color:#fff}
 #calculator .estimate strong em{color:rgba(255,255,255,.6)}
@@ -179,7 +177,7 @@ html.reduce #m1 .block{animation:none}
 .glass .panel.lit{transition-duration:.15s}
 html.reduce .glass .panel{transform:none;transition:none}
 /* the tiles */
-.glass .tile{--tint:rgba(255,255,255,.10);--tint2:rgba(255,255,255,.05);--rim:rgba(255,255,255,.28);
+.glass .tile,#calculator .tile{--tint:rgba(255,255,255,.10);--tint2:rgba(255,255,255,.05);--rim:rgba(255,255,255,.28);
   position:relative;isolation:isolate;border-radius:16px;color:#fff;border:1px solid var(--rim);
   background:linear-gradient(150deg,var(--tint),var(--tint2));
   backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%);
@@ -200,7 +198,7 @@ html.reduce .glass .panel{transform:none;transition:none}
 .glass .p-note{color:rgba(255,255,255,.72);letter-spacing:0;font-weight:var(--weight-body)}
 .glass .dash-row{font-weight:var(--weight-body);color:#fff;border-top-color:rgba(255,255,255,.18)}
 .glass .dash-row b{color:#fff;font-weight:var(--weight-strong)}
-/* 04 Â· the withdrawable figure carries its own tile â€” the balance card's glass in green, sized to the
+/* 04 · the withdrawable figure carries its own tile — the balance card's glass in green, sized to the
    row, so the amount you can take out reads as the one live number in the list (founder, 2026-09-10) */
 #m4 .dash-avail{--tint:rgba(34,170,124,.5);--tint2:rgba(16,112,82,.36);--rim:rgba(150,230,190,.6);--streak:.2;
   display:inline-block;padding:.5rem .75rem;border-radius:12px;white-space:nowrap}
@@ -212,23 +210,23 @@ html.reduce .glass .panel{transform:none;transition:none}
    the radial minus its own 1px inset, by mask). A browser without view timelines shows the streak
    at rest; no pointer, no touch. */
 @property --lit{syntax:'<number>';inherits:true;initial-value:0}
-.glass .panel::after,.glass .tile::after,.glass .tile::before{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none}
-.glass .panel::after,.glass .tile::after{transition:--lit .45s var(--ease);animation:glass-light linear both;animation-range:entry 0% exit 100%}
+.glass .panel::after,.glass .tile::after,.glass .tile::before,#calculator .tile::after,#calculator .tile::before{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none}
+.glass .panel::after,.glass .tile::after,#calculator .tile::after{transition:--lit .45s var(--ease);animation:glass-light linear both;animation-range:entry 0% exit 100%}
 .glass .panel::after{background:
   radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,var(--lit)),transparent 70%) no-repeat 0 0/auto,
   linear-gradient(115deg,transparent 32%,rgba(255,255,255,.14) 46%,rgba(255,255,255,.04) 52%,transparent 62%) no-repeat 100% 0/220% 100%}
-.glass .tile::after{animation-range:entry 30% exit 70%;background:
+.glass .tile::after,#calculator .tile::after{animation-range:entry 30% exit 70%;background:
   radial-gradient(180px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,calc(var(--lit) * 1.6)),transparent 70%) no-repeat 0 0/auto,
   linear-gradient(115deg,transparent 26%,rgba(255,255,255,var(--streak,.24)) 44%,rgba(255,255,255,.06) 51%,transparent 64%) no-repeat 100% 0/260% 100%}
 @keyframes glass-light{from{background-position:0 0,100% 0}to{background-position:0 0,0% 0}}
 .glass .panel.lit{--lit:.08}
-.glass .tile::before{inset:-1px;padding:1px;opacity:0;transition:opacity .45s var(--ease);
+.glass .tile::before,#calculator .tile::before{inset:-1px;padding:1px;opacity:0;transition:opacity .45s var(--ease);
   background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.55),transparent 70%);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
-.glass .panel.lit .tile::before{opacity:1}
+.glass .panel.lit .tile::before,#calculator .panel.lit .tile::before{opacity:1}
 #m2 .panel::after,#m2 .tile::after,#m2 .rayfield.k i{animation-timeline:--m2}
 #m4 .panel::after,#m4 .tile::after,#m4 .rayfield.k i{animation-timeline:--m4}
-html.reduce .glass .panel::after,html.reduce .glass .tile::after,html.reduce .glass .tile::before,html.reduce .glass .rayfield.k i{animation:none;transition:none}
+html.reduce .glass .panel::after,html.reduce .glass .tile::after,html.reduce .glass .tile::before,html.reduce #calculator .tile::after,html.reduce #calculator .tile::before,html.reduce .glass .rayfield.k i{animation:none;transition:none}
 /* the ground: two arcs of light sweeping the corners, on top of the section's own halo */
 .glass .rayfield.k i:nth-child(3),.glass .rayfield.k i:nth-child(4){display:block;background:none;filter:blur(5px);border:4px solid transparent;
   border-top-color:rgba(255,255,255,.5);border-left-color:rgba(var(--rgb-300),.3)}
@@ -344,31 +342,144 @@ html.snap .mech.white .block::after{animation-name:stack-back-paper}
 
 /* ---------- the calculator reads as a control, not another record (founder, 2026-09-08) ----------
    After four screens of tables the form has to say "touch me": a live dot pulsing in its corner, the
-   four levels in their tier metals (02's tints), the fields as frosted iOS-style wells with a hover and a
-   focus ring, the estimate band and the rules link on the same glass. */
-#calculator .live{position:absolute;top:-13px;right:18px;z-index:1;display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border-radius:999px;
-  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.34);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
-  font:var(--weight-label) var(--text-micro)/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.8)}
-#calculator .live i{width:8px;height:8px;border-radius:50%;background:var(--success);animation:live-pulse 1.8s var(--ease) infinite}
+   four levels in the referral rail's tier metals, the three inputs in their own glass wells, the
+   estimate band and the rules link on the same glass.
+   The pill straddles the pane's top edge, so half of it stands on paper: a white translucent ground
+   read as nothing there (founder, 2026-09-10). It carries the pane's own blue instead — opaque, its
+   own rim — and is legible on either side of the edge. */
+#calculator .live{position:absolute;top:-13px;right:18px;z-index:1;display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;
+  background:linear-gradient(150deg,rgba(var(--rgb-900),.9),rgba(var(--rgb-abyss),.94)),linear-gradient(var(--blue),var(--blue));
+  border:1px solid rgba(160,196,255,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 10px 22px -12px rgba(var(--rgb-shadow),.9);
+  font:var(--weight-heavy) var(--text-micro)/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:#fff}
+#calculator .live i{width:7px;height:7px;border-radius:50%;background:var(--success);animation:live-pulse 1.8s var(--ease) infinite}
 @keyframes live-pulse{0%{box-shadow:0 0 0 0 rgba(52,199,123,.6)}70%,100%{box-shadow:0 0 0 9px rgba(52,199,123,0)}}
-#calculator .field select,#calculator .field input{color:#fff;color-scheme:dark;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);
-  backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -1px 0 rgba(var(--rgb-shadow),.18);transition:background-color .25s var(--ease),border-color .25s var(--ease)}
-#calculator .field select:hover,#calculator .field input:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.45)}
-#calculator .field select:focus-visible,#calculator .field input:focus-visible,#calculator .level:focus-visible,#calculator .broker-rules:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:2px}
-#calculator .level{border-color:var(--rim);background:linear-gradient(150deg,var(--tint),var(--tint2));
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3);
-  transition:transform .25s var(--ease),border-color .25s var(--ease),box-shadow .25s var(--ease)}
-#calculator .level b{color:var(--label)}
-#calculator .level:hover{transform:translateY(-1px)}
-#calculator .level[aria-pressed=true]{border-color:#fff;background:linear-gradient(150deg,var(--tint),var(--tint2));box-shadow:inset 0 0 0 1px #fff,0 12px 24px -14px var(--rim)}
+/* the three wells and the four cells are the shared glass controls below; only their size is the form's */
+#calculator .fields{gap:11px}
+#calculator .level-row{--cell-h:76px;--cell-figure:var(--text-summary-stat);gap:9px}
+/* Referral's rail lights all four metals equally; here one of them is the answer to a question the
+   visitor just asked, so the picked cell has to win the row (founder, 2026-09-10). The other three
+   keep a trace of their metal and step back; the picked one wears the full tint, a white rim and a
+   lift. */
+#calculator .rate-cell[aria-pressed=false][data-tier=standard]{--tint:rgba(226,150,96,.24);--tint2:rgba(150,84,50,.2);--rim:rgba(236,176,136,.34)}
+#calculator .rate-cell[aria-pressed=false][data-tier=silver]{--tint:rgba(204,218,238,.16);--tint2:rgba(118,144,184,.13);--rim:rgba(228,238,250,.38)}
+#calculator .rate-cell[aria-pressed=false][data-tier=gold]{--tint:rgba(238,196,102,.24);--tint2:rgba(170,124,40,.2);--rim:rgba(240,208,130,.38)}
+#calculator .rate-cell[aria-pressed=false][data-tier=diamond]{--tint:rgba(138,96,224,.22);--tint2:rgba(76,48,150,.18);--rim:rgba(196,166,250,.38)}
+#calculator .rate-cell[aria-pressed=false]{--streak:.14}
+#calculator .rate-cell[aria-pressed=false] small{color:rgba(255,255,255,.6)}
+#calculator .rate-cell[aria-pressed=false] strong{color:rgba(255,255,255,.78)}
+/* what marks the pick is the metal, not a white box drawn around it (founder, 2026-09-10): the
+   picked tier runs richer than Referral's and takes its own rim, the white is pulled back to a
+   trace, and the pane behind it is saturated so what shows through gains with it. */
+#calculator .rate-cell[aria-pressed=true]{--streak:.34;transform:translateY(-2px);border-color:var(--rim);
+  backdrop-filter:blur(10px) saturate(190%);-webkit-backdrop-filter:blur(10px) saturate(190%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.24),inset 0 1px 0 rgba(255,255,255,.3),0 0 0 2px rgba(255,255,255,.05),0 14px 26px -16px var(--rim)}
+#calculator .rate-cell[aria-pressed=true][data-tier=standard]{--tint:rgba(232,140,72,.74);--tint2:rgba(148,68,28,.7);--rim:rgba(255,178,122,.72);--label:#FFE3CE}
+#calculator .rate-cell[aria-pressed=true][data-tier=silver]{--tint:rgba(206,226,250,.5);--tint2:rgba(104,138,192,.46);--rim:rgba(226,238,255,.56);--label:#FFFFFF}   /* silver's metal is already white; its rim is the one that has to give */
+#calculator .rate-cell[aria-pressed=true][data-tier=gold]{--tint:rgba(246,196,72,.78);--tint2:rgba(166,112,14,.74);--rim:rgba(255,214,118,.78);--label:#FFF0C4}
+#calculator .rate-cell[aria-pressed=true][data-tier=diamond]{--tint:rgba(142,86,244,.64);--tint2:rgba(66,32,160,.6);--rim:rgba(202,164,255,.78);--label:#E9DCFF}
+html.reduce #calculator .rate-cell[aria-pressed=true]{transform:none}
+/* the wells and the cells take their streak from the screen's own timeline, as 02 and 04 do */
+#calculator .tile::after{animation-timeline:--ground}
+#calculator .well:focus-within,#calculator .rate-cell:focus-visible,#calculator .broker-rules:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:2px}
 #calculator .estimate{border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
-#calculator .broker-rules{display:flex;margin:14px 0 0 auto;min-height:40px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.34);
-  background:rgba(255,255,255,.14);color:#fff;font-size:var(--text-ui);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.5);transition:background-color .3s var(--ease)}
-#calculator .broker-rules:hover{background:rgba(255,255,255,.3);border-color:rgba(255,255,255,.6)}
+/* the rules link is text, not a chip: the section already has a CTA and this only names the fine
+   print, so it sits there and asks for nothing (founder, 2026-09-10) */
+#calculator .broker-rules{display:flex;margin:12px 2px 0 auto;min-height:20px;padding:0;border:0;background:none;
+  color:rgba(255,255,255,.58);transition:color .3s var(--ease)}
+#calculator .broker-rules .ext{width:11px;height:11px}
+#calculator .broker-rules:hover{color:#fff}
 #calculator .broker-rules:hover .ext{transform:rotate(0)}   /* the same sloped arrow as every other CTA, straightening on hover (founder, 2026-09-08) */
-html.reduce #calculator .live i,html.reduce #calculator .level:hover{animation:none;transform:none}
+html.reduce #calculator .live i{animation:none}
+/* one stop down on every edge (founder, 2026-09-10: "the shadowing and lighting is a bit harsh").
+   The recipe is the mechanics' — it has to be, they are the same tiles — but on paper, under a
+   frame that is itself lit, every highlight and every drop read twice as loud as they do on blue. */
+#calculator .tile{--streak:.16;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(var(--rgb-shadow),.12),0 10px 22px -18px rgba(var(--rgb-shadow),.4)}
+#calculator .panel{box-shadow:0 22px 46px -34px rgba(var(--rgb-shadow),.5)}
+#calculator .panel::before{box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(var(--rgb-shadow),.06)}
+#calculator .live{box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 8px 18px -14px rgba(var(--rgb-shadow),.6)}
+#calculator .estimate{box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
+#calculator .well:focus-within{box-shadow:inset 0 0 0 1px #fff,inset 0 1px 0 rgba(255,255,255,.4),0 0 0 3px rgba(255,255,255,.1),0 12px 24px -20px rgba(var(--rgb-shadow),.5)}
+
+/* ---------- the glass controls, shared (founder, 2026-09-10: "we'll reuse the thing you'll make") ----------
+   Two controls built on the tile above, so any page can put a form on glass.
+     · .well — one input in its own frosted pane, the label inside it. The wireframe's boxed field
+       under a label was a spreadsheet cell; this is the iOS grouped insert: one pane, a caption, a
+       value, and no second rectangle around the control itself.
+     · .rate-cell — the referral rate rail's tier cell, lifted out of referral/page.css so the
+       Cashback level and the referral rate are picked by the same control on both pages.
+   Both take their size from the page: --cell-h and --cell-figure on the rail, padding on the well. */
+.well{padding:9px 14px 10px;transition:background .3s var(--ease),border-color .3s var(--ease),box-shadow .3s var(--ease)}
+.well>label{display:block;margin:0 0 1px;user-select:none;-webkit-user-select:none;font:var(--weight-heavy) var(--text-label)/var(--leading-ui) var(--sans);
+  letter-spacing:.075em;text-transform:uppercase;color:var(--label,rgba(255,255,255,.7))}
+.well select,.well input{width:100%;min-width:0;min-height:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;
+  color:#fff;color-scheme:dark;font:var(--weight-strong) var(--text-row-title)/1.4 var(--sans);letter-spacing:-.015em}
+.well select{appearance:none;-webkit-appearance:none;padding-right:18px;cursor:pointer;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6.5 8 10.5 12 6.5' fill='none' stroke='%23ffffff' stroke-opacity='.72' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 0 center/12px 12px}
+.well input::-webkit-outer-spin-button,.well input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.well input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.well select:focus,.well input:focus{outline:0}
+.well:hover{--tint:rgba(255,255,255,.18);--rim:rgba(255,255,255,.46)}
+.well:focus-within{--rim:#fff;box-shadow:inset 0 0 0 1px #fff,inset 0 1px 0 rgba(255,255,255,.5),0 0 0 4px rgba(255,255,255,.12),0 18px 34px -18px rgba(var(--rgb-shadow),.8)}
+/* The list a native <select> drops is drawn by the OS: a sharp white rectangle that belongs to no
+   page (founder, 2026-09-10). main.js swaps it for this one — the well's own glass, the same rim
+   and the same rounding — and keeps the <select> underneath as the value, so anything listening to
+   the field still hears it, and a browser with no JS keeps the control it always had. */
+.well.picked>select{display:none}
+.well-value{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:0;border:0;background:none;
+  cursor:pointer;text-align:left;user-select:none;-webkit-user-select:none;color:#fff;font:var(--weight-strong) var(--text-row-title)/1.4 var(--sans);letter-spacing:-.015em}
+.well-value .caret{width:12px;height:12px;flex:none;opacity:.7;transition:transform .25s var(--ease)}
+.well.open{z-index:6}
+.well.open .well-value .caret{transform:rotate(180deg)}
+.picker{position:absolute;z-index:6;left:0;right:0;top:calc(100% + 7px);margin:0;padding:6px;list-style:none;border-radius:15px;
+  display:flex;flex-direction:column;gap:3px;
+  border:1px solid rgba(255,255,255,.22);
+  background:linear-gradient(160deg,rgba(var(--rgb-900),.86),rgba(var(--rgb-abyss),.92)),linear-gradient(var(--blue),var(--blue));
+  backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 16px 30px -24px rgba(var(--rgb-shadow),.6);
+  transform-origin:top center;animation:picker-in .18s var(--ease) both}
+.picker[hidden]{display:none}
+@keyframes picker-in{from{opacity:0;transform:translateY(-4px) scale(.985)}}
+.picker li{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:33px;padding:0 10px;border-radius:9px;cursor:pointer;
+  user-select:none;-webkit-user-select:none;font:var(--weight-label) var(--text-panel-title)/1.3 var(--sans);color:rgba(255,255,255,.8);
+  transition:background-color .18s var(--ease),color .18s var(--ease)}
+.picker li .tick{width:13px;height:13px;flex:none;opacity:0}
+.picker li[aria-selected=true]{color:#fff;font-weight:var(--weight-strong);background:rgba(255,255,255,.13);box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}
+.picker li[aria-selected=true] .tick{opacity:1}
+.picker li:hover,.picker li.on{background:rgba(255,255,255,.2);color:#fff}   /* .on is where the keyboard stands */
+html.reduce .picker{animation:none}
+html.reduce .well-value .caret,html.reduce .picker li{transition:none}
+/* the rail is a chooser. Nothing here is dimmed or greyed — an unpicked plan is an offer, not a
+   disabled control — so every tile keeps its label, its figure and its metal lit. The picked one
+   simply carries more of that metal, inside a white rim, and the light crossing the row runs
+   brighter over all four so the rail reads as glass, not as a printed table. */
+.rate-rail{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.rate-cell{--streak:.32;
+  appearance:none;-webkit-appearance:none;margin:0;font:inherit;cursor:pointer;user-select:none;-webkit-user-select:none;
+  min-height:var(--cell-h,124px);padding:19px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;text-align:center;border-radius:16px;
+  transition:background .3s var(--ease),border-color .3s var(--ease),box-shadow .3s var(--ease),transform .3s var(--ease)}
+.rate-cell small{font-size:var(--text-small);line-height:1.25;white-space:nowrap;color:var(--label,rgba(255,255,255,.85))}
+.rate-cell strong{font-size:var(--cell-figure,var(--text-ring));line-height:1;letter-spacing:-.045em;color:#fff}
+.rate-cell[aria-pressed=false][data-tier=standard]{--tint:rgba(226,150,96,.46);--tint2:rgba(150,84,50,.42);--rim:rgba(236,176,136,.46)}
+.rate-cell[aria-pressed=false][data-tier=silver]{--tint:rgba(204,218,238,.24);--tint2:rgba(118,144,184,.21);--rim:rgba(228,238,250,.46)}
+.rate-cell[aria-pressed=false][data-tier=gold]{--tint:rgba(238,196,102,.46);--tint2:rgba(170,124,40,.46);--rim:rgba(240,208,130,.5)}
+.rate-cell[aria-pressed=false][data-tier=diamond]{--tint:rgba(138,96,224,.32);--tint2:rgba(76,48,150,.29);--rim:rgba(196,166,250,.46)}
+.rate-cell[aria-pressed=false]:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.62);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(var(--rgb-shadow),.22),0 18px 32px -20px rgba(var(--rgb-shadow),.8)}
+.rate-cell[aria-pressed=true]{--streak:.42;border-color:#fff;
+  box-shadow:inset 0 0 0 1px #fff,inset 0 1px 0 rgba(255,255,255,.5),0 0 0 4px rgba(255,255,255,.12),0 18px 34px -18px var(--rim)}
+.rate-cell[aria-pressed=true][data-tier=standard]{--tint:rgba(226,150,96,.62);--tint2:rgba(150,84,50,.6);--label:#FFF1E6}
+.rate-cell[aria-pressed=true][data-tier=silver]{--tint:rgba(204,218,238,.36);--tint2:rgba(118,144,184,.32)}
+.rate-cell[aria-pressed=true][data-tier=gold]{--tint:rgba(238,196,102,.66);--tint2:rgba(170,124,40,.66);--label:#FFF6DF}
+.rate-cell[aria-pressed=true][data-tier=diamond]{--tint:rgba(138,96,224,.5);--tint2:rgba(76,48,150,.46)}
+.rate-cell:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
+html.reduce .rate-cell,html.reduce .well{transition:none}
+html.reduce .rate-cell[aria-pressed=false]:hover{transform:none}
+@media (prefers-reduced-transparency:reduce){
+  .well{backdrop-filter:none;-webkit-backdrop-filter:none}
+}
+/* the rail halves before it clips: four metals need 4 × ~110px, and a phone has one column of wells */
+@media (max-width:1023px){.rate-rail{grid-template-columns:repeat(2,1fr)}}
 
 /* ---------- the display headings' two gradients (founder, 2026-09-10: "this exact gradient across all pages") ----------
    Blue text on paper takes the "Ready to activate?" run; white text on a blue ground takes the referral chapter's

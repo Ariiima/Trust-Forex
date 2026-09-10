@@ -157,7 +157,7 @@
   /* ---------- glass panes (02, 04) and the two-records panel: the light follows the pointer ----------
      --mx/--my in px on the pane and on each tile, relative to its own box, so every radial in
      style.css centres under the cursor; .lit while the pointer is over the pane. */
-  document.querySelectorAll('.glass .panel, .split-panel').forEach(pane => {
+  document.querySelectorAll('.glass .panel, .split-panel, #calculator .panel').forEach(pane => {
     const lit = [pane, ...pane.querySelectorAll('.tile')];
     pane.addEventListener('pointermove', e => {
       for (const el of lit) {
@@ -197,6 +197,99 @@
     });
   });
 
+  /* ---------- every <select> in a .well gets the page's own picker ----------
+     The list a native select drops is the operating system's, not the page's. This builds a listbox
+     on the well's own glass and hides the select behind it — the select stays the value, so anything
+     already listening to the field (the calculator below, among others) hears the same events, and a
+     browser that never runs this keeps the control it always had. */
+  const CARET = '<svg class="caret" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6.5 8 10.5 12 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const TICK = '<svg class="tick" viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 8.5 3 3 6-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  let shut = null;                      // the one open picker on the page closes when another opens
+  document.querySelectorAll('.well > select').forEach((sel, n) => {
+    const well = sel.parentElement;
+    const id = sel.id || `well-${n}`;
+    const label = well.querySelector('label');
+    if (label && !label.id) label.id = `${id}-label`;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'well-value';
+    btn.id = `${id}-value`;
+    btn.setAttribute('role', 'combobox');
+    btn.setAttribute('aria-haspopup', 'listbox');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-controls', `${id}-list`);
+    if (label) btn.setAttribute('aria-labelledby', `${label.id} ${btn.id}`);
+    const list = document.createElement('ul');
+    list.className = 'picker';
+    list.id = `${id}-list`;
+    list.hidden = true;
+    list.setAttribute('role', 'listbox');
+    if (label) list.setAttribute('aria-labelledby', label.id);
+    list.addEventListener('mousedown', e => e.preventDefault());   // the button keeps focus through the click
+    const opts = [...sel.options].map((o, i) => {
+      const li = document.createElement('li');
+      li.id = `${id}-o${i}`;
+      li.setAttribute('role', 'option');
+      li.innerHTML = `<span>${o.text}</span>${TICK}`;
+      li.addEventListener('click', () => pick(i));
+      list.append(li);
+      return li;
+    });
+    well.append(btn, list);
+    well.classList.add('picked');
+    let active = sel.selectedIndex;
+    const paint = () => {
+      btn.innerHTML = `<span>${sel.options[sel.selectedIndex].text}</span>${CARET}`;
+      opts.forEach((li, i) => {
+        li.setAttribute('aria-selected', String(i === sel.selectedIndex));
+        li.classList.toggle('on', !list.hidden && i === active);
+      });
+      if (list.hidden) btn.removeAttribute('aria-activedescendant');
+      else btn.setAttribute('aria-activedescendant', opts[active].id);
+    };
+    const close = () => {
+      if (list.hidden) return;
+      list.hidden = true;
+      well.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      if (shut === close) shut = null;
+      paint();
+    };
+    const open = () => {
+      if (shut) shut();
+      active = sel.selectedIndex;
+      list.hidden = false;
+      well.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+      shut = close;
+      paint();
+    };
+    const pick = i => {
+      sel.selectedIndex = i;
+      active = i;
+      close();
+      sel.dispatchEvent(new Event('input', { bubbles: true }));
+      sel.dispatchEvent(new Event('change', { bubbles: true }));
+      btn.focus();
+    };
+    btn.addEventListener('click', () => (list.hidden ? open() : close()));
+    btn.addEventListener('keydown', e => {
+      const last = opts.length - 1;
+      if (e.key === 'Escape') { if (!list.hidden) { e.preventDefault(); close(); } return; }
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); return list.hidden ? open() : pick(active); }
+      if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) return;
+      e.preventDefault();
+      if (list.hidden) return open();
+      active = e.key === 'Home' ? 0 : e.key === 'End' ? last
+        : Math.min(last, Math.max(0, active + (e.key === 'ArrowDown' ? 1 : -1)));
+      paint();
+    });
+    btn.addEventListener('blur', () => close());
+    sel.addEventListener('change', paint);
+    paint();
+  });
+  addEventListener('pointerdown', e => { if (shut && !e.target.closest('.well.open')) shut(); }, true);
+
   /* ---------- calculator: volume x 17 x account factor x share (the Cashback page only — the Results,
      Referral and About pages load this same script and have no form) ---------- */
   const vol = document.getElementById('volume');
@@ -204,10 +297,20 @@
   const out = document.getElementById('estimate');
   const levels = [...document.querySelectorAll('.level')];
   let rate = 10;
+  // The band holds about seven characters at 44px, and a volume nobody trades used to push the
+  // figure out of it. Three steps keep it in: the volume is capped at the cap the field itself
+  // declares — and written back, so what the figure is computed from is what the field shows — a
+  // figure past seven characters steps down a size, and past $10M it goes compact ($51M), which no
+  // volume can outgrow.
+  const MAX_VOL = +vol?.max || Infinity;
+  const compact = new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 });
   const price = () => {
-    const v = Math.max(0, parseFloat(vol.value) || 0);
+    let v = Math.max(0, parseFloat(vol.value) || 0);
+    if (v > MAX_VOL) { v = MAX_VOL; vol.value = String(MAX_VOL); }
     const n = Math.round(v * 17 * parseFloat(acct.value) * rate / 100);
-    out.innerHTML = `$${n.toLocaleString('en-US')} <em>/ month</em>`;   // cross-fade, never a count-up
+    const figure = `$${n < 1e7 ? n.toLocaleString('en-US') : compact.format(n)}`;
+    out.innerHTML = `${figure} <em>/ month</em>`;   // cross-fade, never a count-up
+    out.classList.toggle('long', figure.length > 7);
     out.classList.remove('swap'); void out.offsetWidth; out.classList.add('swap');
   };
   levels.forEach(b => b.addEventListener('click', () => {
