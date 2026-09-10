@@ -66,14 +66,28 @@
     const xAt = index => centers.length === count ? centers[index] : geometry.left + (count === 1 ? geometry.plotWidth / 2 : (index / (count - 1)) * geometry.plotWidth);
     compareChart.setAttribute('viewBox', '0 0 ' + geometry.width + ' ' + geometry.height);
     compareChart.innerHTML = '';
+    /* a period with no signals is not a zero — the bars leave a dashed stub where the column would be,
+       so the lines leave the same stub and break, rather than ruling straight across a period nothing
+       was recorded in. A lone reading between two empty periods is drawn as a dot. */
+    const baseline = geometry.top + geometry.plotHeight;
+    data[timeframe].forEach((item, index) => {
+      if (item.total) return;
+      const stub = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      stub.setAttribute('x1', String(xAt(index))); stub.setAttribute('x2', String(xAt(index)));
+      stub.setAttribute('y1', String(baseline - 18)); stub.setAttribute('y2', String(baseline));
+      stub.setAttribute('class', 'compare-gap'); compareChart.appendChild(stub);
+    });
     targets.forEach(targetName => {
-      const current = rowsFor(targetName); let path = '', drawing = false;
+      const current = rowsFor(targetName); let path = '', run = [];
+      const flush = () => {
+        if (run.length) path += ' M ' + run[0] + (run.length === 1 ? ' L ' + run[0] : run.slice(1).map(point => ' L ' + point).join(''));
+        run = [];
+      };
       current.forEach((item, index) => {
-        if (item.rate === null) return;
-        const x = xAt(index);
-        const y = geometry.top + (100 - item.rate) / 100 * geometry.plotHeight;
-        path += (drawing ? ' L ' : ' M ') + x.toFixed(2) + ' ' + y.toFixed(2); drawing = true;
+        if (item.rate === null) { flush(); return; }
+        run.push(xAt(index).toFixed(2) + ' ' + (geometry.top + (100 - item.rate) / 100 * geometry.plotHeight).toFixed(2));
       });
+      flush();
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       line.setAttribute('d', path.trim()); line.setAttribute('class', 'compare-path ' + targetName); line.setAttribute('pathLength', '1'); compareChart.appendChild(line);
       if (count <= 6) {
@@ -202,6 +216,10 @@
     if (w[12].rate !== null) fails.push('week 13 should be No Signals');
     if (w.some(r => r.rate !== null && (r.rate < 0 || r.rate > 100))) fails.push('a rate left 0–100');
     if (document.querySelectorAll('#bars .bar-slot').length !== 30) fails.push('bars not drawn');
+    const runs = [...document.querySelectorAll('#compare-chart .compare-path')].map(path => (path.getAttribute('d').match(/M/g) || []).length);
+    if (runs.length !== 4) fails.push(`compare lines ${runs.length} != 4`);
+    if (runs.some(n => n !== 2)) fails.push('a compare line rules across the No Signals week: ' + runs.join(','));
+    if (document.querySelectorAll('#compare-chart .compare-gap').length !== 1) fails.push('the No Signals week lost its stub');
     console.log(fails.length ? 'CHART FAIL\n' + fails.join('\n') : 'CHART OK — 30 weekly slots, week 13 No Signals');
   }
 })();
