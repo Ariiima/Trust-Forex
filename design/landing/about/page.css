@@ -32,8 +32,8 @@ html.snap .story,html:not(.snap) .story{min-height:auto;padding:118px 0;justify-
 .dark-run .article p{color:rgba(255,255,255,.78)}
 .dark-run .article strong{color:#fff}
 /* the same light that crosses every screen: pale blue on paper, white on the blue */
-.story:not(.screen-dark){view-timeline-name:--ground}
-.story:not(.screen-dark)::after{content:'';position:absolute;inset:0 auto 0 0;width:40%;z-index:0;pointer-events:none;
+.story:not(.screen-dark),#founder{view-timeline-name:--ground}
+.story:not(.screen-dark)::after,#founder::after{content:'';position:absolute;inset:0 auto 0 0;width:40%;z-index:0;pointer-events:none;
   background:linear-gradient(115deg,transparent 18%,rgba(var(--rgb-200),.5) 50%,transparent 82%);
   -webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent),linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);-webkit-mask-composite:source-in;
   mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent),linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);mask-composite:intersect;
@@ -42,7 +42,16 @@ html.snap .story,html:not(.snap) .story{min-height:auto;padding:118px 0;justify-
 .dark-run>.rayfield.k i:nth-child(4){display:block;position:absolute;inset:0;z-index:1;border-radius:0;filter:none;pointer-events:none;
   background:linear-gradient(115deg,transparent 36%,rgba(255,255,255,.11) 47%,rgba(255,255,255,.03) 53%,transparent 64%);
   animation:ground-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%}
-html.reduce .story::after,html.reduce .dark-run>.rayfield.k i:nth-child(4){animation:none}
+html.reduce .story::after,html.reduce #founder::after,html.reduce .dark-run>.rayfield.k i:nth-child(4){animation:none}
+
+/* the field the beam travels over: the grid and the two corner glows. Every other white ground
+   on the site carries it; the story pages and the founder were reading as flat paper. */
+.story:not(.screen-dark)::before,#founder::before{content:'';position:absolute;inset:0;pointer-events:none;background:
+  radial-gradient(46% 56% at 10% -4%,rgba(var(--rgb-300),.42),transparent 70%),
+  radial-gradient(40% 52% at 94% 104%,rgba(var(--rgb-200),.5),transparent 70%),
+  repeating-linear-gradient(0deg,rgba(var(--rgb-300),.10) 0 1px,transparent 1px 48px),
+  repeating-linear-gradient(90deg,rgba(var(--rgb-300),.10) 0 1px,transparent 1px 48px);
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent);mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent)}
 
 /* ---------- 8 · the founder: portrait card on the blue, copy beside it, one screen ---------- */
 #founder{background:var(--paper);padding:70px 0}

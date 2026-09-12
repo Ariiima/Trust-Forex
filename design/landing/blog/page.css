@@ -24,18 +24,19 @@
 
 /* ---------- the grid: paper, frosted cards, three across ---------- */
 #posts,#related,#article{background:var(--paper);view-timeline-name:--ground}
-#posts::before,#related::before,#article::before{content:'';position:absolute;inset:0;pointer-events:none;background:
+#from-blog,#editor{view-timeline-name:--ground}
+#posts::before,#related::before,#article::before,#from-blog::before,#editor::before{content:'';position:absolute;inset:0;pointer-events:none;background:
   radial-gradient(46% 56% at 10% -4%,rgba(var(--rgb-300),.42),transparent 70%),
   radial-gradient(40% 52% at 94% 104%,rgba(var(--rgb-200),.5),transparent 70%),
   repeating-linear-gradient(0deg,rgba(var(--rgb-300),.10) 0 1px,transparent 1px 48px),
   repeating-linear-gradient(90deg,rgba(var(--rgb-300),.10) 0 1px,transparent 1px 48px);
   -webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent);mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent)}
-#posts::after,#related::after,#article::after{content:'';position:absolute;inset:0 auto 0 0;width:40%;z-index:0;pointer-events:none;
+#posts::after,#related::after,#article::after,#from-blog::after,#editor::after{content:'';position:absolute;inset:0 auto 0 0;width:40%;z-index:0;pointer-events:none;
   background:linear-gradient(115deg,transparent 18%,rgba(var(--rgb-200),.5) 50%,transparent 82%);
   -webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent),linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);-webkit-mask-composite:source-in;
   mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent),linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);mask-composite:intersect;
   animation:paper-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%}
-html.reduce #posts::after,html.reduce #related::after,html.reduce #article::after{animation:none}
+html.reduce #posts::after,html.reduce #related::after,html.reduce #article::after,html.reduce #from-blog::after,html.reduce #editor::after{animation:none}
 #related{background:#fff}
 html.snap #posts,html.snap #related,html.snap #from-blog{min-height:auto;padding:var(--section-space) 0;justify-content:flex-start}
 .posts-head{display:grid;gap:24px;margin-bottom:32px}
