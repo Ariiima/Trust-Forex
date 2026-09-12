@@ -96,18 +96,16 @@ html.reduce .screen.in .weekly-bar{animation:none}
    k09 keeps its light against the left edge and leaves the middle deep, which is where the
    sentence sits; steps 2 and 4 mirror it and take a deeper wash, so the corridor alternates as
    the wireframe's does without becoming four different rooms.
-   The title sits left of centre and the sentence right of it: the wireframe's ±44px offsets. */
+   The title and the sentence both sit on the centre line. */
 .protocol-run{position:relative;background:var(--blue);color:#fff;--grad:var(--grad-light)}
 .step{position:relative;z-index:1;text-align:center;overflow:hidden}
 #step-2 .rayfield.k,#step-4 .rayfield.k{transform:scaleX(-1)}
 #step-2::before,#step-4::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background:rgba(var(--rgb-abyss),.34)}
 .step>.wrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:28px}
-/* The ±44px offsets ride the `translate` property, not `transform`, so each step's own arrival is
-   free to use `transform` without having to restate the offset — the two compose. */
-.step-title{position:relative;width:min(100%,1000px);margin:0;translate:-44px 0;
+.step-title{position:relative;width:min(100%,1000px);margin:0;
   font-size:var(--text-step-title);line-height:var(--leading-display);letter-spacing:-.065em;
   font-weight:var(--weight-display);color:#fff;text-wrap:balance}
-.step-copy{width:min(100%,700px);max-width:none;margin:0 auto;translate:44px 0;
+.step-copy{width:min(100%,700px);max-width:none;margin:0 auto;
   font-size:var(--text-step-copy);line-height:var(--leading-step-copy);color:rgba(255,255,255,.76);text-wrap:balance}
 
 /* ---------- the four steps arrive the same way, and nothing is on these screens but the words ----------
@@ -153,9 +151,8 @@ html.js:not(.reduce) .step.step-here .step-title{font-weight:var(--weight-displa
    focus pull is the same depth at the clamp's 64px floor as at its 104px ceiling. */
 
 /* ---------- the sentence is the second half of that move, not a second reveal ----------
-   It arrives along the composition's own axis. The title sits 44px left of centre and the sentence
-   44px right of it, so a sentence travelling in from the word's side reads as drawn out of the word
-   rather than as a fresh element landing under it. The ink is unveiled left to right behind a soft
+   It travels in from the left and settles on the centre line under the word, so it reads as drawn
+   out of the word rather than as a fresh element landing under it. The ink is unveiled left to right behind a soft
    mask edge, travelling the same way, so the pair read as one gesture and not as two reveals.
    --wipe is registered: an unregistered percentage in a gradient stop swaps at the halfway mark
    instead of interpolating, and the wipe would be a jump cut.
@@ -413,8 +410,6 @@ body{font-variant-numeric:normal}
   .plans-grid{grid-template-columns:1fr;align-items:stretch}
   .glass .plan-col{min-height:auto}
   .glass .plan-col--lead{padding-top:34px}
-  .step-title{translate:-28px 0}
-  .step-copy{translate:28px 0}
 }
 @media (max-width:680px){
   .weekly-record{min-height:400px;padding:12px 14px 18px}
@@ -425,8 +420,8 @@ body{font-variant-numeric:normal}
   .weekly-grid div{left:38px}
   .weekly-bars{gap:10px}
   .access-visual .tile{padding:16px;gap:12px}
-  .step-title{font-size:clamp(58px,20vw,78px);translate:-10px 0}
-  .step-copy{font-size:var(--text-row-title);max-width:340px;translate:10px 0}
+  .step-title{font-size:clamp(58px,20vw,78px)}
+  .step-copy{font-size:var(--text-row-title);max-width:340px}
   .benefit-name{font-size:var(--text-answer)}
   .rate-flow{grid-template-columns:1fr 1fr}
   /* the badge is the card's biggest object, so it is the first thing that gives ground */
