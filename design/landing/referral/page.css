@@ -74,8 +74,9 @@ html.reduce #chapter-routes::after{animation:none}
 .route-row h3{margin:0 0 6px;font-size:var(--text-panel-title);line-height:1.2;letter-spacing:-.015em;font-weight:var(--weight-strong);white-space:nowrap}
 .route-row p{margin:0;max-width:360px;color:rgba(255,255,255,.8);font-size:var(--text-meta);line-height:1.4}
 /* the destination closes the two routes the way the summary closes the points: the panel's own glass,
-   lifted, over a hairline — one material down the whole pane (founder, 2026-09-12) */
-.shared-destination{min-height:76px;padding:16px 18px;display:grid;place-items:center;text-align:center;color:#fff;
+   lifted, over a hairline — one material down the whole pane (founder, 2026-09-12). The sharing steps'
+   result (10) closes on the same band. */
+.shared-destination,.start-result{min-height:76px;padding:16px 18px;display:grid;place-items:center;text-align:center;color:#fff;
   border-top:1px solid rgba(255,255,255,.3);
   background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.08));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
@@ -170,7 +171,26 @@ html.reduce .example-part b.swap{animation:none}
 .withdraw-label{font-size:var(--text-small);font-weight:var(--weight-strong);padding:8px 11px;border:1px solid rgba(255,255,255,.4);border-radius:999px;color:#fff;white-space:nowrap}
 
 /* ---------- 10 · start sharing: the paper page with Activation's field and beam, the wireframe's own grid ---------- */
-.start-result{position:relative;z-index:1;padding:18px;display:grid;place-items:center;text-align:center}   /* the last track of the value panel */
+/* the steps take the Routes card's material (founder, 2026-09-12): the pane solid blue under the pale glass rim,
+   one soft streak crossing it, the numbers on 04's 44px tiles, the result on the destination band (4). cb8's
+   pane is translucent over a darkened backdrop, so the paper's 48px grid showed through it, and it carried a
+   bloom and a vertical sheen — none of which the Routes card has. A step is one line with no caption, so its
+   row is the band's 76px, not a route's 114, and the card sits at its own height rather than the copy's
+   (founder, 2026-09-12: "too big for no reason"). */
+#start .value-panel{isolation:isolate;height:auto;min-height:0;align-self:center;grid-template-rows:repeat(4,minmax(76px,auto));
+  border:1px solid rgba(160,196,255,.55);background:var(--blue);backdrop-filter:none;-webkit-backdrop-filter:none;
+  box-shadow:0 0 34px rgba(96,156,255,.3),inset 0 1px 0 rgba(255,255,255,.38),inset 0 0 0 1px rgba(160,196,255,.18),inset 0 0 64px rgba(96,156,255,.14),0 30px 60px -28px rgba(var(--rgb-shadow),.8)}
+#start .value-panel::after{inset:0;z-index:0;width:auto;filter:none;transform:none;
+  background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,.14) 46%,rgba(255,255,255,.04) 52%,transparent 62%) no-repeat 100% 0/220% 100%}
+@supports (animation-timeline:view()){#start .value-panel::after{animation-name:start-light}}
+@keyframes start-light{from{background-position:100% 0}to{background-position:0 0}}
+#start .value-row{padding:16px 18px;grid-template-columns:44px minmax(0,1fr);gap:14px;border-bottom-color:rgba(255,255,255,.18);box-shadow:none}
+#start .value-copy strong{font-size:var(--text-panel-title);font-weight:var(--weight-strong);letter-spacing:-.015em;text-shadow:none}
+#start .value-index{width:44px;height:44px;border-radius:13px;font-size:var(--text-label);color:#fff;
+  border-color:rgba(160,196,255,.42);   /* 04's tiles catch the pane's streak as they scroll; these hold its lit corner at rest */
+  background:linear-gradient(115deg,rgba(255,255,255,.2),rgba(255,255,255,.04) 50%,transparent 70%),linear-gradient(150deg,rgba(var(--rgb-900),.34),rgba(var(--rgb-abyss),.34));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 -1px 0 rgba(var(--rgb-shadow),.22),0 14px 30px -18px rgba(var(--rgb-shadow),.7)}
+.start-result{position:relative;z-index:1}   /* the last track of the value panel */
 .start-result strong{font-size:var(--text-result);line-height:1.05;letter-spacing:-.04em;white-space:nowrap}
 
 /* ---------- 12 · the final statement, at the Referral wireframe's size ---------- */
@@ -192,6 +212,7 @@ html.reduce .example-part b.swap{animation:none}
   .glass .route-panel{min-height:0;grid-template-rows:repeat(2,minmax(118px,auto)) 76px}
   .route-row{min-height:118px;padding:16px;column-gap:12px}.glass .route-icon{width:40px;height:40px}.route-row h3{white-space:normal}
   .shared-destination strong{font-size:30px}
+  #start .value-row{padding:16px;column-gap:12px;grid-template-columns:40px minmax(0,1fr)}#start .value-index{width:40px;height:40px}
   .glass .lifetime-story{grid-template-rows:none}.glass .lifetime-point{min-height:96px;padding:15px;grid-template-columns:40px minmax(0,1fr);gap:12px}.glass .lifetime-icon{width:40px;height:40px}
   .lifetime-summary{padding:20px 16px}.lifetime-summary strong{font-size:23px}
   .glass .rates-panel{padding:14px}.rate-rail{grid-template-columns:1fr}.glass .rate-cell{min-height:96px}
