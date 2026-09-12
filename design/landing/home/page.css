@@ -1,0 +1,263 @@
+/* TrustForex Home — page rules over the Cashback system (../cb8/style.css → base.css → ../shared/scale.css).
+   Structure, sizes and layout are the Home wireframe's (TrustForex-Home-v24.html, 2026-09-12); the treatment
+   is cb8's: the blue field on the hero, the paper record, one dark corridor for the protocol, the benefits
+   on white, the plans on a blue block, and the final on the hero's mirrored ground.
+   The wireframe's neutral greys (#0d0f11 steps, a #111 rate bar, white plan cards) become the site's blue
+   and its glass — the composition is the wireframe's, the palette is never the wireframe's. */
+
+/* ---------- 1 · the hero: the wireframe's own widths, and the one CTA back under the paragraph ---------- */
+#hero .display{font-size:var(--text-display-home);letter-spacing:-.065em;max-width:900px}
+#hero .lede{max-width:760px;margin:0 auto}
+.hero-cta{margin-top:34px}
+
+/* ---------- 2 · the record: the wireframe's columns (copy .92fr, module 1.08fr, 88 apart) ---------- */
+#record .grid2{grid-template-columns:minmax(0,.92fr) minmax(520px,1.08fr);gap:88px}
+#record .grid2>div:first-child{max-width:590px}
+#record .copy{max-width:560px}
+.weekly-record{min-height:430px;padding:14px 20px 22px;display:grid;grid-template-rows:auto 1fr auto}
+.weekly-head{min-height:82px;padding:15px 18px;margin-bottom:24px;border-radius:18px;background:var(--soft);
+  display:flex;align-items:center;justify-content:space-between;gap:24px}
+.weekly-head span{display:block;font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.065em;text-transform:uppercase;color:var(--muted)}
+.weekly-head strong{display:block;margin-top:5px;font-size:var(--text-week-period);letter-spacing:-.025em;color:var(--navy)}
+.weekly-total{text-align:right}
+.weekly-total b{display:block;font-size:var(--text-week-total);line-height:1;letter-spacing:-.045em;color:var(--navy)}
+.weekly-total small{display:block;margin-top:4px;font-size:var(--text-label);color:var(--muted)}
+/* the plot: gridlines behind, four columns growing off the floor. The label above a bar is placed
+   against the bar's own top edge, so it travels with --rate and never collides with a gridline. */
+.weekly-chart{position:relative;min-height:285px;padding:14px 10px 36px 48px}
+.weekly-grid{position:absolute;inset:14px 10px 36px 0}
+.weekly-grid div{position:absolute;left:48px;right:0;border-top:1px solid var(--line)}
+.weekly-grid span{position:absolute;right:calc(100% + 8px);top:0;transform:translateY(-50%);font-size:var(--text-micro);color:var(--muted)}
+.weekly-bars{position:relative;height:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:18px;align-items:end}
+.weekly-bar{height:var(--rate);min-height:2px;border-radius:7px 7px 2px 2px;background:var(--bar);position:relative}
+/* TP1 to TP4 walk down the primary ramp — the darkest bar is the target reached most often */
+.weekly-bar:nth-child(1){--bar:var(--p-950)}
+.weekly-bar:nth-child(2){--bar:var(--p-900)}
+.weekly-bar:nth-child(3){--bar:var(--p-700)}
+.weekly-bar:nth-child(4){--bar:var(--p-400)}
+.weekly-bar b{position:absolute;left:50%;top:-28px;transform:translateX(-50%);font-size:var(--text-panel-title);letter-spacing:-.025em;color:var(--navy)}
+.weekly-bar span{position:absolute;left:50%;top:calc(100% + 11px);transform:translateX(-50%);white-space:nowrap;
+  font:var(--weight-heavy) var(--text-label)/1 var(--sans);color:var(--muted)}
+/* The bars grow from the floor once the screen arrives, on the reveal's own curve. Height, not
+   scaleY: the figure above a bar is pinned to that bar's top edge, so it has to ride up with it —
+   a scale would stretch the digits instead. Four elements, once, off the scroll path. */
+.screen.in .weekly-bar{animation:bar-grow .7s var(--ease) both;animation-delay:calc(.18s + var(--n,0) * .07s)}
+.weekly-bar:nth-child(1){--n:0}.weekly-bar:nth-child(2){--n:1}
+.weekly-bar:nth-child(3){--n:2}.weekly-bar:nth-child(4){--n:3}
+@keyframes bar-grow{from{height:0}to{height:var(--rate)}}
+html.reduce .screen.in .weekly-bar{animation:none}
+.record-link{margin-top:20px;display:inline-flex;align-items:center;gap:8px;justify-self:start;
+  font-size:var(--text-guide);font-weight:var(--weight-strong);color:var(--accent)}
+.record-link:hover .ext{transform:translateX(3px)}
+
+/* ---------- 3 · the chapters: the wireframe's one chapter size, on the light one too ---------- */
+.chapter .h2{font-size:var(--text-chapter-home);max-width:1000px}
+.chapter-2 .h2{font-size:var(--text-chapter-home)}
+
+/* ---------- 4–7 · the protocol: one blue corridor, four screens, nothing but type ----------
+   Four screens, one ground. Each step carries its own rayfield rather than sharing one stretched
+   over the whole run: a halo is sized in percentages of its box, so one field across four screens
+   blows up into a single soft glare that lands on the title band and washes the type out.
+   k09 keeps its light against the left edge and leaves the middle deep, which is where the
+   sentence sits; steps 2 and 4 mirror it and take a deeper wash, so the corridor alternates as
+   the wireframe's does without becoming four different rooms.
+   The title sits left of centre and the sentence right of it: the wireframe's ±44px offsets. */
+.protocol-run{position:relative;background:var(--blue);color:#fff;--grad:var(--grad-light)}
+.step{position:relative;z-index:1;text-align:center;overflow:hidden}
+#step-2 .rayfield.k,#step-4 .rayfield.k{transform:scaleX(-1)}
+#step-2::before,#step-4::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background:rgba(var(--rgb-abyss),.34)}
+.step>.wrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:28px}
+/* The ±44px offsets ride the `translate` property, not `transform`, so each step's own arrival is
+   free to use `transform` without having to restate the offset — the two compose. */
+.step-title{position:relative;width:min(100%,1000px);margin:0;translate:-44px 0;
+  font-size:var(--text-step-title);line-height:var(--leading-display);letter-spacing:-.065em;
+  font-weight:var(--weight-display);color:#fff;text-wrap:balance}
+.step-copy{width:min(100%,700px);max-width:none;margin:0 auto;translate:44px 0;
+  font-size:var(--text-step-copy);line-height:var(--leading-step-copy);color:rgba(255,255,255,.76);text-wrap:balance}
+
+/* ---------- the four steps arrive the same way, and nothing is on these screens but the words ----------
+   One move, repeated: the word is tracked wide open at a weight it never keeps, and closes onto the
+   weight and the tracking it holds for good. Nothing translates, nothing staggers, nothing is added
+   to the screens to carry it — the wireframe gives these four type and only type.
+
+   Four different arrivals were tried here first and thrown out: a corridor where each screen does
+   its own trick reads as a slideshow of effects rather than as one place, and the reader spends the
+   second screen wondering what the third will do. One move used four times is a page with a habit.
+
+   The move is the variable weight axis. Inter ships variable (shared/fonts/inter.css declares
+   font-weight:100 900), so a weight is interpolable and a word can arrive light and firm up. It
+   stays one text run at every frame: no per-character split, so the kerning holds and "fixed" keeps
+   its fi ligature. Animating a weight and a tracking is a text relayout, which is why the corridor's
+   frame cost is measured (README) rather than assumed — one heading, once, off the scroll path.
+
+   The from-state is gated on html.js. main.js sets that class, and it is also what splits .words and
+   what adds .in; without it the headings are plain text that no rule would ever reveal. */
+   The gate is .step-here, not .in. main.js sets .in at threshold .25 of the screen, which on a
+   100dvh step puts the word 137px below the fold when its arrival starts — measured — so the whole
+   move plays off screen and the reader only ever meets the finished word. page.js watches the word
+   instead of the screen and only opens the gate once the word is in reading position. The sentence
+   hangs off the same gate, or it lands a screen ahead of the word it belongs to. */
+html.js .step-title{font-weight:180;letter-spacing:.085em;opacity:0;
+  transition:font-weight .78s var(--ease) .1s,letter-spacing .78s var(--ease) .1s,opacity .38s linear}
+html.js .step.step-here .step-title{font-weight:var(--weight-display);letter-spacing:-.065em;opacity:1}
+html.js .step .rv{opacity:0;transform:translateY(18px)}
+html.js .step.step-here .rv{opacity:1;transform:none}
+/* the site's word mask is off on these four: the wrapper stops clipping and the inner span gives up
+   its resting offset. Both halves together — that offset parks a word a full line below its own box
+   until its screen arrives, which is invisible while the wrapper clips and is a line of overflow the
+   moment it does not (it was what ?check=1 reported as step-1 and step-4 clipping in plain mode). */
+.step-title .w{overflow:visible}
+.step-title .w i{transform:none;transition:none}
+/* The run has to end below the ink, not at the box. --grad-light goes pale at both ends, and the
+   span it is measured against stops a little under the baseline — so a descender sits at the very
+   last stop and is painted in --p-400, which on this blue is barely there. "Stay fixed" lost the
+   tail of its y and "Prepare" the foot of its p: not a clip, a fade (the ink reaches the same row
+   either way, measured). Four tenths of an em of paint box below the baseline, pulled straight back
+   off the margin so nothing moves, puts the whole glyph inside the white part of the run and leaves
+   the gradient doing what it was drawn to do. The mask is already open on these four, so the taller
+   box is not clipped again on its way out. */
+.step-title .w i{padding-bottom:.4em;margin-bottom:-.4em}
+
+/* motion off: the words sit at the weight and tracking they end on */
+html.reduce .step-title{opacity:1;font-weight:var(--weight-display);letter-spacing:-.065em;transition:none}
+html.reduce .step .rv{opacity:1;transform:none;transition:none}
+
+/* ---------- 8 · the service: the wireframe's columns, three tiles on one white panel ---------- */
+.service-section .grid2{grid-template-columns:minmax(0,.9fr) minmax(500px,1.1fr);gap:78px}
+.service-section .grid2>div:first-child{max-width:560px}
+.access-visual{padding:8px;display:grid;gap:7px}
+/* .tile has no plain form in base.css — on blue the glass rules own it, on paper each page draws
+   its own. This is the wireframe's: a soft card, the icon in a white well on its left. */
+.access-visual .tile{min-height:96px;padding:15px 18px;background:var(--soft);border-radius:17px;
+  display:grid;grid-template-columns:38px minmax(0,1fr);gap:14px;align-items:center}
+.access-visual .tile-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#fff;color:var(--accent)}
+.access-visual .tile-icon svg{width:20px;height:20px}
+.tile-copy{min-width:0}
+.tile-copy b{display:block;margin-bottom:5px;font-size:var(--text-service-title);line-height:1.2;letter-spacing:-.025em;color:var(--navy)}
+.tile-copy span{min-height:38px;display:flex;align-items:center;max-width:400px;
+  font-size:var(--text-service-copy);line-height:1.42;color:var(--muted)}
+
+/* the benefits screen takes its ground from the body, so it was the one white screen on the page
+   with neither the field nor the beam every other white screen carries (founder, 2026-09-12) */
+#benefits{view-timeline-name:--ground}
+#benefits::before{content:'';position:absolute;inset:0;pointer-events:none;background:
+  radial-gradient(46% 56% at 10% -4%,rgba(var(--rgb-300),.42),transparent 70%),
+  radial-gradient(40% 52% at 94% 104%,rgba(var(--rgb-200),.5),transparent 70%),
+  repeating-linear-gradient(0deg,rgba(var(--rgb-300),.10) 0 1px,transparent 1px 48px),
+  repeating-linear-gradient(90deg,rgba(var(--rgb-300),.10) 0 1px,transparent 1px 48px);
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent);mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent)}
+#benefits::after{content:'';position:absolute;inset:0 auto 0 0;width:40%;z-index:0;pointer-events:none;
+  background:linear-gradient(115deg,transparent 18%,rgba(var(--rgb-200),.5) 50%,transparent 82%);
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent),linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);-webkit-mask-composite:source-in;
+  mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent),linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);mask-composite:intersect;
+  animation:paper-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%}
+html.reduce #benefits::after{animation:none}
+
+/* ---------- 10 · the benefits: the two of them beside the heading, the four rates under them ----------
+   The wireframe's ≥851px layout: heading left, the benefit system right in a 548 column. */
+.benefits-section>.wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(460px,548px);gap:68px;align-items:center}
+.benefits-intro .h2{max-width:520px;margin:0;font-size:var(--text-title-benefits)}
+.benefits-intro .copy{max-width:460px;margin:24px 0 0;font-size:var(--text-copy)}
+.benefit-system{width:100%;max-width:548px;justify-self:end;display:grid;gap:10px}
+.benefit-row{min-height:132px;padding:17px 18px;border:1px solid var(--line);border-radius:18px;background:var(--paper);display:flex;flex-direction:column}
+.benefit-top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.benefit-name{display:flex;align-items:center;gap:9px;font-size:var(--text-benefit-name);font-weight:740;letter-spacing:-.04em;color:var(--navy)}
+.benefit-icon{width:30px;height:30px;flex:0 0 30px;display:grid;place-items:center;border-radius:10px;background:#fff;color:var(--accent)}
+.benefit-icon svg{width:17px;height:17px}
+.benefit-desc{max-width:470px;margin:14px 0 0;font-size:var(--text-guide);line-height:1.4;color:var(--muted)}
+/* the wireframe's late change: the link became a pill, and it holds its size beside the name */
+.benefit-link{flex:0 0 auto;min-height:32px;padding:7px 12px;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid var(--navy);border-radius:999px;line-height:1;font-size:var(--text-guide);font-weight:var(--weight-strong);color:var(--navy);
+  transition:background-color .3s var(--ease),color .3s var(--ease)}
+.benefit-link:hover{background:var(--navy);color:#fff}
+.benefit-link .ext{width:13px;height:13px}
+/* the rate track: the wireframe's black bar, in the page's blue, its four points in their metals */
+.rate-track{padding:8px;border-radius:16px;background:var(--blue);color:#fff;--grad:var(--grad-light);
+  display:grid;grid-template-columns:132px 1fr;gap:8px;align-items:center}
+.rate-label{padding-left:3px;font-size:var(--text-guide);color:rgba(255,255,255,.78)}
+.rate-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.glass .rate-point{padding:6px 5px;border-radius:10px;text-align:center}
+.rate-point small{display:block;font-size:var(--text-nano);color:var(--label,rgba(255,255,255,.85))}
+.rate-point b{display:block;margin-top:1px;font-size:var(--text-rate-point);line-height:1.15;letter-spacing:var(--tracking-stat);color:#fff}
+
+/* ---------- 11 · the plans: the guide, the three durations and the one action, on the blue block ---------- */
+.plans-shell{display:grid}
+.plans-intro{margin-bottom:26px}
+.plans-intro .h2{max-width:780px;margin:0;font-size:var(--text-title-plans)}
+.plan-guide{margin-bottom:12px;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(320px,1fr);gap:10px}
+.glass .plan-guide-group{min-height:62px;padding:10px 12px 10px 16px;border-radius:18px;display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center}
+.plan-guide-label{font-size:var(--text-guide);color:rgba(255,255,255,.7)}
+.plan-guide-items{display:grid;gap:6px}
+.plan-guide-main .plan-guide-items{grid-template-columns:repeat(3,1fr)}
+.plan-guide-change .plan-guide-items{grid-template-columns:repeat(2,1fr)}
+/* the wireframe's last pass turned these chips into plain words parted by a rule */
+.plan-guide-item{padding:2px 12px 2px 0;font-size:var(--text-guide);color:#fff}
+.plan-guide-item+.plan-guide-item{padding-left:12px;border-left:1px solid rgba(255,255,255,.22)}
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.glass .plan-col{min-height:220px;padding:22px;border-radius:22px;display:flex;flex-direction:column}
+.plan-head{min-height:32px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.plan-head h3{margin:0;font-size:var(--text-plan-name);letter-spacing:var(--tracking-card);color:#fff}
+.duration{font-weight:650;font-size:var(--text-ui);color:var(--label,rgba(255,255,255,.85))}
+.price{margin:18px 0 0;font-size:var(--text-plan-price);line-height:1;font-weight:750;letter-spacing:-.05em;color:#fff}
+.equiv{min-height:18px;margin-top:7px;font-size:var(--text-guide);color:rgba(255,255,255,.7)}
+.plan-rate{margin-top:auto;padding:13px 0 0;border-top:1px solid rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:var(--text-label);color:rgba(255,255,255,.8)}
+.plan-rate b{font-size:var(--text-plan-rate);line-height:1;letter-spacing:var(--tracking-stat);color:#fff}
+.glass .plan-cta{min-height:62px;margin-top:12px;padding:9px 10px 9px 17px;border-radius:18px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px}
+.plan-cta-copy{font-size:var(--text-meta);color:rgba(255,255,255,.8)}
+.plan-cta-button{min-height:42px;padding:10px 17px;font-size:var(--text-meta);white-space:nowrap}
+
+/* ---------- 12–13 · the questions and the close ---------- */
+.faq-wrap{max-width:880px}
+#final .display{font-size:var(--text-display-ready)}
+#final .lede{max-width:620px}
+
+/* cb8 sets tabular figures on the whole body, which widens Inter's letters by about 2% and not only
+   its digits. Every page built after it turns that off and keeps tabular figures where columns of
+   numbers actually have to line up: here, the record's plot, the rate rail and the three prices. */
+body{font-variant-numeric:normal}
+.weekly-record,.rate-track,.plans-grid{font-variant-numeric:tabular-nums}
+
+/* ---------- narrower: the wireframe's own two steps ---------- */
+@media (max-width:1023px){
+  #record .grid2,.service-section .grid2{grid-template-columns:1fr;gap:38px}
+  .benefits-section>.wrap{grid-template-columns:1fr;gap:30px}
+  .benefits-intro .h2{max-width:none}
+  .benefit-system{max-width:none;justify-self:stretch}
+  .benefit-row{min-height:146px;padding:18px 19px;border-radius:19px}
+  .benefit-desc{font-size:var(--text-ui)}
+  .rate-track{grid-template-columns:1fr;gap:10px}
+  .rate-label{padding-left:0}
+  .plan-guide{grid-template-columns:1fr}
+  .glass .plan-guide-group{grid-template-columns:145px 1fr}
+  .plans-grid{grid-template-columns:1fr}
+  .glass .plan-col{min-height:auto}
+  .step-title{translate:-28px 0}
+  .step-copy{translate:28px 0}
+}
+@media (max-width:680px){
+  .weekly-record{min-height:400px;padding:12px 14px 18px}
+  .weekly-head{min-height:78px;padding:14px}
+  .weekly-head strong{font-size:var(--text-row-title)}
+  .weekly-total b{font-size:var(--text-answer)}
+  .weekly-chart{min-height:255px;padding-left:38px}
+  .weekly-grid div{left:38px}
+  .weekly-bars{gap:10px}
+  .access-visual .tile{padding:15px 14px;grid-template-columns:36px minmax(0,1fr);gap:12px}
+  .access-visual .tile-icon{width:36px;height:36px}
+  .step-title{font-size:clamp(58px,20vw,78px);translate:-10px 0}
+  .step-copy{font-size:var(--text-row-title);max-width:340px;translate:10px 0}
+  .benefit-name{font-size:var(--text-answer)}
+  .rate-flow{grid-template-columns:1fr 1fr}
+  .plan-guide-main .plan-guide-items{grid-template-columns:1fr}
+  .plan-guide-item+.plan-guide-item{padding-left:0;padding-top:8px;border-left:0;border-top:1px solid rgba(255,255,255,.22)}
+  .glass .plan-guide-group{grid-template-columns:1fr;gap:8px;padding:13px}
+  .glass .plan-cta{flex-direction:column;align-items:flex-start;padding:14px}
+  .plan-cta-button{width:100%}
+}
+
+/* the questions heading holds one line, so its size is measured off this page's own question:
+   "Questions, answered clearly." is 11.85 times its font-size wide
+   (shared/scale.css --text-title-faq divides the content width by it). */
+:root{--faq-ratio:11.85}

@@ -1,11 +1,13 @@
 # Landing pages
 
-Seven pages on one system. `cb8/` is the Cashback page and the system itself — its nav, grounds,
+Eight pages on one system. `cb8/` is the Cashback page and the system itself — its nav, grounds,
 glass, held cards, FAQ, final and footer are what every other page loads (`../cb8/grounds.css`,
-`../cb8/style.css`, `../cb8/main.js`) before its own `page.css`. `index.html` opens cb8 directly.
+`../cb8/style.css`, `../cb8/main.js`) before its own `page.css`. `index.html` opens `home/`, and
+every page's nav and footer link Home there.
 
 | Page | Folder | Source of its structure |
 |---|---|---|
+| Home | `home/` (+ `page.js`, the weekly record) | `_qa/wireframe-home-v24.html` (Home v24, 2026-09-12) |
 | Cashback | `cb8/` | `_qa/wireframe-v24.html` |
 | Results | `results/` (+ `page.js`, the two charts) | the Results wireframe (`result.html`, final) |
 | Referral | `referral/` | the Referral wireframe (`referall.html`, final) |
@@ -102,6 +104,94 @@ Checks against the preview server:
 node design/landing/_qa/chapter-scroll.test.mjs
 node design/landing/_qa/scroll-scale.test.mjs
 node design/landing/_qa/lock.test.mjs
+```
+
+## Home page
+
+`home/` is the site's front door and what `index.html` opens. Thirteen screens: the hero, the
+weekly record, a chapter, the four protocol steps, the signal service, a second chapter, the two
+benefits, the plans, the questions and the close.
+
+Three departures from the wireframe, all commented in `page.css`. Its neutral greys become the
+site's blue: the four `#0d0f11` protocol screens are one blue corridor, the `#111` rate bar is a
+blue one carrying the four tier metals, and the white plan cards are glass tiles in Silver, Gold
+and Diamond. Each protocol step carries its own rayfield rather than sharing one stretched across
+the run — a halo is sized in percentages of its box, so one field over four screens becomes a
+single glare on the title band. And the record module's bars grow by `height`, not `scaleY`,
+because the figure above a bar is pinned to that bar's top edge and has to ride up with it.
+
+### The protocol steps
+
+The four steps are the one place on the site that does not use the ordinary reveal, and all four use
+the same move: the word is tracked wide open at a weight it never keeps, and closes onto the weight
+and the tracking it holds for good. Nothing translates, nothing staggers, and nothing is added to
+the screens to carry it — the wireframe gives these four type and only type.
+
+Four *different* arrivals were built here first and thrown out. A corridor where each screen does
+its own trick reads as a slideshow of effects rather than as one place, and the reader spends the
+second screen wondering what the third will do. One move used four times is a page with a habit.
+
+The move is the variable weight axis: Inter ships variable (`shared/fonts/inter.css` declares
+`font-weight:100 900`), so a weight is interpolable and a word can arrive light and firm up. The
+heading stays one text run at every frame — no per-character split, so the kerning holds and
+"fixed" keeps its fi ligature. The from-state is gated on `html.js`, which `main.js` sets and which
+is also what splits `.words` and what adds `.in`; without it these are plain headings no rule would
+ever reveal.
+
+**The arrival is gated on the word, not on the screen.** `cb8/main.js` reveals a screen at
+`threshold: .25` of the screen itself, which is right where content fills a screen and wrong for
+these four, where one word sits in the middle of 100dvh of ground: when `.in` landed on step-1 the
+word's top edge was 137px *below* the fold, so the whole move played off screen and the reader only
+ever met the finished word. `page.js` watches the title instead, through a root inset 20% at the top
+and 40% at the bottom, and adds `.step-here` once the word reaches that band — about three fifths
+down the screen, so the arrival plays while the word rises into reading position. The sentence hangs
+off the same gate, or it lands a screen ahead of the word it belongs to.
+
+The site's word mask comes off all four, and both halves have to go together: the wrapper stops
+clipping, and the inner span gives up the resting offset that parks a word a full line below its box
+until its screen arrives. That offset is invisible while the wrapper clips and is a line of overflow
+the moment it does not, which is how it surfaced — `?check=1` reported step-1 and step-4 clipping
+their content in plain mode.
+
+**The paint box has to end below the ink.** `--grad-light` goes pale at both ends, and the span it
+is measured against stops a little under the baseline, so a descender lands on the very last stop
+and is painted `--p-400` — barely there on this blue. "Stay fixed" lost the tail of its y and
+"Prepare" the foot of its p. It is a fade, not a clip: the ink reaches the same row either way,
+measured. Four tenths of an em of paint box below the baseline, pulled straight back off the margin
+so nothing moves, puts the whole glyph inside the white part of the run.
+
+**The same fade is on every page**, wherever a gradient heading carries a descender — the Cashback
+and Referral heroes both lose the g in "trading" and "sharing". It is not fixed there. The same
+padding cannot be: those headings still reveal through the mask, and `.w{overflow:hidden}` clips a
+taller span straight back off. Fixing it site-wide means changing `--grad-light`'s foot or the mask
+itself, which is a decision about every page, not about this one.
+
+Animating a weight and a tracking is a text relayout, so it is measured rather than assumed. Over a
+220-notch scroll of the four steps at 1440×900, five runs of each interleaved:
+
+| Long frames (>20ms) | With the arrivals | Without |
+|---|---|---|
+| The four steps, 220 notches | 158 | 155 |
+
+That difference is inside the run-to-run spread, so the arrival costs nothing worth counting.
+Anything added here should be measured the same way before it ships. Three earlier versions were cut
+on that number or on their own noise: a sticky rail threading the four screens (the wireframe gives
+them no such element), a ground drift behind Stay fixed (its halos are 90–140px blurs, and a blurred
+box that moves is re-rasterised every frame whether or not it is promoted — `will-change` measured no
+difference), and a glow riding a wipe across Measure as a `drop-shadow` on a transforming element.
+
+`page.js` holds the record module. Its figures are the last completed week of the Results page's
+own weekly series, recomputed here from that page's rule — same base win rates, same per-period
+shift, same rounding — so the two pages cannot print different numbers for the same week. The
+HTML ships those values too, so the module reads without JavaScript. `?check=1` proves the shipped
+markup equals what the rule returns, that a further target is never reached more often than a
+nearer one, that each plan's rate matches the shared rate the benefits section promised and each
+monthly equivalent divides out of its price — and it fetches `../results/page.js` to confirm the
+constants it borrowed are still the ones that page uses.
+
+```sh
+node _qa/screens.mjs 'http://localhost:5311/home/?check=1' /tmp/home.png
+node _qa/lines.mjs 'http://localhost:5311/_qa/wireframe-home-v24.html' 'http://localhost:5311/home/'
 ```
 
 ## Partner Brokers page
