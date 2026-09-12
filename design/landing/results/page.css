@@ -208,6 +208,11 @@
 .mech.white .page-number i{color:var(--accent)}   /* name and number read as one line, in the run's blue */
 /* the data visual: the wireframe's 420px card with a 70px head, on the pane's glass */
 .glass .panel.data-visual{width:100%;height:420px;padding:0;display:grid;grid-template-rows:70px minmax(0,1fr);border-radius:22px;overflow:hidden}
+/* the Cashback page's `#m2 .panel{padding:20px}` (cb8/base.css) is written at id strength and this page
+   reuses the same section ids, so Signals 02 alone was inheriting 20px of panel padding — 40px stolen
+   from its body track, which is why that one card's rows stopped short of the card's foot. Restated
+   here at id strength so the six cards hold one box. */
+#m2 .panel.data-visual{padding:0}
 /* the head is a bar of its own (founder, 2026-09-12): it floats inside the card instead of
    ruling a hairline across it, the icon takes a chip, and the meta on the right takes the
    same capsule the scalp timer already wore. The colour is the ground's — glass, not a new hue. */
@@ -244,10 +249,18 @@
 .glass .target-step:last-child{--head:rgba(96,236,168,.72);--mid:rgba(40,186,158,.5);--deep:rgba(18,132,132,.52);--rim:rgba(178,244,208,.66)}
 .glass .target-step:last-child b{color:rgba(232,255,242,.94)}
 
-/* 02 · the four rows, the two reached in TP green */
-.dark-rows{display:grid;grid-template-rows:repeat(4,1fr);padding:0 18px}
-.dark-row{min-height:0;padding-inline:4px;display:grid;grid-template-columns:76px 1fr 118px;gap:20px;align-items:center;border-top:1px solid rgba(255,255,255,.14);color:#fff}.dark-row:first-child{border-top:0}
-.dark-row strong{font-size:var(--text-body)}.dark-row small{justify-self:start;color:rgba(255,255,255,.7);font-size:var(--text-label)}.dark-row b{min-width:96px;text-align:right;font-size:var(--text-meta)}
+/* 02 · the four rows, the two reached in TP green. The rows are tiles, like every other card on this
+   run — the ladder's columns, the breach values, the average formulas. Bare hairline rows were the one
+   body on the page that neither took the glass nor filled its card: the grid sized to its content and
+   left ~40px of dead air under TP4, so this card alone read short inside the same 420px block. The body
+   now fills the track and carries the siblings' padding, so the four tiles meet the card's edges evenly. */
+.dark-rows{min-height:0;display:grid;grid-template-rows:repeat(4,1fr);gap:10px;padding:14px 18px 20px}
+.glass .dark-row{min-height:0;padding:0 14px;display:grid;grid-template-columns:76px 1fr 118px;gap:20px;align-items:center;color:#fff}
+.glass .dark-row strong{font-size:var(--text-row-title);letter-spacing:-.02em}
+.dark-row small{justify-self:start;color:rgba(255,255,255,.7);font-size:var(--text-label)}.dark-row b{min-width:96px;text-align:right;font-size:var(--text-meta)}
+/* the two reached rows carry the TP green the ladder and the pills already use, so the record reads
+   down the card and not only in the pill at its right edge */
+.glass .dark-row.is-reached{--tint:rgba(72,212,138,.16);--tint2:rgba(72,212,138,.05);--rim:rgba(150,230,190,.34);--streak:.12}
 .dark-state{justify-self:end;min-width:108px;min-height:30px;padding:0 10px;display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.28);border-radius:999px;
   color:rgba(255,255,255,.7);font-size:var(--text-small);background:rgba(255,255,255,.06)}
 .dark-state::before{content:'';width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35)}
@@ -445,7 +458,8 @@ html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
   .tip-split.quad .tip-cell:nth-child(n+3){border-top:var(--hair)}
   .tip-split.quad .tip-cell b{font-size:var(--text-meta)}
   .mech-copy .page-number{min-width:138px}
-  .dark-row{grid-template-columns:58px 1fr auto;gap:10px}.dark-row small{font-size:var(--text-micro)}.dark-state{min-width:auto;padding-inline:8px}
+  .dark-rows{gap:8px;padding:10px 12px 14px}
+  .glass .dark-row{grid-template-columns:58px 1fr auto;gap:10px;padding-inline:10px}.dark-row small{font-size:var(--text-micro);white-space:nowrap}.dark-state{min-width:auto;padding-inline:8px}
   .target-ladder{padding-inline:12px;gap:7px}.glass .target-step{padding:11px 8px}.glass .target-step b{font-size:var(--text-micro)}
   .winrate-body{padding:12px}.winrate-compare{gap:8px}.glass .winrate-case{min-height:218px;padding:12px 10px 12px;gap:8px}.winrate-case-head{gap:6px}.glass .winrate-case-head strong{padding:2px 6px}
   .winrate-ring{width:128px;height:128px}.glass .winrate-ring strong{font-size:32px}
