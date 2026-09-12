@@ -6,6 +6,9 @@
  * ------------------------------------------------------------------------- */
 
 import { getGuestId } from '../telegram';
+// TEMPORARY demo data — delete this import, the block inside `request` below,
+// and src/api/mock.ts to remove it.
+import { MOCK, mockResponse } from './mock';
 
 export type OrderStatus = 'pending' | 'submitted' | 'confirmed' | 'failed' | 'expired';
 
@@ -81,6 +84,10 @@ export const REF = new URLSearchParams(window.location.search).get('ref');
 
 /** GET when `body` is undefined, JSON POST otherwise. */
 async function request<T>(path: string, body?: unknown): Promise<T> {
+  if (MOCK) {
+    const canned = mockResponse(path);
+    if (canned !== undefined) return canned as T;
+  }
   const headers: Record<string, string> = {};
   const initData = window.Telegram?.WebApp?.initData;
   if (initData) headers.Authorization = 'tma ' + initData;
