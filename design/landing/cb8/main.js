@@ -157,7 +157,7 @@
   /* ---------- glass panes (02, 04) and the two-records panel: the light follows the pointer ----------
      --mx/--my in px on the pane and on each tile, relative to its own box, so every radial in
      style.css centres under the cursor; .lit while the pointer is over the pane. */
-  document.querySelectorAll('.glass .panel, .split-panel, #calculator .panel').forEach(pane => {
+  document.querySelectorAll('.glass .panel, .split-panel, .weekly-record, #calculator .panel').forEach(pane => {
     const lit = [pane, ...pane.querySelectorAll('.tile')];
     pane.addEventListener('pointermove', e => {
       for (const el of lit) {
