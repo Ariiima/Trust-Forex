@@ -62,3 +62,7 @@ design/landing-assets/
 
 # landing QA screenshots (design/landing/_qa/shoot.mjs scratch)
 design/landing/.shots/
+
+# The hero-ground labs packed into one double-clickable file by
+# design/landing/_qa/bundle-labs.mjs: 5.8 MB, rebuilt on demand, not source.
+/hero-grounds-review.html

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hero ground lab — relief</title>
+<!-- The third sheet, after hero-lab.html (still light) and hero-lab-motion.html (moving light).
+     This one answers the reference the founder sent: beveled tiles with currency glyphs pressed
+     into them. That look is not light on a field, it is a MATERIAL, and the browser can make it
+     without a render and without a stock licence — an SVG filter treats the alpha of any drawing
+     as a height map, so flat vector art comes back lit.
+
+     Same rules as the other two: the real stylesheets, the live ground markup, nothing shipped
+     is touched. Every candidate here is static, so there is nothing to freeze for the design
+     review sweep. What they cost is paint, not bytes.
+
+     The scrim is the thing to judge. A material ground is busy where a halo is not, so each
+     card lays one same-hue wash between the surface and the copy. Press "No scrim" to see what
+     the surface does to the headline unaided; anything that still reads is a real candidate. -->
+<link rel="stylesheet" href="grounds.css">
+<link rel="stylesheet" href="style.css">
+<style>
+body{background:#0A1026;color:#fff;font:400 15px/1.5 var(--sans);padding:0 0 80px}
+.lab-head{position:sticky;top:0;z-index:20;padding:14px 26px;background:rgba(10,16,38,.86);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.12);
+  display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.lab-head h1{font-size:16px;font-weight:600;margin:0 auto 0 0;letter-spacing:.2px}
+.lab-head h1 a{color:#89A5E6;font-weight:400;font-size:13px;margin-left:10px}
+.lab-head .set{display:flex;gap:6px;align-items:center}
+.lab-head label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.lab-head button,.lab-head select{padding:6px 11px;border-radius:8px;border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.06);color:#fff;font:inherit;font-size:13px;line-height:1.2}
+.lab-head button[aria-pressed="true"]{background:#fff;color:#0A1026;border-color:#fff}
+.lab-head select option{background:#0A1026}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(460px,1fr));gap:20px;padding:22px 26px}
+.card{position:relative;border-radius:20px;overflow:hidden;isolation:isolate;
+  border:1px solid rgba(255,255,255,.12);aspect-ratio:16/10;display:flex;flex-direction:column}
+.card .rayfield{position:absolute;inset:0;z-index:0}
+.card-body{position:relative;z-index:4;flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:14px;text-align:center;padding:8% 8% 7%}
+.card-body h2{margin:0;font-size:clamp(20px,2.5vw,30px);line-height:1.14;letter-spacing:-.02em;font-weight:640;
+  text-wrap:balance;max-width:18ch}
+.card-body p{margin:0;max-width:40ch;font-size:13px;line-height:1.5;color:rgba(255,255,255,.76)}
+.card-body .btn{margin-top:4px}
+.tag{position:absolute;z-index:5;top:12px;left:12px;display:flex;gap:8px;align-items:baseline;
+  padding:5px 10px;border-radius:8px;background:rgba(4,8,26,.55);border:1px solid rgba(255,255,255,.14);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.tag b{font-size:12px;font-weight:600;letter-spacing:.04em}
+.tag span{font-size:11px;color:rgba(255,255,255,.6)}
+.tag em{font-style:normal;color:#FFC300;font-size:11px}
+
+body.band .card::after{content:'';position:absolute;z-index:6;left:0;right:0;top:30%;height:40%;pointer-events:none;
+  border-top:1px dashed rgba(255,195,0,.5);border-bottom:1px dashed rgba(255,195,0,.5);background:rgba(255,195,0,.05)}
+body.mirror .card .rayfield{transform:scaleX(-1)}
+body.full .grid{display:block;padding:0}
+body.full .card{aspect-ratio:auto;min-height:100dvh;border-radius:0;border:0;border-bottom:1px solid rgba(255,255,255,.14)}
+body.full .card-body h2{font-size:clamp(34px,4.4vw,58px);max-width:22ch}
+body.full .card-body p{font-size:16px;max-width:52ch}
+
+/* the surface itself */
+.rayfield.k > svg.relief{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+/* the scrim: one same-hue wash over the surface, under the copy. This is what makes a busy
+   ground survivable, and it is the first thing to turn off when judging one. */
+.rayfield.k::after{background:
+  radial-gradient(76% 70% at 50% 48%,rgba(var(--rgb-shadow),.52) 0%,rgba(var(--rgb-shadow),.88) 100%),
+  linear-gradient(180deg,rgba(255,255,255,.05),transparent 16%)}
+body.noscrim .rayfield.k::after{background:linear-gradient(180deg,rgba(255,255,255,.045),transparent 16%)}
+/* the faint grid style.css puts on every ground is wrong over a material: it reads as a second
+   surface on top of the first */
+.rayfield.k::before{content:none}
+/* one halo survives on each, so a relief ground still belongs to the same family as the rest */
+.rayfield.k i:first-child{display:block;left:-14%;top:-34%;width:58%;height:80%;--bl:110px;--core:.42;opacity:.7;z-index:1}
+</style>
+</head>
+<body>
+
+<header class="lab-head">
+  <h1>Hero ground lab — relief
+    <a href="hero-lab.html">← still</a><a href="hero-lab-motion.html">← motion</a></h1>
+  <div class="set"><label for="copy">Copy</label>
+    <select id="copy">
+      <option value="home">Home</option>
+      <option value="results">Results</option>
+      <option value="brokers">Brokers</option>
+      <option value="referral">Referral</option>
+      <option value="partnership">Partnership</option>
+      <option value="about">About</option>
+    </select>
+  </div>
+  <div class="set">
+    <button id="t-full" type="button" aria-pressed="false">Full bleed</button>
+    <button id="t-band" type="button" aria-pressed="false">Headline band</button>
+    <button id="t-mirror" type="button" aria-pressed="false">Mirror (#final)</button>
+    <button id="t-scrim" type="button" aria-pressed="false">No scrim</button>
+  </div>
+</header>
+
+<div class="grid" id="grid"></div>
+<script src="hero-lab-relief.js?v=1"></script>
+</body>
+</html>
