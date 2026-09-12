@@ -14,6 +14,10 @@
 
 /* ---------- 1 · the explorer opens the page: the record is the hero ---------- */
 #hero{padding-bottom:40px}                                   /* no fact strip under this one */
+/* the record has to stand whole the moment the tab opens: the plot takes what the viewport leaves after
+   the nav, the type switch, the card padding and the toolbar (324px), so the card never runs past the fold
+   at 100% zoom. It keeps its designed 450px wherever the viewport is tall enough. (founder, 2026-09-12) */
+#hero{--stage-h:clamp(260px,calc(100dvh - 326px),450px)}
 .explorer{position:relative;z-index:1}
 .result-types{width:max-content;max-width:100%;display:grid;grid-template-columns:repeat(2,auto);align-items:center;gap:4px;padding:4px;margin:0 auto 26px;
   border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(255,255,255,.1);
@@ -27,8 +31,8 @@
 .result-type[aria-pressed=true] .new-badge{background:var(--accent-soft);color:var(--accent)}
 
 /* the surface: the wireframe's white card as the glass pane; no lean under a crosshair cursor */
-#hero .panel{transform:none;isolation:isolate;min-height:580px;padding:22px 22px 14px;border-radius:24px}
-.mode-panel{min-height:540px}.mode-panel[hidden]{display:none}.mode-toolbar{min-height:96px}
+#hero .panel{transform:none;isolation:isolate;min-height:calc(var(--stage-h) + 132px);padding:22px 22px 14px;border-radius:24px}
+.mode-panel{min-height:calc(var(--stage-h) + 96px)}.mode-panel[hidden]{display:none}.mode-toolbar{min-height:96px}
 .explorer-controls{display:flex;justify-content:space-between;align-items:center;gap:22px;flex-wrap:wrap;margin-bottom:20px}
 .control-cluster{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .selector{display:inline-flex;align-items:center;gap:4px;padding:4px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
@@ -41,10 +45,15 @@
 /* the four targets stand as four pills, not one trough: the track gives up its glass, every button takes
    its own. The ring is an inset shadow, never a border, so the boxes keep the width they had. */
 .selector.target{gap:8px;padding:0;background:none;border:0;box-shadow:none}
+/* one height across the row: the TP pills set it, so the trough controls (time, compare) shrink to the
+   same 32px silhouette instead of standing 8-10px taller. (founder, 2026-09-12) */
+#hero{--pill-h:32px}
+.selector.time{padding:2px}
+.selector.time button{min-height:calc(var(--pill-h) - 6px);padding:3px 14px}
 .selector.target button{background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.2),inset 0 1px 0 rgba(255,255,255,.25)}
 .selector.target button:hover{background:rgba(255,255,255,.18)}
 .selector.target button[aria-pressed=true]{background:#fff;box-shadow:inset 0 1px 0 #fff,0 6px 16px -10px rgba(8,28,86,.55)}
-.compare-toggle{min-height:var(--control-height);display:inline-flex;align-items:center;gap:9px;padding:9px 14px;border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(255,255,255,.12);color:#fff;
+.compare-toggle{min-height:var(--pill-h);display:inline-flex;align-items:center;gap:9px;padding:4px 13px;border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(255,255,255,.12);color:#fff;
   font-size:var(--text-meta);font-weight:var(--weight-strong);cursor:pointer;white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,.35);transition:background-color .25s var(--ease)}
 .compare-toggle:hover{background:rgba(255,255,255,.2)}
 .compare-mode .compare-toggle{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.5)}
@@ -61,7 +70,7 @@
 .compare-short{display:none}
 
 /* the Signals chart */
-.chart-stage{position:relative;height:450px;touch-action:pan-y;user-select:none;cursor:crosshair}
+.chart-stage{position:relative;height:var(--stage-h);touch-action:pan-y;user-select:none;cursor:crosshair}
 .chart-stage:focus-visible,.scalp-stage:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:5px;border-radius:8px}
 .chart-grid{position:absolute;inset:30px 0 1px;pointer-events:none}   /* 1px = the baseline rule's own width, so 0% lands on the line the columns stand on */
 .gridline{position:absolute;left:0;right:0;height:1px}
@@ -164,11 +173,11 @@
 /* the Scalp Level chart */
 #scalp-results-panel .mode-toolbar{display:flex;align-items:flex-start}
 .scalp-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.scalp-legend{min-height:var(--control-height);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;flex:0 1 390px;margin:0;padding:4px;border-radius:999px;
+.scalp-legend{min-height:var(--pill-h);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;flex:0 1 390px;margin:0;padding:2px;border-radius:999px;
   background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);font-size:var(--text-small)}
-.scalp-legend span{min-height:32px;display:inline-flex;align-items:center;gap:9px;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.1);font-weight:var(--weight-strong);white-space:nowrap}
+.scalp-legend span{min-height:calc(var(--pill-h) - 6px);display:inline-flex;align-items:center;gap:9px;padding:3px 14px;border-radius:999px;background:rgba(255,255,255,.1);font-weight:var(--weight-strong);white-space:nowrap}
 .scalp-legend i{width:12px;height:12px;flex:0 0 12px;border-radius:3px}.scalp-legend .bounce{background:var(--bounce)}.scalp-legend .breach{background:var(--breach)}
-.scalp-stage{position:relative;height:450px;touch-action:pan-y;user-select:none;cursor:crosshair}
+.scalp-stage{position:relative;height:var(--stage-h);touch-action:pan-y;user-select:none;cursor:crosshair}
 .scalp-grid{position:absolute;inset:30px 0 2px;pointer-events:none}
 .scalp-gridline{position:absolute;left:0;right:0;height:1px}
 .scalp-gridline::after{content:'';position:absolute;left:54px;right:0;top:0;border-top:1px solid rgba(255,255,255,.14)}
@@ -184,7 +193,7 @@
 .scalp-mark.bounce{bottom:25%;background:var(--bounce);border-radius:6px 6px 0 0}
 .scalp-mark.breach{top:75%;background:var(--breach);border-radius:0 0 6px 6px}
 .scalp-slot.active .scalp-mark{opacity:1}
-.scalp-empty-state{min-height:360px;display:none;place-items:center;text-align:center;border-bottom:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.7)}
+.scalp-empty-state{min-height:min(360px,100%);display:none;place-items:center;text-align:center;border-bottom:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.7)}
 .scalp-empty-state strong{display:block;color:#fff;font-size:var(--text-empty);margin-bottom:6px}
 .scalp-stage.is-empty .scalp-grid,.scalp-stage.is-empty .scalp-bars{display:none}.scalp-stage.is-empty .scalp-empty-state{display:grid}
 
@@ -407,7 +416,7 @@ html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
 /* ---------- phones and laptops ---------- */
 @media (max-width:1023px){
   .mech-grid{grid-template-columns:1fr;gap:42px}
-  .chart-stage,.scalp-stage{height:390px}
+  #hero{--stage-h:clamp(260px,calc(100dvh - 326px),390px)}
   .bars{gap:4px}
 }
 @media (max-width:560px){
@@ -421,7 +430,8 @@ html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
   .scalp-legend{margin-left:44px;gap:12px 18px}.gridline::after,.scalp-gridline::after{left:44px}
   .bars,.compare-mode .bars{--empty-w:4px;--empty-pull:0px}
   .bars{width:calc(100% - 44px);margin-left:44px;gap:2px;padding-inline:2px}.scalp-bars{left:44px;gap:7px;padding-inline:5px}
-  .chart-stage,.scalp-stage{height:330px}.chart-stage[data-timeframe=yearly] .bars{gap:18px;padding-inline:8%}.scalp-stage{--mark-w:32px}.scalp-stage[data-scalp-timeframe=monthly]{--mark-w:56px}.scalp-stage[data-scalp-timeframe=yearly]{--mark-w:72px}.scalp-mark{width:min(var(--mark-w),70%)}
+  #hero{--stage-h:clamp(240px,calc(100dvh - 392px),330px)}
+  .chart-stage[data-timeframe=yearly] .bars{gap:18px;padding-inline:8%}.scalp-stage{--mark-w:32px}.scalp-stage[data-scalp-timeframe=monthly]{--mark-w:56px}.scalp-stage[data-scalp-timeframe=yearly]{--mark-w:72px}.scalp-mark{width:min(var(--mark-w),70%)}
   .scalp-head .scalp-legend{flex:1 0 100%;width:100%}.scalp-legend span{padding-inline:9px;font-size:var(--text-label)}
   /* the card keeps its shape on a phone, one size down — four compare columns have to fit inside 360px */
   /* the plot is denser per pixel on a phone, so the glass carries a touch more body under the figures */
