@@ -14,12 +14,12 @@
 /* ---------- 2 · use cases: the wireframe's .9fr / 1.1fr split, 76 apart; three rows on the blue card ---------- */
 /* The card turns blue, the same move the Referral evidence card took (founder, 2026-09-12): on paper the
    white pane read as another sheet of the page, so the goals now sit on the record pages' own deep blue,
-   each row a tile on it with a leading icon and a marker. The reward row takes the brand's green. */
+   each row a tile on it with a leading icon and a marker. Each row then carries one faint colour of its own
+   — periwinkle, teal, gold — at the same strength, so the three read as one family. Every part of a row
+   (rim, tint, icon, marker) takes that colour from --acc, so a row is recoloured in one line. */
 #cases .grid2{grid-template-columns:minmax(0,.9fr) minmax(500px,1.1fr);gap:76px}
 #cases .grid2>div:first-child{max-width:520px}
-.marker{width:92px;padding:7px 9px;border:1px solid rgba(160,196,255,.5);border-radius:999px;text-align:center;font-size:var(--text-label);font-weight:var(--weight-strong);color:#fff;background:rgba(255,255,255,.12)}
-.case-row.valued .marker{border-color:rgba(var(--rgb-success),.55);color:var(--success);background:rgba(var(--rgb-success),.16)}
-.case-list{--rgb-success:72,212,138;   /* the state green as a triplet, so the reward row can tint with it */
+.case-list{--rgb-peri:157,180,255;--peri:#9DB4FF;--rgb-teal:95,210,194;--teal:#5FD2C2;--rgb-gold:245,200,107;--gold:#F5C86B;
   width:100%;max-width:590px;justify-self:end;
   min-height:356px;padding:14px;display:grid;grid-template-rows:repeat(3,minmax(100px,auto));gap:10px;border-radius:24px}
 /* the paper screen's frame paints its pane white behind the content (style.css); this one is blue,
@@ -28,19 +28,19 @@
   radial-gradient(120% 90% at 12% 0%,rgba(var(--rgb-600),.5),transparent 66%),
   linear-gradient(165deg,rgba(var(--rgb-900),.92),var(--blue) 58%,var(--p-deep))}
 .screen-paper .case-list::before{border-radius:38px}
-.case-row{--tint:rgba(var(--rgb-600),.34);--tint2:rgba(var(--rgb-900),.26);--rim:rgba(160,196,255,.34);
+.case-row{--acc:var(--rgb-peri);--acc-solid:var(--peri);
   min-height:100px;padding:16px 18px;display:grid;grid-template-columns:52px minmax(0,1fr) 92px;gap:16px;align-items:center;
-  border:1px solid var(--rim);border-radius:16px;color:#fff;
-  background:linear-gradient(150deg,var(--tint),var(--tint2));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
-.case-row.valued{--rim:rgba(var(--rgb-success),.4);background:linear-gradient(105deg,rgba(var(--rgb-success),.34),rgba(var(--rgb-900),.3) 72%)}
+  border:1px solid rgba(var(--acc),.34);border-radius:16px;color:#fff;
+  background:linear-gradient(150deg,rgba(var(--acc),.18),rgba(var(--rgb-deep),.32));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
+.case-row:nth-child(2){--acc:var(--rgb-teal);--acc-solid:var(--teal)}
+.case-row.valued{--acc:var(--rgb-gold);--acc-solid:var(--gold)}
 .case-row>div{min-width:0}
 .case-icon{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;
-  border:1px solid rgba(160,196,255,.42);background:linear-gradient(150deg,rgba(var(--rgb-500),.4),rgba(var(--rgb-900),.3));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
-.case-row.valued .case-icon{border-color:rgba(var(--rgb-success),.45);background:linear-gradient(150deg,rgba(var(--rgb-success),.32),rgba(var(--rgb-900),.3))}
-.case-row .ico{stroke:#fff}
-.case-row.valued .ico{stroke:var(--success)}
+  border:1px solid rgba(var(--acc),.4);background:linear-gradient(150deg,rgba(var(--acc),.2),rgba(var(--rgb-deep),.3));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+.case-row .ico{stroke:var(--acc-solid)}
+.marker{width:92px;padding:7px 9px;border:1px solid rgba(var(--acc),.5);border-radius:999px;text-align:center;font-size:var(--text-label);font-weight:var(--weight-strong);color:var(--acc-solid);background:rgba(var(--acc),.14)}
 .case-row h3{margin:0 0 5px;font-size:var(--text-panel-title);line-height:1.2;letter-spacing:-.015em;font-weight:var(--weight-strong);color:#fff;white-space:nowrap}
 .case-row p{margin:0;max-width:360px;font-size:var(--text-meta);line-height:1.4;color:rgba(255,255,255,.82)}
 
@@ -68,14 +68,23 @@
 .how-point>div{min-width:0}
 .how-point strong{display:block;font-size:var(--text-ui);line-height:1.35}
 .how-point>div>span{display:block;margin-top:5px;font-size:var(--text-label);line-height:1.45;color:rgba(255,255,255,.8)}
-.how-point b{width:102px;height:46px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.4);border-radius:11px;text-align:center;
-  font:var(--weight-strong) var(--text-micro)/1.35 var(--sans);letter-spacing:.04em;text-transform:uppercase;color:#fff}
-.glass .how-point:nth-of-type(1){--tint:rgba(38,104,224,.42);--tint2:rgba(20,70,190,.3);--rim:rgba(130,178,255,.55)}
-.glass .how-point:nth-of-type(2){--tint:rgba(46,178,134,.26);--tint2:rgba(20,90,70,.3);--rim:rgba(150,230,190,.45)}
+.how-point b{width:102px;height:46px;display:grid;place-items:center;border:1px solid rgba(var(--acc),.5);border-radius:11px;text-align:center;background:rgba(var(--acc),.14);
+  font:var(--weight-strong) var(--text-micro)/1.35 var(--sans);letter-spacing:.04em;text-transform:uppercase;color:var(--acc-solid)}
+/* the same per-row colour the use-case rows take, in its own two: violet and coral. One --acc a row,
+   carried by the rim, the tint, the icon tile and the icon stroke. */
+.glass .protected{--rgb-violet:185,167,255;--violet:#B9A7FF;--rgb-coral:255,158,122;--coral:#FF9E7A}
+.glass .how-point{--acc:var(--rgb-violet);--acc-solid:var(--violet);
+  --tint:rgba(var(--acc),.20);--tint2:rgba(var(--rgb-abyss),.30);--rim:rgba(var(--acc),.40)}
+.glass .how-point:nth-of-type(2){--acc:var(--rgb-coral);--acc-solid:var(--coral)}
+.glass .how-point .point-icon{--tint:rgba(var(--acc),.20);--tint2:rgba(var(--rgb-abyss),.28);--rim:rgba(var(--acc),.42)}
+.glass .how-point .point-icon .ico{stroke:var(--acc-solid)}
 
 /* 02 · the access condition reads as a control (the calculator's rule): two glass buttons, the chosen one white,
-   the rule and its three steps swapping with a cross-fade — never a count or a slide */
-.glass .access{padding:8px}
+   the rule and its three steps swapping with a cross-fade — never a count or a slide.
+   The pane carries the page's per-item colour the same way 01 and the use-case rows do: one --acc a step,
+   violet then gold then the TP green, on the rim, the tint, the pip and the rail across the step tops.
+   The two mode buttons stay uncoloured: the switch is a control, the colour belongs to the steps it writes. */
+.glass .access{padding:8px;--rgb-violet:185,167,255;--violet:#B9A7FF;--rgb-gold:245,200,107;--gold:#F5C86B;--rgb-mint:72,212,138;--mint:var(--success)}
 .access-switch{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px}
 .access-switch .tile{min-height:52px;border-radius:16px;font-size:var(--text-meta);font-weight:var(--weight-strong);color:rgba(255,255,255,.82);
   transition:background-color .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease),transform .25s var(--ease)}
@@ -83,16 +92,25 @@
 .access-switch .tile[aria-pressed=true]{background:#fff;border-color:#fff;color:var(--navy);box-shadow:inset 0 0 0 1px #fff,0 12px 24px -14px rgba(255,255,255,.6)}
 .access-switch .tile:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:2px}
 .access-state{border:1px solid rgba(255,255,255,.22);border-radius:17px;overflow:hidden}
-.access-summary{padding:25px 24px;border-bottom:1px solid rgba(255,255,255,.22)}
+.access-summary{padding:22px 24px 25px;border-bottom:1px solid rgba(255,255,255,.14);
+  background:radial-gradient(120% 130% at 6% 0%,rgba(var(--rgb-violet),.22),transparent 62%),linear-gradient(160deg,rgba(var(--rgb-900),.34),rgba(var(--rgb-abyss),.24))}
+.access-eyebrow{display:block;margin-bottom:9px;font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--violet)}
 .access-summary strong{display:block;font-size:var(--text-empty);line-height:1.2;letter-spacing:-.035em;color:#fff}
 .access-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr)}
-.access-step{min-height:112px;padding:20px 18px;border-right:1px solid rgba(255,255,255,.22)}
+.access-step{--acc:var(--rgb-violet);--acc-solid:var(--violet);
+  position:relative;min-height:112px;padding:20px 18px;border-right:1px solid rgba(255,255,255,.22);
+  background:linear-gradient(180deg,rgba(var(--acc),.17),rgba(var(--rgb-abyss),.22))}
+.access-step:nth-child(2){--acc:var(--rgb-gold);--acc-solid:var(--gold)}
+.access-step.done{--acc:var(--rgb-mint);--acc-solid:var(--mint)}
 .access-step:last-child{border-right:0}
-.access-step i{width:26px;height:26px;display:grid;place-items:center;margin-bottom:13px;border:1px solid rgba(255,255,255,.5);border-radius:50%;
-  font:var(--weight-strong) var(--text-nano)/1 var(--sans);font-style:normal;color:#fff}
+/* the rail: one 2px bar a step, the three together reading left to right under the rule */
+.access-step::before{content:'';position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,rgba(var(--acc),.28),var(--acc-solid))}
+.access-step i{width:26px;height:26px;display:grid;place-items:center;margin-bottom:13px;border:1px solid rgba(var(--acc),.55);border-radius:50%;
+  background:rgba(var(--acc),.16);box-shadow:0 0 0 4px rgba(var(--acc),.09);
+  font:var(--weight-strong) var(--text-nano)/1 var(--sans);font-style:normal;color:var(--acc-solid)}
 .access-step.done i{border-color:var(--success);background:rgba(72,212,138,.18);color:var(--success)}
 .access-step i svg{width:12px;height:12px}
-.access-step span{display:block;font-size:var(--text-label);line-height:1.35;color:rgba(255,255,255,.82)}
+.access-step span{display:block;font-size:var(--text-label);line-height:1.35;color:rgba(255,255,255,.86)}
 .swap{animation:xf .28s var(--ease)}   /* cb8's estimate cross-fade */
 html.reduce .swap,html.reduce .access-switch .tile:hover{animation:none;transform:none}
 
@@ -226,6 +244,7 @@ html.reduce .live i{animation:none}
   .access-switch,.access-steps{grid-template-columns:1fr}
   .access-step{min-height:76px;border-right:0;border-bottom:1px solid rgba(255,255,255,.22);display:flex;align-items:center;gap:12px}
   .access-step:last-child{border-bottom:0}.access-step i{margin:0;flex:0 0 auto}
+  .access-step::before{inset:0 auto 0 0;width:2px;height:auto;background:linear-gradient(180deg,rgba(var(--acc),.28),var(--acc-solid))}
   .glass .app-campaign{padding:27px 18px 18px}
   .case-row{grid-template-columns:52px minmax(0,1fr);row-gap:12px;padding:16px}.marker{grid-column:2}
   .case-icon{width:44px;height:44px;border-radius:13px}.case-row h3{white-space:normal}
