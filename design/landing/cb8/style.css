@@ -642,6 +642,19 @@ html.reduce .screen-paper .split-panel::after,html.reduce .split-panel .split-ca
   .split-panel .split-card{backdrop-filter:none;-webkit-backdrop-filter:none}
 }
 
+/* The pane stood 597px wide against 469px of copy, with a dead column between them (founder,
+   2026-09-12). It hands ~100px back to the copy and sits that much further right: the heading runs
+   on longer lines instead of wrapping early, and the pane reads as the smaller of the two halves.
+   The chip's 24px drop stays untouched — the connector's rail is drawn to it. */
+@media (min-width:1024px){
+  #meaning .grid2{grid-template-columns:1fr .86fr;gap:64px}
+  .screen-paper .split-panel{padding:1.5rem}
+}
+/* The tiles carried a 156px floor while their content measured 147px, so each one ended on a band of
+   dead blue under the last line. The grid already stretches the two to a common height, so the floor
+   only ever added that band: the tiles now size to their text. */
+.split-panel .split-card{min-height:0}
+
 /* ---------- 01 · Account setup: two coloured routes joined by a line (founder ref, 2026-09-10) ----------
    The two routes stop being plain rows and become their own coloured glass — blue for reviewing a
    broker, green for opening the account — each with its icon in a light chip and a short line
