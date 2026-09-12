@@ -122,20 +122,39 @@ html.js .step.step-here .rv{opacity:1;transform:none}
 html.reduce .step-title{opacity:1;font-weight:var(--weight-display);letter-spacing:-.065em;transition:none}
 html.reduce .step .rv{opacity:1;transform:none;transition:none}
 
-/* ---------- 8 · the service: the wireframe's columns, three tiles on one white panel ---------- */
+/* ---------- 8 · the service: the wireframe's columns, three tiles on one blue panel ---------- */
+/* The card turns blue (founder, 2026-09-12), the Referral evidence card's treatment: on paper the
+   white pane read as another sheet of the page, so the three service elements now sit on the record
+   pages' own deep blue, each one a tile on it with a leading icon well. Live Signals takes the
+   brand's green — the one element the whole service is built on. */
 .service-section .grid2{grid-template-columns:minmax(0,.9fr) minmax(500px,1.1fr);gap:78px}
 .service-section .grid2>div:first-child{max-width:560px}
-.access-visual{padding:8px;display:grid;gap:7px}
+.access-visual{--rgb-success:72,212,138;   /* the state green as a triplet, so the live row can tint with it */
+  min-height:356px;padding:14px;display:grid;grid-template-rows:repeat(3,minmax(100px,auto));gap:10px;border-radius:24px}
+/* the paper screen's frame paints its pane white behind the content (../cb8/style.css); this one is
+   blue, and both pseudos follow the card's own 24px corner rather than the 28px card radius */
+.screen-paper .access-visual::after{border-radius:24px;background:
+  radial-gradient(120% 90% at 12% 0%,rgba(var(--rgb-600),.5),transparent 66%),
+  linear-gradient(165deg,rgba(var(--rgb-900),.92),var(--blue) 58%,var(--p-deep))}
+.screen-paper .access-visual::before{border-radius:38px}
 /* .tile has no plain form in base.css — on blue the glass rules own it, on paper each page draws
-   its own. This is the wireframe's: a soft card, the icon in a white well on its left. */
-.access-visual .tile{min-height:96px;padding:15px 18px;background:var(--soft);border-radius:17px;
-  display:grid;grid-template-columns:38px minmax(0,1fr);gap:14px;align-items:center}
-.access-visual .tile-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#fff;color:var(--accent)}
-.access-visual .tile-icon svg{width:20px;height:20px}
+   its own. This is the evidence card's: a tinted tile, the icon in a lit well on its left. */
+.access-visual .tile{--tint:rgba(var(--rgb-600),.34);--tint2:rgba(var(--rgb-900),.26);--rim:rgba(160,196,255,.34);
+  min-height:100px;padding:16px 18px;display:grid;grid-template-columns:52px minmax(0,1fr);gap:16px;align-items:center;
+  border:1px solid var(--rim);border-radius:16px;color:#fff;
+  background:linear-gradient(150deg,var(--tint),var(--tint2));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
+.access-visual .tile.live{--rim:rgba(var(--rgb-success),.4);background:linear-gradient(105deg,rgba(var(--rgb-success),.34),rgba(var(--rgb-900),.3) 72%)}
+.access-visual .tile-icon{width:52px;height:52px;display:grid;place-items:center;border-radius:15px;stroke:#fff;
+  border:1px solid rgba(160,196,255,.42);background:linear-gradient(150deg,rgba(var(--rgb-500),.4),rgba(var(--rgb-900),.3));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.access-visual .tile.live .tile-icon{border-color:rgba(var(--rgb-success),.45);stroke:var(--success);
+  background:linear-gradient(150deg,rgba(var(--rgb-success),.32),rgba(var(--rgb-900),.3))}
+.access-visual .tile-icon svg{width:24px;height:24px}
 .tile-copy{min-width:0}
-.tile-copy b{display:block;margin-bottom:5px;font-size:var(--text-service-title);line-height:1.2;letter-spacing:-.025em;color:var(--navy)}
+.tile-copy b{display:block;margin-bottom:5px;font-size:var(--text-service-title);line-height:1.2;letter-spacing:-.025em;color:#fff}
 .tile-copy span{min-height:38px;display:flex;align-items:center;max-width:400px;
-  font-size:var(--text-service-copy);line-height:1.42;color:var(--muted)}
+  font-size:var(--text-service-copy);line-height:1.42;color:rgba(255,255,255,.82)}
 
 /* the benefits screen takes its ground from the body, so it was the one white screen on the page
    with neither the field nor the beam every other white screen carries (founder, 2026-09-12) */
@@ -244,8 +263,8 @@ body{font-variant-numeric:normal}
   .weekly-chart{min-height:255px;padding-left:38px}
   .weekly-grid div{left:38px}
   .weekly-bars{gap:10px}
-  .access-visual .tile{padding:15px 14px;grid-template-columns:36px minmax(0,1fr);gap:12px}
-  .access-visual .tile-icon{width:36px;height:36px}
+  .access-visual .tile{padding:16px;grid-template-columns:44px minmax(0,1fr);gap:12px}
+  .access-visual .tile-icon{width:44px;height:44px;border-radius:13px}
   .step-title{font-size:clamp(58px,20vw,78px);translate:-10px 0}
   .step-copy{font-size:var(--text-row-title);max-width:340px;translate:10px 0}
   .benefit-name{font-size:var(--text-answer)}
