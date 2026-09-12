@@ -15,14 +15,14 @@
 /* ---------- 1 · the explorer opens the page: the record is the hero ---------- */
 #hero{padding-bottom:40px}                                   /* no fact strip under this one */
 .explorer{position:relative;z-index:1}
-.result-types{width:min(100%,520px);display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:5px;padding:5px;margin:0 auto 26px;
+.result-types{width:max-content;max-width:100%;display:grid;grid-template-columns:repeat(2,auto);align-items:center;gap:4px;padding:4px;margin:0 auto 26px;
   border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(255,255,255,.1);
   backdrop-filter:blur(12px) saturate(140%);-webkit-backdrop-filter:blur(12px) saturate(140%);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
-.result-type{min-height:50px;padding:10px 18px;border-radius:999px;color:rgba(255,255,255,.72);font-size:var(--text-ui);font-weight:var(--weight-strong);
-  display:inline-flex;align-items:center;justify-content:center;gap:9px;white-space:nowrap;transition:background-color .3s var(--ease),color .3s var(--ease)}
+.result-type{min-height:calc(var(--control-height) - 8px);padding:6px 16px;border-radius:999px;color:rgba(255,255,255,.72);font-size:var(--text-meta);font-weight:var(--weight-strong);
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;transition:background-color .3s var(--ease),color .3s var(--ease)}
 .result-type:hover{color:#fff}
 .result-type[aria-pressed=true]{background:#fff;color:var(--navy)}
-.new-badge{display:inline-flex;align-items:center;justify-content:center;min-height:22px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.16);color:#fff;
+.new-badge{display:inline-flex;align-items:center;justify-content:center;min-height:18px;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.16);color:#fff;
   font:var(--weight-heavy) var(--text-micro)/1 var(--sans);letter-spacing:.06em;text-transform:uppercase}
 .result-type[aria-pressed=true] .new-badge{background:var(--accent-soft);color:var(--accent)}
 
@@ -158,9 +158,9 @@
 /* the Scalp Level chart */
 #scalp-results-panel .mode-toolbar{display:flex;align-items:flex-start}
 .scalp-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.scalp-legend{min-height:var(--control-height);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;flex:0 1 390px;margin:0;padding:4px;border-radius:14px;
+.scalp-legend{min-height:var(--control-height);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;flex:0 1 390px;margin:0;padding:4px;border-radius:999px;
   background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);font-size:var(--text-small)}
-.scalp-legend span{min-height:32px;display:inline-flex;align-items:center;gap:9px;padding:6px 12px;border-radius:10px;background:rgba(255,255,255,.1);font-weight:var(--weight-strong);white-space:nowrap}
+.scalp-legend span{min-height:32px;display:inline-flex;align-items:center;gap:9px;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.1);font-weight:var(--weight-strong);white-space:nowrap}
 .scalp-legend i{width:12px;height:12px;flex:0 0 12px;border-radius:3px}.scalp-legend .bounce{background:var(--bounce)}.scalp-legend .breach{background:var(--breach)}
 .scalp-stage{position:relative;height:450px;touch-action:pan-y;user-select:none;cursor:crosshair}
 .scalp-grid{position:absolute;inset:30px 0 2px;pointer-events:none}
@@ -405,7 +405,7 @@ html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
   .bars{gap:4px}
 }
 @media (max-width:560px){
-  .result-types{width:100%}.result-type{padding-inline:8px;font-size:var(--text-small)}
+  .result-types{width:100%;grid-template-columns:1fr 1fr}.result-type{padding-inline:8px;font-size:var(--text-small)}
   #hero .panel{padding:14px 12px 10px;border-radius:18px}
   .mode-toolbar{min-height:176px}.explorer-controls,.scalp-head{align-items:stretch;width:100%}
   .control-cluster{width:100%;display:grid;grid-template-columns:1fr auto;gap:8px}.selector{width:100%;display:grid}
@@ -463,7 +463,7 @@ body{font-variant-numeric:normal}
    The bars take the selected target's series colour on glass and grow from the baseline on every redraw, staggered;
    the compare lines draw themselves in; the toggle carries the two methods' icons. All of it is a state change —
    a redraw, a toggle — never a loop. */
-.result-type .ico{width:18px;height:18px;stroke:currentColor}
+.result-type .ico{width:16px;height:16px;stroke:currentColor}
 .result-type[aria-pressed=true] .ico,.glass .result-type[aria-pressed=true] .ico{stroke:var(--accent)}   /* the .glass white-icon rule carries two :not()s, so it outranks a plain three-class selector */
 /* Compare on turns the target bar into the legend it used to be captioned by: every button carries its
    own line's colour, and none carries the white "you are here" pill, because in
