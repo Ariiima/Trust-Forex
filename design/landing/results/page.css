@@ -270,43 +270,33 @@
 .winrate-ring span{margin-top:6px;color:rgba(255,255,255,.6);font-size:var(--text-nano);font-weight:var(--weight-strong);letter-spacing:.1em}
 .winrate-equation{padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);font-size:var(--text-nano);letter-spacing:.03em}
 
-/* 04 · the timer (founder, 2026-09-10). The card used to hold one small ring, one bar and a third of
-   its height in empty pane — the thinnest visual in a chapter whose other cards carry a chart and a
-   pair of tiles. Two things were also saying the wrong thing: the ring swept 72%, which reads as time
-   already spent under a caption saying FIXED WINDOW, and a single bar labelled 00:00–15:00 showed a
-   duration without showing what the copy is actually about — that the window is the same one for
-   every Level. So the ring now closes the whole circle, dim at the first touch and brightest as it
-   shuts, with the seam hidden under the same white-and-blue dot the bars start on; and under it three
-   touched Levels start at three different clock times and run bars of identical length. Equal terms
-   as something you can see, not only read. */
-.timer-body{height:100%;padding:22px 24px 20px;display:grid;grid-template-rows:auto minmax(0,1fr);gap:20px}
-.timer-readout{position:relative;width:156px;height:156px;margin:0 auto;border-radius:50%;display:grid;place-content:center;text-align:center}
-.timer-readout::before{content:'';position:absolute;inset:0;border-radius:50%;--sweep:0%;
-  background:conic-gradient(rgba(255,255,255,.6) 0,#fff var(--sweep),rgba(255,255,255,.16) var(--sweep));
-  -webkit-mask:radial-gradient(circle,transparent 62%,#000 63%);mask:radial-gradient(circle,transparent 62%,#000 63%);transition:--sweep 1.3s var(--ease) .55s}
+/* 04 · the timer (founder, 2026-09-12). The card used to hold a ring over three bars — three touched
+   Levels starting at three clock times and running windows of equal length. The bars said what the
+   copy already says, twice over, and left the pane busy; they are gone. What is left is the one thing
+   the card is about: a single window, closing. The ring is bigger for it, and it is the first place on
+   this page the brand's info blue is used — time is neither a win nor a risk, so green, red and yellow
+   were all wrong for it. It still sweeps dim to bright as the window shuts, with the seam under the
+   touch dot, and one line under it carries the equal-terms point the bars were carrying. */
+/* the card hugs the ring: the 420px height the other visuals hold would leave a third of this one
+   empty now that the bars are gone, and mech-grid centres the panel, so height:auto does not stretch */
+.glass .panel.window-visual{height:auto}
+.timer-body{padding:24px 24px 26px;display:grid;justify-items:center;align-content:center;gap:18px}
+.timer-readout{position:relative;width:212px;height:212px;border-radius:50%;display:grid;place-content:center;text-align:center}
+/* the glow is its own layer so the ring's mask does not clip it, and it sits under the readout */
+.timer-readout::after{content:'';z-index:0;position:absolute;inset:-14%;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,153,255,.42),rgba(0,153,255,0) 70%);opacity:0;transition:opacity .9s var(--ease) .9s}
+.screen.in .timer-readout::after{opacity:1}
+.timer-readout::before{content:'';z-index:0;position:absolute;inset:0;border-radius:50%;--sweep:0%;
+  background:conic-gradient(rgba(0,153,255,.45) 0,#4FC3FF var(--sweep),rgba(255,255,255,.14) var(--sweep));
+  -webkit-mask:radial-gradient(circle,transparent 64%,#000 65%);mask:radial-gradient(circle,transparent 64%,#000 65%);transition:--sweep 1.3s var(--ease) .55s}
 .screen.in .timer-readout::before{--sweep:100%}
-.timer-readout strong{font-size:var(--text-timer);line-height:1;letter-spacing:-.04em;color:#fff}
-.timer-readout span{margin-top:7px;color:rgba(255,255,255,.7);font-size:var(--text-micro)}
-/* the three runs: a header naming the two ends and the length, then one row per touched Level */
-.window-runs{min-height:0;display:grid;grid-template-rows:auto repeat(3,minmax(0,1fr));align-items:center;
-  border-top:1px solid rgba(255,255,255,.16)}
-.window-run{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;gap:12px;align-items:center}
-/* the head names the two ends and the length; it spans the row rather than sitting in its columns,
-   so none of the three labels wraps */
-.window-runs-head{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;padding-top:12px;
-  color:rgba(255,255,255,.6);font-size:var(--text-nano);font-weight:var(--weight-strong);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
-.window-runs-head span:last-child{text-align:right}
-.window-run b{color:#fff;font-size:var(--text-label);font-weight:var(--weight-strong);font-variant-numeric:tabular-nums}
-.window-run b:last-child{text-align:right;color:rgba(255,255,255,.72)}
-.window-line{position:relative;display:block;height:3px;margin:0 8px;background:rgba(255,255,255,.2);border-radius:999px}
-.window-fill{position:absolute;inset:0;background:#fff;border-radius:999px;transform:scaleX(0);transform-origin:left;transition:transform 1.3s var(--ease) var(--d,.55s)}
-.screen.in .window-fill{transform:none}
-.window-dot{position:absolute;top:50%;width:14px;height:14px;transform:translate(-50%,-50%);border:4px solid var(--blue);border-radius:50%;background:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.5)}
-.window-dot.start{left:0}
-/* the close is a boundary, not an event: the card-02 measure cap, not a second touch dot */
-.window-dot.end{left:100%;width:2px;height:11px;border:0;border-radius:999px;background:#fff;box-shadow:none}
-/* the ring's own first touch, sitting on the seam where the sweep opens and closes */
-.window-dot.touch{top:15px;left:50%}
+.timer-readout strong{position:relative;z-index:1;font-size:var(--text-timer);line-height:1;letter-spacing:-.04em;color:#fff}
+.timer-readout span{position:relative;z-index:1;margin-top:8px;color:#fff;font-size:var(--text-micro);font-weight:var(--weight-strong);letter-spacing:.1em}
+/* one line, never two: the note is a caption under the ring, not a paragraph */
+.timer-note{margin:0;color:rgba(255,255,255,.72);font-size:var(--text-meta);text-align:center;white-space:nowrap}
+/* the first touch, sitting on the seam where the sweep opens and closes */
+.window-dot{position:absolute;top:50%;width:14px;height:14px;transform:translate(-50%,-50%);border:4px solid var(--blue);border-radius:50%;background:var(--info);box-shadow:0 0 0 1px rgba(0,153,255,.55),0 0 12px rgba(0,153,255,.7)}
+.window-dot.touch{top:20px;left:50%}
 
 /* 05 · one touched Level: the price journey, in the chart's own colours */
 .mini-timer{min-height:30px;padding:0 9px;display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.35);border-radius:999px;color:#fff;background:rgba(255,255,255,.08)}
@@ -440,11 +430,8 @@ html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
   .target-ladder{padding-inline:12px;gap:7px}.glass .target-step{padding:11px 8px}.glass .target-step b{font-size:var(--text-micro)}
   .winrate-body{padding:12px}.winrate-compare{gap:8px}.glass .winrate-case{min-height:218px;padding:12px 10px 12px;gap:8px}.winrate-case-head{gap:6px}.glass .winrate-case-head strong{padding:2px 6px}
   .winrate-ring{width:128px;height:128px}.glass .winrate-ring strong{font-size:32px}
-  .timer-body{padding:16px 14px}.timer-readout{width:118px;height:118px}.window-dot.touch{top:11px}
-  .window-run{grid-template-columns:34px minmax(0,1fr) 34px;gap:8px}.window-line{margin:0 7px}
-  /* the phone has no room for three labels on one line: the length goes above the two ends */
-  .window-runs-head{grid-template-columns:1fr auto;gap:2px 8px;letter-spacing:.06em}
-  .window-runs-head span:nth-child(2){grid-row:1;grid-column:1/-1;text-align:center}
+  .timer-body{padding:18px 14px 20px;gap:14px}.timer-readout{width:164px;height:164px}.window-dot.touch{top:16px}
+  .timer-readout strong{font-size:32px}.timer-note{font-size:var(--text-micro)}
   .breach-body{padding-inline:12px}.breach-values{gap:8px}.glass .breach-value{padding:12px}.glass .breach-value b{font-size:17px}
   .average-body{grid-template-columns:118px minmax(0,1fr);gap:10px;padding:10px}.average-chart{min-height:230px}.avg-bar{width:24px}
   .average-metrics{gap:9px}.glass .average-formula{padding:13px 9px}.glass .average-formula>small{margin-bottom:8px}

@@ -33,7 +33,7 @@
   --text-title-story: clamp(40px, 5vw, 64px);       /* About section heading */
   --text-monogram: clamp(110px, 14vw, 180px);       /* founder monogram */
   --text-ring: 38px;                                /* win-rate ring, referral rate cells */
-  --text-timer: 31px;                               /* the 15:00 readout */
+  --text-timer: 42px;                               /* the 15:00 readout */
   --text-summary-stat: 27px;                        /* referral overview cards */
   --text-answer: 23px;                              /* average pips answer */
   --text-empty: 22px;                               /* empty-state title */
