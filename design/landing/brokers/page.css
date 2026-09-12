@@ -271,7 +271,7 @@ html.reduce .market-row::before,html.reduce .market-row::after,html.reduce .mark
   transition:border-color .35s var(--ease),box-shadow .35s var(--ease)}
 .market-chip svg{width:var(--icon-size);height:var(--icon-size);fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 
-/* ---------- 6 · cashback: a white record, the table on its side, the two accounts beside each other ----------
+/* ---------- 6 · cashback: a white record, the table on its side, one account over the other ----------
    The record is `.mech.white` now, like Broker overview: no blue block behind it, the heading navy, the copy ink,
    and the panes the one blue thing on it. Its head is `.centred`, so the number, the heading and the sentence
    stand over the middle of the two panes rather than off their left edge (founder, 2026-09-12).
@@ -280,25 +280,29 @@ html.reduce .market-row::before,html.reduce .market-row::after,html.reduce .mark
    three quarters of scrolling for twenty-four figures, with the two account types 400px apart, which is
    to say the one comparison the record exists for could not be made (founder, 2026-09-12). Nothing is
    dropped; the table is turned. A PLAN is a row now and a MARKET is a column, so the ladder that the
-   section head describes — what one lot pays at each plan's share — runs straight down the pane, and the
-   two accounts fit side by side at a third of the height.
+   section head describes — what one lot pays at each plan's share — runs straight down the pane.
+
+   The two accounts stood side by side for a while, then went back to one over the other (founder,
+   2026-09-12): markets are columns, and more markets are coming. Half a record's width holds three
+   before the figures crowd; the full width holds the next several.
 
    Hue answers one question only: the plan. Each row carries its metal on the chip that names it and on
    the rim around each of its figures (where that metal can live is its own note, below). The panes stay
    white-rimmed — copper and violet are two of those four rows, and the Accounts record two screens up
    already spends that pair on these same two account types, so a copper pane over a copper row would be
    one hue answering two questions. */
-.rate-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:start}
+.rate-grid{display:grid;grid-template-columns:1fr;gap:1rem}
 .rate-pane{padding:0;overflow:hidden;border-radius:22px}
 .rate-head{padding:15px 18px 13px;display:flex;flex-direction:column;gap:3px;border-bottom:1px solid rgba(255,255,255,.18)}
 .rate-head h3{margin:0;font-size:var(--text-row-title);font-weight:var(--weight-strong);letter-spacing:-.02em;color:#fff}
 .rate-head span{font-size:var(--text-small);color:rgba(255,255,255,.72)}
 .rate-scroll{overflow-x:auto;padding:12px}
 /* separated cells, so each plan's chip is its own metal and the Diamond row reads as the top of the
-   ladder; fixed columns, so the three markets are one measure wide whatever their names are long, the two
-   panes line up row for row, and "Forex" does not get a narrower column than the money in it needs */
+   ladder; fixed layout, so the plan column is one measure and the markets split what is left evenly —
+   a fourth market added to the markup takes its share without a width being edited, the two panes line
+   up column for column, and "Forex" does not get a narrower column than the money in it needs */
 .rate-table{width:100%;min-width:0;table-layout:fixed;border-collapse:separate;border-spacing:7px;text-align:right}
-.rate-table col.mk{width:21.5%}
+.rate-table col:first-child{width:250px}
 .rate-table thead th{padding:2px 10px 6px;font:var(--weight-heavy) var(--text-label)/1.35 var(--sans);letter-spacing:.08em;
   text-transform:uppercase;color:rgba(255,255,255,.6);vertical-align:bottom}
 .rate-table thead th:first-child{text-align:left}
@@ -416,7 +420,9 @@ body{font-variant-numeric:normal}
   .broker-card.is-prev,.broker-card.is-next{opacity:0;pointer-events:none;transform:scale(.8)}
   /* base.css drops .record-grid to one column and takes the pane's left margin off with it */
   .reg-stack>.placeholder{margin-left:0}
-  .accounts-grid,.bonus-grid,.key-panel,.rate-grid{grid-template-columns:1fr}
+  .accounts-grid,.bonus-grid,.key-panel{grid-template-columns:1fr}
+  /* a 250px plan column leaves a 664px tablet pane 99px a market; a third of the pane leaves them 120 */
+  .rate-table col:first-child{width:34%}
   /* one column of notes below a tablet, so every rule takes back the hairline above it */
   #cashback .note-panel{grid-template-columns:1fr}
   #cashback .note-panel h3+.note-line+.note-line{border-top:1px solid rgba(255,255,255,.14)}
@@ -442,7 +448,6 @@ body{font-variant-numeric:normal}
      the table is read where it stands instead of scrolling sideways under a thumb. */
   .rate-scroll{padding:8px}
   .rate-table{border-spacing:5px}
-  .rate-table col.mk{width:22%}
   .rate-table thead th{padding:0 6px 5px;font-size:9px;letter-spacing:.04em}
   .rate-table .tier{flex-direction:column;align-items:flex-start;gap:2px;padding:8px 9px}
   .rate-table .tier small{font-size:9px;letter-spacing:.05em}

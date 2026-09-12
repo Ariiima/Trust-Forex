@@ -10,7 +10,7 @@
 <style>html{background:#0C2E7B}</style>   <!-- the ground, before any stylesheet arrives: a slow first paint is the brand blue, not a white page -->
 <link rel="stylesheet" href="../cb8/grounds.css?v=348acab3">
 <link rel="stylesheet" href="../cb8/style.css?v=602792ab">
-<link rel="stylesheet" href="page.css?v=3e61a64e">
+<link rel="stylesheet" href="page.css?v=868673df">
 </head>
 <body>
 <svg id="liquid-svg" width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="liquid" x="-4%" y="-8%" width="108%" height="116%" color-interpolation-filters="sRGB">
@@ -231,8 +231,9 @@
     <p class="copy rv" style="--i:1">What one eligible standard lot pays you at each Signal plan's share. These are final figures, not a rebate to be split again.</p>
   </div>
   <!-- Turned on its side. The same twenty-four figures, but a plan is a row and a market is a column, so
-       the four plans stack into one ladder per account and the two accounts stand side by side — the
-       comparison the record is for, which 400px of scrolling used to hide. -->
+       the four plans stack into one ladder per account. The accounts stand one over the other, full width,
+       so a market added later is one more column with room for it: add its <col class="mk">, its <th>
+       and one <td> per plan, and the markets re-split the width on their own. -->
   <div id="rateTables" class="rate-grid rv" style="--i:2">
     <div class="panel rate-pane">
       <div class="rate-head"><h3>Standard Account</h3><span>Final cashback for 1 eligible standard lot</span></div>
