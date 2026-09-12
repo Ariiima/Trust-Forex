@@ -50,7 +50,7 @@
 
 /* ---------- 4–6 · how it works (01–03): the wireframe's 1.08fr / .92fr (visual never under 430), 78 apart ---------- */
 .glass .mech-grid{grid-template-columns:minmax(0,1.08fr) minmax(430px,.92fr);column-gap:78px}
-.mech-copy h3{font-size:var(--text-title-how);line-height:.98;letter-spacing:-.06em;max-width:650px;margin-bottom:24px}
+.mech-copy h3{font-size:var(--text-title-how);line-height:1;letter-spacing:-.045em;max-width:560px;margin-bottom:22px}
 .mech-copy p{max-width:600px}
 .mech-copy .page-number{margin-bottom:26px;font-size:var(--text-small);letter-spacing:.12em}   /* the wireframe's story number */
 .glass .panel{width:100%;max-width:520px;justify-self:end;padding:14px;border-radius:24px}
@@ -60,16 +60,21 @@
 /* 01 · the sponsor row and the two protected points, each with an icon tile and a touch of colour (blue for
    activity, the TP green for the protected relationship) and the wireframe's badge at the right */
 .glass .protected{display:grid;gap:12px}
-.glass .sponsor{min-height:84px;padding:16px 18px;display:flex;align-items:center;gap:16px;border-radius:16px}
-.sponsor small{display:block;margin-bottom:4px;font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.62)}
-.sponsor strong{font-size:var(--text-row-title);letter-spacing:-.02em}
-.glass .how-point{min-height:100px;padding:15px 16px 15px 18px;display:grid;grid-template-columns:44px minmax(0,1fr) 102px;gap:14px;align-items:center;border-radius:16px}
-.glass .point-icon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;padding:0;--streak:.16}
+/* Every title here is a row title, not a dashboard figure, but `.glass .tile strong` (style.css) sets
+   --text-stat 30px at a higher specificity than a bare `.how-point strong` — so both rows rendered at
+   30px, wrapped to two lines and pushed the row to 150px against 11px copy (founder, 2026-09-12: "smaller
+   text and tidier boxes"). The sizes below are scoped under .glass to outrank it: one line a title, the
+   copy a step below it rather than a third of it, and the badge a single-line chip. */
+.glass .sponsor{min-height:76px;padding:14px 18px;display:flex;align-items:center;gap:15px;border-radius:16px}
+.sponsor small{display:block;margin-bottom:5px;font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.62)}
+.glass .sponsor strong{font-size:var(--text-row-title);line-height:1.2;letter-spacing:-.02em}
+.glass .how-point{min-height:96px;padding:16px 16px 16px 18px;display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:14px;align-items:center;border-radius:16px}
+.glass .point-icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;padding:0;--streak:.16}
 .how-point>div{min-width:0}
-.how-point strong{display:block;font-size:var(--text-ui);line-height:1.35}
-.how-point>div>span{display:block;margin-top:5px;font-size:var(--text-label);line-height:1.45;color:rgba(255,255,255,.8)}
-.how-point b{width:102px;height:46px;display:grid;place-items:center;border:1px solid rgba(var(--acc),.5);border-radius:11px;text-align:center;background:rgba(var(--acc),.14);
-  font:var(--weight-strong) var(--text-micro)/1.35 var(--sans);letter-spacing:.04em;text-transform:uppercase;color:var(--acc-solid)}
+.glass .how-point strong{display:block;font-size:var(--text-panel-title);line-height:1.3;letter-spacing:-.015em}
+.glass .how-point>div>span{display:block;margin-top:5px;font-size:var(--text-small);line-height:1.45;letter-spacing:0;color:rgba(255,255,255,.8)}
+.how-point b{padding:7px 11px;display:grid;place-items:center;border:1px solid rgba(var(--acc),.5);border-radius:999px;text-align:center;background:rgba(var(--acc),.14);
+  font:var(--weight-strong) var(--text-micro)/1.3 var(--sans);letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;color:var(--acc-solid)}
 /* the same per-row colour the use-case rows take, in its own two: violet and coral. One --acc a row,
    carried by the rim, the tint, the icon tile and the icon stroke. */
 .glass .protected{--rgb-violet:185,167,255;--violet:#B9A7FF;--rgb-coral:255,158,122;--coral:#FF9E7A}
@@ -79,56 +84,106 @@
 .glass .how-point .point-icon{--tint:rgba(var(--acc),.20);--tint2:rgba(var(--rgb-abyss),.28);--rim:rgba(var(--acc),.42)}
 .glass .how-point .point-icon .ico{stroke:var(--acc-solid)}
 
-/* 02 · the access condition reads as a control (the calculator's rule): two glass buttons, the chosen one white,
-   the rule and its three steps swapping with a cross-fade — never a count or a slide.
-   The pane carries the page's per-item colour the same way 01 and the use-case rows do: one --acc a step,
-   violet then gold then the TP green, on the rim, the tint, the pip and the rail across the step tops.
-   The two mode buttons stay uncoloured: the switch is a control, the colour belongs to the steps it writes. */
-.glass .access{padding:8px;--rgb-violet:185,167,255;--violet:#B9A7FF;--rgb-gold:245,200,107;--gold:#F5C86B;--rgb-mint:72,212,138;--mint:var(--success)}
-.access-switch{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px}
-.access-switch .tile{min-height:52px;border-radius:16px;font-size:var(--text-meta);font-weight:var(--weight-strong);color:rgba(255,255,255,.82);
-  transition:background-color .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease),transform .25s var(--ease)}
-.access-switch .tile:hover{transform:translateY(-1px)}
-.access-switch .tile[aria-pressed=true]{background:#fff;border-color:#fff;color:var(--navy);box-shadow:inset 0 0 0 1px #fff,0 12px 24px -14px rgba(255,255,255,.6)}
+/* ---------- 02 · the access rule, reworked (founder, 2026-09-12: "nothing visibly changed here, no
+     rearrangement, no effect") ----------
+   The pane was three flat bands sharing one clipped box, so the mode, the rule and the path all read at
+   the same depth. Now it is three layers:
+     the switch   a recessed track holding two pills, the chosen one white and lifted — a control, not two tiles
+     the rule     one card, the chosen condition stated on a violet bloom
+     the path     the steps leave that card and become three tiles of their own, gapped, each on its own
+                  colour with the pilot pair's bloom-and-sink shading, the rail across every top reading
+                  left to right as a segmented progress bar
+   One --acc a step carries all of it: rim, ground, rail, pip and glow. Violet, gold, the TP green.
+   The two mode buttons stay uncoloured: the colour belongs to the steps the switch writes. */
+.glass .access{--rgb-violet:185,167,255;--violet:#B9A7FF;--rgb-gold:245,200,107;--gold:#F5C86B;--rgb-mint:72,212,138;--mint:var(--success)}
+/* Cashback writes `#m2 .panel{padding:20px}` at id strength (cb8/base.css) and this page reuses the id,
+   so the pane was framed at 20px whatever a class asked for — the Results page hit the same rule and
+   documented it. One id and two classes take it back, at 01's own 14px, so the three held cards carry
+   the same frame. */
+#m2 .panel.access{padding:14px}
+
+/* the switch: one sunk track, two pills inside it. The inactive pill carries no tile ground of its own,
+   so the track is the only frame and the white pill is the only lit thing in it. */
+.access-switch{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px;padding:5px;border-radius:19px;
+  border:1px solid rgba(255,255,255,.14);background:rgba(var(--rgb-abyss),.42);
+  box-shadow:inset 0 2px 6px rgba(var(--rgb-shadow),.45),inset 0 -1px 0 rgba(255,255,255,.06)}
+.access-switch .tile{min-height:46px;border-radius:15px;font-size:var(--text-panel-title);font-weight:var(--weight-strong);
+  color:rgba(255,255,255,.72);border-color:transparent;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;
+  transition:background-color .3s var(--ease),color .3s var(--ease),box-shadow .3s var(--ease),transform .25s var(--ease)}
+.access-switch .tile::after,.access-switch .tile::before{display:none}   /* no streak, no specular: this is a control */
+.access-switch .tile:hover{color:#fff;background:rgba(255,255,255,.08)}
+.access-switch .tile[aria-pressed=true]{background:#fff;color:var(--navy);transform:translateY(-1px);
+  box-shadow:0 1px 0 rgba(255,255,255,.9),0 10px 20px -10px rgba(var(--rgb-shadow),.6)}
+.access-switch .tile[aria-pressed=true]:hover{background:#fff;transform:translateY(-1px)}
 .access-switch .tile:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:2px}
-.access-state{border:1px solid rgba(255,255,255,.22);border-radius:17px;overflow:hidden}
-.access-summary{padding:22px 24px 25px;border-bottom:1px solid rgba(255,255,255,.14);
-  background:radial-gradient(120% 130% at 6% 0%,rgba(var(--rgb-violet),.22),transparent 62%),linear-gradient(160deg,rgba(var(--rgb-900),.34),rgba(var(--rgb-abyss),.24))}
-.access-eyebrow{display:block;margin-bottom:9px;font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--violet)}
-.access-summary strong{display:block;font-size:var(--text-empty);line-height:1.2;letter-spacing:-.035em;color:#fff}
-.access-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr)}
+
+/* the rule: its own card, the statement on a violet bloom with a lit pip beside the eyebrow */
+.access-summary{padding:20px 22px 22px;border:1px solid rgba(var(--rgb-violet),.34);border-radius:17px;
+  background:
+    radial-gradient(86% 210% at -4% 0%,rgba(var(--rgb-violet),.62),transparent 66%),
+    radial-gradient(86% 180% at 104% 104%,rgba(var(--rgb-abyss),.62),transparent 64%),
+    linear-gradient(150deg,rgba(var(--rgb-violet),.16),rgba(var(--rgb-abyss),.46));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 0 26px -12px rgba(var(--rgb-violet),.7),0 14px 30px -20px rgba(var(--rgb-shadow),.7)}
+.access-eyebrow{display:flex;align-items:center;gap:7px;margin-bottom:9px;font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--violet)}
+.access-eyebrow::before{content:'';width:6px;height:6px;flex:none;border-radius:50%;background:var(--violet);box-shadow:0 0 0 3px rgba(var(--rgb-violet),.22)}
+/* the rule is this pane's one statement, at the size 01 gives its sponsor name, so the two read as a pair */
+.access-summary strong{display:block;font-size:var(--text-row-title);line-height:1.25;letter-spacing:-.02em;color:#fff}
+
+/* the path: three tiles, gapped, one colour each */
+.access-steps{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .access-step{--acc:var(--rgb-violet);--acc-solid:var(--violet);
-  position:relative;min-height:112px;padding:20px 18px;border-right:1px solid rgba(255,255,255,.22);
-  background:linear-gradient(180deg,rgba(var(--acc),.17),rgba(var(--rgb-abyss),.22))}
+  position:relative;isolation:isolate;overflow:hidden;min-height:100px;padding:19px 15px 16px;border-radius:15px;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  border:1px solid rgba(var(--acc),.4);
+  background:
+    radial-gradient(118% 104% at 4% -10%,rgba(var(--acc),.42),transparent 60%),
+    radial-gradient(104% 124% at 106% 116%,rgba(var(--rgb-abyss),.44),transparent 62%),
+    linear-gradient(150deg,rgba(var(--acc),.24),rgba(var(--rgb-abyss),.3));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 0 24px -12px rgba(var(--acc),.75),0 12px 26px -18px rgba(var(--rgb-shadow),.7)}
 .access-step:nth-child(2){--acc:var(--rgb-gold);--acc-solid:var(--gold)}
 .access-step.done{--acc:var(--rgb-mint);--acc-solid:var(--mint)}
-.access-step:last-child{border-right:0}
 /* the rail: one 2px bar a step, the three together reading left to right under the rule */
 .access-step::before{content:'';position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,rgba(var(--acc),.28),var(--acc-solid))}
-.access-step i{width:26px;height:26px;display:grid;place-items:center;margin-bottom:13px;border:1px solid rgba(var(--acc),.55);border-radius:50%;
-  background:rgba(var(--acc),.16);box-shadow:0 0 0 4px rgba(var(--acc),.09);
-  font:var(--weight-strong) var(--text-nano)/1 var(--sans);font-style:normal;color:var(--acc-solid)}
-.access-step.done i{border-color:var(--success);background:rgba(72,212,138,.18);color:var(--success)}
-.access-step i svg{width:12px;height:12px}
-.access-step span{display:block;font-size:var(--text-label);line-height:1.35;color:rgba(255,255,255,.86)}
+.access-step i{width:28px;height:28px;flex:none;display:grid;place-items:center;margin-bottom:auto;border:1px solid rgba(var(--acc),.6);border-radius:50%;
+  background:rgba(var(--acc),.18);box-shadow:0 0 0 4px rgba(var(--acc),.1);
+  font:var(--weight-strong) var(--text-label)/1 var(--sans);font-style:normal;color:var(--acc-solid)}
+.access-step.done i{border-color:var(--success);background:rgba(72,212,138,.2);color:var(--success)}
+.access-step i svg{width:13px;height:13px}
+.access-step span{display:block;margin-top:12px;font-size:var(--text-small);line-height:1.35;font-weight:var(--weight-strong);color:#fff}
 .swap{animation:xf .28s var(--ease)}   /* cb8's estimate cross-fade */
 html.reduce .swap,html.reduce .access-switch .tile:hover{animation:none;transform:none}
 
-/* 03 · the Mini App preview: the broker on the blue tile, the campaign centred, the next action as the one white button */
-.glass .app-shell{display:grid;gap:12px}
-.glass .app-broker{min-height:86px;padding:16px 20px;display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:center;border-radius:16px;
+/* ---------- 03 · the Mini App preview, reworked (founder, 2026-09-12) ----------
+   It was a flat slab: a 30px broker name (the same `.glass .tile strong` leak 01 carried), a 38px
+   headline, and four things stacked in a lot of air, 482px tall against 01's 324. Now the two tiles
+   read as one phone screen — a lighter header bar over a darker screen that is lit from behind its own
+   icon and deepens to the foot, so the white action is the brightest thing on it and the section's
+   point ("the next broker action") is what the eye lands on. */
+.glass .app-shell{display:grid;gap:10px}
+.glass .app-broker{min-height:74px;padding:14px 18px;display:grid;grid-template-columns:42px 1fr;gap:14px;align-items:center;border-radius:16px;
   --tint:rgba(38,104,224,.5);--tint2:rgba(20,70,190,.36);--rim:rgba(130,178,255,.6)}
-.app-broker .bmark{width:44px;height:44px;border-radius:13px}
-.app-broker strong{display:block;font-size:var(--text-panel-title)}
-.app-broker span{display:block;margin-top:3px;font-size:var(--text-label);color:rgba(255,255,255,.75)}
-.glass .app-campaign{padding:31px 24px 24px;text-align:center;border-radius:16px}
-.campaign-icon{width:58px;height:58px;margin:0 auto 20px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.4);border-radius:18px;background:rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
-.campaign-icon .ico{width:24px;height:24px}
-.glass .app-campaign h4{max-width:360px;margin:0 auto 11px;font-size:var(--text-campaign);line-height:1.03;letter-spacing:-.045em;font-weight:var(--weight-strong);color:#fff;text-wrap:balance}   /* .glass .tile h4 (style.css) sets 15px; same specificity, later wins */
-.app-campaign>p{max-width:330px;margin:0 auto 26px;font-size:var(--text-meta);line-height:1.5;color:rgba(255,255,255,.8)}
-.app-action{min-height:52px;padding:0 17px;display:flex;align-items:center;justify-content:space-between;gap:18px;border-radius:14px;background:#fff;color:var(--navy);text-align:left}
-.glass .app-action strong{font-size:var(--text-small);color:var(--navy)}   /* over .glass .tile strong's white */
-.app-action svg{width:18px;height:18px;flex:none}
+.app-broker .bmark{width:42px;height:42px;border-radius:13px}
+.glass .app-broker strong{display:block;font-size:var(--text-row-title);line-height:1.2;letter-spacing:-.02em}
+.app-broker span{display:block;margin-top:4px;font-size:var(--text-small);color:rgba(255,255,255,.78)}
+/* the screen: a periwinkle bloom behind the icon at the top, the abyss at the foot */
+.glass .app-campaign{--rgb-peri:157,180,255;--streak:.07;padding:24px 22px 22px;text-align:center;border-radius:16px;
+  background:
+    radial-gradient(72% 58% at 50% -10%,rgba(var(--rgb-peri),.56),transparent 64%),
+    radial-gradient(134% 80% at 50% 116%,rgba(var(--rgb-abyss),.82),transparent 62%),
+    linear-gradient(180deg,rgba(var(--rgb-deep),.58),rgba(var(--rgb-abyss),.62));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 0 34px -14px rgba(var(--rgb-peri),.7),0 16px 34px -20px rgba(var(--rgb-shadow),.85)}
+.campaign-icon{width:48px;height:48px;margin:0 auto 15px;display:grid;place-items:center;border:1px solid rgba(var(--rgb-peri),.72);border-radius:16px;
+  background:linear-gradient(160deg,rgba(var(--rgb-peri),.4),rgba(var(--rgb-peri),.16));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 0 7px rgba(var(--rgb-peri),.11),0 10px 22px -12px rgba(var(--rgb-shadow),.7)}
+.campaign-icon .ico{width:22px;height:22px;stroke:#EAF0FF}
+.glass .app-campaign h4{max-width:330px;margin:0 auto 9px;font-size:var(--text-campaign);line-height:1.1;letter-spacing:-.03em;font-weight:var(--weight-strong);color:#fff;text-wrap:balance}   /* .glass .tile h4 (style.css) sets 15px; same specificity, later wins */
+.app-campaign>p{max-width:310px;margin:0 auto 20px;font-size:var(--text-small);line-height:1.5;color:rgba(255,255,255,.8)}
+/* the action: the one white thing on the screen, lifted off it, its arrow in a chip of its own */
+.app-action{min-height:50px;padding:0 5px 0 16px;display:flex;align-items:center;justify-content:space-between;gap:14px;border-radius:15px;background:#fff;color:var(--navy);text-align:left;
+  box-shadow:0 1px 0 rgba(255,255,255,.9),0 14px 28px -14px rgba(var(--rgb-shadow),.75)}
+.glass .app-action strong{font-size:var(--text-panel-title);color:var(--navy)}   /* over .glass .tile strong's white */
+.app-go{width:40px;height:40px;flex:none;display:grid;place-items:center;border-radius:11px;background:rgba(var(--rgb-900),.1);color:var(--navy)}
+.app-go svg{width:17px;height:17px}
 
 /* ---------- 7 · the pilot: .screen-paper (cb8/style.css); the card on the blue with its own light ---------- */
 .pilot-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,.92fr);gap:90px;align-items:center}
@@ -172,7 +227,24 @@ html.reduce .live i{animation:none}
 .pilot-offer .tile{min-height:78px;padding:15px 16px;display:flex;flex-direction:column;justify-content:center;border-radius:16px}
 .pilot-offer b{display:block;font-size:var(--text-small);line-height:1.35;font-weight:var(--weight-strong);color:var(--label,#fff)}
 .pilot-offer small{display:block;margin-top:4px;font-size:var(--text-micro);line-height:1.4;color:rgba(255,255,255,.72)}
-.glass .pilot-fee{--tint:rgba(46,178,134,.26);--tint2:rgba(20,90,70,.3);--rim:rgba(150,230,190,.45)}   /* no fee: the TP green */
+/* The offer pair is the card's last line, and a flat fill made it read as a placeholder (founder,
+   2026-09-12: "these two boxes look simple, add some color shading to them"). Each tile keeps its own
+   hue — silver for the access it grants, the TP green for the waived fee — and gains the depth the
+   grounds use: a bloom off the top-left corner, a sink into the bottom-right, over the 150deg tint the
+   other tiles carry. The rim glows inward so the edge holds its colour. The streak and the hover
+   specular are the ::after's, untouched. */
+.pilot-offer .tile{background:
+  radial-gradient(116% 92% at 4% -10%,var(--bloom),transparent 56%),
+  radial-gradient(108% 128% at 106% 114%,var(--sink),transparent 58%),
+  linear-gradient(150deg,var(--tint),var(--tint2));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(var(--rgb-shadow),.26),
+    inset 0 0 26px -10px var(--rim),0 14px 30px -18px rgba(var(--rgb-shadow),.7)}
+/* the sponsored access takes Diamond's violet (founder, 2026-09-12), not Silver's metal — the pale
+   blue sat too close to the card's own ground to read as a separate offer */
+.glass .pilot-benefit{--tint:rgba(150,110,236,.5);--tint2:rgba(58,34,120,.58);--rim:rgba(196,166,250,.58);
+  --bloom:rgba(226,210,255,.56);--sink:rgba(38,18,88,.64);--label:#EFE7FF}
+.glass .pilot-fee{--tint:rgba(54,198,148,.46);--tint2:rgba(10,64,54,.56);--rim:rgba(150,230,190,.56);
+  --bloom:rgba(164,250,214,.5);--sink:rgba(4,42,40,.62)}   /* no fee: the TP green */
 
 /* ---------- 8 · the questions: the wireframe's column and answer size ---------- */
 .faq-wrap{max-width:920px}
@@ -239,13 +311,23 @@ html.reduce .live i{animation:none}
   #hero .display{font-size:52px}#hero .lede{font-size:16px}.h2{font-size:41px}.copy{font-size:16px}
   .chapter .h2,.chapter-2 .h2{font-size:43px}
   .mech-copy h3{font-size:43px}.mech-copy p{font-size:16px}
-  .glass .how-point{padding:14px;grid-template-columns:40px minmax(0,1fr);gap:12px}.glass .point-icon{width:40px;height:40px}
-  .how-point b{grid-column:2;justify-self:start;width:auto;height:auto;padding:7px 10px}   /* the badge drops under the text: the wireframe has no icon column to share the width with */
+  .glass .how-point{padding:14px;grid-template-columns:40px minmax(0,1fr);gap:12px;align-items:start}
+  .glass .how-point .point-icon{width:40px;height:40px;margin-top:-1px}   /* the row is tall here, so the icon holds the title's line rather than floating at its middle */
+  .how-point b{grid-column:2;justify-self:start;margin-top:11px;padding:7px 10px}   /* the badge drops under the text: the wireframe has no icon column to share the width with */
   .access-switch,.access-steps{grid-template-columns:1fr}
-  .access-step{min-height:76px;border-right:0;border-bottom:1px solid rgba(255,255,255,.22);display:flex;align-items:center;gap:12px}
-  .access-step:last-child{border-bottom:0}.access-step i{margin:0;flex:0 0 auto}
+  /* the three step tiles go one under another and each becomes a row: the pip beside its label, and the
+     rail turns to run down the left edge so the column still reads as a path */
+  .access-step{min-height:66px;padding:14px 16px;
+    display:flex;flex-direction:row;justify-content:flex-start;align-items:center;gap:13px}
+  .access-step i{margin:0;flex:0 0 auto}
+  .access-step span{margin-top:0}
   .access-step::before{inset:0 auto 0 0;width:2px;height:auto;background:linear-gradient(180deg,rgba(var(--acc),.28),var(--acc-solid))}
   .glass .app-campaign{padding:27px 18px 18px}
+  /* the action row is only 250px wide here, so the label and its chip both come down a step
+     rather than letting "Continue with Your Broker" break across two lines */
+  .app-action{padding:0 5px 0 14px;gap:10px}
+  .glass .app-action strong{font-size:var(--text-ui)}
+  .app-go{width:34px;height:34px;border-radius:10px}.app-go svg{width:16px;height:16px}
   .case-row{grid-template-columns:52px minmax(0,1fr);row-gap:12px;padding:16px}.marker{grid-column:2}
   .case-icon{width:44px;height:44px;border-radius:13px}.case-row h3{white-space:normal}
   .pilot-card{padding:24px}.pilot-head{grid-template-columns:40px 1fr}.pilot-head>.live{grid-column:2;width:max-content}.pilot-offer{grid-template-columns:1fr}

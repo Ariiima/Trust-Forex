@@ -48,9 +48,9 @@
   --text-display-pitch: clamp(56px, 8vw, 96px);     /* Partnership hero */
   --text-title-pitch: clamp(42px, 5.5vw, 70px);     /* Partnership section heading */
   --text-chapter-pitch: clamp(44px, 6.4vw, 80px);   /* Partnership chapter breaks */
-  --text-title-how: clamp(44px, 5vw, 66px);         /* the three "how it works" headings */
+  --text-title-how: clamp(40px, 4.1vw, 54px);       /* the three "how it works" headings */
   --text-lede-pitch: clamp(19px, 2vw, 23px);        /* Partnership hero paragraph */
-  --text-campaign: clamp(27px, 3vw, 38px);          /* the campaign title in the app preview */
+  --text-campaign: clamp(23px, 1.9vw, 27px);        /* the campaign title in the app preview */
   --text-pilot: clamp(27px, 2.8vw, 38px);           /* the pilot card's heading */
   --text-received: 26px;                            /* "Request received" */
   /* roles added 2026-09-12 for the Home page (TrustForex-Home-v24.html, verbatim). Sizes the

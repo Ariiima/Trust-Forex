@@ -42,9 +42,9 @@ in scale.css for Results, Referral and About). Broker Partnership (`Broker Partn
 | Partnership hero | `--text-display-pitch` | clamp(56px, 8vw, 96px) | .91 | −.072em |
 | Partnership section heading | `--text-title-pitch` | clamp(42px, 5.5vw, 70px) | .99 | −.058em |
 | Partnership chapter breaks | `--text-chapter-pitch` | clamp(44px, 6.4vw, 80px) | .98 | −.062em |
-| "How it works" headings 01–03 | `--text-title-how` | clamp(44px, 5vw, 66px) | .98 | −.06em |
+| "How it works" headings 01–03 | `--text-title-how` | clamp(40px, 4.1vw, 54px) | 1.0 | −.045em |
 | Partnership hero paragraph | `--text-lede-pitch` | clamp(19px, 2vw, 23px) | 1.5 | |
-| Campaign title in the app preview | `--text-campaign` | clamp(27px, 3vw, 38px) | 1.03 | −.045em |
+| Campaign title in the app preview | `--text-campaign` | clamp(23px, 1.9vw, 27px) | 1.1 | −.03em |
 | Pilot card heading | `--text-pilot` | clamp(27px, 2.8vw, 38px) | 1.04 | −.045em |
 | "Request received" | `--text-received` | 26px | 1.2 | −.04em |
 
