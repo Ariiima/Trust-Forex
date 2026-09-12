@@ -157,6 +157,8 @@ html.reduce #hero :is(.display,.lede),html.reduce .facts li{transition:none;tran
 @media (min-width:1024px){#regulation .record-grid,#markets .record-grid{grid-template-columns:minmax(0,.95fr) minmax(520px,1.05fr)}}
 .reg-stack{height:100%}
 .reg-panel{min-height:min(560px,60vh)}
+/* the blue cards drop the ground's 48px grid (style.css .rayfield.k::before); the section grounds keep it */
+.value-panel .rayfield.k::before{content:none}
 .record-copy .data-head{margin-bottom:0}
 /* the footnote is an aside to the record, not a second paragraph of it: it sits off the copy on its
    own and stops well short of the column, so the eye reads the line above it as the sentence. */
