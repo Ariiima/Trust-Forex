@@ -8,10 +8,18 @@
    a licence table that holds the viewport for 30vh is a page you cannot read — so every record section flows at its
    own height (.data below) while the hero and the final keep the full screen. */
 
-/* ---------- the records flow; only the hero and the final are screens ----------
-   The head clearance is the nav plus the reference strip, in both modes: at 88px (base.css's plain-mode
-   padding) the first heading of a record slid under the strip on a phone. */
-.records .screen.data{min-height:auto;padding:calc(var(--nav-h) + 56px) 0 var(--section-space);justify-content:flex-start}
+/* ---------- a record holds a screen, and only as much more as it needs ----------
+   Nothing pins and nothing stacks (the head of this file), but letting every record flow at its own
+   height was the other extreme: the two short ones, 01 and 02, stood in about two thirds of the window
+   with the next record's heading already showing beneath them (founder, 2026-09-12). A record now takes
+   at least one screen and sits in the middle of it, so one is read out before the next appears. A record
+   that carries more than a screen — the two rate tables, the bonus offers — is taller than the floor and
+   scrolls exactly as it did. The floor is a window and one nav bar, not a window exactly: at exactly
+   100dvh the next record's top lands on the fold, and the founder asked for the scroll to be needed
+   (2026-09-12, "a little more so you scroll to see the next section"). The head clearance is the nav and
+   nothing else: the reference strip that used to sit under it is gone, so 56px of the old 112px was
+   clearing a bar that has left. */
+.records .screen.data{min-height:calc(100dvh + var(--nav-h));padding:calc(var(--nav-h) + 40px) 0 var(--section-space);justify-content:center}
 /* the light crosses a blue record as it crosses a paper one: cb8 names --ground on .screen-paper and drives the
    glass streaks from the stack's --m1…--m4, which this page has no stack to provide. Each blue record names its own. */
 #overview,#accounts,#cashback{view-timeline-name:--ground}
@@ -90,21 +98,51 @@ html.js #hero.in .display{visibility:visible;animation:none}
 html.reduce .broker-card,html.reduce .broker-dot{transition:none}
 html.reduce #hero :is(.display,.lede),html.reduce .facts li{transition:none;transform:none}
 
-/* ---------- the reference strip: six anchors, sticky under the nav, the nav's own paper glass ----------
-   It sticks inside .records, so the final screen is never covered by a white bar. */
+/* ---------- wayfinding: the rail, named ----------
+   This page carried a sticky strip of six anchors under a fixed nav — two bars, 104px of chrome over
+   every record, and a third navigation (the rail) already built at the right. The strip is gone, and
+   the rail it duplicated says what each dot is instead: page.js writes the screen's data-name onto the
+   dot, and pointing at the rail names the dot under the pointer and the record you are on. It takes no
+   page height, and it is only there where there is margin to put it in (the 1199px rule at the foot). */
 .records{position:relative}
-.section-strip{position:sticky;top:var(--nav-h);z-index:44;
-  background:rgba(255,255,255,.72);border-bottom:1px solid rgba(var(--rgb-shadow),.08);
-  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px)}
-.strip-inner{min-height:48px;display:flex;align-items:center;justify-content:center;gap:6px;overflow-x:auto;scrollbar-width:none}
-.strip-inner::-webkit-scrollbar{display:none}
-.section-strip a{flex:0 0 auto;padding:7px 13px;border-radius:999px;font:var(--weight-label) var(--text-meta)/1 var(--sans);color:var(--body);
-  transition:background-color .25s var(--ease),color .25s var(--ease)}
-.section-strip a:hover{color:var(--navy);background:rgba(var(--rgb-900),.07)}
-.section-strip a[aria-current=true]{color:#fff;background:var(--navy)}
-html.reduce .section-strip a{transition:none}
+/* style.css turns the rail off for the whole cb8 system (founder, 2026-09-05: it was the only chrome
+   sitting over the blocks, and that deck snaps to a screen on its own). The premise is the narrative
+   deck's, and this page is the one that departs from it — nothing pins here, nine records scroll
+   plainly, and the reader needs a way back to one. So the rail comes back on this page only, named.
+   base.css's `html:not(.snap) #rail` still wins below 1024px: a phone gets one bar and a scroll. */
+#rail{display:flex}
+#rail .dot{position:relative}
+#rail .dot::after{content:attr(data-label);position:absolute;right:calc(100% + 12px);top:50%;transform:translateY(-50%);
+  padding:5px 10px;border-radius:999px;white-space:nowrap;pointer-events:none;
+  font:var(--weight-label) var(--text-label)/1 var(--sans);letter-spacing:-.005em;color:var(--navy);
+  background:rgba(255,255,255,.82);box-shadow:0 8px 20px -14px rgba(var(--rgb-shadow),.7);
+  backdrop-filter:saturate(180%) blur(14px);-webkit-backdrop-filter:saturate(180%) blur(14px);
+  opacity:0;transition:opacity .22s var(--ease)}
+/* one label at a time, and only while the rail is being used: nine names stacked at an 11px pitch
+   would overlap each other, and a name parked beside the reader all the way down the page is the
+   chrome the ruling above was about. Pointing at the rail also names the record you are on. */
+#rail .dot:is(:hover,:focus-visible)::after,#rail:hover .dot[aria-current=true]::after{opacity:1}
+html.dark-now #rail .dot::after{color:#fff;background:rgba(var(--rgb-abyss),.5)}
+html.reduce #rail .dot::after{transition:none}
 
-/* ---------- every record opens the same way: number, heading, one line ---------- */
+/* ---------- one corner per pane ----------
+   A paper pane is three boxes: the element carries the border, ::after carries the white fill and
+   ::before carries the tray behind it (style.css). Both pseudos hard-code the system radius — the fill
+   at var(--radius), the tray at var(--radius) + 14px — so the moment a pane on this page took a corner
+   of its own, the three stopped agreeing. A licence card drew its hairline at 18px, its white at 28 and
+   its tray at 42: a visible double curve at every corner, worst where the card is smallest. The fill
+   inherits the pane's corner now, and the tray is that corner plus its own offset. */
+.screen-paper .panel::after{border-radius:inherit}
+.screen-paper :is(.market-panel,.note-panel){border-radius:var(--r)}
+.screen-paper :is(.market-panel,.note-panel)::before{inset:calc(0px - var(--tray));border-radius:calc(var(--r) + var(--tray))}
+
+/* ---------- every record opens the same way: number, heading, one line ----------
+   The white record's number is the paper record's number. cb8 writes `.mech.white .page-number` as a
+   chip — a background and a border — because on Results it IS a chip (`width:max-content`, inline-flex,
+   a label beside the figure). Here it is the bare word "01" on base.css's `display:block`, so that
+   background painted a pale bar the full width of the block. No chip, and the accent the paper records
+   already give 02, 04 and 06: eight numbers down the page, one treatment. */
+.white .data-head .page-number{background:none;border-color:transparent;color:var(--accent)}
 .data-head{max-width:700px;margin-bottom:var(--block-space)}
 .data-head.centred{max-width:780px;margin-inline:auto;text-align:center}
 .data-head .copy{max-width:640px}
@@ -120,14 +158,36 @@ html.reduce .section-strip a{transition:none}
    which wrapped "New accounts through TrustForex only" over three lines. The skeleton's 15px reads in one. */
 .glass .key-row strong{font-size:var(--text-panel-title);font-weight:var(--weight-strong);letter-spacing:-.01em;text-align:right}
 
-/* ---------- 3 · regulation: five licences, each a frosted card on the paper field ---------- */
-.reg-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
-.reg-card{min-height:190px;padding:20px;display:flex;flex-direction:column;align-items:flex-start;gap:10px;border-radius:20px;
-  background:rgba(255,255,255,.62);border-color:rgba(255,255,255,.95);
-  backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%)}
-.reg-code{font-size:var(--text-card-title);line-height:1;font-weight:var(--weight-heavy);letter-spacing:var(--tracking-card);color:var(--navy)}
-.reg-card p{flex:1;margin:0;font-size:var(--text-small);line-height:1.45;color:var(--muted)}
-.reg-card strong{font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.06em;color:var(--accent)}
+/* ---------- 3 · regulation: the copy on paper, the licences on one blue pane ----------
+   Five cards in a row was the wrong shape twice over. It left the record standing in 391px of a 956px
+   window with a heading floating over a thin strip (founder, 2026-09-12: "looks dead and there's too
+   much empty space"), and at 213px each the cards could not hold an entity name without breaking it
+   over three lines. The record now takes the layout the Connect screen already uses at the foot of this
+   page — .record-grid: the copy on the paper at the left, one pane at the right — so the two ends of
+   the page rhyme. The pane is the blue object on a white field, which is the same balance the Overview
+   record was given. Five rows, each the full width of the pane: the authority, where it licenses, the
+   entity that holds it, and the number, which is a chip because it is the thing a reader checks. */
+/* base.css splits .record-grid 1.15 / .85 for Connect, whose rows are one short line each. A licence
+   row is four facts wide, and at .85 the entity broke over two lines in three rows out of five. The
+   pane takes the larger half here; the copy beside it is a heading and two lines and does not need it. */
+/* min-width, not a bare rule: an id beats base.css's one-column .record-grid at every width, and the
+   520px floor then held a 390px document open sideways (the QA sweep's overflow check). */
+@media (min-width:1024px){#regulation .record-grid{grid-template-columns:minmax(0,.95fr) minmax(520px,1.05fr)}}
+.reg-stack{height:100%}
+.reg-panel{min-height:min(560px,60vh)}
+.record-copy .data-head{margin-bottom:0}
+/* the footnote is an aside to the record, not a second paragraph of it: it sits off the copy on its
+   own and stops well short of the column, so the eye reads the line above it as the sentence. */
+.record-copy .data-note{max-width:460px;margin-top:30px}
+.reg-row{grid-template-columns:74px minmax(0,1fr) auto;gap:18px;padding:20px 24px}
+.reg-code{font-size:var(--text-card-title);line-height:1;font-weight:var(--weight-heavy);letter-spacing:var(--tracking-card);color:#fff}
+/* the entity is the row's second fact, not its caption — one step up from .value-copy's default */
+.reg-row .value-copy p{margin-top:4px;font-size:var(--text-meta);color:rgba(255,255,255,.78)}
+.reg-lic{align-self:center;padding:6px 11px;border-radius:999px;white-space:nowrap;
+  border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);
+  font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.06em;color:#fff}
+/* a broker whose licences are not published yet: the pane's place, held at the pane's height */
+.reg-stack>.placeholder{height:100%;display:grid;place-items:center;margin-left:42px}
 
 /* ---------- 4 · accounts: the two types side by side, both eligible ---------- */
 .accounts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.125rem;align-items:start}
@@ -142,7 +202,7 @@ html.reduce .section-strip a{transition:none}
 .glass .account-row strong{font-size:var(--text-ui);font-weight:var(--weight-strong);letter-spacing:-.01em;text-align:right}
 
 /* ---------- 5 · markets: one table, centred, on the paper field ---------- */
-.market-panel{width:min(880px,100%);margin-inline:auto;padding:0;overflow:hidden;border-radius:24px}
+.market-panel{--r:24px;--tray:14px;width:min(880px,100%);margin-inline:auto;padding:0;overflow:hidden}
 .market-row{min-height:60px;padding:14px 28px;display:grid;grid-template-columns:.7fr 1.3fr;gap:40px;align-items:center;border-top:1px solid var(--line)}
 .market-row:first-child{border-top:0}
 .market-row.head{min-height:44px;background:var(--soft);font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
@@ -167,7 +227,7 @@ html.reduce .section-strip a{transition:none}
 .rate-table td.peak{color:#fff;font-weight:var(--weight-strong);border:1px solid var(--rim);background:linear-gradient(150deg,var(--tint),var(--tint2))}
 
 /* ---------- the numbered rules: the cashback notes on glass, the bonus offers on paper ---------- */
-.note-panel{padding:0;overflow:hidden;border-radius:22px}
+.note-panel{--r:22px;--tray:14px;padding:0;overflow:hidden;border-radius:var(--r)}
 .glass .note-panel{margin-top:1.125rem}
 .note-panel h3{margin:0;padding:17px 20px;border-bottom:1px solid var(--line);font-size:var(--text-row-title);font-weight:var(--weight-strong);letter-spacing:-.02em;color:var(--navy)}
 .note-line{min-height:54px;padding:13px 20px;display:grid;grid-template-columns:26px minmax(0,1fr);gap:14px;align-items:center;border-top:1px solid var(--line)}
@@ -187,34 +247,38 @@ html.reduce .section-strip a{transition:none}
 .placeholder{padding:34px 26px;border-radius:20px;border:1px dashed var(--line-strong);background:rgba(255,255,255,.5);
   text-align:center;font-size:var(--text-panel-title);color:var(--muted)}
 .glass .placeholder{border-color:rgba(255,255,255,.34);background:rgba(255,255,255,.07);color:rgba(255,255,255,.8)}
-.reg-grid>.placeholder,.bonus-grid>.placeholder{grid-column:1/-1}
+.bonus-grid>.placeholder{grid-column:1/-1}
 
 /* tabular figures widen Inter's letters ~2% (cb8's body rule); off for the page, kept where numbers line up */
 body{font-variant-numeric:normal}
 .panel,.value-panel,.rate-table,.market-panel{font-variant-numeric:tabular-nums}
 
 /* ---------- laptops and phones ---------- */
+/* the rail lives in the margin beside the content. Under about 1200px there is no margin left —
+   at 1024 the dots stand on the text — so it goes before it can sit on anything. */
+@media (max-width:1199px){#rail{display:none}}
 @media (max-width:1023px){
-  html.snap .data{padding-top:calc(var(--nav-h) + 48px)}
-  .reg-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  /* The neighbours stand 64% of a 420px card off centre, so they need 479px of half-window to land in.
+     They were hidden below 560px, which fixed the phone and left the tablet: at 768 the next card ran
+     to 821 and the sweep's sideways-overflow check failed on the hero. Hidden wherever they do not fit. */
+  .broker-card.is-prev,.broker-card.is-next{opacity:0;pointer-events:none;transform:scale(.8)}
+  /* base.css drops .record-grid to one column and takes the pane's left margin off with it */
+  .reg-stack>.placeholder{margin-left:0}
   .accounts-grid,.bonus-grid,.key-panel{grid-template-columns:1fr}
   .rate-table{min-width:560px}
 }
 @media (max-width:560px){
   .broker-stage{height:182px}
   .broker-card{width:82vw;min-height:156px;padding:20px}
-  /* the neighbours have nowhere to stand beside a full-width card, and translated off a 390px screen they
-     widen the hero's scroll box (the QA sweep's sideways-overflow check): they stay home and stay hidden */
-  .broker-card.is-prev,.broker-card.is-next{opacity:0;pointer-events:none;transform:scale(.8)}
   .broker-dots{margin-top:18px}
-  .reg-grid{grid-template-columns:1fr 1fr}
-  .reg-card{min-height:170px}
+  /* the licence number drops under the entity rather than squeezing a third column onto 390px */
+  .reg-row{grid-template-columns:58px minmax(0,1fr);gap:8px 14px;padding:16px 18px;align-items:start}
+  .reg-code{font-size:var(--text-row-title)}
+  .reg-lic{grid-column:2;justify-self:start}
   .key-row,.account-row{grid-template-columns:1fr;gap:5px;padding:14px 16px}
   .key-row strong,.account-row strong{text-align:left}
   .market-row{padding:14px 18px;grid-template-columns:.8fr 1.2fr;gap:16px}
   .rate-head{flex-direction:column;align-items:flex-start;gap:6px}
   .rate-scroll{padding:10px}
-  .strip-inner{justify-content:flex-start}
-  .section-strip a{padding:7px 11px}
   .note-line{padding:13px 16px}
 }

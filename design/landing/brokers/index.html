@@ -9,8 +9,8 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-2 -2 29 30%27%3E%3Cg fill=%27%23144CCD%27%3E%3Cpath d=%27M9.447 21.464l-.039-6.979c-.002-1.612-1.409-2.918-3.143-2.918H.259c.24 1.032.52 2.69.875 3.702 1.594 4.322 4.496 7.606 8.313 10.024z%27/%3E%3Cpath d=%27M18.037 11.567c-1.568 0-2.84 1.18-2.842 2.638v11.068c3.797-2.414 6.686-5.689 8.276-10.003.362-1.012.649-2.671.889-3.703z%27/%3E%3Cpath d=%27M24.615 5.29V3.216C20.628 1.712 16.646.61 12.424 0 8.128.602 4.013 1.717 0 3.263V5.29z%27/%3E%3C/g%3E%3C/svg%3E">
 <style>html{background:#0C2E7B}</style>   <!-- the ground, before any stylesheet arrives: a slow first paint is the brand blue, not a white page -->
 <link rel="stylesheet" href="../cb8/grounds.css?v=348acab3">
-<link rel="stylesheet" href="../cb8/style.css?v=243f7959">
-<link rel="stylesheet" href="page.css?v=4036565e">
+<link rel="stylesheet" href="../cb8/style.css?v=a17853bd">
+<link rel="stylesheet" href="page.css?v=f3ed5187">
 </head>
 <body>
 <svg id="liquid-svg" width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="liquid" x="-4%" y="-8%" width="108%" height="116%" color-interpolation-filters="sRGB">
@@ -78,16 +78,13 @@
   </div>
 </section>
 
-<!-- the records. The strip sticks inside this box, so it is never pinned over the final screen. -->
+<!-- the records. One box, so the paper and blue grounds alternate under a single scroll.
+     There is no second bar here: a sticky strip under a fixed nav put 104px of chrome over
+     every record. The rail on the right names each one instead, and costs no height. -->
 <div class="records">
 
-<!-- the reference strip: six anchors, one per record below, sticky under the nav on its own glass -->
-<nav class="section-strip" id="strip" aria-label="Broker details"><div class="wrap strip-inner">
-  <a href="#overview">Overview</a><a href="#regulation">Regulation</a><a href="#accounts">Accounts</a><a href="#markets">Markets</a><a href="#cashback">Cashback</a><a href="#bonuses">Bonuses</a>
-</div></nav>
-
 <!-- 2 · OVERVIEW — the key table as one sheet of glass: eight rows, the figure on the right -->
-<section class="screen screen-blue mech glass data" id="overview" data-name="Overview" aria-labelledby="ov-h">
+<section class="screen screen-blue mech glass white data" id="overview" data-name="Overview" aria-labelledby="ov-h">
   <div class="wrap"><div class="block">
   <div class="rayfield k k01" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="data-head">
@@ -108,22 +105,28 @@
   </div></div>
 </section>
 
-<!-- 3 · REGULATION — five licences on the paper page, each on its own card -->
+<!-- 3 · REGULATION — the record layout the Connect screen uses at the foot of this page: the copy on
+     paper at the left, the evidence on one blue pane at the right. Five licences, one row each. -->
 <section class="screen screen-paper data" id="regulation" data-name="Regulation" aria-labelledby="reg-h">
-  <div class="wrap">
-    <div class="data-head">
-      <span class="page-number rv">02</span>
-      <h2 class="h2 words" id="reg-h">Regulation</h2>
-      <p class="copy rv" style="--i:1">Where the broker holds a licence, and the entity that holds it.</p>
+  <div class="wrap record-grid">
+    <div class="record-copy">
+      <div class="data-head">
+        <span class="page-number rv">02</span>
+        <h2 class="h2 words" id="reg-h">Regulation</h2>
+        <p class="copy rv" style="--i:1">Where the broker holds a licence, and the entity that holds it.</p>
+      </div>
+      <p class="data-note rv" style="--i:3">* A licence can be held by an entity whose name is not the trading name. Check which entity your own account is opened with.</p>
     </div>
-    <div class="reg-grid rv" id="regGrid" style="--i:2">
-      <article class="panel reg-card"><span class="ico" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.7-7 9-4-2.3-7-5-7-9V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span><span class="reg-code">FSCA</span><p>South Africa<br>GTC Global SA (Pty) Ltd</p><strong>FSP 51545</strong></article>
-      <article class="panel reg-card"><span class="ico" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.7-7 9-4-2.3-7-5-7-9V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span><span class="reg-code">VFSC</span><p>Vanuatu<br>GTC Global Trade Capital Co. Limited</p><strong>40354</strong></article>
-      <article class="panel reg-card"><span class="ico" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.7-7 9-4-2.3-7-5-7-9V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span><span class="reg-code">FCA</span><p>United Kingdom<br>Global Markets Group Limited*</p><strong>FRN 744501</strong></article>
-      <article class="panel reg-card"><span class="ico" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.7-7 9-4-2.3-7-5-7-9V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span><span class="reg-code">ASIC</span><p>Australia<br>GTC Global (Australia) Pty Ltd</p><strong>AFSL 496371</strong></article>
-      <article class="panel reg-card"><span class="ico" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.7-7 9-4-2.3-7-5-7-9V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span><span class="reg-code">FSC</span><p>Mauritius<br>GTC Global Ltd</p><strong>GB22200292</strong></article>
+    <div class="reg-stack rv" id="regGrid" style="--i:2">
+      <div class="value-panel reg-panel" aria-label="Licences held">
+        <div class="rayfield k k02" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <article class="value-row reg-row"><span class="reg-code">FSCA</span><div class="value-copy"><strong>South Africa</strong><p>GTC Global SA (Pty) Ltd</p></div><span class="reg-lic">FSP 51545</span></article>
+        <article class="value-row reg-row"><span class="reg-code">VFSC</span><div class="value-copy"><strong>Vanuatu</strong><p>GTC Global Trade Capital Co. Limited</p></div><span class="reg-lic">40354</span></article>
+        <article class="value-row reg-row"><span class="reg-code">FCA</span><div class="value-copy"><strong>United Kingdom</strong><p>Global Markets Group Limited*</p></div><span class="reg-lic">FRN 744501</span></article>
+        <article class="value-row reg-row"><span class="reg-code">ASIC</span><div class="value-copy"><strong>Australia</strong><p>GTC Global (Australia) Pty Ltd</p></div><span class="reg-lic">AFSL 496371</span></article>
+        <article class="value-row reg-row"><span class="reg-code">FSC</span><div class="value-copy"><strong>Mauritius</strong><p>GTC Global Ltd</p></div><span class="reg-lic">GB22200292</span></article>
+      </div>
     </div>
-    <p class="data-note rv" style="--i:3">* A licence can be held by an entity whose name is not the trading name. Check which entity your own account is opened with.</p>
   </div>
 </section>
 
@@ -307,7 +310,7 @@
 <button class="to-top" id="toTop" type="button" aria-label="Back to top"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 
 <script src="../cb8/main.js?v=1eb397eb"></script>
-<script src="page.js?v=741969ed"></script>
+<script src="page.js?v=0a8d5067"></script>
 <script>if (document.documentElement.classList.contains('reduce')) document.getElementById('liquid-svg').pauseAnimations();</script>
 </body>
 </html>
