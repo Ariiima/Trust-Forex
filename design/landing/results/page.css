@@ -512,3 +512,8 @@ html.reduce .tooltip,html.reduce .tip-anchor,html.reduce .tip-anchor::before,htm
 html #chapter-1.chapter{background:#fff;--grad:var(--grad-blue)}          /* beats style.css's html.snap #chapter-1{transparent} */
 #chapter-1 .rayfield{display:none}
 #chapter-1 .h2{color:var(--navy)}                /* the run's fallback colour must agree with it (_qa/headings.mjs) */
+
+/* the questions heading holds one line, so its size is measured off this page's own question:
+   "Questions behind the numbers" is 12.62 times its font-size wide
+   (shared/scale.css --text-title-faq divides the content width by it). */
+:root{--faq-ratio:12.62}

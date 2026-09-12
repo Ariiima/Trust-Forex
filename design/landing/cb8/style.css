@@ -627,8 +627,28 @@ html.reduce .rate-cell[aria-pressed=false]:hover{transform:none}
 .nav-action .pill{min-height:34px;padding:6px 13px;gap:6px}
 
 /* the FAQ heading only (Cashback, Referral): the .w side margins above cancel a -.055em-tracked
-   space, so the words read as one string — put the gap back on the two pages that carry it */
+   space, so the words read as one string — put the gap back on the two pages that carry it.
+   It is also the one heading that stands over a column of its own rows rather than beside copy
+   (founder, 2026-09-12: "bigger, not hugging the questions, centered"): one step over
+   --text-title, centred on the 900px column, and 54px of air under it so the first row reads as
+   an answer to the heading, not as its next line. The .w boxes bleed .18em past the baseline, so
+   the gap is written on the list, where it is the whole distance, not on the heading's margin. */
 .faq-title{word-spacing:.08em}
+/* .faq-stack carries the treatment, not .faq-wrap, and it selects the section's own .h2 rather
+   than .faq-title: two of the five pages never carried that class, and the ruling is about the
+   heading of a questions section, whichever class it wears.
+   The heading is the one thing here that does not belong to the 900px column: at the size that
+   holds it on one line it is wider than that, so it takes the page's own 1200px wrap and the rows
+   keep theirs. Negative side margins, not a transform: the words' reveal already transforms each
+   <i>, and a transformed ancestor would flatten the clipped run on them. The margin collapses to
+   zero on its own once the viewport is narrower than the wrap, so nothing overflows.
+   How wide that one line is depends on the question the page asks, so the size role reads
+   --faq-ratio and each page's page.css sets its own on :root (shared/scale.css carries the
+   default and the reason it lives there). */
+.faq-stack > .h2{font-size:var(--text-title-faq);text-align:center;margin-bottom:0;
+  margin-inline:calc(-1 * max(0px, (min(100vw - 2 * var(--content-gutter), var(--content-width) - 2 * var(--content-gutter)) - 100%) / 2))}
+.faq-stack .faq-list{margin-top:54px}
+@media (max-width:767px){.faq-stack .faq-list{margin-top:38px}}
 
 /* the page number's "0" and the heading's capital share a left edge in ink, not in boxes: the capital
    carries a side bearing four times the digit's at that size (founder, 2026-09-08: "align vertically") */
@@ -649,6 +669,13 @@ html.reduce .rate-cell[aria-pressed=false]:hover{transform:none}
 /* while a row is growing, the glass goes flat — see the FAQ block in main.js for why */
 .faq-list.busy .faq-item{backdrop-filter:none;-webkit-backdrop-filter:none}
 .faq-a p{margin-bottom:20px}
+/* the questions take the blue the headings' run is built on (founder, 2026-09-12: "the blue part
+   of the gradient we use") — --grad-blue's middle stop, flat. A 19px line is too short a box
+   for the run itself to read as anything but a flat fill, so it takes the colour, not the run.
+   Two steps down that run to --p-pressed (founder, 2026-09-12: "a little darker", then
+   "darker"): still the run's own blue, not a mixed one, and 19px bold reads heavier than the
+   88px heading does. This is the run's last blue before its foot turns toward navy. */
+.faq-stack .faq-q{color:var(--p-pressed)}
 @media (prefers-reduced-transparency:reduce){.faq-item{background:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}}
 
 /* ---------- back to top (founder, 2026-09-08) ----------

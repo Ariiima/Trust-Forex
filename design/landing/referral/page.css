@@ -170,3 +170,8 @@ html.reduce .example-part b.swap{animation:none}
 /* tabular figures widen Inter's letters ~2% (cb8's body rule); off for the page, kept where numbers line up */
 body{font-variant-numeric:normal}
 .panel,.path,.proof-canvas,.value-panel{font-variant-numeric:tabular-nums}
+
+/* the questions heading holds one line, so its size is measured off this page's own question:
+   "Questions before you share" is 11.5 times its font-size wide
+   (shared/scale.css --text-title-faq divides the content width by it). */
+:root{--faq-ratio:11.5}

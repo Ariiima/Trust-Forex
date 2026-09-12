@@ -205,3 +205,8 @@ html.reduce .ready i{animation:none}
 /* tabular figures widen Inter's letters ~2% (cb8's body rule); off for the page, kept where numbers line up */
 body{font-variant-numeric:normal}
 .access-steps,.form-card{font-variant-numeric:tabular-nums}
+
+/* the questions heading holds one line, so its size is measured off this page's own question:
+   "Questions before you start" — no word-spacing on this page, so it runs narrower than Referral's near-identical line is 10.81 times its font-size wide
+   (shared/scale.css --text-title-faq divides the content width by it). */
+:root{--faq-ratio:10.81}
