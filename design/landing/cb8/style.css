@@ -409,6 +409,16 @@ html.reduce .rayfield.k i:nth-child(4),html.reduce #chapter-2::after,html.reduce
    translucent deep-blue pane over white is a grey wash under white figures. --grad rides with the white. */
 .mech.white .block{background:#fff;color:var(--ink);--grad:var(--grad-blue)}
 .mech.white .block>.rayfield{display:none}
+/* its ground is gone, so the block is flat #fff — the one white ground on the page without the
+   soft field every other white ground carries (founder, 2026-09-12 — Results). It takes the same
+   one: the two corner glows and the 48px grid, on the block itself, clipped by its own radius.
+   Unmasked, as the calculator's paper block is: the mask exists so two abutting screens do not
+   collide their glows at the seam, and a card inside a screen has no seam. */
+.mech.white .block::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background:
+  radial-gradient(46% 56% at 10% -4%,rgba(var(--rgb-300),.42),transparent 70%),
+  radial-gradient(40% 52% at 94% 104%,rgba(var(--rgb-200),.5),transparent 70%),
+  repeating-linear-gradient(0deg,rgba(var(--rgb-300),.10) 0 1px,transparent 1px 48px),
+  repeating-linear-gradient(90deg,rgba(var(--rgb-300),.10) 0 1px,transparent 1px 48px)}
 .mech.white .block :is(.h2,.mech-copy h3){color:var(--navy)}
 .mech.white .block :is(.mech-copy p,.copy){color:var(--body)}
 .mech.white .page-number{border-color:rgba(var(--rgb-deep),.22);background:rgba(var(--rgb-900),.06);color:var(--navy)}
