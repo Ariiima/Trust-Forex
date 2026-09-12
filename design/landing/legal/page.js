@@ -9,6 +9,7 @@
 (() => {
   const docs = [...document.querySelectorAll('[data-doc]')];
   const tabs = [...document.querySelectorAll('[data-tab]')];
+  const row = document.querySelector('.doc-tabs-row');
   const valid = new Set(tabs.map(t => t.dataset.tab));
   const requested = () => {
     const key = new URLSearchParams(location.search).get('document');
@@ -17,7 +18,11 @@
   const show = (key, push) => {
     docs.forEach(d => { d.hidden = d.dataset.doc !== key; });
     tabs.forEach(t => t.setAttribute('aria-current', t.dataset.tab === key ? 'page' : 'false'));
-    document.title = tabs.find(t => t.dataset.tab === key).textContent + ' — TrustForex';
+    const tab = tabs.find(t => t.dataset.tab === key);
+    document.title = tab.textContent + ' — TrustForex';
+    // On a phone the links scroll sideways; centre the open one so Cookie Settings is not off-screen.
+    const a = tab.getBoundingClientRect(), r = row.getBoundingClientRect();
+    row.scrollLeft += a.left + a.width / 2 - (r.left + r.width / 2);
     if (!push) return;
     const url = new URL(location.href);
     url.searchParams.set('document', key);

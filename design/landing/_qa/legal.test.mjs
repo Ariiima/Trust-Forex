@@ -1,6 +1,6 @@
 // The Legal Center's four rules, checked against the local landing server (_qa/serve.py):
-// the document switch and its history, the no-JS fallback, the flattened headings, and the
-// sticky tab bar on a phone.
+// the document switch and its history, the no-JS fallback, the heading hierarchy, black and
+// white, and the sticky document links on a phone.
 //   node design/landing/_qa/legal.test.mjs [http://localhost:5311]
 import { chromium } from 'playwright';
 import assert from 'node:assert/strict';
@@ -36,30 +36,42 @@ assert.deepEqual(await plain.$$eval('[data-doc]:not([hidden])', e => e.map(x => 
 const chars = await plain.evaluate(() => document.querySelector('.legal-body').innerText.length);
 assert.ok(chars > 50000, 'no-JS text present: ' + chars);
 
-// 3 — every heading in a document is body size and body ink
+// 3 — a standard hierarchy: document title > section heading > subheading = body, meta below body
 await pg.goto(base + '?document=terms', { waitUntil: 'networkidle' });
-const off = await pg.evaluate(() => {
-  const p = getComputedStyle(document.querySelector('.doc:not([hidden]) p'));
-  return [...document.querySelectorAll('.doc:not([hidden]) h2,.doc:not([hidden]) h3,.doc:not([hidden]) h4')]
-    .map(h => { const s = getComputedStyle(h); return { t: h.textContent.slice(0, 24), size: s.fontSize, color: s.color }; })
-    .filter(h => h.size !== p.fontSize || h.color !== p.color);
-});
-assert.deepEqual(off, [], 'headings off the body size/colour: ' + JSON.stringify(off));
+const size = await pg.evaluate(() => Object.fromEntries(['h2', 'h3', 'h4', '.group p', '.doc-meta'].map(s =>
+  [s, parseFloat(getComputedStyle(document.querySelector('.doc:not([hidden]) ' + s)).fontSize)])));
+assert.ok(size.h2 > size.h3 && size.h3 > size.h4 && size.h4 === size['.group p'] && size['.doc-meta'] < size.h4,
+  'hierarchy: ' + JSON.stringify(size));
 
-// 4 — nothing numbered survived
+// 4 — black and white: no computed colour on the page has a hue
+const hued = await pg.evaluate(() => {
+  const props = ['color', 'backgroundColor', 'borderTopColor', 'borderBottomColor', 'fill', 'stroke'];
+  const out = new Set();
+  for (const el of document.querySelectorAll('body *')) for (const pseudo of [null, '::after']) {
+    const s = getComputedStyle(el, pseudo);
+    for (const k of props) {
+      const m = s[k].match(/rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)/);
+      if (m && !(m[1] === m[2] && m[2] === m[3])) out.add(`${el.localName}.${el.getAttribute('class')}${pseudo || ''} ${k} ${s[k]}`);
+    }
+  }
+  return [...out];
+});
+assert.deepEqual(hued, [], 'coloured: ' + hued.join(' | '));
+
+// 5 — nothing numbered survived
 const numbered = await pg.$$eval('.doc h2,.doc h3,.doc h4,.doc-tabs a',
   e => e.map(x => x.textContent.trim()).filter(t => /^\d/.test(t)));
 assert.deepEqual(numbered, [], 'numbered headings: ' + numbered);
 
-// 5 — the tab bar stays under the nav on a phone, on one line
+// 6 — the document links stay under the nav on a phone, on one line
 const ph = await b.newPage({ viewport: { width: 390, height: 844 } });
 await ph.goto(base + '?document=terms', { waitUntil: 'networkidle' });
 await ph.evaluate(() => window.scrollTo(0, 2500));
 await ph.waitForTimeout(200);
 const bar = await ph.evaluate(() => {
   const r = document.querySelector('.doc-tabs').getBoundingClientRect();
-  const row = document.querySelector('.doc-tabs-row');
-  return { top: Math.round(r.top), height: Math.round(r.height), lines: row.scrollHeight > 44 ? 2 : 1 };
+  const links = [...document.querySelectorAll('.doc-tabs-row a')];
+  return { top: Math.round(r.top), height: Math.round(r.height), lines: new Set(links.map(a => a.offsetTop)).size };
 });
 assert.equal(bar.top, 56, 'tab bar not stuck: ' + JSON.stringify(bar));
 assert.equal(bar.lines, 1, 'tab bar wrapped on a phone: ' + JSON.stringify(bar));
