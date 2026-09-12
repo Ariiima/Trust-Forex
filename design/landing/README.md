@@ -146,6 +146,20 @@ the run — a halo is sized in percentages of its box, so one field over four sc
 single glare on the title band. And the record module's bars grow by `height`, not `scaleY`,
 because the figure above a bar is pinned to that bar's top edge and has to ride up with it.
 
+### The record's bars
+
+The four bars are windows onto one green light behind the plot, not four green swatches. Each
+paints the slice of a field sized to the whole bars row, so TP1→TP4 is a single light falling
+across the chart and the streak through it is unbroken across the gaps. The light leans with the
+pane under the pointer, and holds still under reduced motion.
+
+Picked on 2026-09-13 from two rounds of candidates. Round 1 dressed each bar's surface — a lit
+glass tube, frosted green glass, a clear vessel filled to the rate, edge-lit dark glass, a single
+sheen pass — and every one read as an effect; the tube was called "3D generated AI slop", and
+translucent green over the blue pane turns teal. Round 2 started from the data: one glass tile per
+signal lit when it reached the target, the four targets as concentric rings, and last week's rate
+as a level across each bar. One light was chosen; the tiles were the runner-up.
+
 ### The protocol steps
 
 The four steps are the one place on the site that does not use the ordinary reveal, and all four use
