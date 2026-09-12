@@ -164,7 +164,7 @@ html.reduce .rv,html.reduce .words .w i{opacity:1;transform:none;transition:none
 #hero{background:var(--blue);color:#fff;--grad:var(--grad-light);overflow:hidden}
 .hero-center{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;max-width:960px}
 #hero .display{max-width:960px;margin:0 auto 26px}
-#hero .lede{max-width:790px;margin:0 auto 34px;color:rgba(255,255,255,.78)}
+#hero .lede{max-width:790px;margin:0 auto;color:rgba(255,255,255,.78)}   /* no CTA under it any more (founder 2026-09-12) — the trailing 34px would push the centred block up */
 .rayfield{position:absolute;inset:0;z-index:0}
 .rayfield img{width:100%;height:100%;object-fit:cover}
 /* ponytail: the wash is one radial gradient over the still, so the blue stays one hue at any size */
