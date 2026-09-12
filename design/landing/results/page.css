@@ -65,15 +65,21 @@
 .compare-path{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .compare-path.tp1{stroke:var(--tp1)}.compare-path.tp2{stroke:var(--tp2)}.compare-path.tp3{stroke:var(--tp3);stroke-dasharray:7 5}.compare-path.tp4{stroke:var(--tp4);stroke-dasharray:2 5}
 .compare-point{stroke:var(--blue);stroke-width:1.5}
-.compare-gap{stroke:rgba(255,255,255,.45);stroke-width:1;stroke-dasharray:3 4}   /* the dashed stub the bars use for a period with no signals */
+/* compare on hides the columns, so the lit column can no longer mark the reading — a dashed rule does. */
+.compare-cursor{stroke:rgba(255,255,255,.5);stroke-width:1;stroke-dasharray:4 5;opacity:0;transition:opacity .15s var(--ease)}
+.compare-cursor.on{opacity:1}
 .chart-stage[data-timeframe=yearly] .bars{gap:54px;padding-inline:12%}
 .bar-slot{height:100%;flex:1 1 0;min-width:0;display:flex;align-items:flex-end;justify-content:center;position:relative}
+/* A period with no signals is not a reading, so it does not get a reading's width: the slot collapses to a
+   sliver and pulls its neighbours in over the gap. The compare lines read x off the slots, so they clench with it. */
+.bar-slot.no-signals{flex:0 0 var(--empty-w,8px);margin-inline:var(--empty-pull,-3px)}
+.compare-mode .bars{--empty-w:5px;--empty-pull:-5px}   /* a line closes over the hole tighter than a row of columns can */
 .chart-stage{--bar-w:13px}
 .chart-stage[data-timeframe=monthly]{--bar-w:18px}
 .chart-stage[data-timeframe=yearly]{--bar-w:92px}
 .bar{width:min(100%,var(--bar-w));min-height:2px;border-radius:5px 5px 0 0;background:rgba(255,255,255,.55);transition:height .24s var(--ease),filter .2s var(--ease),box-shadow .2s var(--ease)}
 .bar-slot.active .bar{filter:brightness(1.65)}
-.bar-slot.no-signals .bar{height:18px!important;min-height:18px;background:transparent;border:1px dashed rgba(255,255,255,.45);border-bottom:0}
+.bar-slot.no-signals .bar{height:12px!important;min-height:12px;background:transparent;border:1px dashed rgba(255,255,255,.28);border-bottom:0}
 /* the reading is a white card with dark figures — data never sits on a translucent ground (BRAND) */
 .tooltip{position:absolute;z-index:5;min-width:190px;padding:12px 14px;border-radius:12px;background:#fff;color:var(--ink);box-shadow:0 12px 34px rgba(var(--rgb-shadow),.4);
   transform:translate(-50%,calc(-100% - 12px));opacity:0;pointer-events:none;font-size:var(--text-meta);text-align:left;transition:opacity .15s var(--ease)}
@@ -339,6 +345,7 @@ html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
   .selector button{padding-inline:8px}.selector.target button{padding-inline:4px}.selector.target button small{display:none}
   .compare-toggle{width:auto;justify-content:center;padding-inline:9px}.compare-wide{display:none}.compare-short{display:inline}
   .scalp-legend{margin-left:44px;gap:12px 18px}.gridline::after,.scalp-gridline::after{left:44px}
+  .bars,.compare-mode .bars{--empty-w:4px;--empty-pull:0px}
   .bars{width:calc(100% - 44px);margin-left:44px;gap:2px;padding-inline:2px}.scalp-bars{left:44px;gap:7px;padding-inline:5px}
   .chart-stage,.scalp-stage{height:330px}.chart-stage[data-timeframe=yearly] .bars{gap:18px;padding-inline:8%}.scalp-stage{--mark-w:32px}.scalp-stage[data-scalp-timeframe=monthly]{--mark-w:56px}.scalp-stage[data-scalp-timeframe=yearly]{--mark-w:72px}.scalp-mark{width:min(var(--mark-w),70%)}
   .scalp-head .scalp-legend{flex:1 0 100%;width:100%}.scalp-legend span{padding-inline:9px;font-size:var(--text-label)}

@@ -38,6 +38,7 @@
   };
   let target = 'tp2', timeframe = 'weekly', activeIndex = null, compareMode = false, pinned = false;
   let resultView = 'signals', scalpTimeframe = 'weekly', scalpActiveIndex = null, scalpPinned = false;
+  let compareCursor = null;   /* the dashed rule that marks the hovered period while compare is on */
 
   function rowsFor(targetName) {
     return data[timeframe].map((item, index) => {
@@ -66,17 +67,13 @@
     const xAt = index => centers.length === count ? centers[index] : geometry.left + (count === 1 ? geometry.plotWidth / 2 : (index / (count - 1)) * geometry.plotWidth);
     compareChart.setAttribute('viewBox', '0 0 ' + geometry.width + ' ' + geometry.height);
     compareChart.innerHTML = '';
-    /* a period with no signals is not a zero — the bars leave a dashed stub where the column would be,
-       so the lines leave the same stub and break, rather than ruling straight across a period nothing
-       was recorded in. A lone reading between two empty periods is drawn as a dot. */
-    const baseline = geometry.top + geometry.plotHeight;
-    data[timeframe].forEach((item, index) => {
-      if (item.total) return;
-      const stub = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      stub.setAttribute('x1', String(xAt(index))); stub.setAttribute('x2', String(xAt(index)));
-      stub.setAttribute('y1', String(baseline - 18)); stub.setAttribute('y2', String(baseline));
-      stub.setAttribute('class', 'compare-gap'); compareChart.appendChild(stub);
-    });
+    /* a period with no signals is not a zero — every line breaks there rather than ruling straight across a
+       period nothing was recorded in. The break is the whole mark: the slot is clenched to a sliver, so the
+       lines close up over it and nothing is drawn in the hole. A lone reading between two empty periods is a dot. */
+    compareCursor = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    compareCursor.setAttribute('class', 'compare-cursor');
+    compareCursor.setAttribute('y1', String(geometry.top)); compareCursor.setAttribute('y2', String(geometry.top + geometry.plotHeight));
+    compareChart.appendChild(compareCursor);   // first, so the four lines cross over the rule rather than under it
     targets.forEach(targetName => {
       const current = rowsFor(targetName); let path = '', run = [];
       const flush = () => {
@@ -102,13 +99,25 @@
     });
   }
 
+  /* The columns are built once per grain and then re-read, never rebuilt per target. Rebuilding them
+     replayed the entry animation on every TP click, and the browser left some of the fresh columns
+     unpainted until the next repaint — which is why a hover brought the missing ones back. Reusing the
+     nodes also lets `transition:height` morph TP1 into TP4 instead of restarting the chart. */
   function draw() {
-    barsNode.innerHTML = ''; activeIndex = null; pinned = false; tooltip.style.opacity = '0'; chartStage.dataset.timeframe = timeframe;
+    closeTooltip(); chartStage.dataset.timeframe = timeframe;
     const current = rowsFor(target);
     chartStage.setAttribute('aria-label', compareMode ? 'Comparing TP1 through TP4 across ' + current.length + ' ' + timeframe + ' periods' : target.toUpperCase() + ' Win Rate across ' + current.length + ' ' + timeframe + ' periods');
+    if (barsNode.children.length !== current.length) {
+      barsNode.innerHTML = '';
+      current.forEach((item, index) => {
+        const slot = document.createElement('div'); slot.className = 'bar-slot'; slot.dataset.index = String(index);
+        const bar = document.createElement('div'); bar.className = 'bar'; bar.style.setProperty('--i', index); slot.appendChild(bar); barsNode.appendChild(slot);
+      });
+    }
     current.forEach((item, index) => {
-      const slot = document.createElement('div'); slot.className = 'bar-slot' + (item.rate === null ? ' no-signals' : ''); slot.dataset.index = String(index);
-      const bar = document.createElement('div'); bar.className = 'bar'; bar.style.height = item.rate === null ? '18px' : item.rate + '%'; bar.style.setProperty('--i', index); slot.appendChild(bar); barsNode.appendChild(slot);
+      const slot = barsNode.children[index];
+      slot.classList.toggle('no-signals', item.rate === null);
+      slot.firstElementChild.style.height = item.rate === null ? '12px' : item.rate + '%';
     });
     drawCompare();
   }
@@ -116,7 +125,11 @@
   function showIndex(index, clientY) {
     const current = rowsFor(target), slots = [...barsNode.children], item = current[index], stageBounds = chartStage.getBoundingClientRect(); activeIndex = index;
     slots.forEach((slot, i) => slot.classList.toggle('active', i === index));
-    const center = slotCenters()[index];   // the lit column is the reading's marker — no rule is drawn through it
+    const center = slotCenters()[index];   // reading TP1–TP4 the lit column is the marker; compare hides it, so the rule takes over
+    if (compareCursor) {
+      compareCursor.setAttribute('x1', String(center)); compareCursor.setAttribute('x2', String(center));
+      compareCursor.classList.toggle('on', compareMode);
+    }
     if (item.rate === null) {
       tooltip.innerHTML = '<strong>' + item.period + '</strong><span>No Signals</span>';
       live.textContent = item.period + ', No Signals.';
@@ -140,7 +153,7 @@
     showIndex(index, clientY);
   }
 
-  function closeTooltip() { [...barsNode.children].forEach(slot => slot.classList.remove('active')); activeIndex = null; pinned = false; tooltip.style.opacity = '0'; }
+  function closeTooltip() { [...barsNode.children].forEach(slot => slot.classList.remove('active')); activeIndex = null; pinned = false; tooltip.style.opacity = '0'; if (compareCursor) compareCursor.classList.remove('on'); }
   chartStage.addEventListener('pointermove', event => { if (event.pointerType === 'mouse' || event.buttons) showAt(event.clientX, event.clientY); });
   chartStage.addEventListener('pointerdown', event => { pinned = true; showAt(event.clientX, event.clientY); });
   chartStage.addEventListener('pointerleave', () => { if (!pinned) closeTooltip(); });
@@ -219,7 +232,31 @@
     const runs = [...document.querySelectorAll('#compare-chart .compare-path')].map(path => (path.getAttribute('d').match(/M/g) || []).length);
     if (runs.length !== 4) fails.push(`compare lines ${runs.length} != 4`);
     if (runs.some(n => n !== 2)) fails.push('a compare line rules across the No Signals week: ' + runs.join(','));
-    if (document.querySelectorAll('#compare-chart .compare-gap').length !== 1) fails.push('the No Signals week lost its stub');
+    if (document.querySelectorAll('#compare-chart .compare-gap').length) fails.push('the compare chart still rules a stub through the No Signals week');
+    const slots = [...document.querySelectorAll('#bars .bar-slot')];
+    const emptyWidth = () => document.querySelectorAll('#bars .bar-slot')[12].getBoundingClientRect().width;
+    const columnsWidth = emptyWidth();
+    if (columnsWidth >= slots[11].getBoundingClientRect().width) fails.push('the No Signals week is not clenched');
+    compareToggle.checked = true; compareToggle.dispatchEvent(new Event('change'));
+    if (emptyWidth() >= columnsWidth) fails.push('compare mode does not close over the No Signals week tighter than the columns do');
+    compareToggle.checked = false; compareToggle.dispatchEvent(new Event('change'));
+    const firstSlot = slots[0];
+    document.querySelector('[data-target=tp4]').click();
+    if (document.querySelector('#bars .bar-slot') !== firstSlot) fails.push('switching target rebuilt the columns');
+    document.querySelector('[data-target=tp2]').click();
+    /* the rule marks the reading only while compare is on, and only while a reading is open */
+    const rule = document.querySelector('#compare-chart .compare-cursor');
+    if (!rule) fails.push('the compare chart has no cursor rule');
+    showIndex(5, chartStage.getBoundingClientRect().top + 200);
+    if (rule && rule.classList.contains('on')) fails.push('the cursor rule shows with compare off');
+    compareToggle.checked = true; compareToggle.dispatchEvent(new Event('change'));
+    showIndex(5, chartStage.getBoundingClientRect().top + 200);
+    const onRule = document.querySelector('#compare-chart .compare-cursor');
+    if (!onRule.classList.contains('on')) fails.push('the cursor rule does not show with compare on');
+    if (onRule.getAttribute('x1') !== onRule.getAttribute('x2')) fails.push('the cursor rule is not vertical');
+    closeTooltip();
+    if (onRule.classList.contains('on')) fails.push('the cursor rule outlived the reading');
+    compareToggle.checked = false; compareToggle.dispatchEvent(new Event('change'));
     console.log(fails.length ? 'CHART FAIL\n' + fails.join('\n') : 'CHART OK — 30 weekly slots, week 13 No Signals');
   }
 })();
