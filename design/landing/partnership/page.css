@@ -116,16 +116,25 @@ html.reduce .swap,html.reduce .access-switch .tile:hover{animation:none;transfor
 .pilot-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,.92fr);gap:90px;align-items:center}
 .pilot-copy .h2{max-width:560px}
 .pilot-copy .copy{margin-bottom:32px}
+/* the card wears the glass frame its own tiles wear — the calculator's treatment, a blue pane on paper:
+   the rim and glow on the box, the tint and the travelling streak on a layer above the rayfield's blue */
 .pilot-card{position:relative;overflow:hidden;padding:26px;border-radius:var(--radius-card);background:var(--blue);color:#fff;
-  box-shadow:0 24px 48px -30px rgba(var(--rgb-shadow),.5)}
+  border:1px solid rgba(160,196,255,.55);
+  box-shadow:0 0 34px rgba(96,156,255,.3),0 24px 48px -30px rgba(var(--rgb-shadow),.5)}
 .pilot-card>.rayfield{border-radius:inherit}
 .pilot-card>:not(.rayfield){position:relative;z-index:1}
-.pilot-card .rayfield.k i,.pilot-card .tile::after{animation-timeline:--ground}   /* the arcs and the tile streaks travel with the page */
+.pilot-card::after{content:'';position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(160deg,rgba(var(--rgb-900),.14),rgba(var(--rgb-abyss),.22)) no-repeat 0 0/100% 100%,
+    linear-gradient(115deg,transparent 32%,rgba(255,255,255,.14) 46%,rgba(255,255,255,.04) 52%,transparent 62%) no-repeat 100% 0/220% 100%;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.38),inset 0 0 0 1px rgba(160,196,255,.18),inset 0 0 64px rgba(96,156,255,.14);
+  animation:glass-light linear both;animation-range:entry 0% exit 100%}
+.pilot-card .rayfield.k i,.pilot-card .tile::after,.pilot-card::after{animation-timeline:--ground}   /* the arcs, the pane streak and the tile streaks travel with the page */
+html.reduce .pilot-card::after{animation:none}
 .pilot-head{min-height:58px;margin:-2px 0 22px;padding-bottom:16px;display:grid;grid-template-columns:42px 1fr auto;gap:13px;align-items:center;border-bottom:1px solid rgba(255,255,255,.22)}
 .pilot-head .bmark{width:42px;height:42px;border-radius:12px}
 .pilot-head .bmark svg{width:20px;height:20px}
-.pilot-head strong{display:block;font-size:var(--text-ui)}
-.pilot-head span{display:block;margin-top:3px;font-size:var(--text-label);color:rgba(255,255,255,.7)}
+.pilot-head>div strong{display:block;font-size:var(--text-ui)}
+.pilot-head>div span{display:block;margin-top:3px;font-size:var(--text-label);color:rgba(255,255,255,.7)}
 /* "Ready to configure": the calculator's live pill (style.css scopes its own to #calculator), its dot pulsing */
 .live{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid rgba(255,255,255,.34);border-radius:999px;background:rgba(255,255,255,.14);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
@@ -134,11 +143,11 @@ html.reduce .swap,html.reduce .access-switch .tile:hover{animation:none;transfor
 html.reduce .live i{animation:none}
 .pilot-card h3{max-width:420px;margin:0 0 26px;font-size:var(--text-pilot);line-height:1.04;letter-spacing:-.045em;font-weight:var(--weight-strong);color:#fff;text-wrap:balance}
 .pilot-path{list-style:none;margin:0;padding:0 0 0 46px;position:relative}
-.pilot-path::before{content:'';position:absolute;left:15px;top:15px;bottom:15px;width:1px;background:rgba(255,255,255,.28)}
+.pilot-path::before{content:'';position:absolute;left:15px;top:18px;bottom:25px;width:1px;background:rgba(255,255,255,.28)}   /* first icon's centre to the last one's */
 .pilot-step{position:relative;min-height:68px;padding-bottom:18px}
 .pilot-step:last-child{min-height:44px;padding-bottom:0}
-.pilot-step>i{position:absolute;left:-46px;top:0;width:31px;height:31px;display:grid;place-items:center;border-radius:12px;font-style:normal;--streak:.16}
-.pilot-step>i .ico{width:17px;height:17px}
+.pilot-step>i.tile{position:absolute;left:-46px;top:3px;width:31px;height:31px;display:grid;place-items:center;border-radius:12px;font-style:normal;--streak:.16}
+.pilot-step>i.tile .ico{width:17px;height:17px;stroke:#fff}
 .pilot-step>span{display:block;margin-bottom:5px;font-size:var(--text-micro);color:rgba(255,255,255,.65)}
 .pilot-step strong{display:block;font-size:var(--text-panel-title);line-height:1.35;font-weight:var(--weight-strong)}
 .pilot-offer{margin-top:23px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
