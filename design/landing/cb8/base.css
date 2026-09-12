@@ -6,7 +6,7 @@
    02 and 04 and the final; white with outlined panels between them; and two white-to-blue
    gradients (meaning, FAQ) that hand off into the next blue screen. Panels on blue are glass. */
 @import url('../shared/fonts/inter.css');
-@import url('../shared/scale.css?v=869ac7b1');
+@import url('../shared/scale.css?v=e690a3df');
 
 :root{
   /* ---- Primary blue, lifted verbatim from the Mini App's design tokens ----------
@@ -480,13 +480,83 @@ html.reduce .estimate strong.swap{animation:none}
 #final .display{color:#fff;max-width:900px;margin-bottom:24px}
 #final .lede{color:rgba(255,255,255,.78);text-align:center;max-width:760px;margin:0 auto 30px}
 .footer{position:relative;z-index:1;border-top:1px solid var(--navy-line);padding:36px 0 48px;width:100%}
-.footer-row{display:flex;justify-content:space-between;align-items:center;gap:26px;flex-wrap:wrap;font-size:var(--text-meta);color:rgba(255,255,255,.66)}
-.footer-row nav{display:flex;gap:18px;flex-wrap:wrap}
-.footer-row a:hover{color:#fff}
 .social{display:flex;gap:10px}
 .social a{width:32px;height:32px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--navy-line);transition:background-color .3s var(--ease)}
 .social a:hover{background:rgba(255,255,255,.12)}
 .social svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.6;fill:none}
+/* ---------- the footer, every page (was footer-lab.html variant 02, opened out at the founder's
+   word on 2026-09-12: not so high, not fixed in a box) ----------
+   The links sit straight on the ground between two hairlines, and the wordmark under them is the
+   ground: set to the page's measure and cropped by the page's own bottom edge, so the site signs
+   off rather than trailing away. .footer above still gives the position, the width and the top
+   hairline; everything from here down is the signature's.
+   The blog is the one page that closes on paper instead of on the blue, and blog/page.css inks
+   this same markup for it. */
+.fsig{margin-top:76px;padding:26px 0 80px}
+.fsig>.wrap{position:relative;z-index:3}
+.fsig-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.75fr);gap:26px 56px;
+  align-items:start}
+.fsig-brand{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+.fsig-mark{display:inline-flex;flex-direction:column;gap:5px;color:#fff}
+.fsig-mark svg{fill:currentColor}
+.fsig-mark .brand-word{width:132px;height:auto}
+.fsig-mark .brand-sub{width:125px;height:auto}
+.fsig-say{margin:0;max-width:22ch;font-size:var(--text-ui);line-height:1.5;color:rgba(255,255,255,.78)}
+.fsig-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px 30px}
+.fsig-cols h3{margin:0 0 12px;font:var(--weight-label) var(--text-label)/1 var(--sans);
+  letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.fsig-cols ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.fsig-cols a{font-size:var(--text-ui);color:rgba(255,255,255,.82);transition:color .3s var(--ease)}
+.fsig-cols a:hover{color:#fff}
+/* the channel is one line now, not a column: the only thing a visitor can do here that is not
+   "open the app" is follow the record while they decide */
+.fsig-base{display:flex;flex-wrap:wrap;align-items:center;gap:12px 26px;
+  margin-top:20px;padding-top:15px;border-top:1px solid var(--navy-line)}
+.fsig-legal{margin:0;max-width:58ch;font-size:var(--text-label);line-height:1.6;color:rgba(255,255,255,.5)}
+.fsig-chan{display:inline-flex;align-items:center;gap:8px;margin-left:auto;
+  font-size:var(--text-label);color:rgba(255,255,255,.72);transition:color .3s var(--ease)}
+.fsig-chan:hover{color:#fff}
+.fsig-chan svg:first-child{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6}
+.fsig .social a{width:32px;height:32px}
+.fsig .social svg{width:15px;height:15px}
+
+/* The signature. The wordmark is 119×26, so at this measure it stands about 270px tall: the band
+   is a third of that and the mark is anchored to its top, so the caps read and the feet are gone
+   with the page. Anchored to the bottom instead, the crop fell across the letters' middles and
+   the mark read as five blue shapes rather than as the name. */
+.fsig-sign{position:absolute;left:0;right:0;bottom:0;z-index:1;pointer-events:none;overflow:hidden;
+  height:94px;display:flex;align-items:flex-start;justify-content:center}
+.fsig-sign svg{width:min(980px,84%);height:auto;fill:rgba(var(--rgb-600),.28)}
+
+/* The arrival, driven by cb8/main.js. Transform and opacity only, so the rise costs no layout: the mark starts a third
+   of its own height below the band and eases up into the crop as the page ends. --ease is the
+   site's own curve, so the signature settles the way every panel and button on it does.
+   The from-state is gated on html.js, and the rest state is the finished one — so no JavaScript,
+   an unsupported browser or html.reduce all leave the mark exactly where it belongs (the design
+   shoot runs reducedMotion:'reduce', and this must not drift the crop). */
+html.js .fsig-sign svg{transform:translateY(34%);opacity:0;
+  transition:transform 1.05s var(--ease),opacity .7s ease-out}
+html.js .fsig.signed .fsig-sign svg{transform:none;opacity:1}
+html.reduce .fsig-sign svg,
+html.reduce .fsig.signed .fsig-sign svg{transform:none;opacity:1;transition:none}
+@media (prefers-reduced-motion:reduce){
+  html.js .fsig-sign svg{transform:none;opacity:1;transition:none}
+}
+
+@media (max-width:1023px){
+  .fsig-grid{grid-template-columns:1fr;gap:28px}
+  .fsig-cols{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:680px){
+  .fsig{margin-top:52px;padding:24px 0 96px}
+  .fsig-cols{grid-template-columns:1fr 1fr;gap:22px 24px}
+  .fsig-chan{margin-left:0}
+  .fsig-base .social{width:100%}
+  /* the crop is the idea, and a wordmark that fits inside a phone is not cropped: the mark goes
+     wider than the page instead, so what shows is a slice of it */
+  .fsig-sign{height:116px}
+  .fsig-sign svg{width:190%}
+}
 
 /* ---------- mobile / no-lock: an ordinary scrolling page ---------- */
 @media (max-width:1023px){

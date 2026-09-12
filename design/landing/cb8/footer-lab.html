@@ -1,0 +1,1100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Footer lab — thirteen closes for the site</title>
+<!-- A preview sheet only. It loads the real cb8 stylesheets and overrides nothing in them:
+     every variant is a .fvNN block defined in this file, and the live footer (base.css's
+     .footer / .footer-row) is shown first, untouched, as variant 00. index.html, base.css,
+     style.css and grounds.css are not edited by this file.
+
+     The brief is the founder's two references (2026-09-12): the TrustForex split card — a blue
+     brand pane beside a near-white pane carrying the socials over three link columns — and
+     Kresna's, where the same split floats over a giant wordmark cropped by the page edge.
+     v01 is that brief built in cb8's own language. v02–v07 take it somewhere else: the
+     signature, the ledger, the chart, the dock, the masthead and the stub. Round two (08–13,
+     founder: "02 is good, go wilder and wider") takes 02's move off the card and off the
+     1200px wrap. -->
+<link rel="stylesheet" href="grounds.css">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ============================== the sheet itself ============================== */
+body{background:#0A1026;color:#fff;font:400 15px/1.5 var(--sans);padding:0 0 90px;margin:0}
+.lab-head{position:sticky;top:0;z-index:30;padding:16px 26px;background:rgba(10,16,38,.88);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.12);
+  display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.lab-head h1{font-size:17px;font-weight:600;margin:0 auto 0 0;letter-spacing:.2px}
+.lab-head .set{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.lab-head label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.lab-head button{padding:6px 11px;border-radius:8px;border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.06);color:#fff;font-size:13px;line-height:1;cursor:pointer}
+.lab-head button[aria-pressed="true"]{background:#fff;color:#0A1026;border-color:#fff}
+
+.case{padding:34px 26px 0}
+.round{padding:56px 26px 4px;border-top:1px solid rgba(255,255,255,.14);margin-top:44px}
+.round h2{margin:0 0 8px;font-size:22px;font-weight:650;letter-spacing:-.01em}
+.round p{margin:0;max-width:84ch;font-size:14px;color:rgba(255,255,255,.62)}
+.case-head{display:flex;gap:12px;align-items:baseline;margin:0 0 12px;flex-wrap:wrap}
+.case-head b{font-size:13px;font-weight:700;letter-spacing:.06em;color:#fff;
+  border:1px solid rgba(255,255,255,.2);border-radius:7px;padding:3px 8px;background:rgba(255,255,255,.06)}
+.case-head strong{font-size:16px;font-weight:600}
+.case-head span{font-size:13px;color:rgba(255,255,255,.6);max-width:76ch}
+/* the stage is the page bottom: the footer's own ground, cropped to a width the head bar picks */
+.stage{width:100%;max-width:var(--stage,1440px);margin:0 auto;border-radius:14px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.12);position:relative;isolation:isolate;background:var(--blue);
+  container-type:inline-size}
+.stage.paper{background:var(--paper)}
+.stage .above{position:relative;z-index:2;height:96px;display:grid;place-items:center;
+  font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.34)}
+.stage.paper .above{color:rgba(18,20,26,.3)}
+
+/* ============================== shared footer furniture ======================
+   Every variant draws from these, so a difference between two variants is a difference in
+   structure and not in type or colour drifting between them. */
+.fv{position:relative;z-index:2;width:100%}
+.fv a{transition:color .3s var(--ease),opacity .3s var(--ease)}
+.fv .cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px 30px}
+.fv .cols h3{margin:0 0 14px;font:var(--weight-label) var(--text-label)/1 var(--sans);
+  letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.fv .cols ul{margin:0;padding:0;list-style:none;display:grid;gap:11px}
+.fv .cols a{font-size:var(--text-ui);color:rgba(255,255,255,.82)}
+.fv .cols a:hover{color:#fff}
+.fv .legal{margin:0;font-size:var(--text-label);line-height:1.6;color:rgba(255,255,255,.46);max-width:78ch}
+.fv .tagline{margin:0;font-size:var(--text-ui);color:rgba(255,255,255,.8)}
+/* the social row: base.css's .social, one size up, and Telegram carried as the live channel
+   rather than one icon among five — the product is a Telegram app */
+.fv .social a{width:38px;height:38px;border-radius:12px}
+.fv .social svg{width:17px;height:17px}
+.fv .social .tg{width:auto;padding:0 14px;gap:9px;display:inline-flex;align-items:center;
+  font-size:var(--text-ui);font-weight:var(--weight-strong)}
+/* on a light pane the same furniture flips to ink */
+.fv .on-paper .cols h3{color:var(--muted)}
+.fv .on-paper .cols a{color:var(--body)}
+.fv .on-paper .cols a:hover{color:var(--accent-deep)}
+.fv .on-paper .legal{color:var(--muted)}
+.fv .on-paper .tagline{color:var(--body)}
+.fv .on-paper .social a{border-color:var(--line-strong);color:var(--navy)}
+.fv .on-paper .social a:hover{background:#fff;border-color:var(--accent)}
+.fv .on-paper .social .tg{border-color:var(--accent);color:var(--accent)}
+.fv .on-paper .social .tg:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+/* the mark, sized per variant off these two */
+.fv .mark{display:inline-flex;flex-direction:column;gap:6px;color:#fff}
+.fv .mark svg,.f6-mast svg,.f7-shield{fill:currentColor}
+.f6-mast svg{display:block}
+.fv .mark .brand-word{width:var(--mark,148px);height:auto}
+.fv .mark .brand-sub{width:calc(var(--mark,148px) * .94);height:auto}
+.fv .on-paper .mark{color:var(--navy)}
+/* the candle art. A <use> clones the symbol into a shadow tree that CSS selectors cannot reach,
+   so the series carries its own paint as attributes and takes only two things from out here:
+   currentColor, and the host's own opacity. A variant therefore tunes the art by setting
+   colour and opacity on this element and nothing else. */
+.art{position:absolute;z-index:1;pointer-events:none;color:#fff;opacity:.92}
+
+/* ============================== 00 · the live footer =========================
+   base.css's .footer, as it ships: one row, the name, eleven links, two icons. */
+
+/* ============================== 01 · Split card ==============================
+   The brief, built in cb8's language: the brand pane is a real screen — its own k01 ground,
+   the candle series falling off its corner — and the link pane is the site's paper, not a
+   grey. One card, one radius, the two panes butted with no gap so the seam is the only line. */
+.fv01{padding:12px 0 30px}
+.f1{display:grid;grid-template-columns:.82fr 1.18fr;border-radius:var(--radius-card);overflow:hidden;
+  isolation:isolate;box-shadow:0 44px 90px -44px rgba(var(--rgb-shadow),.95)}
+/* the pane cannot take a k ground: that is the page's own field, and the card would dissolve
+   into it. It takes the ramp instead, two steps brighter than the field, so the card's left
+   edge is a real edge */
+.f1-brand{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;
+  gap:30px;padding:36px 34px 32px;min-height:318px;
+  background:linear-gradient(152deg,var(--p-800),var(--p-950) 52%,var(--p-pressed))}
+.f1-brand::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(96deg,rgba(var(--rgb-pressed),.62),rgba(var(--rgb-pressed),.12) 58%,transparent 76%)}
+.f1-brand>:not(.art){position:relative;z-index:3}
+.f1-brand .art{right:-16%;bottom:-12%;width:100%}
+.f1-tag{max-width:22ch;font-size:var(--text-row-title);line-height:1.45;color:#fff}
+.f1-pane{background:linear-gradient(180deg,#fff,var(--soft));padding:30px 34px 26px;
+  display:flex;flex-direction:column;gap:22px}
+.f1-social{justify-content:center}
+.f1-rule{height:1px;background:var(--line)}
+.f1-pane .legal{margin-top:auto;padding-top:18px;border-top:1px solid var(--line)}
+
+/* ============================== 02 · Signature ===============================
+   Kresna's move, in our type: the card floats and the wordmark is the ground, set to the full
+   width of the wrap and cropped by the page's own bottom edge — the site signs off. The right
+   pane gives up a link column for the channel, because the one thing a visitor can do that is
+   not "open the app" is follow the record while they decide. */
+.fv02{padding:20px 0 126px}
+.f2{position:relative;z-index:3;display:grid;grid-template-columns:.78fr 1.22fr;
+  border-radius:var(--radius-card);overflow:hidden;isolation:isolate;
+  box-shadow:0 50px 100px -46px rgba(var(--rgb-shadow),1)}
+.f2-sign{position:absolute;left:0;right:0;bottom:0;z-index:1;pointer-events:none;overflow:hidden;
+  height:142px;display:flex;align-items:flex-start;justify-content:center}
+/* the wordmark is 119×26 — at wrap width it stands ~320px tall, so most of it sits under the
+   fold and only the shoulders of the letters clear the edge */
+.f2-sign svg{width:min(1240px,98%);height:auto;fill:rgba(var(--rgb-600),.3)}
+/* deeper than 01's pane on purpose: this card floats over a lit wordmark, so its own blue has
+   to sit under that light rather than compete with it */
+.f2-brand{position:relative;overflow:hidden;padding:34px 32px 30px;display:flex;flex-direction:column;
+  justify-content:space-between;gap:26px;min-height:300px;
+  background:linear-gradient(168deg,var(--p-900),var(--p-deep) 58%,var(--p-abyss))}
+.f2-brand::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(88deg,rgba(var(--rgb-abyss),.6),rgba(var(--rgb-abyss),.1) 62%,transparent 80%)}
+.f2-brand>:not(.art){position:relative;z-index:3}
+.f2-brand .art{left:-12%;bottom:-18%;width:108%}
+.f2-pane{background:linear-gradient(180deg,#fff,var(--soft));padding:30px 32px 24px;
+  display:grid;grid-template-columns:1.25fr .75fr;gap:26px 34px;align-content:start}
+.f2-pane .cols{grid-template-columns:repeat(2,minmax(0,1fr))}
+.f2-join{display:flex;flex-direction:column;gap:12px;padding-left:28px;border-left:1px solid var(--line)}
+.f2-join h3{margin:0;font-size:var(--text-row-title);line-height:1.35;color:var(--navy);font-weight:var(--weight-strong)}
+.f2-join p{margin:0;font-size:var(--text-small);color:var(--muted);line-height:1.55}
+.f2-join .btn{align-self:start;margin-top:2px}
+.f2-foot{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:16px 26px;align-items:center;
+  padding-top:18px;border-top:1px solid var(--line)}
+.f2-foot .social{margin-left:auto}
+
+/* ============================== 03 · The ledger ==============================
+   No card at all. The footer is a record: a left rail carrying the mark and the last verified
+   week, and the links ruled into a table beside it. The figures are the Results page's own —
+   a footer that prints a number is a footer that can be checked. */
+.fv03{padding:0}
+.f3{border-top:1px solid var(--navy-line);padding:40px 0 0}
+.f3-grid{display:grid;grid-template-columns:340px 1fr;gap:56px}
+.f3-rail{display:flex;flex-direction:column;gap:20px}
+.f3-week{display:grid;border:1px solid var(--navy-line);border-radius:14px;overflow:hidden;
+  font-variant-numeric:tabular-nums;background:rgba(255,255,255,.04)}
+.f3-week div{display:flex;justify-content:space-between;align-items:baseline;gap:14px;
+  padding:11px 14px;font-size:var(--text-small);color:rgba(255,255,255,.62)}
+.f3-week div+div{border-top:1px solid rgba(255,255,255,.1)}
+.f3-week b{font-size:var(--text-figure);font-weight:var(--weight-strong);color:#fff;letter-spacing:var(--tracking-stat)}
+.f3-week .up b{color:var(--success)}
+.f3-week .head{background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);
+  font:var(--weight-label) var(--text-label)/1 var(--sans);letter-spacing:.15em;text-transform:uppercase}
+.f3-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--navy-line)}
+.f3-cols>div{padding:22px 26px 26px;border-right:1px solid var(--navy-line)}
+.f3-cols>div:first-child{padding-left:0}
+.f3-cols>div:last-child{border-right:0}
+.f3-cols h3{margin:0 0 14px;font:var(--weight-label) var(--text-label)/1 var(--sans);
+  letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.f3-cols ul{margin:0;padding:0;list-style:none;display:grid}
+.f3-cols li+li{border-top:1px solid rgba(255,255,255,.08)}
+.f3-cols a{display:block;padding:9px 0;font-size:var(--text-ui);color:rgba(255,255,255,.82)}
+.f3-cols a:hover{color:#fff;padding-left:6px}
+.f3-bar{margin-top:34px;border-top:1px solid var(--navy-line);padding:20px 0 28px;
+  display:flex;flex-wrap:wrap;gap:16px 26px;align-items:center}
+.f3-bar .social{margin-left:auto}
+
+/* ============================== 04 · The close ===============================
+   The page's last argument is the chart, so the chart is the structure: the series runs the
+   full width along the bottom edge, the closing week green, and the action sits on its crest.
+   Nothing is a panel — the links are one ruled row and the small print rides under the rail. */
+.fv04{position:relative;overflow:hidden}
+.f4{position:relative;z-index:2;padding:46px 0 0}
+/* the rail is behind reading text, not beside it, so it runs at two thirds of the panes' weight */
+.fv04 .art{left:0;right:0;bottom:0;width:100%;height:210px;z-index:1;opacity:.62}
+.f4-top{display:flex;flex-wrap:wrap;gap:24px 40px;align-items:flex-end;justify-content:space-between;
+  padding-bottom:26px;border-bottom:1px solid var(--navy-line)}
+.f4-say{margin:0;font-size:var(--text-destination);line-height:1.25;font-weight:var(--weight-title);
+  color:#fff;max-width:20ch}
+.f4-row{display:flex;flex-wrap:wrap;gap:14px 28px;padding:22px 0 26px}
+.f4-row a{font-size:var(--text-ui);color:rgba(255,255,255,.78)}
+.f4-row a:hover{color:#fff}
+.f4-row span{color:rgba(255,255,255,.24)}
+.f4-base{position:relative;z-index:2;margin-top:86px;
+  background:linear-gradient(180deg,rgba(var(--rgb-shadow),.46),rgba(var(--rgb-shadow),.86));
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  border-top:1px solid rgba(255,255,255,.1)}
+.f4-base .wrap{display:flex;flex-wrap:wrap;gap:14px 26px;align-items:center;padding-top:18px;padding-bottom:22px}
+.f4-base .social{margin-left:auto}
+
+/* ============================== 05 · Glass dock ==============================
+   The page closes the way it opened: the nav's own recipe — saturate(180%) blur(20px) over a
+   dark tint, a hairline rim — mirrored to the bottom and rounded off the ground. One line
+   holds everything a visitor still needs; the small print sits under the dock. */
+.fv05{padding:44px 0 30px}
+.f5-bar{display:flex;align-items:center;gap:26px;padding:9px 10px 9px 24px;border-radius:999px;
+  background:rgba(var(--rgb-shadow),.36);border:1px solid rgba(255,255,255,.14);
+  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+  box-shadow:0 26px 60px -28px rgba(var(--rgb-shadow),.9),inset 0 1px 0 rgba(255,255,255,.22)}
+.f5-bar .mark{--mark:104px}
+.f5-nav{display:flex;flex-wrap:wrap;gap:6px 22px;margin:0 auto}
+.f5-nav a{font-size:var(--text-ui);color:rgba(255,255,255,.8)}
+.f5-nav a:hover{color:#fff}
+.f5-bar .social{gap:6px}
+.f5-bar .social a{width:34px;height:34px;border-radius:50%}
+.f5-bar .social svg{width:15px;height:15px}
+.f5-under{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:baseline;padding:20px 4px 0}
+.f5-min{display:flex;flex-wrap:wrap;gap:12px 20px;margin-left:auto}
+.f5-min a{font-size:var(--text-label);color:rgba(255,255,255,.56)}
+.f5-min a:hover{color:#fff}
+
+/* ============================== 06 · Masthead ================================
+   The editorial close, for the paper end of the alternation (the blog's own bottom): the
+   wordmark set to the measure as a masthead, a hairline under it, then four columns where the
+   fourth is the action. The mark takes the nav's gradient fill, its one paper treatment. */
+.fv06{padding:44px 0 34px}
+.f6-mast{display:flex;flex-direction:column;gap:10px;width:min(680px,100%);margin:0 0 14px;color:var(--accent)}
+.f6-mast .brand-word{width:100%;height:auto}
+.f6-mast .brand-sub{width:95.6%;height:auto}
+.f6-sub{display:flex;align-items:baseline;justify-content:space-between;gap:24px;
+  padding-bottom:16px;border-bottom:1px solid var(--line-strong)}
+.f6-sub p{margin:0;font-size:var(--text-copy);color:var(--body)}
+.f6-sub small{font-size:var(--text-label);letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.f6-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) 1.1fr;gap:30px;padding:28px 0 0}
+.f6-grid .cols{display:contents}
+.f6-act{display:flex;flex-direction:column;gap:16px;align-items:flex-start;
+  padding-left:30px;border-left:1px solid var(--line)}
+.f6-act p{margin:0;font-size:var(--text-small);color:var(--muted);line-height:1.55}
+.f6-base{margin-top:30px;padding-top:18px;border-top:1px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:14px 26px;align-items:center}
+.f6-base .social{margin-left:auto}
+
+/* ============================== 07 · The stub ================================
+   A pass, not a panel: what the site sells is access, so the footer is the ticket to it. The
+   stub carries the shield, the word ACCESS and the button; the perforation is a dashed rule
+   with two notches punched clean through to the ground; the counterfoil carries the links. */
+.fv07{padding:26px 0 34px}
+.f7{--seam:300px;display:grid;grid-template-columns:var(--seam) 2px 1fr;border-radius:22px;isolation:isolate;
+  background:linear-gradient(180deg,#fff,var(--soft));
+  --punch:radial-gradient(circle 12px at var(--seam) 0,transparent 12px,#000 12.5px),
+          radial-gradient(circle 12px at var(--seam) 100%,transparent 12px,#000 12.5px);
+  -webkit-mask-image:var(--punch);-webkit-mask-composite:source-in;
+  mask-image:var(--punch);mask-composite:intersect}
+.f7-stub{position:relative;padding:30px 28px;display:flex;flex-direction:column;gap:16px;
+  border-radius:22px 0 0 22px;overflow:hidden;color:#fff;
+  background:linear-gradient(158deg,var(--p-800),var(--p-950) 56%,var(--p-pressed))}
+.f7-stub>:not(.art){position:relative;z-index:3}
+.f7-stub .art{right:-34%;bottom:-14%;width:124%}
+.f7-shield{width:46px;height:auto;fill:#fff}
+.f7-stub small{font:var(--weight-label) var(--text-label)/1 var(--sans);letter-spacing:.28em;
+  text-transform:uppercase;color:rgba(255,255,255,.66)}
+.f7-stub b{font-size:var(--text-summary-stat);font-weight:var(--weight-title);letter-spacing:-.01em}
+.f7-code{margin-top:auto;font-variant-numeric:tabular-nums;font-size:var(--text-label);
+  letter-spacing:.16em;color:rgba(255,255,255,.6)}
+/* the perforation: the dashed rule is a border on a zero-width column, the two notches are the
+   ground punched through the card at the seam — the cut reads from the ground behind it, not
+   from a circle drawn in the card's own colour */
+.f7-perf{position:relative;margin:16px 0;border-radius:2px;
+  background:repeating-linear-gradient(180deg,var(--line-strong) 0 6px,transparent 6px 14px)}
+
+.f7-body{padding:28px 32px 24px;display:flex;flex-direction:column;gap:22px}
+.f7-base{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center;margin-top:auto;
+  padding-top:18px;border-top:1px solid var(--line)}
+.f7-base .social{margin-left:auto}
+
+/* ============================== the narrow end ===============================
+   Every split becomes one column under 860px of stage — the panes stack, the columns halve,
+   and the rails give up their borders. The stage is a container, so this holds at any window
+   size and the head bar's 390 preview is the real thing. */
+@container (max-width:860px){
+  .f1,.f2{grid-template-columns:1fr}
+  .f7{grid-template-columns:1fr}
+  .f2-pane{grid-template-columns:1fr}
+  .f2-join{padding-left:0;border-left:0;padding-top:22px;border-top:1px solid var(--line)}
+  .f3-grid{grid-template-columns:1fr;gap:30px}
+  .f3-cols{grid-template-columns:1fr}
+  .f3-cols>div{padding:18px 0;border-right:0;border-bottom:1px solid var(--navy-line)}
+  .f5-bar{border-radius:24px;flex-wrap:wrap;padding:18px}
+  .f5-nav{margin:0;width:100%;order:3}
+  .f6-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .f6-act{grid-column:1/-1;padding-left:0;border-left:0;padding-top:22px;border-top:1px solid var(--line)}
+  .f7-stub{border-radius:22px 22px 0 0}
+  /* stacked, the seam is horizontal and its ends are where the stub happens to end, which no
+     mask can know: the dashed rule carries the cut on its own and the punch comes off */
+  .f7{-webkit-mask-image:none;mask-image:none}
+  .f7{grid-template-columns:1fr}
+  .f7-perf{height:2px;margin:0 16px;
+    background:repeating-linear-gradient(90deg,var(--line-strong) 0 6px,transparent 6px 14px)}
+}
+@container (max-width:560px){
+  .fv .cols{grid-template-columns:1fr 1fr}
+  .f6-grid{grid-template-columns:1fr}
+  .f4-say{font-size:var(--text-summary)}
+  /* narrow, the series stands as tall as the small print it runs behind */
+  .fv04 .art{height:150px;opacity:.5}
+}
+
+/* ======================================================================================
+   ROUND TWO · wilder and wider (founder, 2026-09-12: "02 is good, go wilder and wider")
+
+   02's move is the keeper: the mark is not a logo in a corner, it is the ground, and the page
+   edge crops it. This round keeps that and gives up the two things holding it back — the card,
+   and the 1200px wrap. Everything here is laid on the viewport, the type is set at display
+   sizes, and in one of them (10) the record is painted inside the letters instead of beside
+   them. Nothing animates but a transform or an opacity, and the one moving variant (12) stops
+   dead on html.reduce, the same switch the shoot uses.
+   ====================================================================================== */
+/* the round's own measure: the full width, with a gutter that grows with the window. .wrap is
+   1200 and centred, which is exactly what "wider" means to give up */
+.fv .wide{width:100%;max-width:none;margin:0;padding:0 clamp(22px,4cqw,68px)}
+
+/* ============================== 08 · Full signature ==========================
+   02 with the card taken away. The links thin out to one line across the top, the statement is
+   set at hero size, and the wordmark fills the width underneath and loses its feet to the page
+   edge. The small print is dropped *into* the letters, which is the whole idea stated once:
+   at this size the mark is not a mark, it is the ground the footer is printed on. */
+.fv08{position:relative;overflow:hidden;padding:54px 0 0}
+.f8-row{display:flex;flex-wrap:wrap;gap:20px 38px;align-items:center;position:relative;z-index:3}
+.f8-row .mark{--mark:124px}
+.f8-nav{display:flex;flex-wrap:wrap;gap:10px 24px;margin-right:auto}
+.f8-nav a{font-size:var(--text-ui);color:rgba(255,255,255,.78)}
+.f8-nav a:hover{color:#fff}
+.f8-say{position:relative;z-index:3;margin:40px 0 0;max-width:20ch;color:#fff;
+  font:var(--weight-display) clamp(38px,7.4cqw,104px)/1.04 var(--sans);letter-spacing:-.02em}
+/* the crop. The band is shorter than the wordmark is tall, and the mark is anchored to its top,
+   so the caps read and the feet are gone — the same arithmetic as 02, one measure wider */
+.f8-sign{position:relative;z-index:2;margin-top:26px;height:clamp(96px,12.5cqw,232px);overflow:hidden}
+.f8-sign svg{display:block;width:102%;margin-left:-1%;height:auto;fill:url(#tf-sign) var(--p-800)}
+.fv08::after{content:"";position:absolute;left:0;right:0;bottom:0;height:92px;z-index:3;
+  pointer-events:none;background:linear-gradient(180deg,transparent,rgba(var(--rgb-abyss),.72))}
+.f8-legal{position:absolute;left:0;right:0;bottom:0;z-index:4;
+  padding:0 clamp(22px,4cqw,68px) 16px;display:flex;flex-wrap:wrap;gap:8px 22px;align-items:baseline}
+.f8-legal .legal{color:rgba(255,255,255,.54)}
+.f8-legal nav{display:flex;flex-wrap:wrap;gap:8px 18px;margin-left:auto}
+.f8-legal a{font-size:var(--text-label);color:rgba(255,255,255,.54)}
+.f8-legal a:hover{color:#fff}
+
+/* ============================== 09 · Wide dock ===============================
+   The same signature, with everything the site owes a visitor spread across the full width
+   above it: four columns edge to edge, then 05's glass bar as one full-width dock, then the
+   crop — and the record's rail crossing the letters on its way out of the page. */
+.fv09{position:relative;overflow:hidden;padding:50px 0 0}
+.f9-grid{position:relative;z-index:3;display:grid;grid-template-columns:1.35fr repeat(3,minmax(0,.88fr));
+  gap:30px 46px}
+.f9-lead{display:flex;flex-direction:column;gap:16px;align-items:flex-start}
+.f9-lead .mark{--mark:152px}
+.f9-lead p{margin:0;font-size:var(--text-row-title);line-height:1.4;color:rgba(255,255,255,.86);max-width:24ch}
+.f9-grid h3{margin:0 0 14px;font:var(--weight-label) var(--text-label)/1 var(--sans);
+  letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.f9-grid ul{margin:0;padding:0;list-style:none;display:grid;gap:11px}
+.f9-grid ul a{font-size:var(--text-ui);color:rgba(255,255,255,.82)}
+.f9-grid ul a:hover{color:#fff}
+.f9-dock{position:relative;z-index:3;margin-top:40px;display:flex;align-items:center;gap:22px;
+  padding:10px 10px 10px 26px;border-radius:999px;
+  background:rgba(var(--rgb-shadow),.4);border:1px solid rgba(255,255,255,.16);
+  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+  box-shadow:0 28px 64px -30px rgba(var(--rgb-shadow),.95),inset 0 1px 0 rgba(255,255,255,.24)}
+.f9-dock p{margin:0;font-size:var(--text-ui);color:rgba(255,255,255,.82)}
+.f9-dock .social{margin-left:auto}
+.f9-sign{position:relative;z-index:2;margin-top:24px;height:clamp(84px,10.5cqw,196px);overflow:hidden}
+.f9-sign svg{display:block;width:102%;margin-left:-1%;height:auto;fill:rgba(var(--rgb-600),.34)}
+.fv09 .art{left:0;right:0;bottom:0;width:100%;height:clamp(110px,14cqw,240px);z-index:1;opacity:.5}
+
+/* ============================== 10 · The cut =================================
+   The letters are the window and the record is what is behind them. One <mask> of the wordmark
+   over the rising series, at the width of the viewport, cropped by the page edge — so the mark
+   is literally made of the weeks it is claiming. Everything else on the screen gets out of the
+   way: one row of links, one button, nothing else. */
+.fv10{position:relative;overflow:hidden;padding:46px 0 0}
+.f10-top{position:relative;z-index:3;display:flex;flex-wrap:wrap;gap:18px 34px;align-items:center}
+.f10-top nav{display:flex;flex-wrap:wrap;gap:10px 22px;margin-right:auto}
+.f10-top nav a{font-size:var(--text-ui);color:rgba(255,255,255,.78)}
+.f10-top nav a:hover{color:#fff}
+.f10-say{position:relative;z-index:3;margin:30px 0 0;max-width:26ch;
+  font-size:var(--text-destination);line-height:1.3;color:rgba(255,255,255,.86)}
+/* xMidYMin slice: the drawing covers the box's width and the bottom of it falls off the page */
+.f10-cut{position:relative;z-index:2;display:block;width:100%;margin-top:22px;
+  height:clamp(110px,15cqw,280px);color:#fff}
+.fv10::after{content:"";position:absolute;left:0;right:0;bottom:0;height:92px;z-index:3;
+  pointer-events:none;background:linear-gradient(180deg,transparent,rgba(var(--rgb-shadow),.76))}
+.f10-legal{position:relative;z-index:4;padding:0 clamp(22px,4cqw,68px) 18px;margin-top:-14px;
+  display:flex;flex-wrap:wrap;gap:8px 22px;align-items:baseline}
+.f10-legal .legal{color:rgba(255,255,255,.5)}
+.f10-legal nav{display:flex;flex-wrap:wrap;gap:8px 18px;margin-left:auto}
+.f10-legal a{font-size:var(--text-label);color:rgba(255,255,255,.5)}
+.f10-legal a:hover{color:#fff}
+
+/* ============================== 11 · The horizon =============================
+   No columns, no card, no wrap: a scene. The statement sits on the skyline the series draws,
+   and the links are one hairline strip running the whole width of the page at its very bottom
+   edge — the last line of the site, edge to edge, the way a rule is. */
+.fv11{position:relative;overflow:hidden;min-height:clamp(360px,46cqw,560px);
+  display:flex;flex-direction:column;justify-content:flex-end;padding:0}
+.f11-body{position:relative;z-index:3;padding:0 clamp(22px,4cqw,68px) 34px;
+  display:flex;flex-wrap:wrap;gap:26px 44px;align-items:flex-end}
+.f11-say{margin:0;max-width:16ch;color:#fff;
+  font:var(--weight-display) clamp(42px,6.6cqw,112px)/.98 var(--sans);letter-spacing:-.03em}
+.f11-side{display:flex;flex-direction:column;gap:16px;align-items:flex-start;margin-left:auto}
+.f11-side p{margin:0;max-width:30ch;font-size:var(--text-ui);color:rgba(255,255,255,.78)}
+.f11-strip{position:relative;z-index:3;border-top:1px solid rgba(255,255,255,.18);
+  background:rgba(var(--rgb-shadow),.42);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;
+  padding:13px clamp(22px,4cqw,68px)}
+.f11-strip a{font-size:var(--text-label);letter-spacing:.02em;color:rgba(255,255,255,.72)}
+.f11-strip a:hover{color:#fff}
+.f11-strip .sep{color:rgba(255,255,255,.24)}
+.f11-strip .social{margin-left:auto;gap:8px}
+.f11-strip .social a{width:30px;height:30px;border-radius:9px}
+.f11-strip .social svg{width:14px;height:14px}
+.fv11 .art{left:0;right:0;bottom:0;width:100%;height:clamp(180px,24cqw,420px);z-index:1;opacity:.5}
+/* the sky: the ground's own shadow pulled up behind the statement so a 112px word never sits
+   on a candle */
+.fv11::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(190deg,rgba(var(--rgb-abyss),.46),transparent 46%)}
+
+/* ============================== 12 · The tape ================================
+   The mark, repeated, running out of the page. A ticker is the one thing a trading site can put
+   at its foot without explaining itself, and it is honest here because it says nothing: the
+   name, over and over, leaving. Three copies of one flex row translated by a third, so the
+   loop has no seam; transform only, and the whole thing stands still on html.reduce. */
+.fv12{position:relative;overflow:hidden;padding:48px 0 0}
+.f12-head{position:relative;z-index:3;display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:30px 46px}
+.f12-head .mark{--mark:140px}
+.f12-head p{margin:14px 0 0;font-size:var(--text-row-title);line-height:1.4;
+  color:rgba(255,255,255,.84);max-width:26ch}
+.f12-head h3{margin:0 0 14px;font:var(--weight-label) var(--text-label)/1 var(--sans);
+  letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.f12-head ul{margin:0;padding:0;list-style:none;display:grid;gap:11px}
+.f12-head a{font-size:var(--text-ui);color:rgba(255,255,255,.82)}
+.f12-head a:hover{color:#fff}
+.f12-bar{position:relative;z-index:3;margin-top:34px;display:flex;flex-wrap:wrap;gap:14px 26px;
+  align-items:center;padding-bottom:26px;border-bottom:1px solid var(--navy-line)}
+.f12-bar .social{margin-left:auto}
+.f12-tape{position:relative;z-index:2;margin-top:26px;overflow:hidden;
+  height:clamp(74px,9cqw,168px);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
+.f12-run{display:flex;align-items:flex-start;width:max-content;
+  animation:tape 44s linear infinite}
+.f12-run svg{flex:none;width:42cqw;margin-right:4cqw;height:auto;fill:rgba(var(--rgb-600),.3)}
+@keyframes tape{from{transform:translate3d(0,0,0)}to{transform:translate3d(-33.3333%,0,0)}}
+html.reduce .f12-run{animation:none}
+@media (prefers-reduced-motion:reduce){.f12-run{animation:none}}
+.f12-legal{position:absolute;left:0;right:0;bottom:0;z-index:4;
+  padding:0 clamp(22px,4cqw,68px) 16px}
+.f12-legal .legal{color:rgba(255,255,255,.5)}
+
+/* ============================== 13 · The vault ===============================
+   The one that is not 02's child. The shield is taken off the lockup, blown up past the page
+   and cut by two of its edges — a mark used as architecture — and everything the footer says
+   is stacked against it in one tall column. Asymmetric on purpose: the site's other screens are
+   all centred, and the last one does not have to be. */
+.fv13{position:relative;overflow:hidden;padding:56px 0 40px}
+.f13-shield{position:absolute;left:min(-13cqw,-120px);top:-30%;z-index:1;
+  width:min(66cqw,880px);height:auto;fill:rgba(255,255,255,.12);pointer-events:none;
+  stroke:rgba(255,255,255,.26);stroke-width:.18}
+.f13{position:relative;z-index:3;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
+  gap:40px 56px;align-items:center}
+.f13-say{margin:0 0 20px;color:#fff;
+  font:var(--weight-display) clamp(38px,4.6cqw,72px)/1.02 var(--sans);letter-spacing:-.025em}
+.f13-lead{margin:0 0 24px;font-size:var(--text-lede);line-height:1.5;color:rgba(255,255,255,.82);max-width:30ch}
+.f13-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px 30px}
+.f13-cols h3{margin:0 0 14px;font:var(--weight-label) var(--text-label)/1 var(--sans);
+  letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.f13-cols ul{margin:0;padding:0;list-style:none;display:grid;gap:11px}
+.f13-cols a{font-size:var(--text-ui);color:rgba(255,255,255,.82)}
+.f13-cols a:hover{color:#fff}
+.f13-base{position:relative;z-index:3;margin-top:38px;padding-top:18px;
+  border-top:1px solid var(--navy-line);display:flex;flex-wrap:wrap;gap:14px 26px;align-items:center}
+.f13-base .social{margin-left:auto}
+
+/* ---------- the narrow end of round two ---------- */
+@container (max-width:860px){
+  .f8-nav{width:100%;order:3}
+  .f9-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .f9-lead{grid-column:1/-1}
+  .f9-dock{border-radius:24px;flex-wrap:wrap;padding:18px}
+  .f9-dock .social{margin-left:0}
+  .f12-head{grid-template-columns:1fr 1fr}
+  .f12-head>:first-child{grid-column:1/-1}
+  .f12-run svg{width:78cqw;margin-right:7cqw}
+  .f13{grid-template-columns:1fr}
+  .f13-shield{left:min(-30cqw,-130px);top:-18%;width:min(112cqw,620px);opacity:.8}
+  .f11-side{margin-left:0}
+}
+@container (max-width:560px){
+  /* the crop is the idea, and at 390 a wordmark that fits inside the page is not cropped: the
+     mark goes wider than the page instead, so what shows is a slice of it */
+  .f8-sign svg,.f9-sign svg{width:190%;margin-left:-46%}
+  .f8-sign,.f9-sign{height:158px}   /* the slice needs room above the small print sitting on it */
+  .f8-legal nav,.f10-legal nav{margin-left:0;width:100%}
+  .f9-grid{grid-template-columns:1fr}
+  .f13-cols{grid-template-columns:1fr 1fr}
+  .f11-strip{gap:8px 14px}
+  .f12-head{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<!-- The displacement filter and the brand lockup's two gradient slices, lifted verbatim from
+     cb8/index.html so a variant that takes the paper nav's gradient fill (06) has the run it
+     names. -->
+<svg id="liquid-svg" width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="liquid" x="-4%" y="-8%" width="108%" height="116%" color-interpolation-filters="sRGB">
+  <feTurbulence type="fractalNoise" baseFrequency="0.006 0.010" numOctaves="2" seed="7" result="n"><animate attributeName="baseFrequency" dur="24s" values="0.006 0.010;0.010 0.006;0.006 0.010" repeatCount="indefinite"/></feTurbulence>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="18" xChannelSelector="R" yChannelSelector="G"/>
+</filter>
+<linearGradient id="tf-brand-a" x1="0" y1="-0.6154" x2="0" y2="1.3077"><stop offset="0%" style="stop-color:rgb(var(--rgb-600))"/><stop offset="50%" style="stop-color:var(--p-900)"/><stop offset="100%" style="stop-color:var(--run-foot)"/></linearGradient>
+<linearGradient id="tf-sign" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" style="stop-color:rgb(var(--rgb-700))"/><stop offset="62%" style="stop-color:var(--p-950)"/><stop offset="100%" style="stop-color:var(--p-abyss)"/></linearGradient>
+<linearGradient id="tf-cut" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" style="stop-color:var(--p-deep)"/><stop offset="58%" style="stop-color:var(--p-abyss)"/><stop offset="100%" style="stop-color:rgb(var(--rgb-shadow))"/></linearGradient>
+<linearGradient id="tf-brand-b" x1="0" y1="-13.2857" x2="0" y2="1"><stop offset="0%" style="stop-color:rgb(var(--rgb-600))"/><stop offset="50%" style="stop-color:var(--p-900)"/><stop offset="100%" style="stop-color:var(--run-foot)"/></linearGradient>
+
+<!-- Every glyph the sheet reuses, defined once. A symbol's own paint is set by attribute and
+     not by class, because CSS selectors do not reach inside a <use>; only inherited values and
+     custom properties cross that boundary, which is why the green body carries an inline
+     style and everything else is drawn in currentColor. -->
+<symbol id="i-word" viewBox="0 0 119 26"><path d="M9.44709 21.4636C9.43678 21.4432 9.42776 21.4217 9.41746 21.4013L9.40844 14.4851C9.40586 12.8734 7.99909 11.567 6.26511 11.567H0.259277C0.498892 12.5992 0.778443 14.2576 1.134 15.2694C2.72757 19.5909 5.63 22.8753 9.44709 25.2929V21.4636Z"/><path d="M18.0372 11.567C16.4694 11.567 15.1978 12.7477 15.1953 14.2049L15.1914 16.7302V25.2726C18.9879 22.8586 21.8774 19.5837 23.4671 15.2694C23.8291 14.2576 24.1164 12.598 24.356 11.567H18.0372Z"/><path d="M24.6146 5.29015V3.21624C20.6275 1.71229 16.6455 0.609481 12.4239 0C8.12758 0.602297 4.0129 1.71708 0 3.26294V5.29135H24.6146V5.29015Z"/><path d="M46.8358 12.841C47.8136 11.6209 48.3031 10.1624 48.3031 8.46331C48.3031 6.21458 47.5559 4.41487 46.0641 3.063C44.5711 1.71232 42.6026 1.03578 40.1575 1.03578H29.3091V5.29137C32.6882 5.28419 36.0686 5.277 39.4477 5.26982C39.7478 5.25066 40.191 5.25425 40.7012 5.37519C41.0142 5.44943 42.1479 5.71645 42.8706 6.69114C43.4864 7.52095 43.7105 8.76266 43.1939 9.71819C42.6219 10.7767 41.2061 11.2916 39.2841 11.2856C37.6055 11.2796 35.9282 11.2748 34.2496 11.2688H31.9655C30.4982 11.2688 29.3079 12.3752 29.3079 13.7391V25.2941C32.0377 25.2941 34.2496 23.2381 34.2496 20.7008V15.7124H37.9945L41.5553 23.0777C42.2071 24.426 43.65 25.2941 45.241 25.2941H47.9167L42.8203 15.3544C44.5195 14.9006 45.8567 14.0624 46.8358 12.8422V12.841Z"/><path d="M62.0465 25.8318C59.1634 25.8318 56.802 25.0666 54.9624 23.5351C53.1215 22.0048 52.2017 20.162 52.2017 18.0091V1.03462C55.059 1.03462 57.3753 3.18756 57.3753 5.84342V18.2234C57.3753 19.0844 57.8004 19.9106 58.6494 20.6997C59.4983 21.4888 60.6307 21.8839 62.0465 21.8839C63.4623 21.8839 64.6268 21.4947 65.4629 20.7176C66.299 19.9405 66.7177 19.1095 66.7177 18.2234V5.84342C66.7177 3.18756 69.034 1.03462 71.8913 1.03462V18.0079C71.8913 20.1848 70.9779 22.0336 69.1499 23.5519C67.3219 25.0714 64.9541 25.8306 62.0465 25.8306V25.8318Z"/><path d="M95.8086 16.4297C95.4351 15.6885 95.0228 15.0958 94.5732 14.6539C94.1223 14.2121 93.4602 13.7631 92.5854 13.308C91.7107 12.8542 91.0279 12.5309 90.5397 12.3393C90.0502 12.1477 89.3043 11.8855 88.3007 11.5502C86.036 10.809 84.4849 10.1744 83.6488 9.64876C82.8128 9.12309 82.3941 8.40465 82.3941 7.49581C82.3941 6.58698 82.7419 5.93439 83.4363 5.4686C84.1306 5.00161 85.0968 4.76931 86.3323 4.76931C87.8511 4.76931 89.0595 5.11656 89.9613 5.80986C90.3052 6.07569 90.5835 6.36426 90.7961 6.67439C91.4041 7.56646 92.5249 8.04183 93.6611 8.04183H96.1719C96.1449 5.88889 95.2483 4.14427 93.4743 2.81395C91.6721 1.46327 89.3558 0.786732 86.5255 0.786732C83.6952 0.786732 81.6482 1.39741 80.0005 2.61637C78.3528 3.83653 77.5296 5.48656 77.5296 7.56886C77.5296 9.65115 78.4817 11.3371 80.387 12.6291C81.339 13.2745 83.1529 14.0887 85.8311 15.0694C87.6849 15.7867 88.8933 16.2896 89.4601 16.577C90.7729 17.2475 91.4286 18.0606 91.4286 19.0173C91.4286 19.8303 91.0872 20.5069 90.4057 21.0445C89.7229 21.5833 88.7001 21.8515 87.3371 21.8515C85.7152 21.8515 84.4282 21.5282 83.4762 20.8828C82.997 20.5583 82.6401 20.1907 82.4044 19.7812C81.8994 18.9071 80.8495 18.4246 79.7815 18.4246H77.1831V18.6581C77.1831 20.8589 78.0643 22.6047 79.8279 23.8967C81.5902 25.1887 83.9645 25.8341 86.9506 25.8341C89.9368 25.8341 92.092 25.2127 93.8028 23.9686C95.5136 22.7245 96.3703 21.0265 96.3703 18.8736C96.3703 17.9887 96.1835 17.1757 95.8099 16.4333L95.8086 16.4297Z"/><path d="M118.644 1.03462V4.98248H111.618V20.6637C111.618 23.2202 109.388 25.2929 106.638 25.2929V4.98248H98.8386V1.03462H118.644Z"/></symbol>
+<symbol id="i-sub" viewBox="0 0 113 11"><path d="M2.29741e-05 10.6637V0.270507H1.08206V10.6637H2.29741e-05ZM0.797311 5.86576V4.88339L5.39595 4.86915V5.85152L0.797311 5.86576ZM0.797311 1.23864V0.270507H5.66646V1.23864H0.797311ZM29.1375 10.9058C28.2358 10.9058 27.4528 10.7444 26.7884 10.4217C26.124 10.099 25.5735 9.67186 25.1368 9.14034C24.7002 8.60881 24.3728 8.02983 24.1545 7.40339C23.9362 6.77695 23.827 6.16474 23.827 5.56678V5.31051C23.827 4.67457 23.9362 4.04339 24.1545 3.41695C24.3823 2.78102 24.7192 2.20678 25.1653 1.69424C25.6114 1.18169 26.1667 0.773558 26.8311 0.469829C27.4955 0.156609 28.2643 -1.01586e-06 29.1375 -1.01586e-06C30.0202 -1.01586e-06 30.789 0.156609 31.444 0.469829C32.1084 0.773558 32.6636 1.18169 33.1097 1.69424C33.5558 2.20678 33.888 2.78102 34.1063 3.41695C34.3341 4.04339 34.448 4.67457 34.448 5.31051V5.58102C34.448 6.17898 34.3389 6.79118 34.1206 7.41763C33.9118 8.03457 33.5843 8.60881 33.1382 9.14034C32.7016 9.67186 32.1511 10.099 31.4867 10.4217C30.8223 10.7444 30.0392 10.9058 29.1375 10.9058ZM29.1375 9.90915C29.8019 9.90915 30.3951 9.79051 30.9172 9.55322C31.4392 9.30644 31.8806 8.97424 32.2412 8.55661C32.6019 8.12949 32.8772 7.65017 33.067 7.11864C33.2568 6.58712 33.3518 6.03186 33.3518 5.45288C33.3518 4.84542 33.2568 4.27593 33.067 3.74441C32.8772 3.21288 32.5972 2.74305 32.227 2.33491C31.8663 1.91729 31.425 1.58983 30.9029 1.35254C30.3809 1.11525 29.7924 0.996609 29.1375 0.996609C28.4921 0.996609 27.9084 1.11525 27.3863 1.35254C26.8643 1.58983 26.4182 1.91729 26.048 2.33491C25.6874 2.74305 25.4074 3.21288 25.208 3.74441C25.0182 4.27593 24.9233 4.84542 24.9233 5.45288C24.9233 6.03186 25.0182 6.58712 25.208 7.11864C25.3979 7.65017 25.6731 8.12949 26.0338 8.55661C26.3945 8.97424 26.8358 9.30644 27.3579 9.55322C27.8894 9.79051 28.4826 9.90915 29.1375 9.90915ZM53.5428 10.6637V0.227795H54.6248V10.6637H53.5428ZM59.9923 10.6637L56.4472 6.06508H57.7143L61.3163 10.6637H59.9923ZM54.1835 6.72V5.75186H56.974C57.4865 5.75186 57.9136 5.6522 58.2553 5.45288C58.597 5.25356 58.8533 4.98305 59.0241 4.64135C59.195 4.29966 59.2804 3.91051 59.2804 3.4739C59.2804 3.03729 59.195 2.64813 59.0241 2.30644C58.8533 1.96474 58.597 1.69424 58.2553 1.49491C57.9136 1.2861 57.4865 1.18169 56.974 1.18169H54.1835V0.227795H56.7889C57.5577 0.227795 58.2079 0.351185 58.7394 0.597965C59.2804 0.835253 59.6886 1.19118 59.9638 1.66576C60.2486 2.13085 60.3909 2.70034 60.3909 3.37424V3.57356C60.3909 4.24746 60.2486 4.82169 59.9638 5.29627C59.6791 5.76135 59.2709 6.11729 58.7394 6.36407C58.2079 6.60135 57.5577 6.72 56.7889 6.72H54.1835ZM79.9318 10.6637V0.270507H81.0138V10.6637H79.9318ZM80.7576 10.6637V9.68135H85.9542V10.6637H80.7576ZM80.7576 5.86576V4.89763H85.4701V5.86576H80.7576ZM80.7576 1.25288V0.270507H85.7976V1.25288H80.7576ZM103.773 10.6637L107.716 5.11118V5.38169L104.143 0.270507H105.367L108.3 4.51322H108.499L111.475 0.270507H112.657L108.969 5.45288V5.18237L112.899 10.6637H111.674L108.4 6.06508H108.2L104.94 10.6637H103.773Z"/></symbol>
+<symbol id="i-shield" viewBox="-2 -2 29 30"><path d="M9.447 21.464l-.039-6.979c-.002-1.612-1.409-2.918-3.143-2.918H.259c.24 1.032.52 2.69.875 3.702 1.594 4.322 4.496 7.606 8.313 10.024z"/><path d="M18.037 11.567c-1.568 0-2.84 1.18-2.842 2.638v11.068c3.797-2.414 6.686-5.689 8.276-10.003.362-1.012.649-2.671.889-3.703z"/><path d="M24.615 5.29V3.216C20.628 1.712 16.646.61 12.424 0 8.128.602 4.013 1.717 0 3.263V5.29z"/></symbol>
+<symbol id="i-tg" viewBox="0 0 24 24"><path d="M21 4 3 11l5 2 2 6 3-4 5 4 3-15Z"/></symbol>
+<symbol id="i-ig" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r=".9"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></symbol>
+<symbol id="i-in" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><path d="M8.2 10.6v6M8.2 7.7v.1M12.2 16.6v-3.5a2.1 2.1 0 0 1 4.2 0v3.5"/></symbol>
+<symbol id="i-yt" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="4"/><path d="M10.4 9.6 15.4 12l-5 2.4z" fill="currentColor" stroke="none"/></symbol>
+<!-- The record, drawn once for the panes (480×300) and once for the full-width rail (1200×200).
+     Both are one deterministic rising series with its midpoint curve, and in both the last body
+     is the week that closed green — the only state colour this sheet allows itself. -->
+<symbol id="art-panel" viewBox="0 0 480 300"><g stroke="currentColor" stroke-width="1.1" fill="none" opacity=".3"><path d="M18 226.9V269.8"/><path d="M38 239.3V261.1"/><path d="M58 230.3V249.9"/><path d="M78 217.2V249.1"/><path d="M98 218.2V250.1"/><path d="M118 213.9V238"/><path d="M138 204V236.2"/><path d="M158 206.2V232.9"/><path d="M178 202.4V216.5"/><path d="M198 206.2V224.8"/><path d="M218 201.4V219.9"/><path d="M238 186.9V210.2"/><path d="M258 179.2V207.7"/><path d="M278 181.6V202.9"/><path d="M298 168.6V197.1"/><path d="M318 149.2V193.7"/><path d="M338 136.1V174.6"/><path d="M358 130.1V169.5"/><path d="M378 120.8V142.3"/><path d="M398 115.4V133.9"/><path d="M418 103.8V126"/><path d="M438 97V133.3"/></g><g fill="currentColor" stroke="none" opacity=".48"><rect x="14" y="243" width="8" height="15" rx="2"/><rect x="34" y="243" width="8" height="2.9" rx="2"/><rect x="54" y="234.1" width="8" height="11.8" rx="2"/><rect x="74" y="234.1" width="8" height="4.4" rx="2"/><rect x="94" y="229" width="8" height="9.5" rx="2"/><rect x="114" y="228" width="8" height="2.5" rx="2"/><rect x="134" y="219.2" width="8" height="8.8" rx="2"/><rect x="154" y="210.5" width="8" height="8.7" rx="2"/><rect x="174" y="210.5" width="8" height="2.5" rx="2"/><rect x="194" y="211" width="8" height="4.3" rx="2"/><rect x="214" y="206" width="8" height="9.3" rx="2"/><rect x="234" y="200.9" width="8" height="5.1" rx="2"/><rect x="254" y="195.5" width="8" height="5.4" rx="2"/><rect x="274" y="189.6" width="8" height="5.9" rx="2"/><rect x="294" y="181.7" width="8" height="7.9" rx="2"/><rect x="314" y="164.7" width="8" height="17" rx="2"/><rect x="334" y="153.3" width="8" height="11.4" rx="2"/><rect x="354" y="136.8" width="8" height="16.5" rx="2"/><rect x="374" y="130.8" width="8" height="6" rx="2"/><rect x="394" y="120.9" width="8" height="9.9" rx="2"/><rect x="414" y="117.7" width="8" height="3.2" rx="2"/><rect x="434" y="110.6" width="8" height="7.1" rx="2" style="fill:var(--success);opacity:1"/></g><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".45" d="M18 250.5 C28 250.5 28 244.5 38 244.5 C48 244.5 48 240 58 240 C68 240 68 236.3 78 236.3 C88 236.3 88 233.8 98 233.8 C108 233.8 108 228.5 118 228.5 C128 228.5 128 223.6 138 223.6 C148 223.6 148 214.8 158 214.8 C168 214.8 168 210.7 178 210.7 C188 210.7 188 213.1 198 213.1 C208 213.1 208 210.6 218 210.6 C228 210.6 228 203.4 238 203.4 C248 203.4 248 198.2 258 198.2 C268 198.2 268 192.5 278 192.5 C288 192.5 288 185.7 298 185.7 C308 185.7 308 173.2 318 173.2 C328 173.2 328 159 338 159 C348 159 348 145 358 145 C368 145 368 133.8 378 133.8 C388 133.8 388 125.9 398 125.9 C408 125.9 408 119.3 418 119.3 C428 119.3 428 114.2 438 114.2"/></symbol>
+<symbol id="art-rail" viewBox="0 0 1200 200" preserveAspectRatio="none"><g stroke="currentColor" stroke-width="1.1" fill="none" opacity=".3"><path d="M18.5 148.2V180.7"/><path d="M45.5 142.3V177.6"/><path d="M72.5 136V167.2"/><path d="M99.5 144.1V178.7"/><path d="M126.5 127.6V174.8"/><path d="M153.5 131.1V158"/><path d="M180.5 130.7V148.1"/><path d="M207.5 117.6V157.3"/><path d="M234.5 128.8V162.7"/><path d="M261.5 127.6V155.2"/><path d="M288.5 118.9V156.9"/><path d="M315.5 124.5V162.3"/><path d="M342.5 117.2V143.6"/><path d="M369.5 117.3V150"/><path d="M396.5 112.4V157.2"/><path d="M423.5 101.7V137.3"/><path d="M450.5 85.7V121.1"/><path d="M477.5 96V131.9"/><path d="M504.5 101.2V135.2"/><path d="M531.5 99.7V113.9"/><path d="M558.5 72V109.2"/><path d="M585.5 59.1V97"/><path d="M612.5 73.7V108.9"/><path d="M639.5 91.3V120.9"/><path d="M666.5 77V112"/><path d="M693.5 76.2V121.8"/><path d="M720.5 56.4V112.3"/><path d="M747.5 63.6V93.9"/><path d="M774.5 64.2V106"/><path d="M801.5 76.4V96.9"/><path d="M828.5 56.9V85.2"/><path d="M855.5 63V102.1"/><path d="M882.5 58V89"/><path d="M909.5 67V92.8"/><path d="M936.5 38.5V94"/><path d="M963.5 39.9V69.9"/><path d="M990.5 34.8V66.1"/><path d="M1017.5 18V58.7"/><path d="M1044.5 16.5V67.4"/><path d="M1071.5 50.7V71.4"/><path d="M1098.5 31.1V70.6"/><path d="M1125.5 23.8V54.9"/><path d="M1152.5 7V50.7"/><path d="M1179.5 7V52.5"/></g><g fill="currentColor" stroke="none" opacity=".48"><rect x="14" y="157.4" width="9" height="10.6" rx="2"/><rect x="41" y="157.4" width="9" height="3.3" rx="2"/><rect x="68" y="151.1" width="9" height="9.6" rx="2"/><rect x="95" y="151.1" width="9" height="16.3" rx="2"/><rect x="122" y="143.8" width="9" height="23.7" rx="2"/><rect x="149" y="138" width="9" height="5.7" rx="2"/><rect x="176" y="134.4" width="9" height="3.6" rx="2"/><rect x="203" y="134.4" width="9" height="4.7" rx="2"/><rect x="230" y="139.1" width="9" height="7.5" rx="2"/><rect x="257" y="131.9" width="9" height="14.7" rx="2"/><rect x="284" y="131.9" width="9" height="13" rx="2"/><rect x="311" y="129.7" width="9" height="15.2" rx="2"/><rect x="338" y="121.5" width="9" height="8.2" rx="2"/><rect x="365" y="121.5" width="9" height="16.1" rx="2"/><rect x="392" y="125.9" width="9" height="11.8" rx="2"/><rect x="419" y="108.5" width="9" height="17.4" rx="2"/><rect x="446" y="100" width="9" height="8.5" rx="2"/><rect x="473" y="100" width="9" height="21.7" rx="2"/><rect x="500" y="105.4" width="9" height="16.3" rx="2"/><rect x="527" y="103.8" width="9" height="2.5" rx="2"/><rect x="554" y="86.9" width="9" height="16.9" rx="2"/><rect x="581" y="78" width="9" height="8.9" rx="2"/><rect x="608" y="78" width="9" height="27.6" rx="2"/><rect x="635" y="99.3" width="9" height="6.3" rx="2"/><rect x="662" y="90.3" width="9" height="9.1" rx="2"/><rect x="689" y="90.3" width="9" height="12.2" rx="2"/><rect x="716" y="75.8" width="9" height="26.7" rx="2"/><rect x="743" y="71.8" width="9" height="4" rx="2"/><rect x="770" y="71.8" width="9" height="19.7" rx="2"/><rect x="797" y="81.5" width="9" height="9.9" rx="2"/><rect x="824" y="75.3" width="9" height="6.2" rx="2"/><rect x="851" y="75.3" width="9" height="9.4" rx="2"/><rect x="878" y="72.2" width="9" height="12.6" rx="2"/><rect x="905" y="72.2" width="9" height="6.4" rx="2"/><rect x="932" y="49.7" width="9" height="28.9" rx="2"/><rect x="959" y="49.7" width="9" height="6.9" rx="2"/><rect x="986" y="41.5" width="9" height="15.1" rx="2"/><rect x="1013" y="29.9" width="9" height="11.6" rx="2"/><rect x="1040" y="29.9" width="9" height="23.8" rx="2"/><rect x="1067" y="53.7" width="9" height="2.5" rx="2"/><rect x="1094" y="41.9" width="9" height="12.1" rx="2"/><rect x="1121" y="34.8" width="9" height="7.1" rx="2"/><rect x="1148" y="18.6" width="9" height="16.2" rx="2"/><rect x="1175" y="18.6" width="9" height="21.7" rx="2" style="fill:var(--success);opacity:1"/></g><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".4" d="M18.5 162.7 C32 162.7 32 159 45.5 159 C59 159 59 155.9 72.5 155.9 C86 155.9 86 159.3 99.5 159.3 C113 159.3 113 155.6 126.5 155.6 C140 155.6 140 140.9 153.5 140.9 C167 140.9 167 136.2 180.5 136.2 C194 136.2 194 136.8 207.5 136.8 C221 136.8 221 142.9 234.5 142.9 C248 142.9 248 139.3 261.5 139.3 C275 139.3 275 138.4 288.5 138.4 C302 138.4 302 137.3 315.5 137.3 C329 137.3 329 125.6 342.5 125.6 C356 125.6 356 129.6 369.5 129.6 C383 129.6 383 131.8 396.5 131.8 C410 131.8 410 117.2 423.5 117.2 C437 117.2 437 104.3 450.5 104.3 C464 104.3 464 110.8 477.5 110.8 C491 110.8 491 113.5 504.5 113.5 C518 113.5 518 104.6 531.5 104.6 C545 104.6 545 95.4 558.5 95.4 C572 95.4 572 82.5 585.5 82.5 C599 82.5 599 91.8 612.5 91.8 C626 91.8 626 102.5 639.5 102.5 C653 102.5 653 94.8 666.5 94.8 C680 94.8 680 96.4 693.5 96.4 C707 96.4 707 89.1 720.5 89.1 C734 89.1 734 73.8 747.5 73.8 C761 73.8 761 81.6 774.5 81.6 C788 81.6 788 86.5 801.5 86.5 C815 86.5 815 78.4 828.5 78.4 C842 78.4 842 80 855.5 80 C869 80 869 78.4 882.5 78.4 C896 78.4 896 75.4 909.5 75.4 C923 75.4 923 64.1 936.5 64.1 C950 64.1 950 53.1 963.5 53.1 C977 53.1 977 49 990.5 49 C1004 49 1004 35.7 1017.5 35.7 C1031 35.7 1031 41.8 1044.5 41.8 C1058 41.8 1058 53.8 1071.5 53.8 C1085 53.8 1085 47.9 1098.5 47.9 C1112 47.9 1112 38.3 1125.5 38.3 C1139 38.3 1139 26.7 1152.5 26.7 C1166 26.7 1166 29.4 1179.5 29.4"/></symbol>
+</svg>
+
+<div class="lab-head">
+  <h1>Footer lab — thirteen closes for the site</h1>
+  <div class="set"><label>Stage</label>
+    <button type="button" data-w="1440" aria-pressed="true">1440</button>
+    <button type="button" data-w="1024">1024</button>
+    <button type="button" data-w="390">390</button>
+  </div>
+  <div class="set"><label>Motion</label>
+    <button type="button" id="reduce" aria-pressed="false">Reduced</button>
+  </div>
+</div>
+
+<!-- ======================= 00 · the live footer, for the diff ======================= -->
+<section class="case">
+  <div class="case-head"><b>00</b><strong>Live</strong><span>base.css as it ships: one row, the name, eleven links in a single wrap, two icons. Everything below is measured against this.</span></div>
+  <div class="stage">
+    <div class="rayfield k k01" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="above">the page ends here</div>
+    <footer class="footer on-dark">
+      <div class="wrap">
+        <div class="footer-row">
+          <div>TrustForex</div>
+          <nav aria-label="Footer"><a href="../home/">Home</a><a href="../results/">Results</a><a href="../brokers/">Brokers</a><a href="../referral/">Referral</a><a href="../about/">About</a><a href="../partnership/">Broker Partnership</a><a href="../brokers/#cashback">Partner Broker Rules</a><a href="#">Cashback Terms</a><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Risk Disclosure</a></nav>
+          <div class="social">
+            <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tg"/></svg></a>
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ig"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ======================= 01 · Split card ======================= -->
+<section class="case">
+  <div class="case-head"><b>01</b><strong>Split card</strong><span>The founder's reference, built in cb8's language: the brand pane is a real screen with its own ground and the record falling off its corner; the link pane is the site's paper. The socials sit above the columns, Telegram named.</span></div>
+  <div class="stage">
+    <div class="rayfield k k01" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="above">the page ends here</div>
+    <footer class="fv fv01">
+      <div class="wrap">
+        <div class="f1">
+          <div class="f1-brand on-dark">
+            <svg class="art" viewBox="0 0 480 300" aria-hidden="true"><use href="#art-panel"/></svg>
+            <a class="mark" href="../home/" aria-label="TrustForex home" style="--mark:176px">
+              <svg class="brand-word" viewBox="0 0 119 26" aria-hidden="true"><use href="#i-word"/></svg>
+              <svg class="brand-sub" viewBox="0 0 113 11" aria-hidden="true"><use href="#i-sub"/></svg>
+            </a>
+            <div>
+              <p class="f1-tag">Built on rules. Measured by results.</p>
+              <a class="pill" href="https://app.trustforex.net" rel="noopener" style="margin-top:20px">Open the App <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            </div>
+          </div>
+          <div class="f1-pane on-paper">
+            <div class="social f1-social">
+              <a href="#" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></a>
+              <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ig"/></svg></a>
+              <a class="tg" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tg"/></svg>Telegram</a>
+              <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-in"/></svg></a>
+              <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-yt"/></svg></a>
+            </div>
+            <div class="f1-rule"></div>
+            <nav class="cols" aria-label="Footer">
+              <div><h3>The site</h3><ul><li><a href="../home/">Home</a></li><li><a href="../results/">Results</a></li><li><a href="../cb8/">Cashback</a></li><li><a href="../referral/">Referral</a></li><li><a href="../blog/">Blog</a></li></ul></div>
+              <div><h3>Partners</h3><ul><li><a href="../about/">About us</a></li><li><a href="../brokers/">Partner brokers</a></li><li><a href="../partnership/">Broker partnership</a></li><li><a href="../brokers/#cashback">Partner broker rules</a></li></ul></div>
+              <div><h3>Legal</h3><ul><li><a href="#">Terms of service</a></li><li><a href="#">Privacy policy</a></li><li><a href="#">Risk disclosure</a></li><li><a href="#">Cashback terms</a></li></ul></div>
+            </nav>
+            <p class="legal">© 2026 TrustForex. Trading carries risk, and a past week's record does not promise the next one. Cashback and referral credits follow each partner broker's own terms.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ======================= 02 · Signature ======================= -->
+<section class="case">
+  <div class="case-head"><b>02</b><strong>Signature</strong><span>Kresna's move in our type: the card floats and the wordmark becomes the ground, cropped by the page's bottom edge. One link column is traded for the Telegram channel — the one thing a visitor can do that is not "open the app".</span></div>
+  <div class="stage">
+    <div class="rayfield k k01" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="above">the page ends here</div>
+    <footer class="fv fv02">
+      <div class="wrap">
+        <div class="f2">
+          <div class="f2-brand on-dark">
+            <svg class="art" viewBox="0 0 480 300" aria-hidden="true"><use href="#art-panel"/></svg>
+            <a class="mark" href="../home/" aria-label="TrustForex home" style="--mark:162px">
+              <svg class="brand-word" viewBox="0 0 119 26" aria-hidden="true"><use href="#i-word"/></svg>
+              <svg class="brand-sub" viewBox="0 0 113 11" aria-hidden="true"><use href="#i-sub"/></svg>
+            </a>
+            <div>
+              <p class="tagline" style="color:#fff;font-size:var(--text-row-title);max-width:20ch">Built on rules. Measured by results.</p>
+              <a class="pill" href="https://app.trustforex.net" rel="noopener" style="margin-top:18px">Open the App <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            </div>
+          </div>
+          <div class="f2-pane on-paper">
+            <nav class="cols" aria-label="Footer">
+              <div><h3>The site</h3><ul><li><a href="../home/">Home</a></li><li><a href="../results/">Results</a></li><li><a href="../cb8/">Cashback</a></li><li><a href="../referral/">Referral</a></li><li><a href="../blog/">Blog</a></li></ul></div>
+              <div><h3>Partners &amp; legal</h3><ul><li><a href="../about/">About us</a></li><li><a href="../brokers/">Partner brokers</a></li><li><a href="../partnership/">Broker partnership</a></li><li><a href="#">Terms of service</a></li><li><a href="#">Privacy policy</a></li><li><a href="#">Risk disclosure</a></li></ul></div>
+            </nav>
+            <div class="f2-join">
+              <h3>The record, every week.</h3>
+              <p>Results post to the channel as each week closes — the same figures the Results page prints.</p>
+              <a class="btn btn-solid" href="#" rel="noopener">Join on Telegram <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            </div>
+            <div class="f2-foot">
+              <p class="legal" style="max-width:56ch">© 2026 TrustForex. Trading carries risk. Credits follow each partner broker's own terms.</p>
+              <div class="social">
+                <a href="#" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></a>
+                <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ig"/></svg></a>
+                <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-in"/></svg></a>
+                <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-yt"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="f2-sign" aria-hidden="true"><svg viewBox="0 0 119 26"><use href="#i-word"/></svg></div>
+    </footer>
+  </div>
+</section>
+
+<!-- ======================= 03 · The ledger ======================= -->
+<section class="case">
+  <div class="case-head"><b>03</b><strong>The ledger</strong><span>No card. A left rail carrying the mark and the last verified week, and the links ruled into a table beside it. The figures are placeholders here; live they come from the Results page's own series, so a footer that prints a number can be checked.</span></div>
+  <div class="stage">
+    <div class="rayfield k k01" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="above">the page ends here</div>
+    <footer class="fv fv03 on-dark">
+      <div class="f3">
+        <div class="wrap">
+          <div class="f3-grid">
+            <div class="f3-rail">
+              <a class="mark" href="../home/" aria-label="TrustForex home" style="--mark:150px">
+                <svg class="brand-word" viewBox="0 0 119 26" aria-hidden="true"><use href="#i-word"/></svg>
+                <svg class="brand-sub" viewBox="0 0 113 11" aria-hidden="true"><use href="#i-sub"/></svg>
+              </a>
+              <p class="tagline" style="max-width:26ch">Built on rules. Measured by results.</p>
+              <div class="f3-week">
+                <div class="head"><span>Last verified week</span><span>1–5 Sep 2026</span></div>
+                <div><span>Signals published</span><b>24</b></div>
+                <div class="up"><span>First target reached</span><b>18</b></div>
+                <div><span>Average result</span><b>+41 pips</b></div>
+              </div>
+              <a class="pill" href="https://app.trustforex.net" rel="noopener" style="align-self:start">Open the App <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            </div>
+            <nav class="f3-cols" aria-label="Footer">
+              <div><h3>The site</h3><ul><li><a href="../home/">Home</a></li><li><a href="../results/">Results</a></li><li><a href="../cb8/">Cashback</a></li><li><a href="../referral/">Referral</a></li><li><a href="../blog/">Blog</a></li></ul></div>
+              <div><h3>Partners</h3><ul><li><a href="../about/">About us</a></li><li><a href="../brokers/">Partner brokers</a></li><li><a href="../partnership/">Broker partnership</a></li><li><a href="../brokers/#cashback">Partner broker rules</a></li></ul></div>
+              <div><h3>Legal</h3><ul><li><a href="#">Terms of service</a></li><li><a href="#">Privacy policy</a></li><li><a href="#">Risk disclosure</a></li><li><a href="#">Cashback terms</a></li></ul></div>
+            </nav>
+          </div>
+          <div class="f3-bar">
+            <p class="legal" style="max-width:62ch">© 2026 TrustForex. Trading carries risk, and a past week's record does not promise the next one.</p>
+            <div class="social">
+              <a class="tg" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tg"/></svg>Telegram</a>
+              <a href="#" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></a>
+              <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ig"/></svg></a>
+              <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-yt"/></svg></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ======================= 04 · The close ======================= -->
+<section class="case">
+  <div class="case-head"><b>04</b><strong>The close</strong><span>The page's last argument is the chart, so the chart is the structure: the series runs the full width of the bottom edge, the closing week green, and the action sits at its crest. No panel anywhere.</span></div>
+  <div class="stage">
+    <div class="rayfield k k01" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="above">the page ends here</div>
+    <footer class="fv fv04 on-dark">
+      <svg class="art" viewBox="0 0 1200 200" preserveAspectRatio="none" aria-hidden="true"><use href="#art-rail"/></svg>
+      <div class="f4">
+        <div class="wrap">
+          <div class="f4-top">
+            <div>
+              <a class="mark" href="../home/" aria-label="TrustForex home" style="--mark:150px;margin-bottom:20px">
+                <svg class="brand-word" viewBox="0 0 119 26" aria-hidden="true"><use href="#i-word"/></svg>
+                <svg class="brand-sub" viewBox="0 0 113 11" aria-hidden="true"><use href="#i-sub"/></svg>
+              </a>
+              <p class="f4-say">Built on rules. Measured by results.</p>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start">
+              <a class="pill" href="https://app.trustforex.net" rel="noopener">Open the App <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+              <div class="social">
+                <a class="tg" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tg"/></svg>Telegram</a>
+                <a href="#" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></a>
+                <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ig"/></svg></a>
+              </div>
+            </div>
+          </div>
+          <nav class="f4-row" aria-label="Footer">
+            <a href="../home/">Home</a><a href="../results/">Results</a><a href="../cb8/">Cashback</a><a href="../referral/">Referral</a><a href="../blog/">Blog</a><span aria-hidden="true">·</span><a href="../about/">About us</a><a href="../brokers/">Partner brokers</a><a href="../partnership/">Broker partnership</a><a href="../brokers/#cashback">Partner broker rules</a>
+          </nav>
+        </div>
+      </div>
+      <div class="f4-base">
+        <div class="wrap">
+          <p class="legal" style="max-width:60ch">© 2026 TrustForex. Trading carries risk. Credits follow each partner broker's own terms.</p>
+          <nav class="f4-row" style="padding:0;gap:12px 20px" aria-label="Legal"><a href="#" style="font-size:var(--text-label);color:rgba(255,255,255,.56)">Terms</a><a href="#" style="font-size:var(--text-label);color:rgba(255,255,255,.56)">Privacy</a><a href="#" style="font-size:var(--text-label);color:rgba(255,255,255,.56)">Risk disclosure</a><a href="#" style="font-size:var(--text-label);color:rgba(255,255,255,.56)">Cashback terms</a></nav>
+        </div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ======================= 05 · Glass dock ======================= -->
+<section class="case">
+  <div class="case-head"><b>05</b><strong>Glass dock</strong><span>The page closes the way it opened: the nav's own glass, mirrored to the bottom and rounded off the ground. One line holds what a visitor still needs, the small print sits under the dock.</span></div>
+  <div class="stage">
+    <div class="rayfield k k01" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="above">the page ends here</div>
+    <footer class="fv fv05 on-dark">
+      <div class="wrap">
+        <div class="f5-bar">
+          <a class="mark" href="../home/" aria-label="TrustForex home">
+            <svg class="brand-word" viewBox="0 0 119 26" aria-hidden="true"><use href="#i-word"/></svg>
+            <svg class="brand-sub" viewBox="0 0 113 11" aria-hidden="true"><use href="#i-sub"/></svg>
+          </a>
+          <nav class="f5-nav" aria-label="Footer"><a href="../home/">Home</a><a href="../results/">Results</a><a href="../cb8/">Cashback</a><a href="../referral/">Referral</a><a href="../brokers/">Brokers</a><a href="../about/">About</a><a href="../blog/">Blog</a></nav>
+          <div class="social">
+            <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tg"/></svg></a>
+            <a href="#" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></a>
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ig"/></svg></a>
+          </div>
+          <a class="pill" href="https://app.trustforex.net" rel="noopener">Open the App <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+        <div class="f5-under">
+          <p class="legal" style="max-width:58ch">© 2026 TrustForex. Trading carries risk. Credits follow each partner broker's own terms.</p>
+          <nav class="f5-min" aria-label="Legal"><a href="../partnership/">Broker partnership</a><a href="../brokers/#cashback">Partner broker rules</a><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Risk disclosure</a></nav>
+        </div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ======================= 06 · Masthead ======================= -->
+<section class="case">
+  <div class="case-head"><b>06</b><strong>Masthead</strong><span>The editorial close, for the paper end of the alternation — the blog's own bottom. The lockup is set as a masthead, a hairline under it, then four columns where the fourth is the action. It takes flat brand blue: the nav's gradient run is drawn for a 17px mark and reads as a wash at this size.</span></div>
+  <div class="stage paper">
+    <div class="above">the page ends here</div>
+    <footer class="fv fv06">
+      <div class="wrap on-paper">
+        <a class="f6-mast" href="../home/" aria-label="TrustForex home"><svg class="brand-word" viewBox="0 0 119 26" aria-hidden="true"><use href="#i-word"/></svg><svg class="brand-sub" viewBox="0 0 113 11" aria-hidden="true"><use href="#i-sub"/></svg></a>
+        <div class="f6-sub">
+          <p>Built on rules. Measured by results.</p>
+          <small>Est. 2026 · app.trustforex.net</small>
+        </div>
+        <div class="f6-grid">
+          <nav class="cols" aria-label="Footer">
+            <div><h3>The site</h3><ul><li><a href="../home/">Home</a></li><li><a href="../results/">Results</a></li><li><a href="../cb8/">Cashback</a></li><li><a href="../referral/">Referral</a></li><li><a href="../blog/">Blog</a></li></ul></div>
+            <div><h3>Partners</h3><ul><li><a href="../about/">About us</a></li><li><a href="../brokers/">Partner brokers</a></li><li><a href="../partnership/">Broker partnership</a></li><li><a href="../brokers/#cashback">Partner broker rules</a></li></ul></div>
+            <div><h3>Legal</h3><ul><li><a href="#">Terms of service</a></li><li><a href="#">Privacy policy</a></li><li><a href="#">Risk disclosure</a></li><li><a href="#">Cashback terms</a></li></ul></div>
+          </nav>
+          <div class="f6-act">
+            <a class="btn btn-solid" href="https://app.trustforex.net" rel="noopener">Open the App <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <p>Plans, payment and cashback continue inside the official TrustForex app.</p>
+            <div class="social">
+              <a class="tg" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tg"/></svg>Telegram</a>
+              <a href="#" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></a>
+              <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ig"/></svg></a>
+            </div>
+          </div>
+        </div>
+        <div class="f6-base">
+          <p class="legal" style="max-width:68ch">© 2026 TrustForex. Trading carries risk, and a past week's record does not promise the next one. Cashback and referral credits follow each partner broker's own terms.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ======================= 07 · The stub ======================= -->
+<section class="case">
+  <div class="case-head"><b>07</b><strong>The stub</strong><span>A pass, not a panel: what the site sells is access, so the footer is the ticket to it. The perforation is a dashed rule with two notches punched clean through to the ground, so the cut reads from the blue behind the card.</span></div>
+  <div class="stage">
+    <div class="rayfield k k01" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="above">the page ends here</div>
+    <footer class="fv fv07">
+      <div class="wrap">
+        <div class="f7">
+          <div class="f7-stub on-dark">
+            <svg class="art" viewBox="0 0 480 300" aria-hidden="true"><use href="#art-panel"/></svg>
+            <svg class="f7-shield" viewBox="-2 -2 29 30" aria-hidden="true"><use href="#i-shield"/></svg>
+            <small>Access</small>
+            <b>TrustForex</b>
+            <a class="pill" href="https://app.trustforex.net" rel="noopener" style="align-self:start">Open the App <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="f7-code">TF · 2026 · SILVER / GOLD / DIAMOND</div>
+          </div>
+          <div class="f7-perf" aria-hidden="true"></div>
+          <div class="f7-body on-paper">
+            <nav class="cols" aria-label="Footer">
+              <div><h3>The site</h3><ul><li><a href="../home/">Home</a></li><li><a href="../results/">Results</a></li><li><a href="../cb8/">Cashback</a></li><li><a href="../referral/">Referral</a></li><li><a href="../blog/">Blog</a></li></ul></div>
+              <div><h3>Partners</h3><ul><li><a href="../about/">About us</a></li><li><a href="../brokers/">Partner brokers</a></li><li><a href="../partnership/">Broker partnership</a></li><li><a href="../brokers/#cashback">Partner broker rules</a></li></ul></div>
+              <div><h3>Legal</h3><ul><li><a href="#">Terms of service</a></li><li><a href="#">Privacy policy</a></li><li><a href="#">Risk disclosure</a></li><li><a href="#">Cashback terms</a></li></ul></div>
+            </nav>
+            <div class="f7-base">
+              <p class="legal" style="max-width:54ch">© 2026 TrustForex. Trading carries risk. Credits follow each partner broker's own terms.</p>
+              <div class="social">
+                <a class="tg" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tg"/></svg>Telegram</a>
+                <a href="#" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></a>
+                <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ig"/></svg></a>
+                <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-yt"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+
+<div class="round">
+  <h2>Round two — wilder and wider</h2>
+  <p>02's move without the card and without the 1200px wrap. The mark is the ground in all but the last; in 10 the record is painted inside the letters; 12 is the only one that moves, and it stops on the reduce switch.</p>
+</div>
+
+<!-- ======================= 08 · Full signature ======================= -->
+<section class="case">
+  <div class="case-head"><b>08</b><strong>Full signature</strong><span>02 with the card taken away. One line of links across the top, the statement at hero size, the wordmark filling the width and losing its feet to the page edge. The small print is dropped into the letters.</span></div>
+  <div class="stage">
+    <div class="rayfield k k01" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="above">the page ends here</div>
+    <footer class="fv fv08 on-dark">
+      <div class="wide">
+        <div class="f8-row">
+          <a class="mark" href="../home/" aria-label="TrustForex home">
+            <svg class="brand-word" viewBox="0 0 119 26" aria-hidden="true"><use href="#i-word"/></svg>
+            <svg class="brand-sub" viewBox="0 0 113 11" aria-hidden="true"><use href="#i-sub"/></svg>
+          </a>
+          <nav class="f8-nav" aria-label="Footer"><a href="../home/">Home</a><a href="../results/">Results</a><a href="../cb8/">Cashback</a><a href="../referral/">Referral</a><a href="../brokers/">Partner brokers</a><a href="../partnership/">Broker partnership</a><a href="../about/">About us</a><a href="../blog/">Blog</a></nav>
+          <div class="social">
+            <a class="tg" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tg"/></svg>Telegram</a>
+            <a href="#" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></a>
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ig"/></svg></a>
+          </div>
+          <a class="pill" href="https://app.trustforex.net" rel="noopener">Open the App <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+        <p class="f8-say">Built on rules. Measured by results.</p>
+      </div>
+      <div class="f8-sign" aria-hidden="true"><svg viewBox="0 0 119 26"><use href="#i-word"/></svg></div>
+      <div class="f8-legal">
+        <p class="legal" style="max-width:52ch">© 2026 TrustForex. Trading carries risk. Credits follow each partner broker's own terms.</p>
+        <nav aria-label="Legal"><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Risk disclosure</a><a href="#">Cashback terms</a><a href="../brokers/#cashback">Partner broker rules</a></nav>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ======================= 09 · Wide dock ======================= -->
+<section class="case">
+  <div class="case-head"><b>09</b><strong>Wide dock</strong><span>The signature with everything a visitor is owed spread across the full width above it: four columns edge to edge, the nav's glass as one full-width dock, then the crop — with the record's rail crossing the letters on its way out of the page.</span></div>
+  <div class="stage">
+    <div class="rayfield k k01" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="above">the page ends here</div>
+    <footer class="fv fv09 on-dark">
+      <svg class="art" viewBox="0 0 1200 200" preserveAspectRatio="none" aria-hidden="true"><use href="#art-rail"/></svg>
+      <div class="wide">
+        <div class="f9-grid">
+          <div class="f9-lead">
+            <a class="mark" href="../home/" aria-label="TrustForex home">
+              <svg class="brand-word" viewBox="0 0 119 26" aria-hidden="true"><use href="#i-word"/></svg>
+              <svg class="brand-sub" viewBox="0 0 113 11" aria-hidden="true"><use href="#i-sub"/></svg>
+            </a>
+            <p>Built on rules. Measured by results.</p>
+          </div>
+          <div><h3>The site</h3><ul><li><a href="../home/">Home</a></li><li><a href="../results/">Results</a></li><li><a href="../cb8/">Cashback</a></li><li><a href="../referral/">Referral</a></li><li><a href="../blog/">Blog</a></li></ul></div>
+          <div><h3>Partners</h3><ul><li><a href="../about/">About us</a></li><li><a href="../brokers/">Partner brokers</a></li><li><a href="../partnership/">Broker partnership</a></li><li><a href="../brokers/#cashback">Partner broker rules</a></li></ul></div>
+          <div><h3>Legal</h3><ul><li><a href="#">Terms of service</a></li><li><a href="#">Privacy policy</a></li><li><a href="#">Risk disclosure</a></li><li><a href="#">Cashback terms</a></li></ul></div>
+        </div>
+        <div class="f9-dock">
+          <p>Plans, payment and cashback continue inside the app.</p>
+          <div class="social">
+            <a class="tg" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tg"/></svg>Telegram</a>
+            <a href="#" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></a>
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ig"/></svg></a>
+            <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-yt"/></svg></a>
+          </div>
+          <a class="pill" href="https://app.trustforex.net" rel="noopener">Open the App <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+      </div>
+      <div class="f9-sign" aria-hidden="true"><svg viewBox="0 0 119 26"><use href="#i-word"/></svg></div>
+    </footer>
+  </div>
+</section>
+
+<!-- ======================= 10 · The cut ======================= -->
+<section class="case">
+  <div class="case-head"><b>10</b><strong>The cut</strong><span>The letters are the window and the record is behind them: one mask of the wordmark over the rising series, at the width of the page, cropped by its edge. The mark is made of the weeks it claims. One row of links, one button, nothing else.</span></div>
+  <div class="stage">
+    <div class="rayfield k k01" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="above">the page ends here</div>
+    <footer class="fv fv10 on-dark">
+      <div class="wide">
+        <div class="f10-top">
+          <a class="mark" href="../home/" aria-label="TrustForex home" style="--mark:118px">
+            <svg class="brand-word" viewBox="0 0 119 26" aria-hidden="true"><use href="#i-word"/></svg>
+            <svg class="brand-sub" viewBox="0 0 113 11" aria-hidden="true"><use href="#i-sub"/></svg>
+          </a>
+          <nav aria-label="Footer"><a href="../home/">Home</a><a href="../results/">Results</a><a href="../cb8/">Cashback</a><a href="../referral/">Referral</a><a href="../brokers/">Partner brokers</a><a href="../partnership/">Broker partnership</a><a href="../about/">About us</a><a href="../blog/">Blog</a></nav>
+          <a class="pill" href="https://app.trustforex.net" rel="noopener">Open the App <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+        <p class="f10-say">Every figure on this site is one week of the same record, published as it closed.</p>
+      </div>
+      <!-- the mask is the wordmark itself: <use> of the same symbol the nav draws, in white, so
+           the letters pass and everything else is cut. Inside it, the ramp and then the series,
+           scaled out of its own 1200×200 box into the mark's 119×26. -->
+      <svg class="f10-cut" viewBox="0 0 119 26" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+        <defs><mask id="m-word" maskUnits="userSpaceOnUse" x="0" y="0" width="119" height="26"><use href="#i-word" fill="#fff"/></mask></defs>
+        <g mask="url(#m-word)">
+          <rect width="119" height="26" fill="url(#tf-cut)"/>
+          <use href="#art-rail" x="0" y="-2" width="119" height="30"/>
+        </g>
+        <use href="#i-word" fill="none" stroke="rgba(255,255,255,.34)" stroke-width=".16"/>
+      </svg>
+      <div class="f10-legal">
+        <p class="legal" style="max-width:52ch">© 2026 TrustForex. Trading carries risk. Credits follow each partner broker's own terms.</p>
+        <nav aria-label="Legal"><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Risk disclosure</a><a href="#">Cashback terms</a><a href="../brokers/#cashback">Partner broker rules</a></nav>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ======================= 11 · The horizon ======================= -->
+<section class="case">
+  <div class="case-head"><b>11</b><strong>The horizon</strong><span>A scene, not a layout: the statement stands on the skyline the series draws, and the links are one hairline strip running the whole width of the page at its very bottom edge — the last line of the site, edge to edge.</span></div>
+  <div class="stage">
+    <div class="rayfield k k01" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="above">the page ends here</div>
+    <footer class="fv fv11 on-dark">
+      <svg class="art" viewBox="0 0 1200 200" preserveAspectRatio="none" aria-hidden="true"><use href="#art-rail"/></svg>
+      <div class="f11-body">
+        <h2 class="f11-say">Built on rules. Measured by results.</h2>
+        <div class="f11-side">
+          <a class="mark" href="../home/" aria-label="TrustForex home" style="--mark:132px">
+            <svg class="brand-word" viewBox="0 0 119 26" aria-hidden="true"><use href="#i-word"/></svg>
+            <svg class="brand-sub" viewBox="0 0 113 11" aria-hidden="true"><use href="#i-sub"/></svg>
+          </a>
+          <p>The week above closed +41 pips on 24 published signals. Every week before it is on the Results page.</p>
+          <a class="pill" href="https://app.trustforex.net" rel="noopener">Open the App <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+      </div>
+      <nav class="f11-strip" aria-label="Footer">
+        <a href="../home/">Home</a><a href="../results/">Results</a><a href="../cb8/">Cashback</a><a href="../referral/">Referral</a><a href="../blog/">Blog</a><span class="sep" aria-hidden="true">·</span><a href="../about/">About us</a><a href="../brokers/">Partner brokers</a><a href="../partnership/">Broker partnership</a><a href="../brokers/#cashback">Partner broker rules</a><span class="sep" aria-hidden="true">·</span><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Risk disclosure</a>
+        <div class="social">
+          <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tg"/></svg></a>
+          <a href="#" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ig"/></svg></a>
+        </div>
+      </nav>
+    </footer>
+  </div>
+</section>
+
+<!-- ======================= 12 · The tape ======================= -->
+<section class="case">
+  <div class="case-head"><b>12</b><strong>The tape</strong><span>The name, repeated, running out of the page. Three copies of one row translated by a third, so the loop has no seam — transform only, and it stands still under the reduce switch. The one variant here that moves.</span></div>
+  <div class="stage">
+    <div class="rayfield k k01" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="above">the page ends here</div>
+    <footer class="fv fv12 on-dark">
+      <div class="wide">
+        <div class="f12-head">
+          <div>
+            <a class="mark" href="../home/" aria-label="TrustForex home">
+              <svg class="brand-word" viewBox="0 0 119 26" aria-hidden="true"><use href="#i-word"/></svg>
+              <svg class="brand-sub" viewBox="0 0 113 11" aria-hidden="true"><use href="#i-sub"/></svg>
+            </a>
+            <p>Built on rules. Measured by results.</p>
+          </div>
+          <div><h3>The site</h3><ul><li><a href="../home/">Home</a></li><li><a href="../results/">Results</a></li><li><a href="../cb8/">Cashback</a></li><li><a href="../referral/">Referral</a></li><li><a href="../blog/">Blog</a></li></ul></div>
+          <div><h3>Partners &amp; legal</h3><ul><li><a href="../about/">About us</a></li><li><a href="../brokers/">Partner brokers</a></li><li><a href="../partnership/">Broker partnership</a></li><li><a href="#">Terms of service</a></li><li><a href="#">Privacy policy</a></li><li><a href="#">Risk disclosure</a></li></ul></div>
+        </div>
+        <div class="f12-bar">
+          <a class="pill" href="https://app.trustforex.net" rel="noopener">Open the App <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <div class="social">
+            <a class="tg" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tg"/></svg>Telegram</a>
+            <a href="#" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></a>
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ig"/></svg></a>
+            <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-yt"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="f12-tape" aria-hidden="true">
+        <div class="f12-run">
+          <svg viewBox="0 0 119 26"><use href="#i-word"/></svg>
+          <svg viewBox="0 0 119 26"><use href="#i-word"/></svg>
+          <svg viewBox="0 0 119 26"><use href="#i-word"/></svg>
+        </div>
+      </div>
+      <div class="f12-legal"><p class="legal" style="max-width:60ch">© 2026 TrustForex. Trading carries risk. Credits follow each partner broker's own terms.</p></div>
+    </footer>
+  </div>
+</section>
+
+<!-- ======================= 13 · The vault ======================= -->
+<section class="case">
+  <div class="case-head"><b>13</b><strong>The vault</strong><span>The one that is not 02's child. The shield comes off the lockup, is blown up past the page and cut by two of its edges — a canopy over the statement, a wing rising out of the bottom — and everything the footer says stacks against it. Asymmetric on purpose: every other screen on the site is centred.</span></div>
+  <div class="stage">
+    <div class="rayfield k k01" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="above">the page ends here</div>
+    <footer class="fv fv13 on-dark">
+      <svg class="f13-shield" viewBox="-2 -2 29 30" aria-hidden="true"><use href="#i-shield"/></svg>
+      <div class="wide">
+        <div class="f13">
+          <div>
+            <h2 class="f13-say">Rules kept. Results published.</h2>
+            <p class="f13-lead">Plans, cashback and referrals all continue inside the official TrustForex app.</p>
+            <a class="pill" href="https://app.trustforex.net" rel="noopener">Open the App <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          </div>
+          <nav class="f13-cols" aria-label="Footer">
+            <div><h3>The site</h3><ul><li><a href="../home/">Home</a></li><li><a href="../results/">Results</a></li><li><a href="../cb8/">Cashback</a></li><li><a href="../referral/">Referral</a></li><li><a href="../blog/">Blog</a></li></ul></div>
+            <div><h3>Partners</h3><ul><li><a href="../about/">About us</a></li><li><a href="../brokers/">Partner brokers</a></li><li><a href="../partnership/">Broker partnership</a></li><li><a href="../brokers/#cashback">Partner broker rules</a></li></ul></div>
+            <div><h3>Legal</h3><ul><li><a href="#">Terms of service</a></li><li><a href="#">Privacy policy</a></li><li><a href="#">Risk disclosure</a></li><li><a href="#">Cashback terms</a></li></ul></div>
+          </nav>
+        </div>
+        <div class="f13-base">
+          <p class="legal" style="max-width:60ch">© 2026 TrustForex. Trading carries risk, and a past week's record does not promise the next one.</p>
+          <div class="social">
+            <a class="tg" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tg"/></svg>Telegram</a>
+            <a href="#" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></a>
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ig"/></svg></a>
+            <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-yt"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<script>
+// The head bar only: the stage width every case is cropped to, and the reduce switch the real
+// pages read off html.reduce. No variant depends on a line of this.
+const setW = w => {
+  document.querySelectorAll('.stage').forEach(s => s.style.setProperty('--stage', w + 'px'));
+  document.querySelectorAll('[data-w]').forEach(b => b.setAttribute('aria-pressed', b.dataset.w === w));
+};
+document.querySelectorAll('[data-w]').forEach(b => b.addEventListener('click', () => setW(b.dataset.w)));
+const r = document.getElementById('reduce');
+r.addEventListener('click', () => {
+  const on = r.getAttribute('aria-pressed') !== 'true';
+  r.setAttribute('aria-pressed', on);
+  document.documentElement.classList.toggle('reduce', on);
+  document.getElementById('liquid-svg')[on ? 'pauseAnimations' : 'unpauseAnimations']();
+});
+</script>
+</body>
+</html>

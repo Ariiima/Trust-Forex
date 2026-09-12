@@ -75,15 +75,11 @@ html.reduce .story::after,html.reduce #founder::after,html.reduce .dark-run>.ray
 .founder-note+.founder-note{margin-top:14px}
 @media (min-width:901px){html.snap #founder{min-height:calc(100svh - var(--nav-h))}}
 
-/* ---------- 9 · the vision: centred on the closing ground, the footer with its risk line and bottom row ---------- */
+/* ---------- 9 · the vision: centred on the closing ground, the site footer inside it ---------- */
 #final .h2{color:#fff;max-width:910px;margin:0 auto}
 .vision-inner{max-width:910px;margin:0 auto}
 .vision-copy{max-width:720px;margin:34px auto 38px;color:rgba(255,255,255,.78);font-size:var(--text-copy);line-height:var(--leading-vision);text-align:center;text-wrap:pretty}
 .vision-copy p{margin:0}.vision-copy p+p{margin-top:20px}
-.footer-main{align-items:flex-start}
-.footer-brand strong{display:block;color:#fff;font-size:var(--text-panel-title)}
-.footer-brand p{max-width:560px;margin:11px 0 0;line-height:1.55;font-size:var(--text-small)}
-.footer-bottom{margin-top:29px;padding-top:21px;border-top:1px solid var(--navy-line);display:flex;justify-content:space-between;gap:24px;font-size:var(--text-label);color:rgba(255,255,255,.55)}
 
 /* ---------- laptops and phones ---------- */
 @media (max-width:900px){
@@ -103,7 +99,6 @@ html.reduce .story::after,html.reduce #founder::after,html.reduce .dark-run>.ray
   .article p{font-size:17px;line-height:1.72}.article p+p{margin-top:21px}
   #founder{padding:76px 0}.founder-grid{gap:40px}.founder-portrait{min-height:330px;padding:27px}.monogram{font-size:128px}.founder-note{font-size:16px}
   .founder-meta{flex-direction:column;align-items:flex-start}
-  .footer-main{flex-direction:column}.footer-bottom{flex-direction:column}
 }
 
 /* tabular figures widen Inter's letters ~2% (cb8's body rule); the wireframe sets none */
