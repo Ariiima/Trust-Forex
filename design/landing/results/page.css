@@ -3,6 +3,10 @@
    argued with here; the treatment is cb8's — the blue grounds, the held cards, the glass panes and tiles,
    the light that travels every screen. Chart series may be vibrant (BRAND, 2026-09-05); green stays TP. */
 :root{--tp1:#fff;--tp2:var(--info);--tp3:#48D48A;--tp4:#FFC300;--bounce:var(--success);--breach:var(--warning)}
+/* Everything that marks a reading travels to the next one on this curve. The page's own --ease is expo-out,
+   which lands so early that a card stepping one column still reads as a snap; this one eases in as well as
+   out, so the move reads as travel. */
+:root{--travel:.2s cubic-bezier(.4,0,.2,1)}
 /* TP2 was the brand's blue-300 (#A1B7EB), a hair off white at 2.2px — it is the palette's own
    unused info blue now (#0099FF), which reads against both TP1 and the ground. */
 /* --tp1..--tp4 now colour the four compare LINES only. The columns are one green for every target
@@ -66,7 +70,7 @@
 .compare-path.tp1{stroke:var(--tp1)}.compare-path.tp2{stroke:var(--tp2)}.compare-path.tp3{stroke:var(--tp3);stroke-dasharray:7 5}.compare-path.tp4{stroke:var(--tp4);stroke-dasharray:2 5}
 .compare-point{stroke:var(--blue);stroke-width:1.5}
 /* compare on hides the columns, so the lit column can no longer mark the reading — a dashed rule does. */
-.compare-cursor{stroke:rgba(255,255,255,.5);stroke-width:1;stroke-dasharray:4 5;opacity:0;transition:opacity .15s var(--ease)}
+.compare-cursor{stroke:rgba(255,255,255,.5);stroke-width:1;stroke-dasharray:4 5;opacity:0;transition:opacity .15s var(--ease),transform var(--travel)}
 .compare-cursor.on{opacity:1}
 .chart-stage[data-timeframe=yearly] .bars{gap:54px;padding-inline:12%}
 .bar-slot{height:100%;flex:1 1 0;min-width:0;display:flex;align-items:flex-end;justify-content:center;position:relative}
@@ -77,16 +81,79 @@
 .chart-stage{--bar-w:13px}
 .chart-stage[data-timeframe=monthly]{--bar-w:18px}
 .chart-stage[data-timeframe=yearly]{--bar-w:92px}
-.bar{width:min(100%,var(--bar-w));min-height:2px;border-radius:5px 5px 0 0;background:rgba(255,255,255,.55);transition:height .24s var(--ease),filter .2s var(--ease),box-shadow .2s var(--ease)}
-.bar-slot.active .bar{filter:brightness(1.65)}
+.bar{position:relative;width:min(100%,var(--bar-w));min-height:2px;border-radius:5px 5px 0 0;background:rgba(255,255,255,.55);transition:height .24s var(--ease),filter .2s var(--ease),box-shadow .2s var(--ease)}
+/* the hovered column lights from its foot: white rising out of the base and spent before the cap, so the
+   cap keeps its green and the white marker sitting on it still has something to read against. A flat wash
+   over the whole column paled the cap too, and the marker vanished into it. */
+.bar::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(to top,#fff 0%,rgba(255,255,255,.72) 22%,rgba(255,255,255,0) 68%);
+  opacity:0;transition:opacity .2s var(--ease)}
+.bar-slot.active .bar::after{opacity:1}
+.bar-slot.no-signals .bar::after{display:none}
 .bar-slot.no-signals .bar{height:12px!important;min-height:12px;background:transparent;border:1px dashed rgba(255,255,255,.28);border-bottom:0}
-/* the reading is a white card with dark figures — data never sits on a translucent ground (BRAND) */
-.tooltip{position:absolute;z-index:5;min-width:190px;padding:12px 14px;border-radius:12px;background:#fff;color:var(--ink);box-shadow:0 12px 34px rgba(var(--rgb-shadow),.4);
-  transform:translate(-50%,calc(-100% - 12px));opacity:0;pointer-events:none;font-size:var(--text-meta);text-align:left;transition:opacity .15s var(--ease)}
-.tooltip strong,.tooltip span{display:block}.tooltip strong{margin-bottom:3px;color:var(--navy)}.tooltip span{color:var(--muted)}
-.tooltip .compare-total{margin:4px 0 9px}.tooltip .compare-row{display:grid;grid-template-columns:12px 1fr auto;gap:8px;align-items:center;min-height:23px}
-.tooltip .compare-dot{width:8px;height:8px;border-radius:50%;background:var(--dot);box-shadow:0 0 0 1px rgba(var(--rgb-shadow),.25)}   /* the ring: TP1's white dot on the white card */
-.tooltip .compare-row b{font-size:var(--text-small);color:var(--navy)}.tooltip .compare-row em{font-size:var(--text-small);font-style:normal;color:var(--muted)}
+/* The reading is a glass card: the page's own liquid-glass treatment, over the chart it reads. It carries
+   the figures in the four line colours, which is what a white card could not do — TP1's white would vanish
+   and TP4's yellow would not pass on paper. A ground that cannot frost (reduced transparency, or an engine
+   without backdrop-filter) gets the solid blue instead, so the figures are never left on a see-through card.
+   The card is a header and a row of cells split by hairlines, and it hangs off a ring set on the mark it
+   reads: the figures are tied to a datum, not to wherever the cursor happens to sit. */
+/* the layer the readings live in: fixed over the page, above the chart and under the nav */
+.tip-layer{position:fixed;inset:0;z-index:40;pointer-events:none}
+.tooltip{position:absolute;min-width:168px;border-radius:14px;color:#fff;
+  /* two layers, not one tint: a white veil over a neutral dark. The veil is what makes the frost read as
+     white rather than as more blue, and the dark underneath is what keeps white figures legible on it. */
+  background:linear-gradient(rgba(255,255,255,.2) 0 100%),rgba(8,28,80,.48);
+  border:1px solid rgba(255,255,255,.5);
+  backdrop-filter:url(#liquid) blur(30px) saturate(210%) brightness(1.08);-webkit-backdrop-filter:blur(30px) saturate(210%) brightness(1.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(255,255,255,.12),0 22px 54px rgba(var(--rgb-shadow),.5);
+  --tp1-ink:#fff;--tp2-ink:#5CC4FF;--tp3-ink:var(--tp3);--tp4-ink:var(--tp4);--hair:1px solid rgba(255,255,255,.2);
+  left:0;top:0;transform:translate(calc(var(--x,0px) - 50%),calc(var(--y,0px) - 100%));
+  opacity:0;pointer-events:none;text-align:left;transition:opacity .15s var(--ease),transform var(--travel)}
+.tip-head{position:relative;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:8px 12px 9px}
+.tip-head::after{content:'';position:absolute;left:12px;right:12px;bottom:0;border-bottom:var(--hair)}   /* the rule is inset, so it reads as a divider rather than a seam in the glass */
+.tip-head strong{font-size:var(--text-small);font-weight:var(--weight-strong);color:#fff;white-space:nowrap}
+.tip-pill{padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.16);font-size:var(--text-label);font-weight:var(--weight-strong);color:rgba(255,255,255,.9);white-space:nowrap}
+.tip-empty{padding:9px 12px;font-size:var(--text-label);color:rgba(255,255,255,.7)}
+/* the readings sit side by side, one hairline between them — two cells for a single target or a Scalp week,
+   four for compare. `quad` only centres them and tightens the gutter; the cell itself is the same cell. */
+.tip-split{display:grid;grid-auto-flow:column;grid-auto-columns:1fr}
+.tip-cell{padding:9px 14px 10px;text-align:center}.tip-cell+.tip-cell{border-left:var(--hair)}
+.tip-cell b{display:block;font-size:var(--text-row-title);line-height:1.15;font-weight:var(--weight-strong);color:#fff;white-space:nowrap}
+.tip-cell i{display:block;font-style:normal;font-size:var(--text-label);color:rgba(255,255,255,.68);white-space:nowrap}
+.tip-cell em{display:block;font-style:normal;font-size:var(--text-nano);color:rgba(255,255,255,.6);white-space:nowrap}
+.tip-cell b+i{margin-top:2px}.tip-cell i+b{margin-top:1px}.tip-cell b+em{margin-top:1px}
+.tip-cell b.pos{color:var(--bounce)}.tip-cell b.neg{color:var(--breach)}
+.tip-split.quad .tip-cell{padding:8px 11px 10px}
+.tip-split.quad .tip-cell b{font-size:var(--text-ui);color:var(--tp-ink)}
+.tip-split.quad .tip-cell i{font-weight:var(--weight-strong);color:rgba(255,255,255,.7)}
+/* a ground that will not frost takes the solid blue — a figure never sits on a see-through card */
+@media (prefers-reduced-transparency:reduce){.tooltip{background:#33477D;backdrop-filter:none;-webkit-backdrop-filter:none}}
+@supports not (backdrop-filter:blur(1px)){.tooltip{background:#33477D}}   /* what the veil and the dark resolve to over the page's blue */
+/* the ring marks the datum the card is reading; the stem is the thread between them, and closes to nothing
+   where the mark runs too high for the card to clear it. */
+.tip-anchor{position:absolute;left:0;top:0;width:5px;height:5px;border-radius:50%;
+  /* a white core inside an empty white circle: the outline's offset is the gap, so whatever the marker
+     sits on shows through the ring rather than the ring carrying a fill of its own */
+  background:#fff;outline:2.5px solid #fff;outline-offset:3px;
+  /* only white light. A dark drop-shadow pulls the edge pixels of a mark this small toward the ground,
+     and at this size almost every pixel is an edge pixel — which is what made it read grey. Two passes:
+     a tight one to hold the shape, a wide one for the glow around it. */
+  filter:drop-shadow(0 0 2px rgba(255,255,255,.95)) drop-shadow(0 0 9px rgba(255,255,255,.65));
+  transform:translate(calc(var(--x,0px) - 50%),calc(var(--y,0px) - 50%));opacity:0;pointer-events:none;
+  transition:opacity .15s var(--ease),transform var(--travel)}
+/* the thread runs from the outer circle's top edge, measured off the marker's centre rather than off its
+   box — the box is only the core, so ending at the box's edge left a visible break. */
+.tip-anchor::before{content:'';position:absolute;left:50%;bottom:50%;margin-bottom:8px;width:2px;height:var(--stem,0px);
+  transform:translateX(-50%);border-radius:1px;background:linear-gradient(to top,rgba(255,255,255,.92),rgba(255,255,255,.5));
+  transition:height var(--travel)}   /* the thread fades as it leaves the bead, so the card is met rather than skewered */
+.tip-anchor.on{opacity:1}
+/* A reading that is opening has no previous place to travel from, so it would slide in from the corner.
+   The stage wears `no-ease` for that one frame and everything lands where it belongs. */
+.tip-layer.no-ease .tooltip,.tip-layer.no-ease .tip-anchor,.tip-layer.no-ease .tip-anchor::before,.no-ease .compare-cursor,.no-ease .compare-live-dot{transition:opacity .15s var(--ease)}
+/* compare hides the columns, so the reading is marked on the lines themselves: the rule, and one dot per
+   target where that line crosses it. */
+.compare-live-dot{stroke:var(--blue);stroke-width:2.5;opacity:0;transition:opacity .15s var(--ease),transform var(--travel)}
+.compare-live-dot.tp1{fill:var(--tp1)}.compare-live-dot.tp2{fill:var(--tp2)}.compare-live-dot.tp3{fill:var(--tp3)}.compare-live-dot.tp4{fill:var(--tp4)}
 
 /* the Scalp Level chart */
 #scalp-results-panel .mode-toolbar{display:flex;align-items:flex-start}
@@ -113,7 +180,7 @@
 .scalp-slot.active .scalp-mark{opacity:1}
 .scalp-empty-state{min-height:360px;display:none;place-items:center;text-align:center;border-bottom:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.7)}
 .scalp-empty-state strong{display:block;color:#fff;font-size:var(--text-empty);margin-bottom:6px}
-.scalp-stage.is-empty .scalp-grid,.scalp-stage.is-empty .scalp-bars,.scalp-stage.is-empty .tooltip{display:none}.scalp-stage.is-empty .scalp-empty-state{display:grid}
+.scalp-stage.is-empty .scalp-grid,.scalp-stage.is-empty .scalp-bars{display:none}.scalp-stage.is-empty .scalp-empty-state{display:grid}
 
 /* ---------- 3–9 · the six held cards ---------- */
 .mech-grid{grid-template-columns:minmax(0,1.08fr) minmax(440px,.92fr);gap:80px}
@@ -349,6 +416,17 @@ html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
   .bars{width:calc(100% - 44px);margin-left:44px;gap:2px;padding-inline:2px}.scalp-bars{left:44px;gap:7px;padding-inline:5px}
   .chart-stage,.scalp-stage{height:330px}.chart-stage[data-timeframe=yearly] .bars{gap:18px;padding-inline:8%}.scalp-stage{--mark-w:32px}.scalp-stage[data-scalp-timeframe=monthly]{--mark-w:56px}.scalp-stage[data-scalp-timeframe=yearly]{--mark-w:72px}.scalp-mark{width:min(var(--mark-w),70%)}
   .scalp-head .scalp-legend{flex:1 0 100%;width:100%}.scalp-legend span{padding-inline:9px;font-size:var(--text-label)}
+  /* the card keeps its shape on a phone, one size down — four compare columns have to fit inside 360px */
+  /* the plot is denser per pixel on a phone, so the glass carries a touch more body under the figures */
+  .tooltip{min-width:0;background:linear-gradient(rgba(255,255,255,.2) 0 100%),rgba(8,28,80,.6)}.tip-head{padding:7px 10px;gap:9px}
+  .tip-cell{padding:8px 11px 9px}.tip-cell b{font-size:var(--text-body)}
+  /* four targets in one row leave a card too wide to stand clear of the rule on a 390px stage, and a card
+     that straddles the rule hides the crossing it reports — so the four fold into two rows of two. */
+  .tip-split.quad{grid-auto-flow:row;grid-template-columns:1fr 1fr}
+  .tip-split.quad .tip-cell{padding:7px 10px 8px;border-left:0}
+  .tip-split.quad .tip-cell:nth-child(2n){border-left:var(--hair)}
+  .tip-split.quad .tip-cell:nth-child(n+3){border-top:var(--hair)}
+  .tip-split.quad .tip-cell b{font-size:var(--text-meta)}
   .mech-copy .page-number{min-width:138px}
   .dark-row{grid-template-columns:58px 1fr auto;gap:10px}.dark-row small{font-size:var(--text-micro)}.dark-state{min-width:auto;padding-inline:8px}
   .target-ladder{padding-inline:12px;gap:7px}.glass .target-step{padding:11px 8px}.glass .target-step b{font-size:var(--text-micro)}
@@ -410,7 +488,7 @@ body{font-variant-numeric:normal}
 .chart-stage{--series:var(--tp3)}   /* the columns are green whichever target is read */
 .bar{background:linear-gradient(180deg,var(--series) 0%,color-mix(in srgb,var(--series) 30%,transparent) 100%);border:1px solid rgba(255,255,255,.4);border-bottom:0;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 0 0 99px rgba(255,255,255,0),0 10px 24px -12px var(--series);transform-origin:bottom;animation:bar-in .55s var(--ease) both;animation-delay:calc(var(--i,0) * 16ms)}
-.bar-slot.active .bar{filter:brightness(1.4) saturate(1.1);box-shadow:inset 0 1px 0 #fff,inset 0 0 0 99px rgba(255,255,255,.26),0 10px 24px -12px var(--series)}
+.bar-slot.active .bar{box-shadow:inset 0 1px 0 #fff,0 10px 26px -10px var(--series)}
 .bar-slot.no-signals .bar{background:transparent;box-shadow:none;animation:none}
 @keyframes bar-in{from{transform:scaleY(0)}}
 .compare-path{stroke-dasharray:1;stroke-dashoffset:1;animation:line-in 1.1s var(--ease) both}
@@ -423,6 +501,7 @@ body{font-variant-numeric:normal}
 .scalp-slot.active .scalp-mark{opacity:1;box-shadow:inset 0 1px 0 #fff,inset 0 0 0 99px rgba(255,255,255,.06),0 0 18px rgba(255,255,255,.1)}   /* a wide block carries a lift louder than a 13px bar, so it takes less of one */
 .scalp-empty-state .ico{margin:0 auto 14px;width:40px;height:40px;stroke:rgba(255,255,255,.7)}
 html.reduce .bar,html.reduce .compare-path,html.reduce .compare-point,html.reduce .scalp-mark,html.reduce .selector.target button::before{animation:none}
+html.reduce .tooltip,html.reduce .tip-anchor,html.reduce .tip-anchor::before,html.reduce .compare-cursor,html.reduce .compare-live-dot{transition:opacity .15s var(--ease)}
 
 /* ---------- the Signals half on white (founder, 2026-09-10) ----------
    Chapter 1 and cards 01–03 go the calculator's way (cb8 style.css §9): the block is white, its
