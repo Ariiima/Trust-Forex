@@ -75,7 +75,7 @@ const footer = rel => `<!-- the footer, every page: the links sit straight on th
         <p class="fsig-say">Built on rules. Measured by results.</p>
       </div>
       <nav class="fsig-cols" aria-label="Footer">
-        <div><h3>The site</h3><ul><li><a href="${rel}home/">Home</a></li><li><a href="${rel}results/">Results</a></li><li><a href="${rel}cb8/">Cashback</a></li><li><a href="${rel}referral/">Referral</a></li><li><a href="${rel}blog/">Blog</a></li></ul></div>
+        <div><h3>The site</h3><ul><li><a href="${rel}home/">Home</a></li><li><a href="${rel}results/">Results</a></li><li><a href="${rel}cb8/">Cashback</a></li><li><a href="${rel}brokers/">Brokers</a></li><li><a href="${rel}referral/">Referral</a></li><li><a href="${rel}blog/">Blog</a></li></ul></div>
         <div><h3>Partners</h3><ul><li><a href="${rel}about/">About us</a></li><li><a href="${rel}brokers/">Partner brokers</a></li><li><a href="${rel}partnership/">Broker partnership</a></li><li><a href="${rel}brokers/#cashback">Partner broker rules</a></li></ul></div>
         <div><h3>Legal</h3><ul><li><a href="#">Terms of service</a></li><li><a href="#">Privacy policy</a></li><li><a href="#">Risk disclosure</a></li><li><a href="#">Cashback terms</a></li></ul></div>
       </nav>
