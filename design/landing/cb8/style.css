@@ -379,7 +379,13 @@ html.reduce .glass .panel::after,html.reduce .glass .tile::after,html.reduce .gl
 #hero .rayfield.k i:nth-child(4),#chapter-1 .rayfield.k i:nth-child(4),#final .rayfield.k i:nth-child(4),
 #chapter-2::after,#activation::after,#faq::after,.screen-paper::after{display:block;position:absolute;inset:0;z-index:1;border-radius:0;filter:none;pointer-events:none;
   background:linear-gradient(115deg,transparent 36%,var(--beam,rgba(255,255,255,.11)) 47%,var(--beam-tail,rgba(255,255,255,.03)) 53%,transparent 64%);
+  -webkit-mask-image:var(--beam-edges);mask-image:var(--beam-edges);
   animation:ground-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%}
+/* The band is cut by the layer it is painted on, and the layer travels: once it has moved, the cut shows as
+   a hard vertical line standing in the ground (founder, 2026-09-12 — Results). The paper beams were masked
+   for this in 2026-09-08; the blue grounds were not. The layer fades out over its own outer eighth, which the
+   band never reaches, so the light is unchanged and the edge has nothing to draw. */
+:root{--beam-edges:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
 /* the timeline is the screen's, named (a held screen's is its .hold box — base.css): the layers sit under
    overflow:hidden boxes (the rayfield, the block, the chapter), and an anonymous view() would take that box
    for its scroller and never move */

@@ -92,7 +92,7 @@
   }
 
   function chartGeometry() {
-    const width = chartStage.clientWidth, height = chartStage.clientHeight, left = window.innerWidth <= 560 ? 44 : 54, right = 8, top = 30, bottom = 2;
+    const width = chartStage.clientWidth, height = chartStage.clientHeight, left = window.innerWidth <= 560 ? 44 : 54, right = 8, top = 30, bottom = 1;   /* the baseline rule, which is where 0% sits — same as .bars and .chart-grid in page.css */
     return { width, height, left, right, top, bottom, plotWidth: width - left - right, plotHeight: height - top - bottom };
   }
 

@@ -57,12 +57,12 @@
 /* the Signals chart */
 .chart-stage{position:relative;height:450px;touch-action:pan-y;user-select:none;cursor:crosshair}
 .chart-stage:focus-visible,.scalp-stage:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:5px;border-radius:8px}
-.chart-grid{position:absolute;inset:30px 0 2px;pointer-events:none}
+.chart-grid{position:absolute;inset:30px 0 1px;pointer-events:none}   /* 1px = the baseline rule's own width, so 0% lands on the line the columns stand on */
 .gridline{position:absolute;left:0;right:0;height:1px}
 .gridline::after{content:'';position:absolute;left:54px;right:0;top:0;border-top:1px solid rgba(255,255,255,.14)}
 .gridline span{position:absolute;left:0;top:0;transform:translateY(-50%);font-size:var(--text-label);color:rgba(255,255,255,.6)}
 .axis-title{position:absolute;left:0;top:-26px;font-size:var(--text-label);font-weight:var(--weight-strong);color:rgba(255,255,255,.6)}
-.bars{position:relative;z-index:1;width:calc(100% - 54px);height:100%;margin-left:54px;display:flex;align-items:flex-end;gap:8px;padding:30px 8px 2px;border-bottom:1px solid rgba(255,255,255,.3)}
+.bars{position:relative;z-index:1;width:calc(100% - 54px);height:100%;margin-left:54px;display:flex;align-items:flex-end;gap:8px;padding:30px 8px 0;border-bottom:1px solid rgba(255,255,255,.3)}   /* no bottom padding: the columns' feet sit ON the baseline, not 2px over it */
 .compare-mode .bars{visibility:hidden}
 .compare-chart{position:absolute;z-index:1;inset:0;width:100%;height:100%;display:none;overflow:visible}
 .compare-mode .compare-chart{display:block}
@@ -389,6 +389,7 @@ html.reduce #m4 .block,html.reduce #m5 .block,html.reduce #m6 .block,html.reduce
 #chapter-scalp::after{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,0),#fff);transform:scaleY(0);transform-origin:bottom}
 #chapter-scalp .rayfield.k i:nth-child(4){display:block;position:absolute;inset:0;z-index:1;border-radius:0;filter:none;pointer-events:none;
   background:linear-gradient(115deg,transparent 36%,rgba(255,255,255,.11) 47%,rgba(255,255,255,.03) 53%,transparent 64%);
+  -webkit-mask-image:var(--beam-edges);mask-image:var(--beam-edges);   /* the layer's own sides, same as every other beam (../cb8/style.css) */
   animation:ground-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%}
 html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
 
