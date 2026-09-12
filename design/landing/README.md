@@ -48,10 +48,11 @@ Disclosure, Privacy Policy, Cookie Settings) on one page and one URL space,
 `?document=terms|risk|privacy|cookies`, so an acceptance record can point at a stable address.
 It loads the nav, the footer and the tokens and nothing else — no grounds, no glass, no reveal,
 no `cb8/main.js`, and so no scroll holds. It is also the one page with no colour: black, greys
-and white from the nav to the footer, with the hierarchy every other policy page uses — page
-title, 32px document title, 22px section headings, bold subheadings at the 16px body size, no
-numbering (founder, 2026-09-12: "completely black and white and simple, like every other privacy
-policy"). That replaced a first pass the same day where every heading was body size in body
+and white from the nav to the footer, with the hierarchy every other policy page uses — a 28px
+page title, 24px document title, 18px section headings, 16px subheadings, no numbering (founder,
+2026-09-12: "completely black and white and simple, like every other privacy policy"). Titles are
+medium weight, not bold, and the page lede is gone (same day: "edit the boldness of titles, make
+them simple text and make them smaller"). That replaced a first pass the same day where every heading was body size in body
 ink. `page.css` does it by resetting the site's colour tokens at `:root`, so the nav, footer and
 focus ring follow. A row of plain text links, sticky under the nav, switches documents; the open
 one is black and underlined. The text is the wireframe's verbatim, nothing rewritten, less one

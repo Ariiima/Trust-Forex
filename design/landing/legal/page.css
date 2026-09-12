@@ -5,8 +5,10 @@
 
    Black and white, with the hierarchy every other policy page uses (founder, 2026-09-12:
    "make it completely black and white and simple, like every other privacy policy there is out
-   there"): page title, document title, section headings, then bold subheadings at body size.
-   That replaces the earlier rule that every heading was body size in body ink. The palette is
+   there"): page title, document title, section headings, then subheadings at body size. Titles
+   are medium weight, not bold, and kept small (founder, same day: "edit the boldness of titles,
+   make them simple text and make them smaller"). That replaces the earlier rule that every
+   heading was body size in body ink. The palette is
    set once, as the site's own tokens, so the nav, the footer and the focus ring fall in line
    without a selector per colour. */
 
@@ -33,15 +35,13 @@ body{background:#fff;color:var(--body);font-variant-numeric:normal}
 /* ---------- the head: page title, then the four documents ---------- */
 .legal-top{padding:calc(var(--nav-h) + 56px) 0 0}
 .legal-wrap{max-width:calc(var(--copy) + 2 * var(--content-gutter))}
-.legal-top h1{margin:12px 0 0;font-size:40px;line-height:1.15;letter-spacing:-.02em;
-  font-weight:var(--weight-title);color:#000}
-.legal-lede{margin:14px 0 0;font-size:17px;line-height:1.6;color:var(--muted)}
+.legal-top h1{margin:12px 0 0;font-size:28px;line-height:1.25;letter-spacing:-.01em;font-weight:500;color:#000}
 
 /* The document switch: four plain text links, the open one black and underlined. It stays stuck
    under the nav while you read — on a 74-clause Terms of Service it is the only thing telling you
    which document you are in. Sticky inside .legal, which spans the head and every document:
    parked in the head it would come unstuck the moment the head scrolled past. */
-.doc-tabs{position:sticky;top:var(--nav-h);z-index:20;margin:36px 0 0;
+.doc-tabs{position:sticky;top:var(--nav-h);z-index:20;margin:28px 0 0;
   background:#fff;border-bottom:1px solid var(--line)}
 .doc-tabs-row{display:flex;gap:28px}
 .doc-tabs a{position:relative;flex:none;padding:14px 0;font-size:15px;font-weight:var(--weight-label);
@@ -53,13 +53,13 @@ body{background:#fff;color:var(--body);font-variant-numeric:normal}
 .legal-body{padding:0 0 var(--section-space)}
 .doc[hidden]{display:none}
 .doc h2,.doc h3,.doc h4{color:#000;text-wrap:balance}
-.doc h2{margin:48px 0 0;font-size:32px;line-height:1.2;letter-spacing:-.015em;font-weight:var(--weight-title)}
+.doc h2{margin:40px 0 0;font-size:24px;line-height:1.3;letter-spacing:-.01em;font-weight:500}
 .doc p{margin:12px 0 0;font-size:var(--text-body);line-height:1.7;color:var(--body);text-wrap:pretty}
 .doc .doc-lede{font-size:17px;line-height:1.6;color:var(--muted)}
 .doc .doc-meta{margin:8px 0 0;padding:0 0 32px;border-bottom:1px solid var(--line);
   font-size:var(--text-ui);color:var(--muted);text-wrap:balance}
-.group h3{margin:44px 0 0;font-size:22px;line-height:1.3;letter-spacing:-.01em;font-weight:600}
-.group h4{margin:28px 0 0;font-size:var(--text-body);line-height:1.5;font-weight:var(--weight-strong)}
+.group h3{margin:40px 0 0;font-size:18px;line-height:1.4;font-weight:500}
+.group h4{margin:28px 0 0;font-size:var(--text-body);line-height:1.5;font-weight:600}
 .group h4 + p{margin-top:4px}
 
 /* ---------- the footer, on paper ----------
@@ -83,15 +83,14 @@ body{background:#fff;color:var(--body);font-variant-numeric:normal}
 
 @media (max-width:560px){
   .legal-top{padding-top:calc(var(--nav-h) + 36px)}
-  .legal-top h1{font-size:32px}
-  .legal-lede{font-size:var(--text-body)}
+  .legal-top h1{font-size:24px}
   /* One line that scrolls sideways, not two that wrap: stuck under the nav, a wrapped bar
      takes a tenth of a phone screen away from the text for the whole document. */
   .doc-tabs-row{gap:22px;overflow-x:auto;scrollbar-width:none}
   .doc-tabs-row::-webkit-scrollbar{display:none}
   .doc-tabs a{font-size:var(--text-ui)}
-  .doc h2{margin-top:36px;font-size:26px}
-  .group h3{margin-top:36px;font-size:20px}
+  .doc h2{margin-top:36px;font-size:22px}
+  .group h3{margin-top:36px;font-size:17px}
 }
 
 /* Printing is how a legal document is kept. Drop the chrome, keep the text, and print the
