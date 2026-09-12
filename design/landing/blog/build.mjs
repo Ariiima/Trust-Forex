@@ -49,13 +49,11 @@ const PLACEHOLDER = Object.fromEntries(cats.map(c => [c.id, existsSync(join(BLOG
 const coverSrc = (p, rel) => p.cover || (PLACEHOLDER[p.cat.id] ? `${rel}blog/img/${p.cat.id}.jpg` : '');
 const cover = (p, rel, cls = '') => { const src = coverSrc(p, rel);
   return `<div class="cover ${cls}">${ray(p.cat.ground)}${src ? `<img src="${esc(src)}" alt="" loading="lazy">` : ico(p.cat.icon, rel, 'cover-ico')}${cls.includes('cover-sm') ? '' : `<span class="read">${p.minutes} min read</span>`}</div>`; };
-const initials = n => n.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
-const author = p => `<div class="author"><i>${initials(p.author)}</i><span>${esc(p.author)}</span></div>`;
 const url = (p, rel) => `${rel}blog/p/${p.slug}/`;
 
 const card = (p, rel, big = false) => `<article class="card${big ? ' card-big' : ''}" data-cat="${p.cat.id}" data-date="${p.date}" data-reads="${p.reads}">
-  <a class="card-link" href="${url(p, rel)}">${cover(p, rel)}<div class="card-body"><span class="card-meta"><b>${esc(p.cat.name)}</b> · ${fmtDate(p.date)}</span><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p>${big ? author(p) : ''}</div></a></article>`;
-const mini = (p, rel) => `<a class="mini" href="${url(p, rel)}"><div><b>${esc(p.title)}</b><span>${esc(p.author)} · ${p.minutes} min read</span></div>${cover(p, rel, 'cover-sm')}</a>`;
+  <a class="card-link" href="${url(p, rel)}">${cover(p, rel)}<div class="card-body"><span class="card-meta"><b>${esc(p.cat.name)}</b> · ${fmtDate(p.date)}</span><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></div></a></article>`;
+const mini = (p, rel) => `<a class="mini" href="${url(p, rel)}"><div><b>${esc(p.title)}</b><span>${p.minutes} min read</span></div>${cover(p, rel, 'cover-sm')}</a>`;
 
 /* ---- the shell every page shares ---- */
 const FAVICON = /<link rel="icon"[^>]*>/.exec(cb8)[0];
