@@ -333,9 +333,13 @@
     const wide = screens.filter(s => s.scrollWidth > s.clientWidth + 2).map(s => s.id);
     if (wide.length) fails.push(`screens overflow sideways: ${wide.join(', ')}`);
     if (document.documentElement.scrollWidth > innerWidth + 2) fails.push('document scrolls sideways');
-    // guards the .field/.rayfield class collision that once collapsed the whole form to 0px
-    const fields = document.querySelector('#calculator .fields');
-    if (fields && fields.getBoundingClientRect().height < 100) fails.push(`calculator fields collapsed to ${Math.round(fields.getBoundingClientRect().height)}px`);
+    // guards the .field/.rayfield class collision that once collapsed the whole form to 0px. The
+    // form is two steps now, and the wells no longer share a grid with the rail, so each step is
+    // measured on its own — one 250px .fields block would have hidden an empty one beside it.
+    [...document.querySelectorAll('#calculator .step')].forEach((step, i) => {
+      const h = step.getBoundingClientRect().height;
+      if (h < 60) fails.push(`calculator step ${i + 1} collapsed to ${Math.round(h)}px`);
+    });
     // every icon slot must show one glyph: the Iconly file, or its inline stand-in until the file is pulled
     const bare = [...document.querySelectorAll('.ico')].filter(el => !el.querySelector('svg')).length;
     if (bare) fails.push(`${bare} icon slots are empty`);
