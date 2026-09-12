@@ -77,18 +77,71 @@
 .pstep{background:rgba(255,255,255,.58);border-color:rgba(255,255,255,.95);
   backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%)}
 .pstep.last{background:var(--blue);border-color:var(--blue);backdrop-filter:none;-webkit-backdrop-filter:none}
+/* ---------- the record layout's panel: one pane of glass, lit ----------
+   Every page's blue step panel — Cashback's Activation, Brokers' Licences and Connect,
+   Referral's Share, Results' record — was the one solid block on its paper screen, so the
+   field, the grid and the beam all died at its edge. Now they pass through it. The pane keeps the card's own --blue and takes no
+   border: a hairline round it read as a sticker cut out of the page, and the edge does not need
+   one — the glass is dark and the paper is not. Four layers make it, no single one the effect:
+     · the body — a blue tint over a backdrop that is displaced, blurred, saturated and darkened.
+       The brightness step runs before the tint: that is what stops a deep-blue pane over paper
+       reading as the grey wash the white mechanics warn about, and it holds white text past 8:1;
+     · the sheen (::after) — one soft band on the surface of the glass, travelling across the pane
+       on the section's own --ground timeline: the same light that crosses every other screen;
+     · two lights inside — k08's corner halo, plus the rayfield's spare second <i> promoted to a
+       white-cored bloom behind step 01, so the pane has a near light and a far one;
+     · the beads and the rules — the step numbers are lit from above and drop a shadow, the row
+       lines are a light edge over a dark one, so each row reads as a step cut into the glass.
+   Two backdrop declarations, as the chart frame does it — plain blur first, the #liquid
+   displacement over it where url() filters are supported. */
+.value-panel{border:0;background:
+    linear-gradient(180deg,rgba(var(--rgb-50),.1),transparent 18%),
+    radial-gradient(72% 60% at 100% -2%,rgba(var(--rgb-shadow),.34),transparent 62%),
+    radial-gradient(120% 90% at 6% -8%,rgba(255,255,255,.12),rgba(255,255,255,.02) 34%,transparent 62%),
+    radial-gradient(90% 80% at 104% 108%,rgba(var(--rgb-200),.2),transparent 58%),
+    linear-gradient(200deg,rgba(var(--rgb-blue),.84),rgba(var(--rgb-blue),.97));
+  backdrop-filter:blur(16px) saturate(240%) brightness(.42);-webkit-backdrop-filter:blur(16px) saturate(240%) brightness(.42);
+  box-shadow:0 44px 82px -42px rgba(var(--rgb-shadow),.8),0 20px 46px -26px rgba(var(--rgb-blue),.5),
+    inset 0 -26px 48px -30px rgba(var(--rgb-shadow),.55)}
+.value-panel{backdrop-filter:url(#liquid) blur(7px) saturate(240%) brightness(.42)}
+/* the sheen sits above the rows: light on the surface of the glass falls on whatever is under it.
+   Parked short of the middle where the timeline is unsupported, so the pane is lit there too. */
+.value-panel::after{content:'';position:absolute;z-index:2;pointer-events:none;top:-40%;bottom:-40%;left:0;width:34%;
+  background:linear-gradient(90deg,transparent 6%,rgba(255,255,255,.3) 26%,rgba(var(--rgb-100),.1) 40%,transparent 48%,
+    rgba(var(--rgb-50),.17) 64%,rgba(255,255,255,.03) 76%,transparent 94%);
+  filter:blur(16px);transform:translateX(60%) rotate(-11deg)}
+@supports (animation-timeline:view()){
+  .value-panel::after{animation:pane-shine linear both;animation-timeline:--ground;animation-range:entry 15% exit 85%}
+}
+@keyframes pane-shine{from{transform:translateX(-120%) rotate(-11deg)}to{transform:translateX(420%) rotate(-11deg)}}
+html.reduce .value-panel::after{animation:none}
+.value-panel .rayfield.k{background:transparent}
+.value-panel .rayfield.k::after{opacity:.5}
+.value-panel .rayfield.k i:nth-child(2){display:block;left:-18%;top:-38%;width:48%;height:80%;--bl:64px;--core:.9;opacity:.62}
+.value-panel .value-row:not(:last-child){border-bottom-color:rgba(255,255,255,.26);box-shadow:0 1px 0 rgba(var(--rgb-shadow),.22)}
+.value-panel .value-copy strong{text-shadow:0 1px 2px rgba(var(--rgb-shadow),.45)}
+.value-panel .value-index{color:#fff;border-color:rgba(255,255,255,.5);
+  background:linear-gradient(162deg,rgba(255,255,255,.38),rgba(255,255,255,.05) 62%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),inset 0 -3px 7px -3px rgba(var(--rgb-shadow),.6),0 6px 14px -8px rgba(var(--rgb-shadow),.8)}
+
 /* both neighbours are white: start on the calculator's #fff, peak, land on activation's paper */
 .chapter-2{background:linear-gradient(180deg,#fff,var(--p-100) 55%,var(--paper))}
 
 /* ---------- the effect must be defeatable ---------- */
 @media (prefers-reduced-transparency:reduce){
-  .on-dark .btn-solid,.block .panel::before,.screen-paper .panel::before,.pstep,.glass .panel,.glass .tile,#calculator .tile{backdrop-filter:none;-webkit-backdrop-filter:none}
+  .on-dark .btn-solid,.block .panel::before,.screen-paper .panel::before,.pstep,.glass .panel,.glass .tile,#calculator .tile,.value-panel{backdrop-filter:none;-webkit-backdrop-filter:none}
   .on-dark .btn-solid{background:#fff;color:var(--navy)}
   .pstep{background:#fff}
+  .value-panel{background:var(--blue)}
+  .value-panel::after{display:none}
+  .value-panel .rayfield.k{background:var(--blue)}
 }
 @supports not (backdrop-filter:blur(1px)){
   .on-dark .btn-solid{background:#fff;color:var(--navy)}
   .pstep{background:#fff}
+  .value-panel{background:var(--blue)}
+  .value-panel::after{display:none}
+  .value-panel .rayfield.k{background:var(--blue)}
 }
 @media (max-width:1023px){
   .block .panel::before,.screen-paper .panel::before{inset:-10px;border-radius:calc(var(--radius) + 10px)}
