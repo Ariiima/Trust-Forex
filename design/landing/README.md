@@ -1,6 +1,6 @@
 # Landing pages
 
-Eight pages on one system. `cb8/` is the Cashback page and the system itself — its nav, grounds,
+Nine pages on one system. `cb8/` is the Cashback page and the system itself — its nav, grounds,
 glass, held cards, FAQ, final and footer are what every other page loads (`../cb8/grounds.css`,
 `../cb8/style.css`, `../cb8/main.js`) before its own `page.css`. `index.html` opens `home/`, and
 every page's nav and footer link Home there.
@@ -15,6 +15,7 @@ every page's nav and footer link Home there.
 | Partner Brokers | `brokers/` (+ `page.js`: the picker, and what a record shows for a broker whose figures are pending) | the Broker Profile skeleton (`Broker Profile.html`, 2026-09-12) |
 | Broker Partnership | `partnership/` (+ `page.js`: the access switch and the request form → `POST app.trustforex.net/api/partnership`) | the Broker Partnership wireframe (`Broker Partnership.html`) |
 | Blog | `blog/` — built from `blog/posts/*.md`, see `blog/README.md` | the founder's two layout references |
+| Legal Center | `legal/` (+ `page.js`, the document switch) | the Legal Center wireframe (`Legal Center.html`, 2026-09-12) |
 
 The three wireframed pages keep their wireframes' structure, sizes and layout exactly (new type
 roles went into `shared/scale.css`); the treatment — blue grounds, glass panes and tiles, the
@@ -41,6 +42,19 @@ tier chooser that the Referral rate rail and the Cashback calculator now share. 
 `--cell-h` and `--cell-figure` on the row rather than restyling the cell. `cb8/main.js` turns any
 `<select>` inside a well into the page's own listbox and hides the select behind it as the value,
 so the OS never draws its list; without JS the select is untouched and still works.
+
+`legal/` is the exception to everything above: four documents (Terms of Service, Risk
+Disclosure, Privacy Policy, Cookie Settings) on one page and one URL space,
+`?document=terms|risk|privacy|cookies`, so an acceptance record can point at a stable address.
+It loads the nav, the footer and the tokens and nothing else — no grounds, no glass, no reveal,
+no `cb8/main.js`, and so no scroll holds. Inside a document every heading is body size in body
+ink and carries no number (founder, 2026-09-12: "make the titles and headlines the same size as
+text, same color", "no numbering"); weight alone separates a heading from a paragraph, and the
+sticky tab bar is what tells the reader which document they are in. The text is the wireframe's
+verbatim — 130 headings and 163 paragraphs, nothing rewritten. Nothing is hidden in the markup:
+without `page.js` the page is all four documents in order, which is also what prints and what a
+crawler reads. Every page's footer links here. `node _qa/legal.test.mjs` covers the switch, the
+history, the no-JS fallback and the two type rules.
 
 QA: `node _qa/screens.mjs <url> <out.png> [w h [frames]]` shoots every screen of a page into one
 sheet (`?check=1` prints CHECK OK/FAIL in the console); `node _qa/lines.mjs <wireframe file> <url>`

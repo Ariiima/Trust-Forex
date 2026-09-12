@@ -1,0 +1,100 @@
+/* Legal Center — the plainest page on the site.
+   It carries the house nav and the house footer and nothing else: no grounds, no glass, no
+   reveal, no scroll holds. A legal document is read, printed and quoted, so the only job here
+   is one measured column of text.
+
+   The one rule that shapes it: inside a document every heading is set at body size, in body
+   ink, with no number (founder, 2026-09-12: "make the titles and headlines the same size as
+   text, same color", "no numbering"). Weight is all that separates a heading from a paragraph,
+   which is why the column is narrow and the space above a heading is large — with the size
+   gone, rhythm has to carry the structure. */
+
+/* The column: one measure, narrower than the site's 1200px grid, because this page is prose
+   and nothing else. 760px at 18px is a little over 80 characters. */
+:root{--copy:760px}
+body{background:#fff}
+
+/* The nav is paper here, permanently. Every other page earns .is-paper from cb8/main.js as the
+   reader leaves a dark ground; this page has no dark ground and does not load that file, so a
+   nav written for blue would be white text on white. Set in this stylesheet rather than on the
+   markup's class attribute, because _qa/nav.py rewrites that header from cb8 on every run. */
+.nav{background:rgba(255,255,255,.72);border-bottom-color:rgba(var(--rgb-shadow),.08)}
+.nav .brand{color:var(--navy)}
+.nav .navlinks a{color:var(--body)}
+.nav .navlinks a:hover{color:var(--navy)}
+.nav .pill{background:var(--navy);color:#fff}
+.nav .pill:hover{background:var(--accent)}
+
+/* ---------- the head: page title, then the four documents ---------- */
+.legal-top{padding:calc(var(--nav-h) + 64px) 0 0}
+.legal-wrap{max-width:calc(var(--copy) + 2 * var(--content-gutter))}
+.legal-top h1{margin:14px 0 0;font-size:var(--text-title);line-height:var(--leading-title);
+  letter-spacing:var(--tracking-title);font-weight:var(--weight-title);color:var(--navy)}
+.legal-lede{margin:18px 0 0;font-size:var(--text-copy);line-height:var(--leading-body);color:var(--body)}
+
+/* The tab bar is the only place a document is named at a size you can see from across the room.
+   It replaces the headings the founder flattened, so it stays stuck under the nav while you read
+   — on a 74-clause Terms of Service it is the only thing telling you which document you are in.
+   Sticky inside .legal, which spans the head and every document: parked in the head it would
+   come unstuck the moment the head scrolled past. */
+.doc-tabs{position:sticky;top:var(--nav-h);z-index:20;margin:32px 0 0;padding:14px 0;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.doc-tabs-row{display:flex;flex-wrap:wrap;gap:8px}
+.doc-tabs a{display:inline-flex;align-items:center;min-height:34px;padding:0 14px;border-radius:999px;
+  border:1px solid var(--line);font-size:var(--text-ui);font-weight:var(--weight-label);color:var(--body);
+  transition:background-color .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease)}
+.doc-tabs a:hover{border-color:var(--line-strong);color:var(--navy)}
+.doc-tabs a[aria-current="page"]{background:var(--navy);border-color:var(--navy);color:#fff}
+
+/* ---------- the text ---------- */
+.legal-body{padding:8px 0 var(--section-space)}
+.doc[hidden]{display:none}
+.doc h2,.doc h3,.doc h4,.doc p{font-size:var(--text-copy);line-height:var(--leading-body);color:var(--body)}
+.doc h2,.doc h3,.doc h4{font-weight:var(--weight-strong);letter-spacing:0;text-wrap:pretty}
+.doc h2{margin:44px 0 0}
+.doc-lede{margin:10px 0 0}
+.doc-meta{margin:10px 0 0;font-size:var(--text-small);color:var(--muted)}
+.group{margin:0}
+.group h3{margin:52px 0 0}
+.group h4{margin:30px 0 0}
+.doc p{margin:12px 0 0;text-wrap:pretty}
+
+/* ---------- the footer, on paper (the blog's treatment, blog/page.css) ----------
+   Class only, and the section carries no id: base.css paints #final blue and a full screen
+   tall for the closing statement every other page ends on, and out-specifying an id from here
+   is a fight this page can simply not have. */
+.footer-only{background:var(--paper);color:var(--muted)}
+.footer-only .footer{border-top:1px solid var(--line)}
+.footer-only .fsig-mark{color:var(--navy)}
+.footer-only .fsig-say{color:var(--body)}
+.footer-only .fsig-cols h3{color:var(--muted)}
+.footer-only .fsig-cols a{color:var(--body)}
+.footer-only .fsig-cols a:hover{color:var(--accent-deep)}
+.footer-only .fsig-base{border-top-color:var(--line)}
+.footer-only .fsig-legal{color:var(--muted)}
+.footer-only .fsig-chan{color:var(--body)}
+.footer-only .fsig-chan:hover{color:var(--accent-deep)}
+.footer-only .social a{border-color:var(--line);color:var(--navy)}
+.footer-only .social a:hover{background:var(--accent-soft)}
+.footer-only .fsig-sign svg{fill:rgba(var(--rgb-900),.1)}
+
+@media (max-width:560px){
+  .legal-top{padding-top:calc(var(--nav-h) + 40px)}
+  /* One line that scrolls sideways, not two that wrap: stuck under the nav, a wrapped bar
+     takes a tenth of a phone screen away from the text for the whole document. */
+  .doc-tabs-row{gap:6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .doc-tabs-row::-webkit-scrollbar{display:none}
+  .doc-tabs a{flex:none;padding:0 11px;font-size:var(--text-small)}
+  .group h3{margin-top:40px}
+}
+
+/* Printing is how a legal document is kept. Drop the chrome, keep the text, and print the
+   document that is open rather than all four. */
+@media print{
+  .nav,.doc-tabs,.footer-only{display:none!important}
+  .legal-top{padding-top:0}
+  .legal-wrap{max-width:none;padding:0}
+  .doc h2,.doc h3,.doc h4{break-after:avoid}
+  .doc p{break-inside:avoid}
+}

@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Legal Center — TrustForex</title>
+<meta name="description" content="TrustForex Terms of Service, Risk Disclosure, Privacy Policy and Cookie Settings — the full legal text, one page.">
+<link rel="preload" href="../shared/fonts/Inter-VF.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-2 -2 29 30%27%3E%3Cg fill=%27%23144CCD%27%3E%3Cpath d=%27M9.447 21.464l-.039-6.979c-.002-1.612-1.409-2.918-3.143-2.918H.259c.24 1.032.52 2.69.875 3.702 1.594 4.322 4.496 7.606 8.313 10.024z%27/%3E%3Cpath d=%27M18.037 11.567c-1.568 0-2.84 1.18-2.842 2.638v11.068c3.797-2.414 6.686-5.689 8.276-10.003.362-1.012.649-2.671.889-3.703z%27/%3E%3Cpath d=%27M24.615 5.29V3.216C20.628 1.712 16.646.61 12.424 0 8.128.602 4.013 1.717 0 3.263V5.29z%27/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="../cb8/grounds.css?v=348acab3">
+<link rel="stylesheet" href="../cb8/style.css?v=50610bdd">
+<link rel="stylesheet" href="page.css?v=75af4833">
+</head>
+<body>
+<svg id="liquid-svg" width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="liquid" x="-4%" y="-8%" width="108%" height="116%" color-interpolation-filters="sRGB">
+  <feTurbulence type="fractalNoise" baseFrequency="0.006 0.010" numOctaves="2" seed="7" result="n"><animate attributeName="baseFrequency" dur="24s" values="0.006 0.010;0.010 0.006;0.006 0.010" repeatCount="indefinite"/></feTurbulence>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="18" xChannelSelector="R" yChannelSelector="G"/>
+</filter>
+<!-- The brand lockup's run. Both halves carry the same three stops — the heading run, which is
+     also what the pill and the CTAs take (style.css: --grad-blue) — and differ only in which
+     slice of it they show. The stretched y vector is that slice: solving y1+a(y2-y1)=0 and
+     y1+b(y2-y1)=1 maps an element's own 0..1 onto run [a,b]. TRUST takes [.32,.84], FOREX takes
+     [.93,1] — the mark starts a third of the way down the run, not at its head, because the run's
+     light blue reads as a washed top edge on a 17px wordmark rather than as a gradient (founder,
+     2026-09-12: "make the light blue section a bit darker so the gradient isn't easily visible").
+     The fills still take the whole run: a 40px capsule has the height to carry it. Two gradients because the mark is two <svg>s and one objectBoundingBox gradient
+     would restart the run on FOREX; the slices keep it falling once, across the whole mark.
+     FOREX sits almost on the foot because it is 7px of hairline letterforms and a gradient
+     across 7px is a smudge, not a run (founder, 2026-09-12: "push the gradient a bit higher").
+     Colours are :root tokens, so the palette stays in style.css and never in twenty HTML files.
+     They ride inside #liquid-svg because every page already carries it and blog/build.mjs
+     already copies it. -->
+<linearGradient id="tf-brand-a" x1="0" y1="-0.6154" x2="0" y2="1.3077"><stop offset="0%" style="stop-color:rgb(var(--rgb-600))"/><stop offset="50%" style="stop-color:var(--p-900)"/><stop offset="100%" style="stop-color:var(--run-foot)"/></linearGradient>
+<linearGradient id="tf-brand-b" x1="0" y1="-13.2857" x2="0" y2="1"><stop offset="0%" style="stop-color:rgb(var(--rgb-600))"/><stop offset="50%" style="stop-color:var(--p-900)"/><stop offset="100%" style="stop-color:var(--run-foot)"/></linearGradient>
+<!-- The footer's lockup, as two symbols: the mark is drawn twice down there, small in the
+     corner and huge as the signature, and a symbol is the one way to say it once. The nav above
+     carries the same two drawings inline because its markup is spliced into every page from
+     cb8/index.html by _qa/nav.py and cannot reference anything a single page defines. -->
+<symbol id="tf-word" viewBox="0 0 119 26"><path d="M9.44709 21.4636C9.43678 21.4432 9.42776 21.4217 9.41746 21.4013L9.40844 14.4851C9.40586 12.8734 7.99909 11.567 6.26511 11.567H0.259277C0.498892 12.5992 0.778443 14.2576 1.134 15.2694C2.72757 19.5909 5.63 22.8753 9.44709 25.2929V21.4636Z"/><path d="M18.0372 11.567C16.4694 11.567 15.1978 12.7477 15.1953 14.2049L15.1914 16.7302V25.2726C18.9879 22.8586 21.8774 19.5837 23.4671 15.2694C23.8291 14.2576 24.1164 12.598 24.356 11.567H18.0372Z"/><path d="M24.6146 5.29015V3.21624C20.6275 1.71229 16.6455 0.609481 12.4239 0C8.12758 0.602297 4.0129 1.71708 0 3.26294V5.29135H24.6146V5.29015Z"/><path d="M46.8358 12.841C47.8136 11.6209 48.3031 10.1624 48.3031 8.46331C48.3031 6.21458 47.5559 4.41487 46.0641 3.063C44.5711 1.71232 42.6026 1.03578 40.1575 1.03578H29.3091V5.29137C32.6882 5.28419 36.0686 5.277 39.4477 5.26982C39.7478 5.25066 40.191 5.25425 40.7012 5.37519C41.0142 5.44943 42.1479 5.71645 42.8706 6.69114C43.4864 7.52095 43.7105 8.76266 43.1939 9.71819C42.6219 10.7767 41.2061 11.2916 39.2841 11.2856C37.6055 11.2796 35.9282 11.2748 34.2496 11.2688H31.9655C30.4982 11.2688 29.3079 12.3752 29.3079 13.7391V25.2941C32.0377 25.2941 34.2496 23.2381 34.2496 20.7008V15.7124H37.9945L41.5553 23.0777C42.2071 24.426 43.65 25.2941 45.241 25.2941H47.9167L42.8203 15.3544C44.5195 14.9006 45.8567 14.0624 46.8358 12.8422V12.841Z"/><path d="M62.0465 25.8318C59.1634 25.8318 56.802 25.0666 54.9624 23.5351C53.1215 22.0048 52.2017 20.162 52.2017 18.0091V1.03462C55.059 1.03462 57.3753 3.18756 57.3753 5.84342V18.2234C57.3753 19.0844 57.8004 19.9106 58.6494 20.6997C59.4983 21.4888 60.6307 21.8839 62.0465 21.8839C63.4623 21.8839 64.6268 21.4947 65.4629 20.7176C66.299 19.9405 66.7177 19.1095 66.7177 18.2234V5.84342C66.7177 3.18756 69.034 1.03462 71.8913 1.03462V18.0079C71.8913 20.1848 70.9779 22.0336 69.1499 23.5519C67.3219 25.0714 64.9541 25.8306 62.0465 25.8306V25.8318Z"/><path d="M95.8086 16.4297C95.4351 15.6885 95.0228 15.0958 94.5732 14.6539C94.1223 14.2121 93.4602 13.7631 92.5854 13.308C91.7107 12.8542 91.0279 12.5309 90.5397 12.3393C90.0502 12.1477 89.3043 11.8855 88.3007 11.5502C86.036 10.809 84.4849 10.1744 83.6488 9.64876C82.8128 9.12309 82.3941 8.40465 82.3941 7.49581C82.3941 6.58698 82.7419 5.93439 83.4363 5.4686C84.1306 5.00161 85.0968 4.76931 86.3323 4.76931C87.8511 4.76931 89.0595 5.11656 89.9613 5.80986C90.3052 6.07569 90.5835 6.36426 90.7961 6.67439C91.4041 7.56646 92.5249 8.04183 93.6611 8.04183H96.1719C96.1449 5.88889 95.2483 4.14427 93.4743 2.81395C91.6721 1.46327 89.3558 0.786732 86.5255 0.786732C83.6952 0.786732 81.6482 1.39741 80.0005 2.61637C78.3528 3.83653 77.5296 5.48656 77.5296 7.56886C77.5296 9.65115 78.4817 11.3371 80.387 12.6291C81.339 13.2745 83.1529 14.0887 85.8311 15.0694C87.6849 15.7867 88.8933 16.2896 89.4601 16.577C90.7729 17.2475 91.4286 18.0606 91.4286 19.0173C91.4286 19.8303 91.0872 20.5069 90.4057 21.0445C89.7229 21.5833 88.7001 21.8515 87.3371 21.8515C85.7152 21.8515 84.4282 21.5282 83.4762 20.8828C82.997 20.5583 82.6401 20.1907 82.4044 19.7812C81.8994 18.9071 80.8495 18.4246 79.7815 18.4246H77.1831V18.6581C77.1831 20.8589 78.0643 22.6047 79.8279 23.8967C81.5902 25.1887 83.9645 25.8341 86.9506 25.8341C89.9368 25.8341 92.092 25.2127 93.8028 23.9686C95.5136 22.7245 96.3703 21.0265 96.3703 18.8736C96.3703 17.9887 96.1835 17.1757 95.8099 16.4333L95.8086 16.4297Z"/><path d="M118.644 1.03462V4.98248H111.618V20.6637C111.618 23.2202 109.388 25.2929 106.638 25.2929V4.98248H98.8386V1.03462H118.644Z"/></symbol>
+<symbol id="tf-sub" viewBox="0 0 113 11"><path d="M2.29741e-05 10.6637V0.270507H1.08206V10.6637H2.29741e-05ZM0.797311 5.86576V4.88339L5.39595 4.86915V5.85152L0.797311 5.86576ZM0.797311 1.23864V0.270507H5.66646V1.23864H0.797311ZM29.1375 10.9058C28.2358 10.9058 27.4528 10.7444 26.7884 10.4217C26.124 10.099 25.5735 9.67186 25.1368 9.14034C24.7002 8.60881 24.3728 8.02983 24.1545 7.40339C23.9362 6.77695 23.827 6.16474 23.827 5.56678V5.31051C23.827 4.67457 23.9362 4.04339 24.1545 3.41695C24.3823 2.78102 24.7192 2.20678 25.1653 1.69424C25.6114 1.18169 26.1667 0.773558 26.8311 0.469829C27.4955 0.156609 28.2643 -1.01586e-06 29.1375 -1.01586e-06C30.0202 -1.01586e-06 30.789 0.156609 31.444 0.469829C32.1084 0.773558 32.6636 1.18169 33.1097 1.69424C33.5558 2.20678 33.888 2.78102 34.1063 3.41695C34.3341 4.04339 34.448 4.67457 34.448 5.31051V5.58102C34.448 6.17898 34.3389 6.79118 34.1206 7.41763C33.9118 8.03457 33.5843 8.60881 33.1382 9.14034C32.7016 9.67186 32.1511 10.099 31.4867 10.4217C30.8223 10.7444 30.0392 10.9058 29.1375 10.9058ZM29.1375 9.90915C29.8019 9.90915 30.3951 9.79051 30.9172 9.55322C31.4392 9.30644 31.8806 8.97424 32.2412 8.55661C32.6019 8.12949 32.8772 7.65017 33.067 7.11864C33.2568 6.58712 33.3518 6.03186 33.3518 5.45288C33.3518 4.84542 33.2568 4.27593 33.067 3.74441C32.8772 3.21288 32.5972 2.74305 32.227 2.33491C31.8663 1.91729 31.425 1.58983 30.9029 1.35254C30.3809 1.11525 29.7924 0.996609 29.1375 0.996609C28.4921 0.996609 27.9084 1.11525 27.3863 1.35254C26.8643 1.58983 26.4182 1.91729 26.048 2.33491C25.6874 2.74305 25.4074 3.21288 25.208 3.74441C25.0182 4.27593 24.9233 4.84542 24.9233 5.45288C24.9233 6.03186 25.0182 6.58712 25.208 7.11864C25.3979 7.65017 25.6731 8.12949 26.0338 8.55661C26.3945 8.97424 26.8358 9.30644 27.3579 9.55322C27.8894 9.79051 28.4826 9.90915 29.1375 9.90915ZM53.5428 10.6637V0.227795H54.6248V10.6637H53.5428ZM59.9923 10.6637L56.4472 6.06508H57.7143L61.3163 10.6637H59.9923ZM54.1835 6.72V5.75186H56.974C57.4865 5.75186 57.9136 5.6522 58.2553 5.45288C58.597 5.25356 58.8533 4.98305 59.0241 4.64135C59.195 4.29966 59.2804 3.91051 59.2804 3.4739C59.2804 3.03729 59.195 2.64813 59.0241 2.30644C58.8533 1.96474 58.597 1.69424 58.2553 1.49491C57.9136 1.2861 57.4865 1.18169 56.974 1.18169H54.1835V0.227795H56.7889C57.5577 0.227795 58.2079 0.351185 58.7394 0.597965C59.2804 0.835253 59.6886 1.19118 59.9638 1.66576C60.2486 2.13085 60.3909 2.70034 60.3909 3.37424V3.57356C60.3909 4.24746 60.2486 4.82169 59.9638 5.29627C59.6791 5.76135 59.2709 6.11729 58.7394 6.36407C58.2079 6.60135 57.5577 6.72 56.7889 6.72H54.1835ZM79.9318 10.6637V0.270507H81.0138V10.6637H79.9318ZM80.7576 10.6637V9.68135H85.9542V10.6637H80.7576ZM80.7576 5.86576V4.89763H85.4701V5.86576H80.7576ZM80.7576 1.25288V0.270507H85.7976V1.25288H80.7576ZM103.773 10.6637L107.716 5.11118V5.38169L104.143 0.270507H105.367L108.3 4.51322H108.499L111.475 0.270507H112.657L108.969 5.45288V5.18237L112.899 10.6637H111.674L108.4 6.06508H108.2L104.94 10.6637H103.773Z"/></symbol>
+</svg>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-inner lg">
+    <a class="brand" href="https://trustforex.net/" aria-label="TrustForex home">
+      <svg class="brand-word" viewBox="0 0 119 26" aria-hidden="true"><path d="M9.44709 21.4636C9.43678 21.4432 9.42776 21.4217 9.41746 21.4013L9.40844 14.4851C9.40586 12.8734 7.99909 11.567 6.26511 11.567H0.259277C0.498892 12.5992 0.778443 14.2576 1.134 15.2694C2.72757 19.5909 5.63 22.8753 9.44709 25.2929V21.4636Z"/><path d="M18.0372 11.567C16.4694 11.567 15.1978 12.7477 15.1953 14.2049L15.1914 16.7302V25.2726C18.9879 22.8586 21.8774 19.5837 23.4671 15.2694C23.8291 14.2576 24.1164 12.598 24.356 11.567H18.0372Z"/><path d="M24.6146 5.29015V3.21624C20.6275 1.71229 16.6455 0.609481 12.4239 0C8.12758 0.602297 4.0129 1.71708 0 3.26294V5.29135H24.6146V5.29015Z"/><path d="M46.8358 12.841C47.8136 11.6209 48.3031 10.1624 48.3031 8.46331C48.3031 6.21458 47.5559 4.41487 46.0641 3.063C44.5711 1.71232 42.6026 1.03578 40.1575 1.03578H29.3091V5.29137C32.6882 5.28419 36.0686 5.277 39.4477 5.26982C39.7478 5.25066 40.191 5.25425 40.7012 5.37519C41.0142 5.44943 42.1479 5.71645 42.8706 6.69114C43.4864 7.52095 43.7105 8.76266 43.1939 9.71819C42.6219 10.7767 41.2061 11.2916 39.2841 11.2856C37.6055 11.2796 35.9282 11.2748 34.2496 11.2688H31.9655C30.4982 11.2688 29.3079 12.3752 29.3079 13.7391V25.2941C32.0377 25.2941 34.2496 23.2381 34.2496 20.7008V15.7124H37.9945L41.5553 23.0777C42.2071 24.426 43.65 25.2941 45.241 25.2941H47.9167L42.8203 15.3544C44.5195 14.9006 45.8567 14.0624 46.8358 12.8422V12.841Z"/><path d="M62.0465 25.8318C59.1634 25.8318 56.802 25.0666 54.9624 23.5351C53.1215 22.0048 52.2017 20.162 52.2017 18.0091V1.03462C55.059 1.03462 57.3753 3.18756 57.3753 5.84342V18.2234C57.3753 19.0844 57.8004 19.9106 58.6494 20.6997C59.4983 21.4888 60.6307 21.8839 62.0465 21.8839C63.4623 21.8839 64.6268 21.4947 65.4629 20.7176C66.299 19.9405 66.7177 19.1095 66.7177 18.2234V5.84342C66.7177 3.18756 69.034 1.03462 71.8913 1.03462V18.0079C71.8913 20.1848 70.9779 22.0336 69.1499 23.5519C67.3219 25.0714 64.9541 25.8306 62.0465 25.8306V25.8318Z"/><path d="M95.8086 16.4297C95.4351 15.6885 95.0228 15.0958 94.5732 14.6539C94.1223 14.2121 93.4602 13.7631 92.5854 13.308C91.7107 12.8542 91.0279 12.5309 90.5397 12.3393C90.0502 12.1477 89.3043 11.8855 88.3007 11.5502C86.036 10.809 84.4849 10.1744 83.6488 9.64876C82.8128 9.12309 82.3941 8.40465 82.3941 7.49581C82.3941 6.58698 82.7419 5.93439 83.4363 5.4686C84.1306 5.00161 85.0968 4.76931 86.3323 4.76931C87.8511 4.76931 89.0595 5.11656 89.9613 5.80986C90.3052 6.07569 90.5835 6.36426 90.7961 6.67439C91.4041 7.56646 92.5249 8.04183 93.6611 8.04183H96.1719C96.1449 5.88889 95.2483 4.14427 93.4743 2.81395C91.6721 1.46327 89.3558 0.786732 86.5255 0.786732C83.6952 0.786732 81.6482 1.39741 80.0005 2.61637C78.3528 3.83653 77.5296 5.48656 77.5296 7.56886C77.5296 9.65115 78.4817 11.3371 80.387 12.6291C81.339 13.2745 83.1529 14.0887 85.8311 15.0694C87.6849 15.7867 88.8933 16.2896 89.4601 16.577C90.7729 17.2475 91.4286 18.0606 91.4286 19.0173C91.4286 19.8303 91.0872 20.5069 90.4057 21.0445C89.7229 21.5833 88.7001 21.8515 87.3371 21.8515C85.7152 21.8515 84.4282 21.5282 83.4762 20.8828C82.997 20.5583 82.6401 20.1907 82.4044 19.7812C81.8994 18.9071 80.8495 18.4246 79.7815 18.4246H77.1831V18.6581C77.1831 20.8589 78.0643 22.6047 79.8279 23.8967C81.5902 25.1887 83.9645 25.8341 86.9506 25.8341C89.9368 25.8341 92.092 25.2127 93.8028 23.9686C95.5136 22.7245 96.3703 21.0265 96.3703 18.8736C96.3703 17.9887 96.1835 17.1757 95.8099 16.4333L95.8086 16.4297Z"/><path d="M118.644 1.03462V4.98248H111.618V20.6637C111.618 23.2202 109.388 25.2929 106.638 25.2929V4.98248H98.8386V1.03462H118.644Z"/></svg>
+      <svg class="brand-sub" viewBox="0 0 113 11" aria-hidden="true"><path d="M2.29741e-05 10.6637V0.270507H1.08206V10.6637H2.29741e-05ZM0.797311 5.86576V4.88339L5.39595 4.86915V5.85152L0.797311 5.86576ZM0.797311 1.23864V0.270507H5.66646V1.23864H0.797311ZM29.1375 10.9058C28.2358 10.9058 27.4528 10.7444 26.7884 10.4217C26.124 10.099 25.5735 9.67186 25.1368 9.14034C24.7002 8.60881 24.3728 8.02983 24.1545 7.40339C23.9362 6.77695 23.827 6.16474 23.827 5.56678V5.31051C23.827 4.67457 23.9362 4.04339 24.1545 3.41695C24.3823 2.78102 24.7192 2.20678 25.1653 1.69424C25.6114 1.18169 26.1667 0.773558 26.8311 0.469829C27.4955 0.156609 28.2643 -1.01586e-06 29.1375 -1.01586e-06C30.0202 -1.01586e-06 30.789 0.156609 31.444 0.469829C32.1084 0.773558 32.6636 1.18169 33.1097 1.69424C33.5558 2.20678 33.888 2.78102 34.1063 3.41695C34.3341 4.04339 34.448 4.67457 34.448 5.31051V5.58102C34.448 6.17898 34.3389 6.79118 34.1206 7.41763C33.9118 8.03457 33.5843 8.60881 33.1382 9.14034C32.7016 9.67186 32.1511 10.099 31.4867 10.4217C30.8223 10.7444 30.0392 10.9058 29.1375 10.9058ZM29.1375 9.90915C29.8019 9.90915 30.3951 9.79051 30.9172 9.55322C31.4392 9.30644 31.8806 8.97424 32.2412 8.55661C32.6019 8.12949 32.8772 7.65017 33.067 7.11864C33.2568 6.58712 33.3518 6.03186 33.3518 5.45288C33.3518 4.84542 33.2568 4.27593 33.067 3.74441C32.8772 3.21288 32.5972 2.74305 32.227 2.33491C31.8663 1.91729 31.425 1.58983 30.9029 1.35254C30.3809 1.11525 29.7924 0.996609 29.1375 0.996609C28.4921 0.996609 27.9084 1.11525 27.3863 1.35254C26.8643 1.58983 26.4182 1.91729 26.048 2.33491C25.6874 2.74305 25.4074 3.21288 25.208 3.74441C25.0182 4.27593 24.9233 4.84542 24.9233 5.45288C24.9233 6.03186 25.0182 6.58712 25.208 7.11864C25.3979 7.65017 25.6731 8.12949 26.0338 8.55661C26.3945 8.97424 26.8358 9.30644 27.3579 9.55322C27.8894 9.79051 28.4826 9.90915 29.1375 9.90915ZM53.5428 10.6637V0.227795H54.6248V10.6637H53.5428ZM59.9923 10.6637L56.4472 6.06508H57.7143L61.3163 10.6637H59.9923ZM54.1835 6.72V5.75186H56.974C57.4865 5.75186 57.9136 5.6522 58.2553 5.45288C58.597 5.25356 58.8533 4.98305 59.0241 4.64135C59.195 4.29966 59.2804 3.91051 59.2804 3.4739C59.2804 3.03729 59.195 2.64813 59.0241 2.30644C58.8533 1.96474 58.597 1.69424 58.2553 1.49491C57.9136 1.2861 57.4865 1.18169 56.974 1.18169H54.1835V0.227795H56.7889C57.5577 0.227795 58.2079 0.351185 58.7394 0.597965C59.2804 0.835253 59.6886 1.19118 59.9638 1.66576C60.2486 2.13085 60.3909 2.70034 60.3909 3.37424V3.57356C60.3909 4.24746 60.2486 4.82169 59.9638 5.29627C59.6791 5.76135 59.2709 6.11729 58.7394 6.36407C58.2079 6.60135 57.5577 6.72 56.7889 6.72H54.1835ZM79.9318 10.6637V0.270507H81.0138V10.6637H79.9318ZM80.7576 10.6637V9.68135H85.9542V10.6637H80.7576ZM80.7576 5.86576V4.89763H85.4701V5.86576H80.7576ZM80.7576 1.25288V0.270507H85.7976V1.25288H80.7576ZM103.773 10.6637L107.716 5.11118V5.38169L104.143 0.270507H105.367L108.3 4.51322H108.499L111.475 0.270507H112.657L108.969 5.45288V5.18237L112.899 10.6637H111.674L108.4 6.06508H108.2L104.94 10.6637H103.773Z"/></svg>
+    </a>
+    <nav class="navlinks" aria-label="Primary">
+      <a href="../home/">Home</a><a href="../results/">Results</a><a href="../cb8/">Cashback</a><a href="../referral/">Referral</a><a href="../blog/">Blogs</a>
+    </nav>
+    <div class="nav-action"><a class="pill" href="https://app.trustforex.net" rel="noopener">Open the App <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
+  </div>
+</header><!--/NAV Legal-->
+
+<main id="deck">
+
+<!-- The legal text, and nothing else. Four documents share one page and one URL space
+     (?document=terms|risk|privacy|cookies), so an acceptance record can point at a stable
+     address. Inside a document every heading is set at body size in body ink and carries no
+     number (founder, 2026-09-12: "make the titles and headlines the same size as text, same
+     color", "no numbering") — the tab bar says which document you are reading, and the page
+     reads as one continuous text rather than an outline. -->
+<div class="legal">
+
+  <section class="legal-top">
+    <div class="wrap legal-wrap">
+      <span class="label">Legal</span>
+      <h1>Legal Center</h1>
+      <p class="legal-lede">One legal framework for the TrustForex website, Telegram Mini App, bot, private channels, subscriptions, payments, Balance, rewards, broker features and support.</p>
+    </div>
+  </section>
+
+  <!-- The tab bar is a child of .legal, not of the head, so it can stay stuck under the nav for
+       the whole document. Inside .legal-top it would unstick the moment the head scrolled past. -->
+  <div class="doc-tabs">
+    <nav class="wrap legal-wrap doc-tabs-row" aria-label="Legal documents"><a href="?document=terms" data-tab="terms" aria-current="false">Terms of Service</a><a href="?document=risk" data-tab="risk" aria-current="false">Risk Disclosure</a><a href="?document=privacy" data-tab="privacy" aria-current="false">Privacy Policy</a><a href="?document=cookies" data-tab="cookies" aria-current="false">Cookie Settings</a></nav>
+  </div>
+
+  <section class="legal-body">
+    <div class="wrap legal-wrap">
+    <article class="doc" data-doc="terms">
+    <h2>Terms of Service</h2>
+    <p class="doc-lede">The master agreement for access, eligibility, payments, rewards, broker features, support and acceptable use.</p>
+    <p class="doc-meta">Version 4.0 · Last updated 12 September 2026 · English</p>
+    <section class="group">
+      <h3 id="terms-integrated-legal-framework">Integrated Legal Framework</h3>
+      <p>These Terms, the Risk Disclosure, the Privacy Policy, the Cookie Settings, every current schedule incorporated by them and every transaction-specific notice shown before an action form one integrated legal framework. The User normally accepts the mandatory contractual framework once before first access.</p>
+      <p>Commercial facts that may change, including available Plans, prices, supported assets or networks, fees, processing estimates, brokers, campaigns and reward rates, are shown in the relevant interface or versioned schedule and are not permanently fixed in these Terms. Listing a document or market does not make an otherwise unlawful activity lawful.</p>
+    </section>
+    <section class="group">
+      <h3 id="terms-legal-notice-and-operator-information">Legal Notice and Operator Information</h3>
+      <h4 id="terms-legal-notice-and-operator-information-trading-name">Trading name</h4>
+      <p>TrustForex is the trading name used for the Service. A trading name is not by itself a company, licensed adviser, broker, bank, exchange, custodian or investment manager.</p>
+      <h4 id="terms-legal-notice-and-operator-information-contracting-operator">Contracting Operator</h4>
+      <p>TrustForex is currently an unincorporated project operating under the TrustForex trading name. Until a company lawfully assumes the Service, the individual who actually operates and sells the Service is the contracting Operator. The Operator's identifying details, business address, official web contact, governing law and dispute forum must be completed before paid launch.</p>
+      <h4 id="terms-legal-notice-and-operator-information-pre-incorporation-status">Pre incorporation status</h4>
+      <p>Until a company lawfully assumes the business, obligations entered into for TrustForex are obligations of the person who actually enters or performs them. Describing the project as a startup or using a brand name does not create a separate liability shield.</p>
+      <h4 id="terms-legal-notice-and-operator-information-personnel-and-founder">Personnel and founder</h4>
+      <p>A founder, analyst, developer, employee, contractor, affiliate or service provider is not a separate contracting party merely because they contribute to the Service. This does not exclude personal responsibility that law attaches to actual conduct, control, misrepresentation, fraud or another non-excludable matter.</p>
+      <h4 id="terms-legal-notice-and-operator-information-regulatory-status">Regulatory status</h4>
+      <p>TrustForex and the current Operator do not hold or claim a financial-advice, investment-services, portfolio-management, brokerage, money-transmission, exchange, custody or comparable regulatory licence unless the live Operator Information record is updated with verifiable licence details. The Service may be made available only where the Operator has documented that the enabled activities can lawfully be provided without that authorisation or under another confirmed lawful basis.</p>
+      <h4 id="terms-legal-notice-and-operator-information-official-channels">Official channels</h4>
+      <p>Only domains, bots, Mini Apps, channels and support routes identified through the official TrustForex website are official. Users should disregard impersonators and must never disclose passwords, trading credentials, one-time codes, seed phrases or private keys.</p>
+      <h4 id="terms-legal-notice-and-operator-information-successor-operator">Successor Operator</h4>
+      <p>The business may later be transferred to an incorporated affiliate or lawful successor. The live Operator Information page will identify the current contracting party and effective date, and any required notice will be provided before the transfer becomes effective for Users.</p>
+    </section>
+    <section class="group">
+      <h3 id="terms-terms-of-service-and-acceptable-use">Terms of Service and Acceptable Use</h3>
+      <h4 id="terms-terms-of-service-and-acceptable-use-scope">Scope</h4>
+      <p>These Terms govern the TrustForex website, public content, results, Telegram bot, Mini App, private channels, subscriptions, Balance, rewards, broker-related features, support and every related Service made available under the brand. They incorporate every current policy listed on the Legal Hub and every transaction-specific notice shown before an action.</p>
+      <h4 id="terms-terms-of-service-and-acceptable-use-priority">Priority</h4>
+      <p>For the same subject, mandatory law controls first, then a transaction-specific notice for that transaction, then the relevant programme policy, and then these general Terms. Public product descriptions and checkout information remain binding where applicable law treats them as contractual information.</p>
+      <h4 id="terms-terms-of-service-and-acceptable-use-acceptance">Acceptance</h4>
+      <p>Before first access, the User must actively accept the Terms and incorporated contractual policies, acknowledge the Risk Disclosure, confirm receipt of the Privacy Notice and make the displayed eligibility declarations. Acceptance normally occurs once. Reacceptance may be required only for a materially adverse contractual change or where law requires a distinct choice.</p>
+      <h4 id="terms-terms-of-service-and-acceptable-use-account">Account</h4>
+      <p>Access, plans, queued plans, Balance, broker connections and programme records are personal to the validated account and linked Telegram numeric identifier. They may not be sold, shared, sublicensed or transferred to another person or account except where mandatory law requires a lawful succession or correction.</p>
+      <h4 id="terms-terms-of-service-and-acceptable-use-permitted-use">Permitted use</h4>
+      <p>The User receives a limited, revocable, non-exclusive and non-transferable right to use the Service for personal lawful purposes during valid access. No ownership in the Service, content, software, database, methodology or brand is transferred.</p>
+      <h4 id="terms-terms-of-service-and-acceptable-use-prohibited-conduct">Prohibited conduct</h4>
+      <p>Credential sharing, copying or redistributing private content, scraping, reverse engineering, bypassing access controls, manipulating records, false broker information, self-referral, circular or coordinated referral, payment or wallet abuse, impersonation, unlawful promotion, sanctions evasion, security interference and use for unlawful activity are prohibited.</p>
+      <h4 id="terms-terms-of-service-and-acceptable-use-third-parties">Third parties</h4>
+      <p>Telegram, brokers, blockchain networks, wallets, data feeds, hosting, analytics and other providers are independent. Their terms apply directly where relevant. TrustForex does not control or guarantee their availability, solvency, execution, data, security or conduct and is not endorsed by them unless a specific written statement says so.</p>
+      <h4 id="terms-terms-of-service-and-acceptable-use-changes">Changes</h4>
+      <p>TrustForex may prospectively add, remove, replace or modify features, delivery channels, supported assets, networks, brokers, campaigns and programme rules for legitimate legal, security, sanctions, platform, technical or commercial reasons. Material changes will receive proportionate notice and will not arbitrarily erase confirmed earnings or accrued paid access.</p>
+      <h4 id="terms-terms-of-service-and-acceptable-use-restriction-and-termination">Restriction and termination</h4>
+      <p>TrustForex may investigate, limit, suspend or terminate the affected account, feature, payment, broker connection, reward or withdrawal where reasonably necessary for breach, abuse, fraud, error, security, sanctions, counterparty dispute, platform rules or law. Action may be immediate where delay creates risk. Legitimate confirmed value is not forfeited merely as a penalty.</p>
+      <h4 id="terms-terms-of-service-and-acceptable-use-availability">Availability</h4>
+      <p>The Service is provided on an available basis without a promise of uninterrupted, error-free or continuous operation. A verified general failure caused by TrustForex that prevents delivery of paid access will be addressed through a reasonable extension, restoration, correction or other remedy required by applicable law. User devices, local connectivity and third-party failures are not automatically TrustForex failures.</p>
+      <h4 id="terms-terms-of-service-and-acceptable-use-liability">Liability</h4>
+      <p>To the maximum extent permitted by law, TrustForex is not responsible for trading losses, market movement, broker or wallet conduct, lost opportunity, indirect or consequential loss, User error or third-party interruption. Nothing excludes fraud, wilful misconduct, mandatory consumer rights or another liability that applicable law does not permit to be excluded or limited.</p>
+      <h4 id="terms-terms-of-service-and-acceptable-use-user-responsibility">User responsibility</h4>
+      <p>The User remains responsible for lawful use, account security, trading decisions, taxes and loss caused by their fraud, prohibited redistribution, false declaration, infringement or material breach. Any indemnity is limited to lawful, proportionate and causally connected loss and does not cover TrustForex's own breach or unlawful act.</p>
+      <h4 id="terms-terms-of-service-and-acceptable-use-intellectual-property">Intellectual property</h4>
+      <p>TrustForex and its licensors retain rights in the brand, original software, interfaces, documentation, content, methodology and selection or arrangement of proprietary records to the extent protected by law. Raw market facts and third-party materials remain subject to their owners' rights. Feedback may be used without revealing confidential User information.</p>
+      <h4 id="terms-terms-of-service-and-acceptable-use-general-terms">General terms</h4>
+      <p>The Operator may assign the business and these Terms to a lawful successor that assumes the relevant obligations in a genuine incorporation, reorganisation, financing or business transfer. The User may not assign the account. Invalid provisions are limited to the minimum necessary; delay is not waiver; and mandatory law prevails over inconsistent wording.</p>
+    </section>
+    <section class="group">
+      <h3 id="terms-eligibility-and-restricted-jurisdictions">Eligibility and Restricted Jurisdictions</h3>
+      <h4 id="terms-eligibility-and-restricted-jurisdictions-basic-eligibility">Basic eligibility</h4>
+      <p>A User must be at least eighteen, have the legal capacity required in their location, act for themselves or an authorised organisation, and be legally permitted to receive every material component enabled for them.</p>
+      <h4 id="terms-eligibility-and-restricted-jurisdictions-complete-service-rule">Complete Service rule</h4>
+      <p>TrustForex applies one conservative eligibility rule to the complete Service. If any material component, including paid signals, broker links, Cashback, Referral, sponsored access, crypto payment or withdrawal, is prohibited, restricted or requires an authorisation not held by the Operator for that User or market, the complete Service is unavailable there.</p>
+      <h4 id="terms-eligibility-and-restricted-jurisdictions-connection-with-a-market">Connection with a market</h4>
+      <p>Restriction may arise from actual location, residence, ordinary residence, citizenship where legally relevant, incorporation, establishment, control, beneficial ownership, the person for whose benefit the User acts, payment or wallet nexus, sanctions status, advertising route or another connection recognised by applicable law.</p>
+      <h4 id="terms-eligibility-and-restricted-jurisdictions-restricted-persons">Restricted persons</h4>
+      <p>The Service is unavailable to a sanctioned, blocked or prohibited person; a person owned or controlled by such a person where relevant; a person using the Service for prohibited activity; or a person whose transaction would expose TrustForex, the Operator or a provider to a legal prohibition.</p>
+      <h4 id="terms-eligibility-and-restricted-jurisdictions-user-declaration">User declaration</h4>
+      <p>At entry, the User declares that they satisfy these conditions and are not connected with a Restricted Jurisdiction. The declaration must remain true. The User must stop access and notify Support if eligibility changes.</p>
+      <h4 id="terms-eligibility-and-restricted-jurisdictions-no-circumvention">No circumvention</h4>
+      <p>A User must not use a VPN, proxy, false statement, nominee, third-party identity, wallet, broker account or payment route to conceal a restricted fact or make an ineligible transaction appear eligible.</p>
+      <h4 id="terms-eligibility-and-restricted-jurisdictions-trustforex-controls">TrustForex controls</h4>
+      <p>Self-declaration is the standard entry control but not an obligation to ignore contrary facts. TrustForex may apply proportionate technical, transaction, wallet, broker, sanctions or document review where risk, a provider or law requires it and may refuse or hold the affected action while reviewing.</p>
+      <h4 id="terms-eligibility-and-restricted-jurisdictions-schedule">Schedule</h4>
+      <p>The live Schedule may list countries, territories, categories and persons. It is a conservative service policy and may be broader than a particular law. Absence from the Schedule is not an automatic approval. TrustForex may add or remove a market prospectively after a documented legal and operational review.</p>
+      <h4 id="terms-eligibility-and-restricted-jurisdictions-provisional-target-and-restricted-schedule">Provisional target and restricted schedule</h4>
+      <p>The current Provisional Target Markets are Georgia, Costa Rica, the Dominican Republic and Paraguay. TrustForex intentionally directs the complete Service only to an eligible User who is both located and ordinarily resident in one of these markets. Listing is a conservative business targeting decision, not a representation that TrustForex or the Operator is licensed, authorised, endorsed or approved by a regulator there. The User must still satisfy every eligibility condition, and the Service remains unavailable wherever any material component is unlawful or requires an authorisation not held by the Operator. TrustForex may withhold launch, suspend access or remove a market prospectively if law, regulatory review, sanctions, a provider, broker or operational risk requires it. Every other country and territory is a Restricted Jurisdiction for the complete Service unless expressly added to this Schedule.</p>
+      <h4 id="terms-eligibility-and-restricted-jurisdictions-effect">Effect</h4>
+      <p>TrustForex may refuse access, cancel an uncompleted order, restrict a feature, reject or hold a payout, request lawful verification or terminate access where this Policy applies. Handling of paid access, confirmed earnings and user-funded credit remains subject to mandatory law and the Payments Policy.</p>
+    </section>
+    <section class="group">
+      <h3 id="terms-plans-access-crypto-payments-balance-and-refunds">Plans Access Crypto Payments Balance and Refunds</h3>
+      <h4 id="terms-plans-access-crypto-payments-balance-and-refunds-plan-information">Plan information</h4>
+      <p>Before purchase, the checkout shows the selected access level or duration, final price, included features, start or queue treatment, available payment method and any material limitation. Features and commercial names may change prospectively; the completed order record controls the purchased access.</p>
+      <p>No free trial is available unless TrustForex expressly displays one before purchase.</p>
+      <h4 id="terms-plans-access-crypto-payments-balance-and-refunds-activation-and-term">Activation and term</h4>
+      <p>A Plan activates after the required payment receives the stated confirmation and the Service records successful activation. If activation is delayed solely by a verified TrustForex failure, the paid term begins when usable access is actually provided or is extended by the verified lost period.</p>
+      <p>An eligible payment is normally confirmed automatically after the required blockchain confirmation, reliable order matching and successful system activation.</p>
+      <p>A verified service-wide outage that prevents delivery of paid access may be remedied by a proportionate extension. A problem limited to the User's device, Telegram account, credentials or local connectivity does not qualify as a TrustForex service-wide outage.</p>
+      <h4 id="terms-plans-access-crypto-payments-balance-and-refunds-renewal-and-plan-changes">Renewal and plan changes</h4>
+      <p>There is no automatic renewal unless the checkout expressly introduces it in the future with any consent required by law. Early renewal adds the new duration to remaining valid time. An upgrade may take effect immediately under the displayed rule; a lower Plan may be queued to begin after current paid access ends.</p>
+      <h4 id="terms-plans-access-crypto-payments-balance-and-refunds-expiry">Expiry</h4>
+      <p>When paid access expires, access to the relevant private channel or feature ends and Plan-dependent reward rates return to the then-current standard level. Confirmed Earnings and valid Subscription Credit do not expire merely because a Plan expires.</p>
+      <h4 id="terms-plans-access-crypto-payments-balance-and-refunds-crypto-only-payment">Crypto-only payment</h4>
+      <p>TrustForex currently accepts only the crypto assets and networks displayed at checkout. Prices may be expressed by reference to USD and converted into the selected asset for the invoice validity window. The displayed asset, network, address, amount, memo or tag and expiry must be followed exactly.</p>
+      <p>Plan prices are denominated by reference to USD. Checkout calculates the displayed crypto equivalent and fixes that quote for fifteen minutes. The User must send exactly the displayed amount, including every decimal, using the displayed asset, network, address and any memo or tag before the invoice expires. Sender-side or exchange fees must not reduce the amount received by TrustForex.</p>
+      <h4 id="terms-plans-access-crypto-payments-balance-and-refunds-confirmation-and-attribution">Confirmation and attribution</h4>
+      <p>A transaction is recognised only after the Service can reliably attribute it to the order and the required blockchain confirmation is reached. Broadcast, wallet display, transaction creation or a screenshot alone is not final confirmation. The User bears network and sending-wallet fees unless the interface states otherwise.</p>
+      <p>A receiving address may be shared across multiple Users or invoices. TrustForex may use the exact amount, asset, network, blockchain time and transaction data together to attribute a payment. The User must not reuse an expired or previously completed invoice.</p>
+      <p>A transaction broadcast within the fifteen-minute invoice window may confirm later and remain eligible where its blockchain record reliably proves the broadcast time and order match.</p>
+      <h4 id="terms-plans-access-crypto-payments-balance-and-refunds-wrong-or-incomplete-transfer">Wrong or incomplete transfer</h4>
+      <p>A wrong asset, network, address, memo, amount, late transfer or transfer that cannot be reliably attributed may not activate a Plan. Where funds are received and can lawfully and reliably be attributed, TrustForex may apply the amount as non-withdrawable Subscription Credit, request completion, manually reconcile it or apply another remedy shown for that case. Recovery is not guaranteed where the transfer cannot be identified or controlled.</p>
+      <p>An underpayment does not activate a Plan, and multiple transfers are not guaranteed to be combined as one payment. If the interface permits completion, the remaining amount must be sent within the original invoice window. Where an underpayment, overpayment or late payment is lawfully received and reliably attributed, the recognised amount is normally applied as non-withdrawable Subscription Credit after reconciliation.</p>
+      <p>A transfer using a wrong asset, network, address, memo or tag, or a transfer that cannot be reliably matched, may be permanently lost. TrustForex has no obligation to recover or return an incorrect transfer. If TrustForex elects and is technically and legally able to attempt recovery, unavoidable network or third-party costs may be deducted.</p>
+      <h4 id="terms-plans-access-crypto-payments-balance-and-refunds-balance-structure">Balance structure</h4>
+      <p>Balance is a summary display and not a bank account, deposit account, wallet, savings product or promise that every displayed amount is withdrawable. It may contain separate ledgers for Subscription Credit and confirmed Cashback or Referral Earnings.</p>
+      <h4 id="terms-plans-access-crypto-payments-balance-and-refunds-subscription-credit">Subscription Credit</h4>
+      <p>Subscription Credit may be used only for eligible TrustForex purchases or renewals under the current interface. It is non-withdrawable, non-transferable, does not earn interest and has no expiry under the current programme. It is not treated as Cashback or Referral Earnings and does not become cash merely because it appears in Balance.</p>
+      <p>Available Earnings may also be used for an eligible TrustForex purchase or renewal where that option is shown in the interface.</p>
+      <h4 id="terms-plans-access-crypto-payments-balance-and-refunds-available-earnings">Available Earnings</h4>
+      <p>Only verified Cashback and Referral amounts released under the applicable programme become Available Earnings. Pending, estimated, disputed, reversed, duplicated, fraudulent or unconfirmed amounts are not Available Earnings and need not be displayed before verification.</p>
+      <h4 id="terms-plans-access-crypto-payments-balance-and-refunds-withdrawals">Withdrawals</h4>
+      <p>A User may request withdrawal of eligible Available Earnings using a supported asset and network displayed at the time. Before confirmation, the interface shows the destination, amount, applicable fee or deduction, net amount and processing estimate. Blockchain transfers are generally irreversible; the User is responsible for checking the destination and network.</p>
+      <p>A valid withdrawal request is normally reviewed and processed within forty-eight hours. This period does not include or guarantee blockchain settlement time. The applicable network fee is deducted from the requested amount, and the net amount is displayed before confirmation.</p>
+      <h4 id="terms-plans-access-crypto-payments-balance-and-refunds-review-and-processing">Review and processing</h4>
+      <p>A withdrawal is a request until broadcast and may be held or rejected for insufficient eligible balance, wrong destination, security, sanctions, fraud, duplicate records, broker reversal, legal requirements or a material system error. The usual target may be displayed as forty-eight hours, but no absolute processing time is guaranteed where review or network conditions intervene.</p>
+      <p>A rejected withdrawal amount returns to Available Earnings unless it is subject to a lawful hold, correction or reversal. A User may submit a withdrawal request immediately when eligible, but TrustForex does not promise instant processing or settlement.</p>
+      <h4 id="terms-plans-access-crypto-payments-balance-and-refunds-cancellation-and-refunds">Cancellation and refunds</h4>
+      <p>Plans are not user-cancellable after activation and routine refunds are not offered after digital access is supplied, subject always to mandatory consumer rights. If TrustForex confirms duplicate collection, non-delivery caused by its own system, a manifest accounting error or another legally required remedy, it may correct, restore, extend, credit or refund through a reasonable method. User error, non-use, changed preference, Telegram account loss or trading outcome does not automatically create a refund right.</p>
+      <h4 id="terms-plans-access-crypto-payments-balance-and-refunds-taxes-and-records">Taxes and records</h4>
+      <p>The User is responsible for taxes arising from purchases, rewards or withdrawals except taxes imposed directly on TrustForex. TrustForex may keep transaction, wallet, invoice, confirmation, balance and correction records for accounting, security, disputes and legal compliance.</p>
+    </section>
+    <section class="group">
+      <h3 id="terms-cashback-and-referral-programme-terms">Cashback and Referral Programme Terms</h3>
+      <h4 id="terms-cashback-and-referral-programme-terms-programme-status">Programme status</h4>
+      <p>Cashback and Referral are optional commercial programmes, not investments, deposits, wages, guaranteed income or rights to future availability. They operate only for eligible Users, markets, brokers, events and periods displayed by TrustForex.</p>
+      <p>Cashback is available to an eligible User without a paid Signal Plan. Every eligible User may use the personal Referral link provided by TrustForex. There is no published invitation limit, but eligibility and anti-abuse controls continue to apply.</p>
+      <h4 id="terms-cashback-and-referral-programme-terms-cashback-eligibility">Cashback eligibility</h4>
+      <p>Cashback may arise only from an eligible account opened or connected through the required TrustForex route and successfully verified with the relevant broker. The account connection may be permanent for programme purposes. Existing accounts, transferred accounts, excluded trades, unconfirmed activity or broker-rejected activity do not qualify unless TrustForex expressly accepts them.</p>
+      <p>Unless the interface or a broker-specific schedule expressly provides otherwise, one eligible account may be connected for each supported broker. A User may connect accounts with multiple supported brokers. Once verified, an account connection cannot ordinarily be deleted, transferred or reassigned except to correct a verified administrative error.</p>
+      <h4 id="terms-cashback-and-referral-programme-terms-cashback-basis">Cashback basis</h4>
+      <p>Cashback is a stated share of eligible rebate or commercial revenue actually recognised by TrustForex from the broker for attributed activity. It is not calculated from User profit or loss and should not be treated as a reason to trade more. The applicable share is determined by the User's eligible Plan status at the entitlement time defined by the current programme schedule.</p>
+      <p>The current share is 10% without a paid Plan, 15% with Silver, 20% with Gold and 30% with Diamond. The User's eligible Plan when TrustForex verifies and posts the Cashback credit determines the rate. An earlier transaction date, internal pending date or later Plan change does not recalculate the confirmed credit.</p>
+      <p>Broker settlement may commonly be reviewed in weekly cycles, but weekly confirmation or credit is not guaranteed.</p>
+      <h4 id="terms-cashback-and-referral-programme-terms-verification">Verification</h4>
+      <p>Broker data, payment and programme checks control eligibility. Only an amount verified and released by TrustForex becomes Available Earnings. Pending broker data and internal estimates are not user balances and need not be displayed.</p>
+      <p>Verification may be automated, manual or combined. Only a verified amount released by TrustForex becomes Available Earnings.</p>
+      <h4 id="terms-cashback-and-referral-programme-terms-referral-attribution">Referral attribution</h4>
+      <p>Referral is one-level and direct. Attribution is created only through the official referral route on the invited person's first valid start. A person who previously started the Service cannot later be attached to another referrer, and an attribution may not be sold, transferred, overwritten or combined.</p>
+      <p>Attribution is intended to continue for the life of that TrustForex account while the programme and the relevant accounts remain active and eligible. Lifetime attribution does not guarantee that the programme, eligible events or rates will continue unchanged forever.</p>
+      <h4 id="terms-cashback-and-referral-programme-terms-referral-events">Referral events</h4>
+      <p>A referrer may earn only on eligible revenue actually recognised by TrustForex from an attributed User, such as the net amount of a qualifying Plan purchase after discounts or an eligible Cashback-related commercial receipt. No reward is calculated on a discount, tax, refunded, reversed, fraudulent, duplicated, uncollected or otherwise ineligible amount.</p>
+      <p>Only the inviter receives the Referral reward. The invited User receives no separate Referral benefit unless a specific promotion expressly states otherwise. Amounts funded from existing Available Earnings or Subscription Credit are excluded from eligible net new external value unless the current programme schedule expressly states otherwise.</p>
+      <h4 id="terms-cashback-and-referral-programme-terms-rate-and-no-deduction">Rate and no deduction</h4>
+      <p>The current rate shown in the Service is determined by the referrer's eligible Plan at the entitlement time. A Referral reward is funded separately and does not reduce the invited User's purchase, Cashback or Balance unless a specific lawful promotion expressly states otherwise.</p>
+      <p>The current inviter rate is 10% without a paid Plan, 15% with Silver, 20% with Gold and 30% with Diamond. The inviter's eligible Plan when the Referral credit is posted determines the rate. A later upgrade, downgrade or expiry does not recalculate an already confirmed reward.</p>
+      <h4 id="terms-cashback-and-referral-programme-terms-no-multi-level-right">No multi level right</h4>
+      <p>No reward is payable for referrals made by the invited User or for a downstream network. Referral does not create employment, agency, franchise, partnership, investment or authority to represent TrustForex.</p>
+      <h4 id="terms-cashback-and-referral-programme-terms-prohibited-referral-conduct">Prohibited referral conduct</h4>
+      <p>Self-referral, duplicate identities, coordinated accounts, misleading claims, spam, impersonation, unauthorised financial promotion, bidding on protected brand terms, promised returns, false discounts, incentive abuse and sanctions circumvention are prohibited. TrustForex may reverse only affected ineligible rewards and restrict participation after a documented review.</p>
+      <p>A User who promotes a Referral link or compensated TrustForex or broker relationship must make a clear, accurate and appropriately prominent disclosure of that financial relationship with the relevant communication and must not present themselves as an authorised representative or licensed adviser.</p>
+      <h4 id="terms-cashback-and-referral-programme-terms-corrections">Corrections</h4>
+      <p>A reward may be corrected, withheld or recovered where the underlying broker receipt, purchase or event is reversed, duplicated, erroneous, fraudulent, disputed or ineligible. A completed withdrawal is subject to blockchain finality and any lawful recovery right; unrelated confirmed amounts are not confiscated as a penalty.</p>
+      <h4 id="terms-cashback-and-referral-programme-terms-programme-changes">Programme changes</h4>
+      <p>TrustForex may prospectively change, pause or close a programme, broker, eligibility rule or future rate for legitimate legal, sanctions, platform, security, counterparty, technical or commercial reasons. No User has a right to future programme availability or an unchanged future rate. Confirmed accrued Earnings remain subject to the Payments Policy.</p>
+    </section>
+    <section class="group">
+      <h3 id="terms-broker-sponsorship-and-conflict-disclosure">Broker Sponsorship and Conflict Disclosure</h3>
+      <h4 id="terms-broker-sponsorship-and-conflict-disclosure-commercial-relationships">Commercial relationships</h4>
+      <p>TrustForex may receive commissions, rebates, sponsorship fees, campaign funding, content support or other commercial value from a broker or related partner when Users register, fund, trade, maintain an account or participate in a campaign. The structure may vary by written partner agreement.</p>
+      <h4 id="terms-broker-sponsorship-and-conflict-disclosure-conflict-of-interest">Conflict of interest</h4>
+      <p>This compensation creates a conflict because TrustForex may benefit from a User choosing or using a broker or generating eligible activity. Users should consider that conflict and independently assess a broker. TrustForex must not describe compensated placement as wholly independent or unbiased.</p>
+      <p>At the point of a broker link, profile or call to action, TrustForex may state that it can be paid when a User registers, funds or trades through the link and that compensation may increase with eligible activity. Sponsored or paid placement must be identified as such.</p>
+      <h4 id="terms-broker-sponsorship-and-conflict-disclosure-no-broker-guarantee">No broker guarantee</h4>
+      <p>A listing, logo, review, rating, link, Cashback offer or sponsorship does not guarantee a broker's licence, solvency, execution, pricing, cybersecurity, withdrawals, complaint handling or continued availability. The User contracts directly with the broker under the broker's terms.</p>
+      <h4 id="terms-broker-sponsorship-and-conflict-disclosure-broker-information">Broker information</h4>
+      <p>Broker information is based on sources considered reliable at the stated review time, including the broker's own published material and available regulator information. It may become outdated and is not a substitute for the User's review of the current legal entity, regulator, account terms and country availability.</p>
+      <h4 id="terms-broker-sponsorship-and-conflict-disclosure-no-execution-role">No execution role</h4>
+      <p>TrustForex does not accept the User's brokerage deposit, hold brokerage assets, execute a trade, determine leverage or resolve broker withdrawals. It may verify limited account or activity information for a programme but does not thereby become the broker, custodian or account manager.</p>
+      <h4 id="terms-broker-sponsorship-and-conflict-disclosure-sponsored-access">Sponsored access</h4>
+      <p>A broker may fund a discount, Plan access, campaign benefit or other ordinary TrustForex feature for eligible Users under a separate agreement. Sponsored access does not add a new trading promise. It may limit the broker options shown to the sponsored cohort and lasts only for the period or condition displayed in the Service or partner schedule.</p>
+      <p>Where a sponsored cohort is shown only one broker, the interface must disclose that other broker options are hidden because of the sponsorship arrangement.</p>
+      <h4 id="terms-broker-sponsorship-and-conflict-disclosure-data-exchange">Data exchange</h4>
+      <p>TrustForex and the relevant broker or sponsor may exchange only information reasonably necessary to verify attribution, account connection, eligible activity, funded or active status, benefits, fraud, support and agreed reporting. Each party remains responsible for its own data role and must not receive trading passwords, seed phrases or private keys.</p>
+      <h4 id="terms-broker-sponsorship-and-conflict-disclosure-marketing-and-representation">Marketing and representation</h4>
+      <p>A broker, sponsor, affiliate or referrer may not make promises, guarantees or regulated claims on behalf of TrustForex unless specifically authorised in writing and lawful in the target market. TrustForex may require correction or removal of misleading use of its name, content, results or relationship.</p>
+      <h4 id="terms-broker-sponsorship-and-conflict-disclosure-market-restrictions">Market restrictions</h4>
+      <p>A broker agreement or sponsorship does not override the Restricted Jurisdictions Policy or create a right to distribute TrustForex in a market where the complete Service is not made available under the current Eligibility Schedule. Each partner is responsible for permissions applicable to its own activity and audience.</p>
+      <h4 id="terms-broker-sponsorship-and-conflict-disclosure-ending-a-relationship">Ending a relationship</h4>
+      <p>TrustForex may remove, replace or suspend a broker or sponsorship prospectively when the agreement ends or for legal, regulatory, security, performance, complaint or commercial reasons. The treatment of confirmed accrued benefits and active sponsored access follows the applicable schedule and mandatory law.</p>
+    </section>
+    <section class="group">
+      <h3 id="terms-support-complaints-and-resolution-policy">Support Complaints and Resolution Policy</h3>
+      <h4 id="terms-support-complaints-and-resolution-policy-official-route">Official route</h4>
+      <p>Support requests may be submitted through the in-app support function. Privacy, legal and payment-rights requests must also have a durable web route identified on the Operator Information page so loss of Telegram access does not make the request impossible.</p>
+      <h4 id="terms-support-complaints-and-resolution-policy-required-information">Required information</h4>
+      <p>A request should include the internal User ID, relevant order, transaction, withdrawal, broker or programme reference, a clear description and the requested outcome. TrustForex may request proportionate evidence needed to identify the record and prevent unauthorised disclosure or payment.</p>
+      <h4 id="terms-support-complaints-and-resolution-policy-no-sensitive-credentials">No sensitive credentials</h4>
+      <p>Users must not send Telegram passwords, one-time codes, trading-account passwords, wallet seed phrases or private keys. TrustForex may close or redact a message containing unnecessary sensitive credentials and ask the User to secure the affected account.</p>
+      <h4 id="terms-support-complaints-and-resolution-policy-triage">Triage</h4>
+      <p>Security compromise, unauthorised account access, duplicate payment, failed delivery, blocked withdrawal and privacy incidents receive priority over general questions. TrustForex may combine duplicate requests and separate unrelated issues into distinct cases.</p>
+      <h4 id="terms-support-complaints-and-resolution-policy-review">Review</h4>
+      <p>TrustForex reviews the applicable document version, system and blockchain records, broker confirmation, communications and any evidence supplied. A target response time may be displayed but is an operational target rather than a waiver of investigation, network delay or mandatory legal deadlines.</p>
+      <h4 id="terms-support-complaints-and-resolution-policy-possible-outcomes">Possible outcomes</h4>
+      <p>An outcome may include explanation, correction, restoration of access, Plan extension, Subscription Credit, release or correction of Earnings, rejection with a reason category, refund where required, or escalation for legal, security, sanctions or broker review.</p>
+      <h4 id="terms-support-complaints-and-resolution-policy-escalation-and-rights">Escalation and rights</h4>
+      <p>A User may request one internal reconsideration by identifying the disputed finding and new evidence. Using Support does not waive a mandatory right to approach a competent regulator, consumer body, data authority or court and does not shorten a statutory deadline.</p>
+      <h4 id="terms-support-complaints-and-resolution-policy-abuse">Abuse</h4>
+      <p>Threats, harassment, spam, impersonation, fabricated evidence, repeated abusive requests and attempts to obtain another person's data or value are prohibited. TrustForex may limit abusive contact while preserving a lawful route for genuine complaints and rights requests.</p>
+    </section>
+    <section class="group">
+      <h3 id="terms-one-time-acceptance">One Time Acceptance</h3>
+      <p>I confirm that I am at least 18, am not located in or ordinarily resident in a Restricted Jurisdiction, and accept the Terms of Service, acknowledge the Risk Disclosure and confirm receipt of the Privacy Policy. I understand that trading is high risk, results are not guaranteed, and TrustForex does not provide personal financial advice.</p>
+    </section>
+  </article>
+
+    <article class="doc" data-doc="risk">
+    <h2>Risk Disclosure</h2>
+    <p class="doc-lede">Trading risk, no-personal-advice terms and the complete rules used to measure signals, Results and Scalp Levels.</p>
+    <p class="doc-meta">Version 4.0 · Last updated 12 September 2026 · English</p>
+    <section class="group">
+      <h3 id="risk-trading-risk-and-no-personal-advice-disclosure">Trading Risk and No Personal Advice Disclosure</h3>
+      <h4 id="risk-trading-risk-and-no-personal-advice-disclosure-high-risk-activity">High risk activity</h4>
+      <p>Forex, gold and leveraged derivatives are speculative and high-risk. The User may lose all deposited trading capital and, depending on the instrument, broker and protections, may lose more. No person should trade funds they cannot afford to lose.</p>
+      <h4 id="risk-trading-risk-and-no-personal-advice-disclosure-standardised-content">Standardised content</h4>
+      <p>TrustForex provides standardised, non-personalised market observations, alerts, signals, levels and tools to a general audience. It does not assess the User's income, wealth, objectives, experience, open positions, leverage, jurisdiction or capacity for loss and does not determine suitability.</p>
+      <p>TrustForex Support and private messages do not provide personalised instructions about position size, leverage, holding, closing or managing a User's trade.</p>
+      <h4 id="risk-trading-risk-and-no-personal-advice-disclosure-no-account-control">No account control</h4>
+      <p>TrustForex does not open, operate, access or manage the User's trading account, choose position size, place, amend or close orders, accept trading deposits, hold trading capital or private keys, or provide copy trading or discretionary management.</p>
+      <p>TrustForex does not log into, control or operate a trading account. It may receive limited account and activity data from a broker solely for attribution, Cashback, sponsorship, fraud prevention and support as described in the Privacy Policy and Broker Disclosure.</p>
+      <h4 id="risk-trading-risk-and-no-personal-advice-disclosure-regulatory-character">Regulatory character</h4>
+      <p>Calling content educational, informational or an opinion does not override a law that classifies the actual activity as advice, a recommendation, a signal service, a financial promotion, arranging or another regulated activity. TrustForex restricts markets where the required authorisation or lawful basis has not been confirmed.</p>
+      <h4 id="risk-trading-risk-and-no-personal-advice-disclosure-independent-decision">Independent decision</h4>
+      <p>The User alone decides whether, when and how to trade and remains responsible for broker selection, position size, leverage, order type, monitoring, exits, taxes and compliance. A signal does not remove discretion or create a fiduciary, agency or personal advisory relationship.</p>
+      <h4 id="risk-trading-risk-and-no-personal-advice-disclosure-execution-differences">Execution differences</h4>
+      <p>Broker prices, bid and ask, spread, commission, swap, slippage, latency, gaps, liquidity, order rules, account type, platform and connection may produce outcomes different from TrustForex measurements. A displayed touch does not prove that every User could enter or exit at that price.</p>
+      <h4 id="risk-trading-risk-and-no-personal-advice-disclosure-performance-limits">Performance limits</h4>
+      <p>Published Results are rule-based model outcomes, not audited returns from a live managed account. They do not include User position size and may not reflect every cost or execution condition. Past, historical, backtested, hypothetical or simulated information does not predict future results.</p>
+      <p>Target percentages are model outcome frequencies, not return on investment, account profit or loss, or User returns. A signal is counted once in each applicable target series and is not presented as four independent trades or as stacked profit. Results are not net returns and may exclude spread, commission, swap, slippage, latency, tax and other User-specific costs.</p>
+      <h4 id="risk-trading-risk-and-no-personal-advice-disclosure-no-guarantee">No guarantee</h4>
+      <p>Signal frequency, timeliness, target rate, reaction, accuracy, profit, availability and any broker or reward outcome are not guaranteed. There may be long periods without a signal and a User result may materially underperform a published model result.</p>
+      <p>Cashback, Referral rewards, broker rebates, sponsored access and discounts must not be treated as a reason to open, increase, prolong or repeat a trade. Trading costs and losses may substantially exceed any reward. A User should never trade merely to qualify for Cashback or another benefit.</p>
+      <h4 id="risk-trading-risk-and-no-personal-advice-disclosure-counterparty-and-technology">Counterparty and technology</h4>
+      <p>Brokers, Telegram, wallets, blockchain networks, stablecoin issuers, market-data feeds, internet and hosting may fail, delay, freeze, depeg, reject or lose availability. TrustForex cannot close a User trade during an outage, so Users must not depend on the Service for emergency position protection.</p>
+      <p>Crypto payments and withdrawals involve separate risks, including irreversible transfers, wrong-address or wrong-network loss, blockchain congestion, confirmation delay, wallet failure, network fees, asset volatility, stablecoin de-pegging, issuer restrictions, freezes and network forks. A nominal USD reference does not guarantee redemption at one US dollar, and TrustForex cannot reverse a completed blockchain transaction.</p>
+      <h4 id="risk-trading-risk-and-no-personal-advice-disclosure-professional-advice">Professional advice</h4>
+      <p>Where needed, the User should obtain independent advice from appropriately licensed financial, legal and tax professionals. A User who does not understand the product, leverage, loss exposure or this Disclosure should not use the trading content.</p>
+    </section>
+    <section class="group">
+      <h3 id="risk-signal-results-and-scalp-methodology">Signal Results and Scalp Methodology</h3>
+      <h4 id="risk-signal-results-and-scalp-methodology-official-record">Official record</h4>
+      <p>Only content published through a designated Official Channel with a verifiable publication time and required fields is an official TrustForex record. Drafts, private comments, marketing examples and pre-entry alerts are not active signals.</p>
+      <h4 id="risk-signal-results-and-scalp-methodology-pre-entry-alert">Pre entry alert</h4>
+      <p>A pre-entry alert identifies an area to watch. Reaching the alert does not activate a trade. TrustForex reassesses its own conditions and may publish an active signal or publish nothing.</p>
+      <h4 id="risk-signal-results-and-scalp-methodology-active-signal">Active signal</h4>
+      <p>A signal becomes active only when the official message publishes the instrument, side, entry, original Stop Loss and applicable targets. The original values remain fixed for public measurement even if a User independently manages a live trade differently.</p>
+      <h4 id="risk-signal-results-and-scalp-methodology-target-by-target-measurement">Target by target measurement</h4>
+      <p>Each published target is measured separately against the original Stop Loss under chronological first-touch rules. A higher target implies lower targets already crossed; a target not actually reached does not count. A later return through Entry does not erase a reached target or create an assumed break-even, trailing-stop or risk-free result.</p>
+      <h4 id="risk-signal-results-and-scalp-methodology-market-closure-and-ambiguity">Market closure and ambiguity</h4>
+      <p>Market closure alone does not resolve an open official record; measurement resumes when the official feed resumes. If the available data cannot prove whether a target or Stop Loss occurred first, TrustForex applies the published conservative ambiguity rule and may later correct the result only through the correction record.</p>
+      <h4 id="risk-signal-results-and-scalp-methodology-data-conventions">Data conventions</h4>
+      <p>The Results interface or a versioned Methodology Schedule identifies the official data source, price convention, timezone, pip convention, precision, market-hours rule and treatment of gaps or missing data. Those technical facts may be updated prospectively without rewriting the master Terms.</p>
+      <p>The live Methodology Schedule must state whether a signal requires an eligible Entry touch or is treated as active at publication, and must identify how expiry, same-timestamp ambiguity and a correction before activation are treated. These rules must be fixed before the affected outcome is known.</p>
+      <h4 id="risk-signal-results-and-scalp-methodology-reporting">Reporting</h4>
+      <p>Results are grouped by the published reporting period and displayed by target. Open, unresolved, cancelled, no-signal and corrected records must not be silently converted into successful outcomes. The applicable numerator, denominator and Methodology version must remain available with the result.</p>
+      <p>The live Results display must identify the reporting period, sample size, Methodology version and the counts of issued, active, resolved, open, expired or untriggered, no-signal, cancelled and corrected records where applicable. No-signal periods are not trades.</p>
+      <h4 id="risk-signal-results-and-scalp-methodology-scalp-levels">Scalp Levels</h4>
+      <p>Scalp Levels are a separate intraday observation tool, not an active signal or complete trading instruction. Each level is assessed on its first eligible touch during the stated validity window. Bounce and Breach describe measured price behaviour under the current Methodology Schedule and are not promised profits, targets or maximum losses.</p>
+      <p>The live Methodology Schedule must define the first eligible touch, validity window, reference price, direction, measurement origin, tolerance, Bounce window, Breach measurement and same-timestamp ambiguity before statistics are published. Scalp Levels do not prove that a User could execute at the measured prices.</p>
+      <h4 id="risk-signal-results-and-scalp-methodology-integrity-and-corrections">Integrity and corrections</h4>
+      <p>Official records must retain the original source observation, rule version and calculation result. A correction must state the reason, evidence, time and responsible reviewer, preserve the previous value and remain visible in an audit trail. TrustForex may correct an error but may not selectively remove weak outcomes to improve presentation.</p>
+      <p>Official messages and their publication times must remain linked to the outcome record. An edit or deletion must not silently change the original measurement basis; any material correction must be identified through the correction record.</p>
+      <h4 id="risk-signal-results-and-scalp-methodology-methodology-changes">Methodology changes</h4>
+      <p>A new Methodology applies prospectively from its stated effective time. Historical data is not silently recalculated under a new rule. If a comparison or restatement is published, the old and new basis and the effect of the change must be identifiable.</p>
+    </section>
+  </article>
+
+    <article class="doc" data-doc="privacy">
+    <h2>Privacy Policy</h2>
+    <p class="doc-lede">How TrustForex collects, uses, shares, protects, retains and transfers personal data across the website and Telegram interfaces.</p>
+    <p class="doc-meta">Version 4.0 · Last updated 12 September 2026 · English</p>
+    <section class="group">
+      <h3 id="privacy-privacy-data-rights-and-security-notice">Privacy Data Rights and Security Notice</h3>
+      <h4 id="privacy-privacy-data-rights-and-security-notice-controller-and-scope">Controller and scope</h4>
+      <p>The current Operator identified on the Legal Notice page is responsible for TrustForex processing unless a specific notice identifies another controller. This Notice covers the website, Telegram interfaces, channels, subscriptions, payments, Balance, broker programmes, support, security and related records.</p>
+      <h4 id="privacy-privacy-data-rights-and-security-notice-data-categories">Data categories</h4>
+      <p>TrustForex may process Telegram identifiers and profile data made available by the platform, internal User IDs, acceptance and account records, Plan and access status, invoices and blockchain transaction data, wallet destinations, Balance and reward records, broker identifiers and programme status, support communications, device or network information, security events and website or app usage data.</p>
+      <p>When a User opens a Telegram Mini App, TrustForex may receive the Internet Protocol address used to connect to its web service and Telegram-provided data such as the numeric Telegram User ID, public profile fields, username where available, language, interface theme, Premium status and relevant launch or chat context. TrustForex stores only the fields reasonably necessary for the stated purposes.</p>
+      <p>An internal numeric User ID is a pseudonymous identifier, not anonymous data, where TrustForex can reconnect it to a Telegram account, broker record, wallet, transaction or other User record.</p>
+      <p>Data categories may also include device and browser information, security logs, the exact legal acceptance text, document version and acceptance time, Plan and channel-access status, support messages and evidence, and Cookie or communications preference records.</p>
+      <p>This may include invoice identifiers, asset and network selections, blockchain addresses, transaction hashes and timestamps, confirmation and attribution records, Balance entries, Subscription Credit, Cashback and Referral records, withdrawal destinations and request status.</p>
+      <p>For broker programmes, this may include the selected broker, registration email or broker customer identifier, internal pseudonymous User identifier, account-connection and eligibility status, qualifying activity, broker-confirmed rebate information, programme benefits and related support or fraud records.</p>
+      <h4 id="privacy-privacy-data-rights-and-security-notice-sources">Sources</h4>
+      <p>Data may come from the User, Telegram, public blockchains, connected brokers or sponsors, technical providers and security or fraud checks. Public blockchain records exist independently and normally cannot be altered or erased by TrustForex.</p>
+      <h4 id="privacy-privacy-data-rights-and-security-notice-purposes">Purposes</h4>
+      <p>Data is used to authenticate and secure access, record acceptance, perform the contract, administer Plans, payments, Balance, rewards and broker relationships, reconcile transactions, provide support, prevent abuse, enforce eligibility, measure and improve the Service, resolve disputes, maintain evidence, comply with law and complete a genuine corporate transfer.</p>
+      <h4 id="privacy-privacy-data-rights-and-security-notice-legal-grounds">Legal grounds</h4>
+      <p>Depending on the activity and applicable law, processing relies on contract performance, steps requested before contract, legitimate interests in security and operation, compliance with legal obligations or specific consent. Acceptance of Terms is not treated as consent where law requires a separate freely given choice.</p>
+      <p>Contract performance generally supports account, Plan, access, payment, Balance, Earnings and withdrawal processing; requested pre-contract steps support invoice and Plan selection; legitimate interests may support proportionate security, fraud prevention, system integrity, support and reconciliation; legal obligations may support tax, accounting, sanctions and lawful requests; and separate consent supports optional analytics, advertising or promotional messaging where required. Acceptance of the Terms is not blanket consent for every processing purpose.</p>
+      <h4 id="privacy-privacy-data-rights-and-security-notice-sharing">Sharing</h4>
+      <p>Data may be shared only as reasonably necessary with hosting, database, security, analytics, payment and technical providers, Telegram, the relevant broker or sponsor, professional advisers, lawful authorities and a genuine business successor. TrustForex does not sell personal data as an independent data product.</p>
+      <p>Telegram acts as an independent platform. Hosting, database, security and technical vendors may act as processors, while a broker, sponsor, blockchain infrastructure provider, professional adviser, authority or business successor may have an independent or other legally defined role depending on the actual arrangement.</p>
+      <p>TrustForex and the relevant broker or sponsor may exchange only information reasonably necessary for attribution, account connection, eligibility, benefit calculation, fraud prevention, support and agreed reporting. Trading passwords, one-time codes, seed phrases and private keys must never be requested or shared.</p>
+      <p>A referrer does not receive the invited User's purchase details, wallet address, broker account details or other unnecessary identity information. The referrer may see only the attribution, qualifying event and reward information necessary for the referrer's own programme record.</p>
+      <p>TrustForex does not sell personal data as a separate product or use trading, broker, wallet or reward data for unrelated behavioural advertising under the current Service model.</p>
+      <h4 id="privacy-privacy-data-rights-and-security-notice-international-processing">International processing</h4>
+      <p>The Service and providers may operate in different countries. Where applicable data law treats access or transfer as restricted, TrustForex will use the required lawful mechanism and proportionate safeguard for the actual transfer. This Notice does not conceal or change where processing really occurs.</p>
+      <h4 id="privacy-privacy-data-rights-and-security-notice-retention">Retention</h4>
+      <p>Data is retained only as long as reasonably necessary for service delivery, accounting, security, fraud prevention, legal obligations, tax, disputes, claims, evidence and business continuity, then deleted or anonymised where appropriate. Different categories have different internal retention periods. Deletion may be limited where records must lawfully be preserved.</p>
+      <p>Account and access data is generally retained during the active relationship and for a necessary period afterwards. Transaction and reward records may be retained through applicable accounting, tax, dispute and limitation periods; security logs for a limited period proportionate to risk; support records through resolution and a reasonable claims period; and consent or acceptance records while needed to prove the choice or contract. The internal retention schedule controls the specific periods.</p>
+      <h4 id="privacy-privacy-data-rights-and-security-notice-rights">Rights</h4>
+      <p>Subject to applicable law, a person may request access, correction, deletion, restriction, portability or objection, withdraw revocable consent and complain to a competent authority. Rights are not absolute and proportionate verification may be required. A durable web request route must remain available even if the Telegram account is inaccessible.</p>
+      <h4 id="privacy-privacy-data-rights-and-security-notice-automated-processing">Automated processing</h4>
+      <p>TrustForex may use automated rules for payment confirmation, account access, programme calculation, security flags and result measurement. Where a decision has a legally significant or similarly substantial effect and applicable law grants a review right, the User may request appropriate human review through Support.</p>
+      <p>Automated rules may also match transaction amounts, identify duplicate records and restrict a high-risk action. A review request does not require TrustForex to complete an action while a lawful security, sanctions, fraud or legal hold remains necessary.</p>
+      <h4 id="privacy-privacy-data-rights-and-security-notice-security">Security</h4>
+      <p>TrustForex uses proportionate organisational and technical safeguards, including access limitation, credential protection, logging, backup and incident response appropriate to its risk. No system is perfectly secure. Users must protect their accounts and must never send passwords, trading credentials, one-time codes, seed phrases or private keys.</p>
+      <p>TrustForex records and investigates material security incidents and, where applicable law requires it, notifies the competent authority and affected persons within the required period.</p>
+      <h4 id="privacy-privacy-data-rights-and-security-notice-children">Children</h4>
+      <p>The Service is not directed to persons under eighteen and TrustForex does not knowingly provide it to them. If a contrary fact is discovered, access and associated data may be restricted, preserved where legally necessary and otherwise deleted as appropriate.</p>
+      <h4 id="privacy-privacy-data-rights-and-security-notice-business-transfer">Business transfer</h4>
+      <p>If the Operator changes through incorporation, restructuring, financing or a genuine business transfer, relevant data and responsibilities may pass to the lawful successor for compatible purposes. Notice and any required safeguard or consent will be provided where applicable law requires it.</p>
+      <h4 id="privacy-privacy-data-rights-and-security-notice-updates-and-contact">Updates and contact</h4>
+      <p>The version and effective date of this Notice are published. Material changes are communicated by an appropriate route before effect where required. Privacy requests may be submitted through the official in-app Support and the durable web route stated on the Operator Information page.</p>
+    </section>
+    <section class="group">
+      <h3 id="privacy-service-and-marketing-communications">Service and Marketing Communications</h3>
+      <h4 id="privacy-service-and-marketing-communications-service-messages">Service messages</h4>
+      <p>TrustForex may send messages necessary for access, security, payments, withdrawals, support, policy changes and programme administration while the account or relevant request remains active. These are operational messages and may not always be optional.</p>
+      <h4 id="privacy-service-and-marketing-communications-marketing-messages">Marketing messages</h4>
+      <p>Promotional messages are sent only where lawful under the applicable route and audience rules. Where consent or an opt-out is required, TrustForex must provide the required choice. A User's receipt of operational messages is not permission for unrelated marketing.</p>
+      <h4 id="privacy-service-and-marketing-communications-telegram-communications">Telegram communications</h4>
+      <p>Telegram remains an independent platform and may process messages, identifiers and device data under its own terms. TrustForex cannot guarantee Telegram delivery, retention or availability and must maintain independent records required for the Service.</p>
+    </section>
+  </article>
+
+    <article class="doc" data-doc="cookies">
+    <h2>Cookie Settings</h2>
+    <p class="doc-lede">How cookies and similar technologies are used, and how optional analytics and marketing choices can be controlled.</p>
+    <p class="doc-meta">Version 4.0 · Last updated 12 September 2026 · English</p>
+    <section class="group">
+      <h3 id="cookies-cookies-analytics-and-communications-notice">Cookies Analytics and Communications Notice</h3>
+      <h4 id="cookies-cookies-analytics-and-communications-notice-technologies-covered">Technologies covered</h4>
+      <p>This Notice covers cookies, local storage, SDKs, pixels, server logs, device identifiers and similar technologies used on the TrustForex website or interfaces. Actual technologies in use must be recorded in the internal technology register.</p>
+      <h4 id="cookies-cookies-analytics-and-communications-notice-essential-operation">Essential operation</h4>
+      <p>Strictly necessary technologies may be used for authentication, security, fraud prevention, session continuity, language, user choices and core service delivery where permitted without optional consent. They cannot be disabled through a consent tool if the Service cannot securely function without them.</p>
+      <h4 id="cookies-cookies-analytics-and-communications-notice-optional-analytics-and-advertising">Optional analytics and advertising</h4>
+      <p>Non-essential analytics, advertising or cross-service tracking will not be activated where applicable law requires consent until the User makes a clear choice. The Terms acceptance checkbox is not used as consent for optional technologies.</p>
+      <h4 id="cookies-cookies-analytics-and-communications-notice-information-shown">Information shown</h4>
+      <p>The live preference interface identifies the current category, purpose, provider and duration or persistence of non-essential technologies in a practical form. TrustForex may update vendors or tools prospectively and will refresh consent where the change legally requires it.</p>
+      <h4 id="cookies-cookies-analytics-and-communications-notice-control">Control</h4>
+      <p>Where legally required, Users can accept, reject or later change non-essential choices without losing core access. Browser or device settings may also affect technologies, but rejecting optional tracking must be as easy as accepting it.</p>
+    </section>
+  </article>
+    </div>
+  </section>
+
+</div>
+
+<!-- The page ends on the footer, on paper — no closing statement, the way the blog ends.
+     It carries no id="final": base.css gives that id a full screen of height and a blue ground,
+     which is the closing statement every other page has and this one does not. -->
+<section class="footer-only">
+  <footer class="footer fsig">
+    <div class="wrap">
+      <div class="fsig-grid">
+        <div class="fsig-brand">
+          <a class="fsig-mark" href="../home/" aria-label="TrustForex home">
+            <svg class="brand-word" viewBox="0 0 119 26" aria-hidden="true"><use href="#tf-word"/></svg>
+            <svg class="brand-sub" viewBox="0 0 113 11" aria-hidden="true"><use href="#tf-sub"/></svg>
+          </a>
+          <p class="fsig-say">Built on rules. Measured by results.</p>
+        </div>
+        <nav class="fsig-cols" aria-label="Footer">
+          <div><h3>The site</h3><ul><li><a href="../home/">Home</a></li><li><a href="../results/">Results</a></li><li><a href="../cb8/">Cashback</a></li><li><a href="../brokers/">Brokers</a></li><li><a href="../referral/">Referral</a></li><li><a href="../blog/">Blog</a></li></ul></div>
+          <div><h3>Partners</h3><ul><li><a href="../about/">About us</a></li><li><a href="../brokers/">Partner brokers</a></li><li><a href="../partnership/">Broker partnership</a></li><li><a href="../brokers/#cashback">Partner broker rules</a></li></ul></div>
+          <!-- same page: these four are written bare so page.js switches in place instead of reloading -->
+          <div><h3>Legal</h3><ul><li><a href="?document=terms">Terms of service</a></li><li><a href="?document=privacy">Privacy policy</a></li><li><a href="?document=risk">Risk disclosure</a></li><li><a href="?document=cookies">Cookie settings</a></li></ul></div>
+        </nav>
+      </div>
+      <div class="fsig-base">
+        <p class="fsig-legal">© 2026 TrustForex. Trading carries risk. Credits follow each partner broker's own terms.</p>
+        <a class="fsig-chan" href="#" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3 11l5 2 2 6 3-4 5 4 3-15Z"/></svg>Weekly results on Telegram</a>
+        <div class="social">
+          <a href="#" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r=".9"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><path d="M8.2 10.6v6M8.2 7.7v.1M12.2 16.6v-3.5a2.1 2.1 0 0 1 4.2 0v3.5"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="4"/><path d="M10.4 9.6 15.4 12l-5 2.4z" fill="currentColor" stroke="none"/></svg></a>
+        </div>
+      </div>
+    </div>
+    <div class="fsig-sign" aria-hidden="true"><svg viewBox="0 0 119 26"><use href="#tf-word"/></svg></div>
+  </footer>
+</section>
+
+</main>
+<script src="page.js?v=21a0ed00"></script>
+</body>
+</html>
