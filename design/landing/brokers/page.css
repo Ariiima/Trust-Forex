@@ -1,0 +1,220 @@
+/* TrustForex Partner Brokers — page rules over the Cashback system (../cb8/style.css → base.css → ../shared/scale.css).
+   No wireframe: the structure is the founder's Broker Profile skeleton (Broker Profile.html, 2026-09-12) kept as drawn —
+   the picker, the eight-row overview, five licences, two account cards, the market table, the two rate tables and their
+   notes, the two bonus cards, the four connection steps — and the treatment is cb8's: blue grounds, glass panes and
+   tiles, the travelling light, and the four plans in the tier metals style.css already gives them.
+
+   One thing departs from cb8 on purpose: this is a reference page, not a narrative. Nothing pins and nothing stacks —
+   a licence table that holds the viewport for 30vh is a page you cannot read — so every record section flows at its
+   own height (.data below) while the hero and the final keep the full screen. */
+
+/* ---------- the records flow; only the hero and the final are screens ----------
+   The head clearance is the nav plus the reference strip, in both modes: at 88px (base.css's plain-mode
+   padding) the first heading of a record slid under the strip on a phone. */
+.records .screen.data{min-height:auto;padding:calc(var(--nav-h) + 56px) 0 var(--section-space);justify-content:flex-start}
+/* the light crosses a blue record as it crosses a paper one: cb8 names --ground on .screen-paper and drives the
+   glass streaks from the stack's --m1…--m4, which this page has no stack to provide. Each blue record names its own. */
+#overview,#accounts,#cashback{view-timeline-name:--ground}
+.glass .panel::after,.glass .tile::after,.glass .rayfield.k i{animation-timeline:--ground}
+/* the ground is a positioned layer (z-index 0), so a non-positioned child of the block paints UNDER it —
+   base.css lifts .mech-grid and .grid2 for exactly this reason, and these records put their heading and
+   their panes in the block directly. Lift everything that is not the ground. */
+.block > :not(.rayfield){position:relative;z-index:1}
+
+/* ---------- 1 · the picker: the broker's name is the statement, the three cards are the control ---------- */
+.on-dark .label{color:rgba(255,255,255,.6);margin-bottom:16px}
+#hero .display{margin-bottom:18px}
+#hero .lede{max-width:640px;margin-bottom:32px}
+.broker-stage{position:relative;width:100%;height:196px;display:flex;align-items:center;justify-content:center}
+/* the mechanics' tile, written out: the hero is a field, not a .glass block, so it cannot inherit style.css's recipe */
+.broker-card{position:absolute;width:min(420px,72vw);min-height:168px;padding:22px 26px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;color:#fff;
+  --tint:rgba(var(--rgb-900),.34);--tint2:rgba(var(--rgb-abyss),.34);--rim:rgba(160,196,255,.5);
+  border:1px solid var(--rim);border-radius:22px;background:linear-gradient(150deg,var(--tint),var(--tint2));
+  backdrop-filter:blur(12px) saturate(140%);-webkit-backdrop-filter:blur(12px) saturate(140%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 -1px 0 rgba(var(--rgb-shadow),.22),0 22px 44px -24px rgba(var(--rgb-shadow),.8);
+  transition:transform .42s var(--ease),opacity .32s var(--ease),border-color .32s var(--ease);
+  transform:scale(.72);opacity:0;pointer-events:none}
+.broker-card.is-active{z-index:4;transform:none;opacity:1;pointer-events:auto;border-color:rgba(255,255,255,.72);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.5),inset 0 1px 0 rgba(255,255,255,.5),0 0 0 4px rgba(255,255,255,.1),0 26px 50px -24px rgba(var(--rgb-shadow),.8)}
+/* the neighbours stand back rather than grey out: grayscale on glass reads as a dead pane, not as a card behind */
+.broker-card.is-prev{z-index:2;transform:translateX(-64%) scale(.8);opacity:.44;pointer-events:auto}
+.broker-card.is-next{z-index:2;transform:translateX(64%) scale(.8);opacity:.44;pointer-events:auto}
+.broker-card.is-far{z-index:1;transform:scale(.74);opacity:0}
+.broker-card:is(.is-prev,.is-next):hover{opacity:.72}
+.broker-logo{width:58px;height:58px;padding:7px;border-radius:16px;background:#fff;object-fit:contain;
+  box-shadow:0 8px 20px -4px var(--glow,rgba(10,27,97,.4))}
+.broker-card-name{font-size:var(--text-card-title);line-height:var(--leading-card);font-weight:var(--weight-strong);letter-spacing:var(--tracking-card)}
+.broker-card-note{font:var(--weight-body) var(--text-label)/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.carousel-arrow{position:absolute;top:50%;z-index:8;width:44px;height:44px;display:grid;place-items:center;border-radius:50%;color:#fff;
+  border:1px solid rgba(255,255,255,.38);background:rgba(255,255,255,.12);
+  backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);
+  transform:translateY(-50%);transition:background-color .3s var(--ease),border-color .3s var(--ease)}
+.carousel-arrow:hover{background:rgba(255,255,255,.26);border-color:rgba(255,255,255,.6)}
+.carousel-arrow svg{width:16px;height:16px}
+.carousel-arrow.prev{left:0}
+.carousel-arrow.next{right:0}
+.broker-dots{display:flex;justify-content:center;gap:8px;margin-top:22px}
+.broker-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);transition:width .3s var(--ease),background-color .3s var(--ease)}
+.broker-dot[aria-current=true]{width:24px;border-radius:999px;background:#fff}
+/* ---------- the hero arrives once ----------
+   Everything in the hero rides the reveal (.rv, base.css) except the statement, which is plain text until
+   main.js splits it into words — so it painted immediately, in the fallback face, and then again split,
+   sized and revealed. Held until its screen is in, it is drawn once, by the reveal that was designed for it.
+   visibility, not opacity, so it keeps its box and never fights the swap fade below; the 2s keyframe is the
+   safety net for a visitor whose JS never arrives. */
+/* the strip is pinned to the hero's bottom edge, so it fades in where it stands: .rv's 18px rise would
+   push it past that edge and the screen would report itself as clipping (main.js's ?check=1 caught it) */
+#hero .fact-strip.rv{transform:none}
+html.js #hero .display{visibility:hidden;animation:boot-show 0s linear 2s forwards}
+html.js #hero.in .display{visibility:visible;animation:none}
+@keyframes boot-show{to{visibility:visible}}
+
+/* ---------- changing broker is one move, not three ----------
+   The rail slides on the click (.42s above). The words those cards name go down fast and come back slowly:
+   out is a straight fade in --swap-out, in is --swap-in, nearly three times as long, with a 7px rise, so
+   the new text settles instead of blinking on. The line follows the statement, and the strip refills column
+   by column. page.js reads --swap-out and waits exactly that long before it writes, as main.js reads the
+   FAQ's --faq-ms — one number, so the wait and the fade can never drift apart.
+   The strip only takes part when its four facts actually change (.facts-change, set by page.js): two
+   brokers that share the strip have nothing to show, and fading identical words is a flicker for nothing. */
+#hero{--swap-out:150;--swap-in:420}
+#hero :is(.display,.lede),.facts li{
+  transition:opacity calc(var(--swap-in) * 1ms) var(--ease),transform calc(var(--swap-in) * 1ms) var(--ease);
+  transition-delay:calc(var(--d,0) * 70ms)}
+#hero .lede{--d:1}
+.facts li{transition-delay:calc(var(--i,0) * 55ms)}
+#hero.is-swapping :is(.display,.lede),#hero.is-swapping.facts-change .facts li{
+  opacity:0;transform:translateY(7px);
+  transition-duration:calc(var(--swap-out) * 1ms);transition-delay:0s}
+html.reduce .broker-card,html.reduce .broker-dot{transition:none}
+html.reduce #hero :is(.display,.lede),html.reduce .facts li{transition:none;transform:none}
+
+/* ---------- the reference strip: six anchors, sticky under the nav, the nav's own paper glass ----------
+   It sticks inside .records, so the final screen is never covered by a white bar. */
+.records{position:relative}
+.section-strip{position:sticky;top:var(--nav-h);z-index:44;
+  background:rgba(255,255,255,.72);border-bottom:1px solid rgba(var(--rgb-shadow),.08);
+  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px)}
+.strip-inner{min-height:48px;display:flex;align-items:center;justify-content:center;gap:6px;overflow-x:auto;scrollbar-width:none}
+.strip-inner::-webkit-scrollbar{display:none}
+.section-strip a{flex:0 0 auto;padding:7px 13px;border-radius:999px;font:var(--weight-label) var(--text-meta)/1 var(--sans);color:var(--body);
+  transition:background-color .25s var(--ease),color .25s var(--ease)}
+.section-strip a:hover{color:var(--navy);background:rgba(var(--rgb-900),.07)}
+.section-strip a[aria-current=true]{color:#fff;background:var(--navy)}
+html.reduce .section-strip a{transition:none}
+
+/* ---------- every record opens the same way: number, heading, one line ---------- */
+.data-head{max-width:700px;margin-bottom:var(--block-space)}
+.data-head.centred{max-width:780px;margin-inline:auto;text-align:center}
+.data-head .copy{max-width:640px}
+.data-head.centred .copy{margin-inline:auto}
+.data-head .h2{max-width:none}
+.data-note{margin:18px 0 0;font:var(--weight-body) var(--text-label)/var(--leading-ui) var(--sans);color:var(--muted)}
+
+/* ---------- 2 · the overview: eight rows on one sheet of glass, two across as the skeleton has them ---------- */
+.key-panel{display:grid;grid-template-columns:1fr 1fr;gap:.625rem}
+.key-row{--streak:.12;min-height:60px;padding:14px 18px;display:grid;grid-template-columns:minmax(0,.76fr) minmax(0,1.24fr);gap:16px;align-items:center}
+.key-row span{font-size:var(--text-small);color:rgba(255,255,255,.76)}
+/* a key value is a line of prose, not a dashboard figure: style.css sizes .glass .tile strong at 30px,
+   which wrapped "New accounts through TrustForex only" over three lines. The skeleton's 15px reads in one. */
+.glass .key-row strong{font-size:var(--text-panel-title);font-weight:var(--weight-strong);letter-spacing:-.01em;text-align:right}
+
+/* ---------- 3 · regulation: five licences, each a frosted card on the paper field ---------- */
+.reg-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.reg-card{min-height:190px;padding:20px;display:flex;flex-direction:column;align-items:flex-start;gap:10px;border-radius:20px;
+  background:rgba(255,255,255,.62);border-color:rgba(255,255,255,.95);
+  backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%)}
+.reg-code{font-size:var(--text-card-title);line-height:1;font-weight:var(--weight-heavy);letter-spacing:var(--tracking-card);color:var(--navy)}
+.reg-card p{flex:1;margin:0;font-size:var(--text-small);line-height:1.45;color:var(--muted)}
+.reg-card strong{font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.06em;color:var(--accent)}
+
+/* ---------- 4 · accounts: the two types side by side, both eligible ---------- */
+.accounts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.125rem;align-items:start}
+.account-pane{display:grid;gap:.625rem;align-content:start}
+.account-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 4px 15px;border-bottom:1px solid rgba(255,255,255,.18)}
+.account-head h3{margin:0;font-size:var(--text-card-title);line-height:var(--leading-card);letter-spacing:var(--tracking-card);font-weight:var(--weight-strong);color:#fff}
+/* the one green thing on the page: the account is eligible (referral's active pill, style.css's success) */
+.eligible{padding:6px 10px;border-radius:999px;white-space:nowrap;font:var(--weight-strong) var(--text-label)/1 var(--sans);letter-spacing:.04em;
+  color:#c9f7e0;background:rgba(46,196,127,.22);border:1px solid rgba(84,226,160,.55)}
+.account-row{--streak:.12;min-height:56px;padding:12px 16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center}
+.account-row span{font-size:var(--text-small);color:rgba(255,255,255,.76)}
+.glass .account-row strong{font-size:var(--text-ui);font-weight:var(--weight-strong);letter-spacing:-.01em;text-align:right}
+
+/* ---------- 5 · markets: one table, centred, on the paper field ---------- */
+.market-panel{width:min(880px,100%);margin-inline:auto;padding:0;overflow:hidden;border-radius:24px}
+.market-row{min-height:60px;padding:14px 28px;display:grid;grid-template-columns:.7fr 1.3fr;gap:40px;align-items:center;border-top:1px solid var(--line)}
+.market-row:first-child{border-top:0}
+.market-row.head{min-height:44px;background:var(--soft);font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.market-row strong{font-size:var(--text-ui);font-weight:var(--weight-strong);color:var(--navy)}
+.market-row>span:last-child{font-size:var(--text-meta);line-height:1.45;color:var(--muted)}
+
+/* ---------- 6 · cashback: one pane per account type, the four plans in their metals ---------- */
+.rate-pane{padding:0;overflow:hidden;border-radius:22px}
+.rate-pane+.rate-pane{margin-top:1.125rem}
+.rate-head{padding:18px 22px;display:flex;align-items:baseline;justify-content:space-between;gap:18px;border-bottom:1px solid rgba(255,255,255,.18)}
+.rate-head h3{margin:0;font-size:var(--text-row-title);font-weight:var(--weight-strong);letter-spacing:-.02em;color:#fff}
+.rate-head span{font-size:var(--text-small);color:rgba(255,255,255,.72)}
+.rate-scroll{overflow-x:auto;padding:14px}
+/* separated cells, so each plan's header is its own metal chip and the Diamond column reads as the top of the ladder */
+.rate-table{width:100%;min-width:640px;border-collapse:separate;border-spacing:8px;text-align:right}
+.rate-table thead th:first-child{font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6);text-align:left}
+.rate-table .tier{padding:11px 14px;border-radius:14px;vertical-align:middle}
+.rate-table .tier small{display:block;font:var(--weight-body) var(--text-micro)/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--label,rgba(255,255,255,.85))}
+.rate-table .tier b{display:block;margin-top:6px;font-size:var(--text-ui);font-weight:var(--weight-strong);color:#fff}
+.rate-table tbody th{padding:13px 14px;font-size:var(--text-ui);font-weight:var(--weight-strong);color:#fff;text-align:left}
+.rate-table td{padding:13px 14px;border-radius:12px;font-size:var(--text-ui);font-weight:var(--weight-label);color:rgba(255,255,255,.88);background:rgba(255,255,255,.05)}
+.rate-table td.peak{color:#fff;font-weight:var(--weight-strong);border:1px solid var(--rim);background:linear-gradient(150deg,var(--tint),var(--tint2))}
+
+/* ---------- the numbered rules: the cashback notes on glass, the bonus offers on paper ---------- */
+.note-panel{padding:0;overflow:hidden;border-radius:22px}
+.glass .note-panel{margin-top:1.125rem}
+.note-panel h3{margin:0;padding:17px 20px;border-bottom:1px solid var(--line);font-size:var(--text-row-title);font-weight:var(--weight-strong);letter-spacing:-.02em;color:var(--navy)}
+.note-line{min-height:54px;padding:13px 20px;display:grid;grid-template-columns:26px minmax(0,1fr);gap:14px;align-items:center;border-top:1px solid var(--line)}
+.note-panel h3+.note-line{border-top:0}
+.note-line>span:last-child{font-size:var(--text-meta);line-height:1.45;color:var(--body)}
+.note-num{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--p-200);background:var(--accent-soft);
+  font:var(--weight-heavy) var(--text-micro)/1 var(--sans);color:var(--accent)}
+.glass .note-panel h3{color:#fff;border-bottom-color:rgba(255,255,255,.18)}
+.glass .note-line{border-top-color:rgba(255,255,255,.14)}
+.glass .note-line>span:last-child{color:rgba(255,255,255,.84)}
+.glass .note-num{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff}
+.bonus-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.bonus-card{background:rgba(255,255,255,.62);border-color:rgba(255,255,255,.95);
+  backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%)}
+
+/* ---------- a broker whose record is not published yet: the section says so, in its own ground's register ---------- */
+.placeholder{padding:34px 26px;border-radius:20px;border:1px dashed var(--line-strong);background:rgba(255,255,255,.5);
+  text-align:center;font-size:var(--text-panel-title);color:var(--muted)}
+.glass .placeholder{border-color:rgba(255,255,255,.34);background:rgba(255,255,255,.07);color:rgba(255,255,255,.8)}
+.reg-grid>.placeholder,.bonus-grid>.placeholder{grid-column:1/-1}
+
+/* tabular figures widen Inter's letters ~2% (cb8's body rule); off for the page, kept where numbers line up */
+body{font-variant-numeric:normal}
+.panel,.value-panel,.rate-table,.market-panel{font-variant-numeric:tabular-nums}
+
+/* ---------- laptops and phones ---------- */
+@media (max-width:1023px){
+  html.snap .data{padding-top:calc(var(--nav-h) + 48px)}
+  .reg-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .accounts-grid,.bonus-grid,.key-panel{grid-template-columns:1fr}
+  .rate-table{min-width:560px}
+}
+@media (max-width:560px){
+  .broker-stage{height:182px}
+  .broker-card{width:82vw;min-height:156px;padding:20px}
+  /* the neighbours have nowhere to stand beside a full-width card, and translated off a 390px screen they
+     widen the hero's scroll box (the QA sweep's sideways-overflow check): they stay home and stay hidden */
+  .broker-card.is-prev,.broker-card.is-next{opacity:0;pointer-events:none;transform:scale(.8)}
+  .broker-dots{margin-top:18px}
+  .reg-grid{grid-template-columns:1fr 1fr}
+  .reg-card{min-height:170px}
+  .key-row,.account-row{grid-template-columns:1fr;gap:5px;padding:14px 16px}
+  .key-row strong,.account-row strong{text-align:left}
+  .market-row{padding:14px 18px;grid-template-columns:.8fr 1.2fr;gap:16px}
+  .rate-head{flex-direction:column;align-items:flex-start;gap:6px}
+  .rate-scroll{padding:10px}
+  .strip-inner{justify-content:flex-start}
+  .section-strip a{padding:7px 11px}
+  .note-line{padding:13px 16px}
+}

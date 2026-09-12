@@ -6,7 +6,7 @@
    feDisplacementMap (#liquid in index.html) in backdrop-filter, Chromium only; every other
    engine gets the same glass without the bend. The data stays opaque white — the founder's
    "white chart" — so figures never sit on a translucent ground. */
-@import url('base.css?v=531b5a2f');
+@import url('base.css?v=4a717934');
 
 /* ---------- structure behind the glass: a faint grid in every blue ground ---------- */
 .rayfield.k::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:
@@ -516,6 +516,30 @@ html.reduce .rate-cell[aria-pressed=false]:hover{transform:none}
 .screen-dark,.on-dark{--grad:var(--grad-light)}
 :is(.display,.h2,h3).words .w i,:is(.display,.h2):not(.words){background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 :is(.display,.h2,h3).words :is(.w,.w i){padding:.14em .12em .18em;margin:-.14em -.12em -.18em}
+
+/* ---------- the same run, on fills (founder, 2026-09-12: "same gradient") ----------
+   --grad-blue was a heading's run only. It now also paints the solid CTAs, the paper nav's pill
+   and the wordmark, so every blue on a paper screen belongs to one family. A fill takes its own
+   copy of the run: the heading's foot is only a little darker because it is ink on paper, while a
+   40px capsule carrying white has to reach --p-deep to hold the label. The lightest stop sits
+   above the cap line, so the label reads against ~#3062D3 (5.5:1) and never against the top. */
+:root{--grad-fill:linear-gradient(180deg,rgb(var(--rgb-600)) 0%,var(--p-900) 50%,var(--p-deep) 100%);
+      --grad-fill-hover:linear-gradient(180deg,var(--p-500) 0%,var(--p-800) 50%,var(--p-pressed) 100%)}
+/* the rim goes with the flat navy: a navy hairline over the run's light head reads as a dark
+   line drawn above the button, not as its edge. Blue grounds keep their glass capsule
+   (.on-dark .btn-solid) and the closing CTA keeps its white paper (#final .btn-solid). */
+.btn-solid{background:var(--grad-fill);border-color:transparent}
+.btn-solid:hover{background:var(--grad-fill-hover);border-color:transparent}
+.nav.is-paper .pill{background:var(--grad-fill);color:#fff}
+.nav.is-paper .pill:hover{background:var(--grad-fill-hover)}
+/* the mark takes the run through the two gradients defined in #liquid-svg. The flat fallback
+   after the url() keeps the lockup navy if those defs ever go missing. On the blue screens the
+   brand stays white — the run is a paper treatment. */
+.nav.is-paper .brand-word{fill:url(#tf-brand-a) var(--navy)}
+.nav.is-paper .brand-sub{fill:url(#tf-brand-b) var(--navy)}
+/* narrower than the 18px a page CTA takes: the strip's action is a label on a 56px bar
+   (founder, 2026-09-12: "more narrow width") */
+.nav-action .pill{padding:8px 13px;gap:6px}
 
 /* the FAQ heading only (Cashback, Referral): the .w side margins above cancel a -.055em-tracked
    space, so the words read as one string — put the gap back on the two pages that carry it */

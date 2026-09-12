@@ -61,7 +61,7 @@ const mini = (p, rel) => `<a class="mini" href="${url(p, rel)}"><div><b>${esc(p.
 const FAVICON = /<link rel="icon"[^>]*>/.exec(cb8)[0];
 const LIQUID = /<svg id="liquid-svg"[\s\S]*?<\/svg>/.exec(cb8)[0];
 const footer = rel => `<footer class="footer"><div class="wrap"><div class="footer-row"><div>TrustForex</div>
-  <nav aria-label="Footer"><a href="https://trustforex.net/">Home</a><a href="${rel}results/">Results</a><a href="${rel}cb8/">Cashback</a><a href="${rel}referral/">Referral</a><a href="${rel}about/">About</a><a href="${rel}partnership/">Broker Partnership</a><a href="${rel}blog/">Blog</a><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Risk Disclosure</a></nav>
+  <nav aria-label="Footer"><a href="https://trustforex.net/">Home</a><a href="${rel}results/">Results</a><a href="${rel}cb8/">Cashback</a><a href="${rel}brokers/">Brokers</a><a href="${rel}referral/">Referral</a><a href="${rel}about/">About</a><a href="${rel}partnership/">Broker Partnership</a><a href="${rel}blog/">Blog</a><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Risk Disclosure</a></nav>
   <div class="social"><a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3 11l5 2 2 6 3-4 5 4 3-15Z"/></svg></a><a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r=".9"/></svg></a></div>
 </div></div></footer>`;
 const final = rel => `<section class="screen footer-only" id="final" data-name="Footer">${footer(rel)}</section>`;

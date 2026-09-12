@@ -1,6 +1,6 @@
 # Landing pages
 
-Five pages on one system. `cb8/` is the Cashback page and the system itself — its nav, grounds,
+Seven pages on one system. `cb8/` is the Cashback page and the system itself — its nav, grounds,
 glass, held cards, FAQ, final and footer are what every other page loads (`../cb8/grounds.css`,
 `../cb8/style.css`, `../cb8/main.js`) before its own `page.css`. `index.html` opens cb8 directly.
 
@@ -10,6 +10,7 @@ glass, held cards, FAQ, final and footer are what every other page loads (`../cb
 | Results | `results/` (+ `page.js`, the two charts) | the Results wireframe (`result.html`, final) |
 | Referral | `referral/` | the Referral wireframe (`referall.html`, final) |
 | About | `about/` | the About wireframe (`about us.html`, final) |
+| Partner Brokers | `brokers/` (+ `page.js`: the picker, and what a record shows for a broker whose figures are pending) | the Broker Profile skeleton (`Broker Profile.html`, 2026-09-12) |
 | Broker Partnership | `partnership/` (+ `page.js`: the access switch and the request form → `POST app.trustforex.net/api/partnership`) | the Broker Partnership wireframe (`Broker Partnership.html`) |
 | Blog | `blog/` — built from `blog/posts/*.md`, see `blog/README.md` | the founder's two layout references |
 
@@ -24,8 +25,8 @@ system font, ~1.5% narrower still. The chapter headings' box is 960px on Results
 (the wireframe's 940 plus that margin) — the one width at which every chapter breaks as drawn.
 `node _qa/lines.mjs` reports all headings matching on all three pages.
 
-The nav is written once, in `cb8/index.html`; `python3 _qa/nav.py` splices it into the other
-three pages (they carry a `<!--NAV <Page>-->` marker) and `blog/build.mjs` reads it for every blog
+The nav is written once, in `cb8/index.html`; `python3 _qa/nav.py` splices it into every sibling
+page that carries a `<!--NAV <Page>-->` marker and `blog/build.mjs` reads it for every blog
 page. Edit the nav in cb8 only, then run both. Icons are Iconly Lottie files in `cb8/ico/` (the ids are
 listed in `_qa/iconly.py`); a slot keeps an inline stand-in glyph (`svg.fb`) that shows only if
 its file is missing. Each icon rests on its last frame, plays once on reveal and once per hover;
@@ -57,8 +58,12 @@ compares every heading's line count and size against a wireframe.
 Preview from the repository root:
 
 ```sh
-python3 -m http.server 5311 --directory design/landing
+python3 design/landing/_qa/serve.py        # port 5311, the port every QA script expects
 ```
+
+Use that rather than `python3 -m http.server`: the plain server sends only `Last-Modified`, so a
+browser caches the HTML, a cached page then asks for the stylesheet hashes it already has, and an
+edit looks like it did nothing. `_qa/serve.py` is the same server with `Cache-Control: no-store`.
 
 After changes, run `python3 design/landing/_qa/stamp.py` to refresh the stylesheet
 and script cache keys. Use `sh design/landing/deploy.sh` for a full deployment;
@@ -97,4 +102,29 @@ Checks against the preview server:
 node design/landing/_qa/chapter-scroll.test.mjs
 node design/landing/_qa/scroll-scale.test.mjs
 node design/landing/_qa/lock.test.mjs
+```
+
+## Partner Brokers page
+
+`brokers/` is the broker record: one page, one broker at a time, `?broker=<key>` in the URL. The
+hero is the picker — the three partner cards the Cashback page lists, on the mechanics' glass —
+and the active card's name is the page's statement. Under it a sticky strip of six anchors, then
+the records: overview, regulation, accounts, markets, cashback, bonuses, and the Cashback page's
+own four connection steps.
+
+The structure is the founder's Broker Profile skeleton, kept as drawn; the treatment is cb8's.
+Two departures, both commented in `page.css`: the records **flow** at their own height rather
+than hold a screen each (a licence table that pins for 30vh is a page you cannot read), and
+anything a `.block` puts straight on its ground is lifted to `z-index:1` — base.css does that for
+`.mech-grid` alone, and a heading placed directly in a block paints *under* the rayfield without it.
+
+`page.js` holds the broker table. GTCFX is published; a broker with no record yet keeps the same
+shape with its figures pending, and regulation, rates and bonuses say so rather than leaving the
+last broker's numbers on screen. `?check=1` proves the tables' arithmetic — every figure is the
+no-plan figure scaled by that plan's share (10, 15, 20, 30) and the overview's "Maximum cashback"
+is the largest figure printed — and, on a pending broker, that nothing published is left behind.
+
+```sh
+node _qa/screens.mjs 'http://localhost:5311/brokers/?check=1' /tmp/brokers.png
+node _qa/screens.mjs 'http://localhost:5311/brokers/?broker=xm&check=1' /tmp/xm.png
 ```

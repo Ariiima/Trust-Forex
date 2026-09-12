@@ -6,7 +6,7 @@
 import { chromium } from 'playwright';
 const base = process.argv[2] || 'http://localhost:5311';
 const b = await chromium.launch(); const pg = await b.newPage({ viewport: { width: 1280, height: 800 } });
-const pages = ['cb8', 'results', 'referral', 'about', 'partnership', 'blog'];
+const pages = ['cb8', 'results', 'referral', 'about', 'partnership', 'brokers', 'blog'];
 await pg.goto(`${base}/blog/`, { waitUntil: 'networkidle' });
 const post = await pg.evaluate(() => document.querySelector('a[href^="p/"]')?.getAttribute('href'));
 if (post) pages.push('blog/' + post.replace(/\/?$/, ''));
