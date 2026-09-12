@@ -21,6 +21,26 @@
   box-shadow:0 12px 30px -12px rgba(var(--rgb-shadow),.6),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(var(--rgb-shadow),.12)}
 .on-dark .btn-solid:hover{background:rgba(255,255,255,.3);border-color:rgba(255,255,255,.6);color:#fff}
 
+/* The closing CTA is the exception: solid white, no rim, held off the field by one long shadow
+   (founder, 2026-09-12 — variant 15 of cta-lab.html). It is the last thing on the page and the
+   only click that matters there, so it stops being glass and becomes paper lying on the blue.
+   Scoped by id so the hero and the activation CTA keep the capsule. */
+#final .btn-solid{background:#fff;color:var(--navy);border-color:transparent;
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+  box-shadow:0 26px 50px -20px rgba(var(--rgb-shadow),.95),0 6px 14px -6px rgba(var(--rgb-shadow),.6)}
+/* Hover moves one thing: the arrow. The ink stays navy and the shadow steps once, outside the
+   transition list. Animating the ink as well ran a 300ms colour ramp along a 2px glyph while it
+   turned, and the two together read as a vibration. */
+#final .btn-solid:hover{background:#fff;color:var(--navy);border-color:transparent;
+  box-shadow:0 32px 60px -18px rgba(var(--rgb-shadow),1),0 8px 18px -6px rgba(var(--rgb-shadow),.7)}
+/* The arrow is the same glyph, the same rotate and the same --ease as every other CTA — only its
+   drawing changes. At 1em the 16-unit viewBox is scaled to 15px, so the 1.8-unit shaft lands as
+   1.69px straddling two pixel rows and washes out to half weight through the turn. Navy on white
+   is the only place on the site where that shows; the white arrows on blue hide it. 16px draws the
+   viewBox 1:1 and a 2px shaft covers whole pixels. */
+#final .btn-solid .ext{width:16px;height:16px}
+#final .btn-solid .ext path{stroke-width:2}
+
 /* ---------- the white chart in a thick glass frame ---------- */
 /* Two pseudos behind the card's content, both at negative z inside the card's own stacking
    context, painted in tree order: ::before is the frame (14px proud of the card, the ground
