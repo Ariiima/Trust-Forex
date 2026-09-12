@@ -21,8 +21,22 @@
   const targets = ['tp1', 'tp2', 'tp3', 'tp4'];
   const weeklyDates = ['4 Feb 2026', '11 Feb 2026', '18 Feb 2026', '25 Feb 2026', '4 Mar 2026', '11 Mar 2026', '18 Mar 2026', '25 Mar 2026', '1 Apr 2026', '8 Apr 2026', '15 Apr 2026', '22 Apr 2026', '29 Apr 2026', '6 May 2026', '13 May 2026', '20 May 2026', '27 May 2026', '3 Jun 2026', '10 Jun 2026', '17 Jun 2026', '24 Jun 2026', '1 Jul 2026', '8 Jul 2026', '15 Jul 2026', '22 Jul 2026', '29 Jul 2026', '5 Aug 2026', '12 Aug 2026', '19 Aug 2026', '26 Aug 2026'];
   const months = ['Mar 2024', 'Apr 2024', 'May 2024', 'Jun 2024', 'Jul 2024', 'Aug 2024', 'Sep 2024', 'Oct 2024', 'Nov 2024', 'Dec 2024', 'Jan 2025', 'Feb 2025', 'Mar 2025', 'Apr 2025', 'May 2025', 'Jun 2025', 'Jul 2025', 'Aug 2025', 'Sep 2025', 'Oct 2025', 'Nov 2025', 'Dec 2025', 'Jan 2026', 'Feb 2026', 'Mar 2026', 'Apr 2026', 'May 2026', 'Jun 2026', 'Jul 2026', 'Aug 2026'];
+  /* The Mini App's own performance chart names its points "Apr 2026 · W4" / "Apr 2026" /
+     "Q2 2026" (src/screens/home/signal-buckets.ts), and the two surfaces have to read the
+     same. The monthly and yearly rows above are already written that way; a week is named
+     for its Thursday — the day-4-of-7 majority rule the admin's weekOf uses — so a week
+     straddling two months lands in whichever month owns most of its days. */
+  const SHORT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function weekLabel(date) {
+    const [day, month, year] = date.split(' ');
+    const thursday = new Date(Date.UTC(+year, SHORT_MONTHS.indexOf(month), +day));
+    thursday.setUTCDate(thursday.getUTCDate() - ((thursday.getUTCDay() + 6) % 7) + 3);
+    return SHORT_MONTHS[thursday.getUTCMonth()] + ' ' + thursday.getUTCFullYear()
+      + ' · W' + (Math.floor((thursday.getUTCDate() - 1) / 7) + 1);
+  }
+
   const data = {
-    weekly: weeklyDates.map((period, index) => ({ period, total: index === 12 ? 0 : 6 + (index % 8), seed: index })),
+    weekly: weeklyDates.map((date, index) => ({ period: weekLabel(date), total: index === 12 ? 0 : 6 + (index % 8), seed: index })),
     monthly: months.map((period, index) => ({ period, total: index === 8 ? 0 : 28 + (index % 19), seed: index + 4 })),
     yearly: ['Q4 2025', 'Q1 2026', 'Q2 2026'].map((period, index) => ({ period, total: 86 + index * 11, seed: index + 8 }))
   };
