@@ -1,6 +1,6 @@
 /* Referral — what this page adds beyond cb8/main.js: the rate rail on 03 is a chooser.
    The four tiles are the four current Signal plans; picking one recomputes the example
-   beneath it at that plan's referral rate. Gold ships selected. */
+   beneath it at that plan's referral rate. Diamond ships selected. */
 (() => {
   const CASHBACK = 120;                                  // the example's fixed credited amount
   const reward = (rate) => CASHBACK * rate / 100;        // the whole calculation, one line
@@ -36,17 +36,23 @@
     });
     const on = cells.filter((c) => c.getAttribute('aria-pressed') === 'true');
     if (on.length !== 1) fails.push(`${on.length} tiles are selected, exactly 1 must be`);
-    const pill = document.querySelector('.plan-pill');                 // 04's preview names the plan 03 ships selected
-    if (!pill) fails.push('the App preview has no plan pill on its rate card');
-    if (pill && on.length === 1 && pill.dataset.tier !== on[0].dataset.tier)
-      fails.push(`plan pill says ${pill.dataset.tier}, the selected tile is ${on[0].dataset.tier}`);
-    if (pill && on.length === 1 && pill.textContent.trim().toLowerCase() !== on[0].dataset.tier)
-      fails.push(`plan pill reads "${pill.textContent.trim()}", its data-tier is ${pill.dataset.tier}`);
+    const card = document.querySelector('.plan-card');                 // 04's preview IS the plan 03 ships selected: no pill, the card wears the tier
+    if (!card) fails.push('the App preview has no plan card on its rate cell');
+    if (card && card.querySelector('.plan-pill')) fails.push('the plan card still holds a pill; the card itself is the pill');
+    if (card && on.length === 1 && card.dataset.tier !== on[0].dataset.tier)
+      fails.push(`plan card says ${card.dataset.tier}, the selected tile is ${on[0].dataset.tier}`);
+    if (card && on.length === 1 && !card.querySelector('small').textContent.trim().toLowerCase().startsWith(on[0].dataset.tier))
+      fails.push(`plan card label reads "${card.querySelector('small').textContent.trim()}", its data-tier is ${card.dataset.tier}`);
     if (on.length === 1) {
       const r = +on[0].dataset.rate;
       if (pct.textContent.trim() !== `${r}%`) fails.push(`shipped rate ${pct.textContent} != selected tile's ${r}%`);
       if (out.textContent.trim() !== `+$${reward(r)}`) fails.push(`shipped reward ${out.textContent} != +$${reward(r)}`);
       if (note.textContent.trim() !== `$${reward(r)}`) fails.push(`shipped note ${note.textContent} != $${reward(r)}`);
+      if (card && card.querySelector('strong').textContent.trim() !== `${r}%`)
+        fails.push(`plan card shows ${card.querySelector('strong').textContent.trim()}, the selected tile is ${r}%`);
+      const toast = document.querySelector('.toast strong');           // the preview's notification is one reward at that rate
+      if (toast && toast.textContent.trim() !== `+$${reward(r)} referral reward`)
+        fails.push(`toast reads "${toast.textContent.trim()}", the rate gives +$${reward(r)}`);
     }
     console.log(fails.length ? 'REFERRAL CHECK FAIL\n' + fails.join('\n') : `REFERRAL CHECK OK — ${cells.length} rate tiles, example at ${pct.textContent}`);
   }

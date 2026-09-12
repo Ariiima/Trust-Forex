@@ -156,18 +156,18 @@
       <div class="rate-rail" role="group" aria-label="Referral rate by current Signal plan — choose a plan to see the reward">
         <button class="tile rate-cell" type="button" data-tier="standard" data-rate="10" aria-pressed="false"><small>No paid plan</small><strong>10%</strong></button>
         <button class="tile rate-cell" type="button" data-tier="silver" data-rate="15" aria-pressed="false"><small>Silver</small><strong>15%</strong></button>
-        <button class="tile rate-cell" type="button" data-tier="gold" data-rate="20" aria-pressed="true"><small>Gold</small><strong>20%</strong></button>
-        <button class="tile rate-cell" type="button" data-tier="diamond" data-rate="30" aria-pressed="false"><small>Diamond</small><strong>30%</strong></button>
+        <button class="tile rate-cell" type="button" data-tier="gold" data-rate="20" aria-pressed="false"><small>Gold</small><strong>20%</strong></button>
+        <button class="tile rate-cell" type="button" data-tier="diamond" data-rate="30" aria-pressed="true"><small>Diamond</small><strong>30%</strong></button>
       </div>
       <div class="rate-example" aria-label="Example referral reward calculation">
         <div class="example-flow" aria-live="polite">
           <div class="example-part"><small>Cashback credited</small><b>$120</b></div>
           <span class="example-arrow" aria-hidden="true">×</span>
-          <div class="example-part"><small>Your current rate</small><b id="rate-pct">20%</b></div>
+          <div class="example-part"><small>Your current rate</small><b id="rate-pct">30%</b></div>
           <span class="example-arrow" aria-hidden="true">=</span>
-          <div class="example-part result"><small>Your reward</small><b id="rate-reward">+$24</b></div>
+          <div class="example-part result"><small>Your reward</small><b id="rate-reward">+$36</b></div>
         </div>
-        <p class="example-note">They keep the full $120; your <span id="rate-note">$24</span> is added on top.</p>
+        <p class="example-note">They keep the full $120; your <span id="rate-note">$36</span> is added on top.</p>
       </div>
     </div>
   </div>
@@ -185,10 +185,10 @@
       <p class="copy rv" style="--i:1">Track every referral reward and available balance in one clear view, without exposing anyone’s identity.</p>
     </div>
     <div class="panel app-preview rv" style="--i:2" aria-label="Example Referral overview in the TrustForex App">
-      <div class="toast"><strong>+$24 referral reward</strong></div>
+      <div class="toast"><strong>+$36 referral reward</strong></div>
       <div class="app-top"><strong>Referral overview</strong></div>
       <div class="summary-grid">
-        <div class="tile summary-card"><small>Current rate</small><strong>20%<span class="plan-pill" data-tier="gold">Gold</span></strong></div>
+        <div class="tile summary-card plan-card" data-tier="diamond"><small>Diamond rate</small><strong>30%</strong></div>
         <div class="tile summary-card"><small>Invited users</small><strong>24</strong></div>
         <div class="tile summary-card"><small>Active users</small><strong>16</strong></div>
       </div>
