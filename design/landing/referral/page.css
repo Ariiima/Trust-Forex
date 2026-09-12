@@ -12,17 +12,39 @@
 #hero .display{max-width:940px}
 #hero .lede{max-width:680px;margin-bottom:0}
 
-/* ---------- 2 · the evidence: three rows on the white card, a marker on each ---------- */
-.marker{width:92px;padding:7px 9px;border:1px solid var(--p-200);border-radius:999px;text-align:center;font-size:var(--text-label);font-weight:var(--weight-strong);color:var(--accent);background:var(--accent-soft)}
+/* ---------- 2 · the evidence: three rows on the blue card, a marker on each ---------- */
+/* The card turns blue (founder, 2026-09-12): on paper the white pane read as another sheet of the
+   page, so the evidence now sits on the record pages' own deep blue, each row a tile on it with a
+   leading icon. The Results row takes the brand's green — the one row about what stays public. */
+.marker{width:92px;padding:7px 9px;border:1px solid rgba(160,196,255,.5);border-radius:999px;text-align:center;font-size:var(--text-label);font-weight:var(--weight-strong);color:#fff;background:rgba(255,255,255,.12)}
+.proof-row.tracked .marker{border-color:rgba(var(--rgb-success),.55);color:var(--success);background:rgba(var(--rgb-success),.16)}
+.proof-canvas{--rgb-success:72,212,138;   /* the state green as a triplet, so the tracked row can tint with it */
+  min-height:356px;padding:14px;display:grid;grid-template-rows:repeat(3,minmax(100px,auto));gap:10px;border-radius:24px}
+/* the paper screen's frame paints its pane white behind the content (style.css); this one is blue,
+   and both pseudos follow the card's own 24px corner rather than the 28px card radius */
+.screen-paper .proof-canvas::after{border-radius:24px;background:
+  radial-gradient(120% 90% at 12% 0%,rgba(var(--rgb-600),.5),transparent 66%),
+  linear-gradient(165deg,rgba(var(--rgb-900),.92),var(--blue) 58%,var(--p-deep))}
+.screen-paper .proof-canvas::before{border-radius:38px}
+.proof-row{--tint:rgba(var(--rgb-600),.34);--tint2:rgba(var(--rgb-900),.26);--rim:rgba(160,196,255,.34);
+  min-height:100px;padding:16px 18px;display:grid;grid-template-columns:52px minmax(0,1fr) 92px;gap:16px;align-items:center;
+  border:1px solid var(--rim);border-radius:16px;color:#fff;
+  background:linear-gradient(150deg,var(--tint),var(--tint2));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
+.proof-row.tracked{--rim:rgba(var(--rgb-success),.4);background:linear-gradient(105deg,rgba(var(--rgb-success),.34),rgba(var(--rgb-900),.3) 72%)}
+.proof-row>div{min-width:0}
+.proof-icon{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;
+  border:1px solid rgba(160,196,255,.42);background:linear-gradient(150deg,rgba(var(--rgb-500),.4),rgba(var(--rgb-900),.3));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.proof-row.tracked .proof-icon{border-color:rgba(var(--rgb-success),.45);background:linear-gradient(150deg,rgba(var(--rgb-success),.32),rgba(var(--rgb-900),.3))}
+.proof-row .ico{stroke:#fff}
+.proof-row.tracked .ico{stroke:var(--success)}
+.proof-row h3{margin:0 0 5px;font-size:var(--text-panel-title);line-height:1.2;letter-spacing:-.015em;font-weight:var(--weight-strong);color:#fff;white-space:nowrap}
+.proof-row p{margin:0;max-width:360px;font-size:var(--text-meta);line-height:1.4;color:rgba(255,255,255,.82)}
 
 /* ---------- the chapters: the wireframe's one chapter size on the light ones too; the routes chapter sits
      between two white pages, so its blue peaks in the middle and returns to white ---------- */
 .chapter-2 .h2{font-size:var(--text-chapter)}
-.proof-canvas{min-height:356px;padding:14px;display:grid;grid-template-rows:repeat(3,minmax(100px,auto));gap:10px;border-radius:24px}
-.proof-row{min-height:100px;padding:16px 18px;display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:16px;align-items:center;border:1px solid var(--line);border-radius:14px;background:var(--paper)}
-.proof-row>div{min-width:0}
-.proof-row h3{display:flex;align-items:center;gap:10px;margin:0 0 5px;font-size:var(--text-panel-title);line-height:1.2;letter-spacing:-.015em;font-weight:var(--weight-strong);color:var(--navy);white-space:nowrap}
-.proof-row p{margin:0;max-width:360px;font-size:var(--text-meta);line-height:1.4;color:var(--muted)}
 #chapter-routes{background:linear-gradient(180deg,#fff,var(--p-100) 55%,#fff)}
 #chapter-routes::after{content:'';position:absolute;inset:0 auto 0 0;width:40%;z-index:0;pointer-events:none;
   background:linear-gradient(115deg,transparent 18%,rgba(var(--rgb-200),.5) 50%,transparent 82%);
@@ -157,7 +179,8 @@ html.reduce .example-part b.swap{animation:none}
   .rate-rail{grid-template-columns:repeat(2,1fr)}.glass .rates-panel{height:auto}
 }
 @media (max-width:560px){
-  .proof-row{grid-template-columns:1fr;padding:16px}.marker{grid-column:1}
+  .proof-row{grid-template-columns:52px minmax(0,1fr);row-gap:12px;padding:16px}.marker{grid-column:2}
+  .proof-icon{width:44px;height:44px;border-radius:13px}.proof-row h3{white-space:normal}
   #hero .display{font-size:48px}#hero .lede{font-size:18px}
   .chapter-2 .h2{font-size:42px}
   .glass .route-panel{min-height:0;grid-template-rows:repeat(2,minmax(118px,auto)) 76px}
