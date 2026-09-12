@@ -507,7 +507,8 @@ html.reduce .rate-cell[aria-pressed=false]:hover{transform:none}
    cannot see through a composited child — so the runs are vertical: a diagonal would restart on every word.
    The clip is the box: at line-height 1 and tight tracking the ink hangs past it on every side and vanished
    (founder, 2026-09-08), so the <i> and the word's own overflow box both grow the same way. */
-:root{--grad-blue:linear-gradient(180deg,rgb(var(--rgb-600)) 0%,var(--p-900) 50%,color-mix(in srgb,var(--p-pressed),var(--p-deep) 30%) 100%);   /* the foot a step toward deep — "only a little darker, only its bottom" (founder, 2026-09-10) */
+:root{--run-foot:color-mix(in srgb,var(--p-pressed),var(--p-deep) 30%);   /* the foot a step toward deep — "only a little darker, only its bottom" (founder, 2026-09-10) */
+      --grad-blue:linear-gradient(180deg,rgb(var(--rgb-600)) 0%,var(--p-900) 50%,var(--run-foot) 100%);
       --grad-light:linear-gradient(180deg,var(--p-400) 0%,#fff 42%,#fff 58%,var(--p-400) 100%);
       --grad:var(--grad-blue)}   /* --grad is the run a heading takes. It inherits, so every rule that paints a ground sets it beside
                                     its background (#hero, .chapter, .block, #final … light; .chapter-2, #calculator .block, a paper
@@ -519,27 +520,39 @@ html.reduce .rate-cell[aria-pressed=false]:hover{transform:none}
 
 /* ---------- the same run, on fills (founder, 2026-09-12: "same gradient") ----------
    --grad-blue was a heading's run only. It now also paints the solid CTAs, the paper nav's pill
-   and the wordmark, so every blue on a paper screen belongs to one family. A fill takes its own
-   copy of the run: the heading's foot is only a little darker because it is ink on paper, while a
-   40px capsule carrying white has to reach --p-deep to hold the label. The lightest stop sits
-   above the cap line, so the label reads against ~#3062D3 (5.5:1) and never against the top. */
-:root{--grad-fill:linear-gradient(180deg,rgb(var(--rgb-600)) 0%,var(--p-900) 50%,var(--p-deep) 100%);
+   and the wordmark, so every blue on a paper screen belongs to one family. A fill takes that run
+   unchanged, not a copy of it (founder, 2026-09-12, picking variant 02 of grad-lab.html over nine
+   alternatives): one definition means the button and the heading can never drift, so --grad-fill
+   is an alias, not a second stop list. The light head sits above a label's cap line, so white
+   reads against ~#3062D3 (5.5:1) and never against the top of the run. Hover lightens all three
+   stops by one step; the run's foot is already blue, so the lift stays inside the palette. */
+:root{--grad-fill:var(--grad-blue);
       --grad-fill-hover:linear-gradient(180deg,var(--p-500) 0%,var(--p-800) 50%,var(--p-pressed) 100%)}
-/* the rim goes with the flat navy: a navy hairline over the run's light head reads as a dark
-   line drawn above the button, not as its edge. Blue grounds keep their glass capsule
-   (.on-dark .btn-solid) and the closing CTA keeps its white paper (#final .btn-solid). */
-.btn-solid{background:var(--grad-fill);border-color:transparent}
-.btn-solid:hover{background:var(--grad-fill-hover);border-color:transparent}
+/* Two things the rim and the origin have to agree on.
+   The rim goes with the flat navy: a navy hairline over the run's light head reads as a dark line
+   drawn above the button, not as its edge. But making it transparent is not enough on its own —
+   background-origin defaults to padding-box, so the run was laid over the padding box while
+   background-clip stretched the paint out to the border box, and the 1px the border adds got
+   filled by repeating the run. That put its last stop, navy, back as a hard line along the top
+   edge (founder, 2026-09-12: "a black line above the cta button"). border-box origin makes the
+   run span the box it is actually painted into. The pill never showed it: a pill has no border.
+   Blue grounds keep their glass capsule (.on-dark .btn-solid) and the closing CTA keeps its white
+   paper (#final .btn-solid). */
+.btn-solid{background:var(--grad-fill);background-origin:border-box;border-color:transparent}
+.btn-solid:hover{background:var(--grad-fill-hover);background-origin:border-box;border-color:transparent}
 .nav.is-paper .pill{background:var(--grad-fill);color:#fff}
 .nav.is-paper .pill:hover{background:var(--grad-fill-hover)}
-/* the mark takes the run through the two gradients defined in #liquid-svg. The flat fallback
-   after the url() keeps the lockup navy if those defs ever go missing. On the blue screens the
-   brand stays white — the run is a paper treatment. */
+/* the mark takes the run through the two gradients defined in #liquid-svg, which read --run-foot
+   and the palette tokens straight off :root — so the stops live here, not in twenty HTML files.
+   The flat fallback after the url() keeps the lockup navy if those defs ever go missing. On the
+   blue screens the brand stays white: the run is a paper treatment. */
 .nav.is-paper .brand-word{fill:url(#tf-brand-a) var(--navy)}
 .nav.is-paper .brand-sub{fill:url(#tf-brand-b) var(--navy)}
-/* narrower than the 18px a page CTA takes: the strip's action is a label on a 56px bar
-   (founder, 2026-09-12: "more narrow width") */
-.nav-action .pill{padding:8px 13px;gap:6px}
+/* smaller than a page CTA on both axes: the strip's action is a label, not the click the page is
+   built around. 13px sides against a CTA's 18px (founder, 2026-09-12: "more narrow width"), and
+   34px tall against --control-height's 40 (founder, 2026-09-12), which puts 11px of bar above and
+   below it instead of 8. min-height has to come down with the padding or the padding does nothing. */
+.nav-action .pill{min-height:34px;padding:6px 13px;gap:6px}
 
 /* the FAQ heading only (Cashback, Referral): the .w side margins above cancel a -.055em-tracked
    space, so the words read as one string — put the gap back on the two pages that carry it */

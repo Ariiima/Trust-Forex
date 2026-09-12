@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gradient lab — variant 02</title>
+<!-- The record of the pick, kept the way cta-lab.html is kept. Approved and shipped
+     2026-09-12: style.css carries the run as --grad-fill, and every page's #liquid-svg carries
+     the two lifted lockup gradients. This sheet still owns its own copy, so it can be edited
+     without touching the site.
+
+     Variant 02 won (founder, 2026-09-12): the heading's own stops, with the foot staying blue
+     instead of dropping to deep navy. Two things changed after the pick.
+
+     1. The mark takes the run higher than the fills do. FOREX is 7px of hairline letterforms, and
+        a gradient across 7px is not a gradient, it is a smudge — so the mark reads the run from
+        further down, where it is already dark, and FOREX comes out near-solid deep blue
+        (founder, 2026-09-12: "push the gradient a bit higher"). MARK below holds those two spans:
+        TRUST takes run 0..0.72 and FOREX takes 0.88..1, against the fills' full 0..1.
+
+     2. The seam above the CTA is gone. `background-origin` defaults to padding-box, so the run was
+        laid over the padding box while `background-clip: border-box` stretched the paint out to
+        the border box — and the 1px the border adds got filled by repeating the run, which put its
+        last stop, navy, as a hard line along the top edge. `background-origin: border-box` makes
+        the run span the box it is actually painted into. The pill never showed it because a pill
+        has no border.
+
+     One run, four places: the stop list below drives the pill, the CTA, the swatch and both halves
+     of the lockup, so this can never look like one thing on the button and another on the mark.
+
+     Serve it: python3 _qa/serve.py 5311 -> localhost:5311/cb8/grad-lab.html
+     The mark is read out of index.html at load, so the lab can never show a stale lockup. -->
+<link rel="stylesheet" href="grounds.css">
+<link rel="stylesheet" href="style.css">
+<style>
+body{background:#EEF2FB;color:var(--navy);font:400 15px/1.5 var(--sans);padding:0 0 90px}
+.lab-head{padding:20px 28px;border-bottom:1px solid rgba(var(--rgb-shadow),.1)}
+.lab-head h1{font-size:17px;font-weight:600;margin:0 0 4px;letter-spacing:.2px}
+.lab-head p{margin:0;font-size:13px;color:var(--body);max-width:80ch}
+.ref{padding:28px 28px 4px}
+.ref .h2{margin:0 0 6px;max-width:16ch}
+.ref small,.card-top span{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+.wrap-lab{padding:20px 28px;max-width:960px}
+.card{background:#fff;border-radius:20px;border:1px solid rgba(var(--rgb-shadow),.1);overflow:hidden;
+  box-shadow:0 18px 40px -30px rgba(var(--rgb-shadow),.5)}
+.card-top{display:flex;align-items:baseline;gap:12px;padding:13px 18px;border-bottom:1px solid rgba(var(--rgb-shadow),.07)}
+.card-top b{font-size:13px;font-weight:600;margin-right:auto}
+/* the nav's paper state, at the size it really runs */
+.strip{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:11px 18px;
+  background:linear-gradient(180deg,#F7F9FE,#E7EDFA);border-bottom:1px solid rgba(var(--rgb-shadow),.07)}
+.lock{display:inline-flex;flex-direction:column;align-items:center;gap:4px}
+.lock svg{display:block}
+.lock .brand-word{width:78px;height:17px}
+.lock .brand-sub{width:74px;height:7.2px}
+/* bigger copies, to judge where the run lands inside the letters */
+.lock.x2{gap:8px}
+.lock.x2 .brand-word{width:156px;height:34px}
+.lock.x2 .brand-sub{width:148px;height:14.4px}
+.lock.x4{gap:16px}
+.lock.x4 .brand-word{width:312px;height:68px}
+.lock.x4 .brand-sub{width:296px;height:28.8px}
+.row{display:flex;align-items:center;gap:22px;padding:20px 18px;flex-wrap:wrap}
+.row+.row{border-top:1px solid rgba(var(--rgb-shadow),.07)}
+.bar{width:34px;height:104px;border-radius:9px;flex:none;border:1px solid rgba(var(--rgb-shadow),.12)}
+.defs{position:absolute;width:0;height:0}
+/* the run, on everything it paints. --run is set on the card. */
+.card .pill,.card .btn-solid{background:var(--run);background-origin:border-box;border-color:transparent;color:#fff}
+.card .pill:hover,.card .btn-solid:hover{background:var(--run);background-origin:border-box;filter:brightness(1.12) saturate(1.04)}
+.card .bar{background:var(--run)}
+</style>
+</head>
+<body>
+<header class="lab-head">
+  <h1>Gradient lab — variant 02, with the mark lifted</h1>
+  <p>The winning run, with two fixes: the lockup reads the run from further down so FOREX comes out near-solid deep blue, and the navy seam along the top of the CTA is gone. Both are live on the site.</p>
+</header>
+
+<section class="ref">
+  <small>Reference — the run on ink, unchanged</small>
+  <h2 class="h2">Your market result is only one side of the trade</h2>
+</section>
+
+<div class="wrap-lab"><div class="card" id="card"></div></div>
+
+<script>
+/* The run. One stop list drives every surface below. */
+const ANGLE = 180;
+const RUN = [['--p-600', 0], ['--p-900', 50], ['--run-foot', 100]];
+
+/* Where each half of the lockup sits in that run. TRUST stops short of the foot and FOREX sits
+   almost on it, so the mark ends dark and the 7px subtitle stops trying to hold a gradient. */
+const MARK = { word: [0.32, 0.84], sub: [0.93, 1] };
+
+/* --p-600 and friends are style.css tokens; a bare #hex passes straight through */
+const ink = c => c.startsWith('--') ? 'var(' + c + ')' : c;
+
+/* Map an element's own 0..1 onto the slice [a,b] of the shared run. Solving
+   y1 + a(y2-y1) = 0 and y1 + b(y2-y1) = 1 gives the vector below, so both halves of the
+   lockup carry one identical stop list and still fall as one. */
+const span = ([a, b]) => ({ y1: -a / (b - a), y2: (1 - a) / (b - a) });
+
+const svgStops = () => RUN.map(s => '<stop offset="' + s[1] + '%" style="stop-color:' + ink(s[0]) + '"/>').join('');
+const svgGrad = (id, slice) => {
+  const v = span(slice);
+  return '<linearGradient id="' + id + '" x1="0" y1="' + v.y1 + '" x2="0" y2="' + v.y2 + '">' + svgStops() + '</linearGradient>';
+};
+const cssRun = 'linear-gradient(' + ANGLE + 'deg,' + RUN.map(s => ink(s[0]) + ' ' + s[1] + '%').join(',') + ')';
+
+const ARROW = '<svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+/* the mark comes out of index.html so this sheet can never show a stale lockup */
+fetch('index.html').then(r => r.text()).then(html => {
+  const lockup = new DOMParser().parseFromString(html, 'text/html').querySelector('.brand').innerHTML;
+  /* one defs pair per copy of the mark: an id can only be used by the size that owns it */
+  const mark = k => lockup
+    .replace('class="brand-word"', 'class="brand-word" style="fill:url(#w' + k + ') var(--navy)"')
+    .replace('class="brand-sub"', 'class="brand-sub" style="fill:url(#s' + k + ') var(--navy)"');
+  const defs = k => svgGrad('w' + k, MARK.word) + svgGrad('s' + k, MARK.sub);
+
+  document.getElementById('card').style.setProperty('--run', cssRun);
+  document.getElementById('card').innerHTML =
+    '<svg class="defs" aria-hidden="true">' + defs('a') + defs('b') + defs('c') + '</svg>' +
+    '<div class="card-top"><b>02 · The heading run, verbatim — mark lifted</b>' +
+      '<span>' + ANGLE + 'deg · ' + RUN.length + ' stops</span></div>' +
+    '<div class="strip"><span class="lock">' + mark('a') + '</span>' +
+      '<a class="pill" href="#" onclick="return false">Open the App ' + ARROW + '</a></div>' +
+    '<div class="row"><span class="bar"></span><span class="lock x2">' + mark('b') + '</span>' +
+      '<a class="btn btn-solid" href="#" onclick="return false">Start Cashback setup ' + ARROW + '</a></div>' +
+    '<div class="row"><span class="lock x4">' + mark('c') + '</span></div>';
+}).catch(() => {
+  document.getElementById('card').innerHTML =
+    '<p style="padding:18px;margin:0;font-size:13px">Open this over the dev server, not from disk: the lockup is read out of index.html.</p>';
+});
+</script>
+</body>
+</html>
