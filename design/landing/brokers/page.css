@@ -1,7 +1,7 @@
 /* TrustForex Partner Brokers — page rules over the Cashback system (../cb8/style.css → base.css → ../shared/scale.css).
    No wireframe: the structure is the founder's Broker Profile skeleton (Broker Profile.html, 2026-09-12) kept as drawn —
-   the picker, the eight-row overview, five licences, two account cards, the market table, the two rate tables and their
-   notes, the two bonus cards, the four connection steps — and the treatment is cb8's: blue grounds, glass panes and
+   the picker, the eight-row overview, five licences, two account cards, the market table, the rate tables and their
+   notes (turned on their side on 2026-09-12, see record 6), the two bonus cards, the four connection steps — and the treatment is cb8's: blue grounds, glass panes and
    tiles, the travelling light, and the four plans in the tier metals style.css already gives them.
 
    One thing departs from cb8 on purpose: this is a reference page, not a narrative. Nothing pins and nothing stacks —
@@ -21,7 +21,8 @@
    clearing a bar that has left. */
 .records .screen.data{min-height:calc(100dvh + var(--nav-h));padding:calc(var(--nav-h) + 40px) 0 var(--section-space);justify-content:center}
 /* the light crosses a blue record as it crosses a paper one: cb8 names --ground on .screen-paper and drives the
-   glass streaks from the stack's --m1…--m4, which this page has no stack to provide. Each blue record names its own. */
+   glass streaks from the stack's --m1…--m4, which this page has no stack to provide. Each record with glass panes in
+   it names its own — including Cashback, whose block is white but whose panes are still blue. */
 #overview,#accounts,#cashback{view-timeline-name:--ground}
 .glass .panel::after,.glass .tile::after,.glass .rayfield.k i{animation-timeline:--ground}
 /* the ground is a positioned layer (z-index 0), so a non-positioned child of the block paints UNDER it —
@@ -190,17 +191,47 @@ html.reduce #rail .dot::after{transition:none}
 /* a broker whose licences are not published yet: the pane's place, held at the pane's height */
 .reg-stack>.placeholder{height:100%;display:grid;place-items:center;margin-left:42px}
 
-/* ---------- 4 · accounts: the two types side by side, both eligible ---------- */
-.accounts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.125rem;align-items:start}
-.account-pane{display:grid;gap:.625rem;align-content:start}
-.account-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 4px 15px;border-bottom:1px solid rgba(255,255,255,.18)}
-.account-head h3{margin:0;font-size:var(--text-card-title);line-height:var(--leading-card);letter-spacing:var(--tracking-card);font-weight:var(--weight-strong);color:#fff}
+/* ---------- 4 · accounts: the two types side by side, both eligible ----------
+   This record has to be read without scrolling (founder, 2026-09-12: the ECN pane's last rows were
+   below the fold), so the section head gives up the full --block-space under it — the two panes carry
+   headings of their own and do not need the record-to-record gap a lone table wants — and the rows run
+   at the dense setting, not the overview's.
+
+   And it is one blue. The page's own metals give each type a colour: Standard the copper style.css
+   already maps to the standard tier, ECN the diamond violet. Gold and silver are deliberately left
+   alone — they are two columns of the rate table three screens down, and a gold account head would
+   read as the Gold plan. The Markets record next door spends seven hues of its own (--mk) and copper
+   and violet sit near its energy and its crypto; a screen apart, on tiles this size against chips that
+   size, the pair still reads as two account types rather than two more markets. The metal paints the pane's rim, its head rule, its title and the three
+   figures that actually differ. The two that do not — leverage, platforms — sit under a hairline on a
+   fainter tile with a white figure, so the pair reads as "same rule, different price" before a word of
+   it is read. Green stays the one state colour on this page: the eligibility pill, and nothing else. */
+#accounts .data-head{margin-bottom:1.625rem}
+#accounts .data-head .page-number{margin-bottom:12px}
+#accounts .data-head .h2{margin-bottom:12px}
+.accounts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:start}
+.account-pane{display:grid;gap:.375rem;align-content:start;padding:16px 16px 14px;
+  --acc:#fff;--acc-tint:rgba(255,255,255,.12);--acc-tint2:rgba(255,255,255,.06);--acc-rim:rgba(255,255,255,.3)}
+.account-pane[data-acc=copper]{--acc:#F5BC93;--acc-tint:rgba(200,128,88,.3);--acc-tint2:rgba(120,70,48,.24);--acc-rim:rgba(236,176,136,.5)}
+.account-pane[data-acc=violet]{--acc:#C4ADF7;--acc-tint:rgba(138,96,224,.3);--acc-tint2:rgba(76,48,150,.24);--acc-rim:rgba(196,166,250,.5)}
+.glass .account-pane{border-color:var(--acc-rim)}   /* the pane's rim is the type's metal, not the system's blue */
+.account-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 2px 10px;margin-bottom:2px;border-bottom:1px solid var(--acc-rim)}
+.account-head h3{margin:0;font-size:20px;line-height:var(--leading-card);letter-spacing:-.025em;font-weight:var(--weight-strong);color:var(--acc)}
 /* the one green thing on the page: the account is eligible (referral's active pill, style.css's success) */
-.eligible{padding:6px 10px;border-radius:999px;white-space:nowrap;font:var(--weight-strong) var(--text-label)/1 var(--sans);letter-spacing:.04em;
+.eligible{padding:5px 9px;border-radius:999px;white-space:nowrap;font:var(--weight-strong) var(--text-micro)/1 var(--sans);letter-spacing:.05em;
   color:#c9f7e0;background:rgba(46,196,127,.22);border:1px solid rgba(84,226,160,.55)}
-.account-row{--streak:.12;min-height:56px;padding:12px 16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center}
+.account-row{--streak:.12;min-height:44px;padding:9px 14px;border-radius:13px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center}
 .account-row span{font-size:var(--text-small);color:rgba(255,255,255,.76)}
 .glass .account-row strong{font-size:var(--text-ui);font-weight:var(--weight-strong);letter-spacing:-.01em;text-align:right}
+/* what differs: the type's metal, on the tile and on the figure */
+.glass .account-row.is-key{--tint:var(--acc-tint);--tint2:var(--acc-tint2);--rim:var(--acc-rim)}
+.glass .account-row.is-key strong{color:var(--acc)}
+/* what does not: the same answer on both sides, so it steps back and keeps its white */
+.glass .account-row.is-same{--tint:rgba(255,255,255,.06);--tint2:rgba(255,255,255,.03);--rim:rgba(255,255,255,.16);--streak:.06;box-shadow:none}
+.account-row.is-same span{color:rgba(255,255,255,.62)}
+/* the break between the two groups is air: a tile's ::before is the glass recipe's lit rim, so there is no
+   hairline to draw here without taking it off the row */
+.account-row.is-key + .account-row.is-same{margin-top:10px}
 
 /* ---------- 5 · markets: the coverage list on one blue pane, centred on the paper field ----------
    The record was a white table on a white field — the only one on the page with no colour in it
@@ -258,22 +289,63 @@ html.reduce .market-row::before,html.reduce .market-row::after,html.reduce .mark
   transition:border-color .35s var(--ease),box-shadow .35s var(--ease)}
 .market-chip svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 
-/* ---------- 6 · cashback: one pane per account type, the four plans in their metals ---------- */
+/* ---------- 6 · cashback: a white record, the table on its side, the two accounts beside each other ----------
+   The record is `.mech.white` now, like Broker overview: no blue block behind it, the heading navy, the copy ink,
+   and the panes the one blue thing on it. Its head is `.centred`, so the number, the heading and the sentence
+   stand over the middle of the two panes rather than off their left edge (founder, 2026-09-12).
+
+   Two stacked panes of three market rows under four plan chips ran the record to 1732px — a screen and
+   three quarters of scrolling for twenty-four figures, with the two account types 400px apart, which is
+   to say the one comparison the record exists for could not be made (founder, 2026-09-12). Nothing is
+   dropped; the table is turned. A PLAN is a row now and a MARKET is a column, so the ladder that the
+   section head describes — what one lot pays at each plan's share — runs straight down the pane, and the
+   two accounts fit side by side at a third of the height.
+
+   Hue answers one question only: the plan. Each row carries its metal on the chip that names it and on
+   the rim around each of its figures (where that metal can live is its own note, below). The panes stay
+   white-rimmed — copper and violet are two of those four rows, and the Accounts record two screens up
+   already spends that pair on these same two account types, so a copper pane over a copper row would be
+   one hue answering two questions. */
+.rate-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:start}
 .rate-pane{padding:0;overflow:hidden;border-radius:22px}
-.rate-pane+.rate-pane{margin-top:1.125rem}
-.rate-head{padding:18px 22px;display:flex;align-items:baseline;justify-content:space-between;gap:18px;border-bottom:1px solid rgba(255,255,255,.18)}
+.rate-head{padding:15px 18px 13px;display:flex;flex-direction:column;gap:3px;border-bottom:1px solid rgba(255,255,255,.18)}
 .rate-head h3{margin:0;font-size:var(--text-row-title);font-weight:var(--weight-strong);letter-spacing:-.02em;color:#fff}
 .rate-head span{font-size:var(--text-small);color:rgba(255,255,255,.72)}
-.rate-scroll{overflow-x:auto;padding:14px}
-/* separated cells, so each plan's header is its own metal chip and the Diamond column reads as the top of the ladder */
-.rate-table{width:100%;min-width:640px;border-collapse:separate;border-spacing:8px;text-align:right}
-.rate-table thead th:first-child{font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6);text-align:left}
-.rate-table .tier{padding:11px 14px;border-radius:14px;vertical-align:middle}
-.rate-table .tier small{display:block;font:var(--weight-body) var(--text-micro)/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--label,rgba(255,255,255,.85))}
-.rate-table .tier b{display:block;margin-top:6px;font-size:var(--text-ui);font-weight:var(--weight-strong);color:#fff}
-.rate-table tbody th{padding:13px 14px;font-size:var(--text-ui);font-weight:var(--weight-strong);color:#fff;text-align:left}
-.rate-table td{padding:13px 14px;border-radius:12px;font-size:var(--text-ui);font-weight:var(--weight-label);color:rgba(255,255,255,.88);background:rgba(255,255,255,.05)}
-.rate-table td.peak{color:#fff;font-weight:var(--weight-strong);border:1px solid var(--rim);background:linear-gradient(150deg,var(--tint),var(--tint2))}
+.rate-scroll{overflow-x:auto;padding:12px}
+/* separated cells, so each plan's chip is its own metal and the Diamond row reads as the top of the
+   ladder; fixed columns, so the three markets are one measure wide whatever their names are long, the two
+   panes line up row for row, and "Forex" does not get a narrower column than the money in it needs */
+.rate-table{width:100%;min-width:0;table-layout:fixed;border-collapse:separate;border-spacing:7px;text-align:right}
+.rate-table col.mk{width:21.5%}
+.rate-table thead th{padding:2px 10px 6px;font:var(--weight-heavy) var(--text-label)/1.35 var(--sans);letter-spacing:.08em;
+  text-transform:uppercase;color:rgba(255,255,255,.6);vertical-align:bottom}
+.rate-table thead th:first-child{text-align:left}
+/* the chip is the row's handle: name left, share right, one line, so a plan row is a plan row's height */
+.rate-table .tier{padding:10px 12px;border-radius:13px;text-align:left;
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.rate-table .tier small{font:var(--weight-body) var(--text-micro)/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--label,rgba(255,255,255,.85))}
+.rate-table .tier b{font-size:var(--text-ui);font-weight:var(--weight-strong);color:#fff}
+.rate-table td{padding:11px 12px;border-radius:12px;font-size:var(--text-ui);font-weight:var(--weight-label);color:#fff;
+  border:1px solid var(--row-rim,rgba(255,255,255,.12));background:linear-gradient(150deg,var(--row),var(--row2))}
+
+/* the four metals, mixed for this page's deeper blue: style.css blends them for the Cashback page's own
+   ground, where No plan came out mud here and Gold came out olive. Same four hues, carried further. */
+.rate-table tr[data-tier=standard] .tier{--tint:rgba(234,142,72,.86);--tint2:rgba(158,80,36,.82);--rim:rgba(250,196,154,.78);--label:#FFEAD9}
+.rate-table tr[data-tier=silver]   .tier{--tint:rgba(206,222,244,.52);--tint2:rgba(116,146,190,.52);--rim:rgba(240,248,255,.75);--label:#FBFDFF}
+.rate-table tr[data-tier=gold]     .tier{--tint:rgba(246,202,72,.82);--tint2:rgba(152,108,14,.78);--rim:rgba(252,224,150,.8);--label:#FFF4CC}
+.rate-table tr[data-tier=diamond]  .tier{--tint:rgba(146,98,240,.78);--tint2:rgba(72,42,162,.74);--rim:rgba(208,182,255,.78);--label:#EFE6FF}
+/* Where each metal is allowed to live. Copper and gold are the blue ground's near-opposites, so a
+   translucent wash of either mixes back to grey — every alpha between .2 and .55 was tried and the row
+   came out brown, then olive, then grey (2026-09-12). A metal only survives on this ground where it is
+   nearly opaque. So it is spent where it can be: the chip, which is the plan's name, and the 1px rim
+   around each of the plan's figures. The fills behind the figures step by WEIGHT instead — each plan a
+   little lighter than the one above it — so the four rows still read as a ladder from across the screen.
+   Diamond is the exception and keeps a filled row: violet sits beside blue rather than opposite it, so it
+   is the one metal that survives the wash, and it is the top of the ladder anyway. */
+.rate-table tr[data-tier=standard] td{--row:rgba(255,255,255,.07);--row2:rgba(255,255,255,.03);--row-rim:rgba(250,186,138,.62)}
+.rate-table tr[data-tier=silver]   td{--row:rgba(255,255,255,.1);--row2:rgba(255,255,255,.05);--row-rim:rgba(238,246,255,.66)}
+.rate-table tr[data-tier=gold]     td{--row:rgba(255,255,255,.14);--row2:rgba(255,255,255,.07);--row-rim:rgba(252,218,124,.72)}
+.rate-table tr.peak td{--row:rgba(158,116,250,.5);--row2:rgba(96,58,206,.44);--row-rim:rgba(206,182,255,.75);font-weight:var(--weight-strong)}
 
 /* ---------- the numbered rules: the cashback notes, on glass ---------- */
 .note-panel{--r:22px;--tray:14px;padding:0;overflow:hidden;border-radius:var(--r)}
@@ -288,6 +360,16 @@ html.reduce .market-row::before,html.reduce .market-row::after,html.reduce .mark
 .glass .note-line{border-top-color:rgba(255,255,255,.14)}
 .glass .note-line>span:last-child{color:rgba(255,255,255,.84)}
 .glass .note-num{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff}
+/* five one-line rules down a 1085px pane left two thirds of every row empty and 400px of record behind
+   it. Two columns instead, and the pairs fall out as they were already written: 1 and 2 what the rates
+   are, 3 and 4 what the account and the trade must do, and 5 — the one rule that says what is NOT paid —
+   takes the full width under them, in rose. Reading order is unchanged: 1 to 5, left to right. */
+#cashback .note-panel{display:grid;grid-template-columns:1fr 1fr;align-content:start}
+#cashback .note-panel h3,#cashback .note-line.is-not{grid-column:1/-1}
+#cashback .note-panel h3+.note-line+.note-line{border-top:0}                       /* note 2 shares note 1's first row */
+#cashback .note-line:nth-child(odd){border-left:1px solid rgba(255,255,255,.14)}   /* the right column: notes 2 and 4 */
+#cashback .note-line.is-not{border-top:1px solid rgba(255,255,255,.14);border-left:0}
+#cashback .note-line.is-not .note-num{border-color:rgba(255,150,160,.5);background:rgba(255,110,130,.2);color:#FFD3D9}
 /* ---------- 7 · bonuses: the two offers as two panes, each with its own figure and its own light ----------
    Two white cards of six hairline rules, on a white field — the record Markets was before it (founder,
    2026-09-12: "the same love treatment"). Each offer is a .value-panel now, so both take the deep blue,
@@ -355,8 +437,15 @@ body{font-variant-numeric:normal}
   .broker-card.is-prev,.broker-card.is-next{opacity:0;pointer-events:none;transform:scale(.8)}
   /* base.css drops .record-grid to one column and takes the pane's left margin off with it */
   .reg-stack>.placeholder{margin-left:0}
-  .accounts-grid,.bonus-grid,.key-panel{grid-template-columns:1fr}
-  .rate-table{min-width:560px}
+  .accounts-grid,.bonus-grid,.key-panel,.rate-grid{grid-template-columns:1fr}
+  /* one column of notes below a tablet, so every rule takes back the hairline above it */
+  #cashback .note-panel{grid-template-columns:1fr}
+  #cashback .note-panel h3+.note-line+.note-line{border-top:1px solid rgba(255,255,255,.14)}
+  #cashback .note-line:nth-child(odd){border-left:0}
+  /* under a tablet the two note columns become one, so every rule takes the hairline above it again */
+  #cashback .note-panel{grid-template-columns:1fr}
+  #cashback .note-panel h3+.note-line+.note-line{border-top:1px solid rgba(255,255,255,.14)}
+  #cashback .note-line:nth-child(odd){border-left:0}
 }
 @media (max-width:560px){
   .broker-stage{height:182px}
@@ -371,7 +460,16 @@ body{font-variant-numeric:normal}
   .market-row{padding:15px 18px;grid-template-columns:36px minmax(0,1fr);gap:14px}
   .market-chip{width:36px;height:36px;border-radius:11px}
   .market-chip svg{width:19px;height:19px}
-  .rate-head{flex-direction:column;align-items:flex-start;gap:6px}
-  .rate-scroll{padding:10px}
+  /* 316px of phone for four columns: the chip stacks its name over its share, the figures drop to the
+     small size and the cells give up their side padding. Fixed columns keep the four inside the pane, so
+     the table is read where it stands instead of scrolling sideways under a thumb. */
+  .rate-scroll{padding:8px}
+  .rate-table{border-spacing:5px}
+  .rate-table col.mk{width:22%}
+  .rate-table thead th{padding:0 6px 5px;font-size:9px;letter-spacing:.04em}
+  .rate-table .tier{flex-direction:column;align-items:flex-start;gap:2px;padding:8px 9px}
+  .rate-table .tier small{font-size:9px;letter-spacing:.05em}
+  .rate-table .tier b{font-size:var(--text-small)}
+  .rate-table td{padding:9px 8px;font-size:var(--text-small)}
   .note-line{padding:13px 16px}
 }
