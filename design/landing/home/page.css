@@ -250,17 +250,18 @@ html:not(.js) .step .rv{opacity:1;transform:none}
 /* .tile has no plain form in base.css — on blue the glass rules own it, on paper each page draws
    its own. This is the evidence card's: a tinted tile, the icon in a lit well on its left. */
 .access-visual .tile{--tint:rgba(var(--rgb-600),.34);--tint2:rgba(var(--rgb-900),.26);--rim:rgba(160,196,255,.34);
-  min-height:100px;padding:16px 18px;display:grid;grid-template-columns:52px minmax(0,1fr);gap:16px;align-items:center;
+  min-height:100px;padding:16px 18px;display:grid;grid-template-columns:var(--icon-well) minmax(0,1fr);gap:16px;align-items:center;
   border:1px solid var(--rim);border-radius:16px;color:#fff;
   background:linear-gradient(150deg,var(--tint),var(--tint2));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
 .access-visual .tile.live{--rim:rgba(var(--rgb-success),.4);background:linear-gradient(105deg,rgba(var(--rgb-success),.34),rgba(var(--rgb-900),.3) 72%)}
-.access-visual .tile-icon{width:52px;height:52px;display:grid;place-items:center;border-radius:15px;stroke:#fff;
+/* the well is the .ico itself, and the player sizes its svg to 100% of the box — so the padding, not
+   an svg rule, is what holds the glyph at --icon-size (half the well less the glyph, less the 1px rim) */
+.access-visual .tile-icon{width:var(--icon-well);height:var(--icon-well);padding:calc((var(--icon-well) - var(--icon-size))/2 - 1px);display:grid;place-items:center;border-radius:var(--icon-well-radius);stroke:#fff;
   border:1px solid rgba(160,196,255,.42);background:linear-gradient(150deg,rgba(var(--rgb-500),.4),rgba(var(--rgb-900),.3));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
 .access-visual .tile.live .tile-icon{border-color:rgba(var(--rgb-success),.45);stroke:var(--success);
   background:linear-gradient(150deg,rgba(var(--rgb-success),.32),rgba(var(--rgb-900),.3))}
-.access-visual .tile-icon svg{width:24px;height:24px}
 .tile-copy{min-width:0}
 .tile-copy b{display:block;margin-bottom:5px;font-size:var(--text-service-title);line-height:1.2;letter-spacing:-.025em;color:#fff}
 .tile-copy span{min-height:38px;display:flex;align-items:center;max-width:400px;
@@ -308,10 +309,9 @@ html.reduce #benefits::after{animation:none}
   .benefit-row{background:radial-gradient(120% 130% at 0% 0%,rgba(var(--acc),.18),rgba(var(--acc),0) 58%),#fff}}
 .benefit-top{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .benefit-name{display:flex;align-items:center;gap:9px;font-size:var(--text-benefit-name);font-weight:740;letter-spacing:-.04em;color:var(--navy)}
-.benefit-icon{width:30px;height:30px;flex:0 0 30px;display:grid;place-items:center;border-radius:10px;
+.benefit-icon{width:var(--icon-well);height:var(--icon-well);flex:none;padding:calc((var(--icon-well) - var(--icon-size))/2 - 1px);display:grid;place-items:center;border-radius:var(--icon-well-radius);
   border:1px solid rgba(var(--acc),.32);background:rgba(var(--acc),.16);color:var(--acc-ink)}
 .benefit-row .ico.benefit-icon{stroke:var(--acc-ink)}
-.benefit-icon svg{width:17px;height:17px}
 /* the copy sits on the card's floor, so the name and the copy hold the two edges instead of leaving
    the lower third of the card empty */
 .benefit-desc{max-width:470px;margin:14px 0 0;font-size:var(--text-guide);line-height:1.4;color:var(--muted)}
@@ -424,8 +424,7 @@ body{font-variant-numeric:normal}
   .weekly-chart{min-height:255px;padding-left:38px}
   .weekly-grid div{left:38px}
   .weekly-bars{gap:10px}
-  .access-visual .tile{padding:16px;grid-template-columns:44px minmax(0,1fr);gap:12px}
-  .access-visual .tile-icon{width:44px;height:44px;border-radius:13px}
+  .access-visual .tile{padding:16px;gap:12px}
   .step-title{font-size:clamp(58px,20vw,78px);translate:-10px 0}
   .step-copy{font-size:var(--text-row-title);max-width:340px;translate:10px 0}
   .benefit-name{font-size:var(--text-answer)}

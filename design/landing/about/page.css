@@ -68,7 +68,7 @@ html.reduce .story::after,html.reduce #founder::after,html.reduce .dark-run>.ray
   backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);
   box-shadow:0 12px 30px -12px rgba(var(--rgb-shadow),.6),inset 0 1px 0 rgba(255,255,255,.6);font-size:var(--text-ui);white-space:nowrap}
 .founder-portrait .linkedin:hover{background:rgba(255,255,255,.3);border-color:rgba(255,255,255,.6);color:#fff}
-.founder-portrait .linkedin>svg:first-child{width:18px;height:18px}
+.founder-portrait .linkedin>svg:first-child{width:18px;height:18px;flex:none}   /* without it the nowrap label squeezed the mark to 13.5 wide */
 .founder-copy{align-self:center}
 .founder-copy .h2{max-width:720px;margin-bottom:24px}
 .founder-note{max-width:660px;margin:0;color:var(--body);font-size:var(--text-step);line-height:var(--leading-note)}

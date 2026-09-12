@@ -6,7 +6,7 @@
    02 and 04 and the final; white with outlined panels between them; and two white-to-blue
    gradients (meaning, FAQ) that hand off into the next blue screen. Panels on blue are glass. */
 @import url('../shared/fonts/inter.css');
-@import url('../shared/scale.css?v=e690a3df');
+@import url('../shared/scale.css?v=8c3fb211');
 
 :root{
   /* ---- Primary blue, lifted verbatim from the Mini App's design tokens ----------

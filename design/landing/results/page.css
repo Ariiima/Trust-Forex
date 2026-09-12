@@ -220,7 +220,7 @@
   border:1px solid rgba(255,255,255,.22);border-radius:15px;background:rgba(255,255,255,.1);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.22);color:#fff;font-size:var(--text-meta)}
 .visual-head strong{display:inline-flex;align-items:center;gap:12px;font-weight:var(--weight-strong)}
-.visual-head .ico{width:40px;height:40px;padding:9px;border:1px solid rgba(255,255,255,.24);border-radius:12px;background:rgba(255,255,255,.12)}
+.visual-head .ico{width:var(--icon-well);height:var(--icon-well);padding:calc((var(--icon-well) - var(--icon-size))/2 - 1px);border:1px solid rgba(255,255,255,.24);border-radius:var(--icon-well-radius);background:rgba(255,255,255,.12)}
 .visual-head>span{color:rgba(255,255,255,.7);font-size:var(--text-label)}
 /* the timer is already a capsule and keeps its own white; every other meta borrows the shape */
 .visual-head>span:not(.mini-timer){min-height:30px;padding:0 12px;display:inline-flex;align-items:center;
@@ -490,7 +490,7 @@ body{font-variant-numeric:normal}
    The bars take the selected target's series colour on glass and grow from the baseline on every redraw, staggered;
    the compare lines draw themselves in; the toggle carries the two methods' icons. All of it is a state change —
    a redraw, a toggle — never a loop. */
-.result-type .ico{width:16px;height:16px;stroke:currentColor}
+.result-type .ico{margin-block:-2px;stroke:currentColor}   /* the shared 24px glyph in a 20px line: the negative margin keeps the pill its height */
 .result-type[aria-pressed=true] .ico,.glass .result-type[aria-pressed=true] .ico{stroke:var(--accent)}   /* the .glass white-icon rule carries two :not()s, so it outranks a plain three-class selector */
 /* Compare on turns the target bar into the legend it used to be captioned by: every button carries its
    own line's colour, and none carries the white "you are here" pill, because in
@@ -526,7 +526,7 @@ body{font-variant-numeric:normal}
 .scalp-mark.bounce{background:linear-gradient(180deg,var(--bounce),color-mix(in srgb,var(--bounce) 45%,transparent));transform-origin:bottom;border-bottom:0}
 .scalp-mark.breach{background:linear-gradient(0deg,var(--breach),color-mix(in srgb,var(--breach) 45%,transparent));transform-origin:top;border-top:0}
 .scalp-slot.active .scalp-mark{opacity:1;box-shadow:inset 0 1px 0 #fff,inset 0 0 0 99px rgba(255,255,255,.06),0 0 18px rgba(255,255,255,.1)}   /* a wide block carries a lift louder than a 13px bar, so it takes less of one */
-.scalp-empty-state .ico{margin:0 auto 14px;width:40px;height:40px;stroke:rgba(255,255,255,.7)}
+.scalp-empty-state .ico{margin:0 auto 14px;stroke:rgba(255,255,255,.7)}
 html.reduce .bar,html.reduce .compare-path,html.reduce .compare-point,html.reduce .scalp-mark,html.reduce .selector.target button::before{animation:none}
 html.reduce .tooltip,html.reduce .tip-anchor,html.reduce .tip-anchor::before,html.reduce .compare-cursor,html.reduce .compare-live-dot{transition:opacity .15s var(--ease)}
 

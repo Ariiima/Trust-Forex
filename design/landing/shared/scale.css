@@ -130,5 +130,7 @@
   --frame-inset: 1.25rem;
   --control-height: 2.5rem;   /* 40px — buttons and fields (founder 2026-09-10: "globally less height") */
   --icon-size: 1.5rem;
+  --icon-well: 2.5rem;         /* 40px — the one box an icon sits in, at every width (founder 2026-09-12) */
+  --icon-well-radius: 12px;
   --radius-card: 28px;
 }

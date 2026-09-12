@@ -6,7 +6,7 @@
    feDisplacementMap (#liquid in index.html) in backdrop-filter, Chromium only; every other
    engine gets the same glass without the bend. The data stays opaque white — the founder's
    "white chart" — so figures never sit on a translucent ground. */
-@import url('base.css?v=6d2d4ad4');
+@import url('base.css?v=24dd05fd');
 
 /* ---------- structure behind the glass: a faint grid in every blue ground ---------- */
 .rayfield.k::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:
@@ -793,10 +793,9 @@ html.reduce .screen-paper .split-panel::after,html.reduce .split-panel .split-ca
 .route-flow .route-option+.route-option,.route-link+.route-option{margin-top:0}
 .route-link{width:2px;height:14px;margin-left:33px;flex:none;border-radius:2px;
   background:linear-gradient(180deg,rgba(130,178,255,.75),rgba(120,214,176,.75))}
-.route-chip{display:grid;place-items:center;width:40px;height:40px;flex:none;border-radius:12px;
+.route-chip{display:grid;place-items:center;width:var(--icon-well);height:var(--icon-well);flex:none;border-radius:var(--icon-well-radius);
   background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
-.route-chip .ico{width:22px;height:22px}
 .glass [data-route=review]{--tint:rgba(38,104,224,.5);--tint2:rgba(20,70,190,.36);--rim:rgba(130,178,255,.6)}
 .glass [data-route=open]{--tint:rgba(32,152,112,.48);--tint2:rgba(16,92,70,.36);--rim:rgba(120,214,176,.55)}
 html.reduce .route-link{background:rgba(255,255,255,.5)}

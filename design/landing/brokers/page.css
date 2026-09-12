@@ -240,7 +240,7 @@ html.reduce #hero :is(.display,.lede),html.reduce .facts li{transition:none;tran
    the line that names it (founder, 2026-09-12: "place items like in this section"). Two columns, not
    three — a market is one short word and a sentence, and holding them apart in a wide table left a
    third of the pane empty between them. The pane's own divider comes with .value-row. */
-.market-row{position:relative;z-index:1;padding:18px 24px;grid-template-columns:44px minmax(0,1fr);gap:18px}
+.market-row{position:relative;z-index:1;padding:18px 24px;grid-template-columns:var(--icon-well) minmax(0,1fr);gap:18px}
 .market-row .value-copy strong{font-size:var(--text-ui);letter-spacing:-.01em}
 .market-row .value-copy p{margin-top:4px;font-size:var(--text-meta);line-height:1.45;color:rgba(255,255,255,.78)}
 /* the wash: the hue enters at the row's leading edge and is gone by its middle, so the colour names the
@@ -265,11 +265,11 @@ html.reduce .market-row::before,html.reduce .market-row::after,html.reduce .mark
 /* the chip carries the hue at full strength — it is 40px on a deep blue pane, and the tints the tiles
    use on the blue records disappear at that size. A dark base of the hue's own deep end, the light end
    on the rim and in the glyph, and a small glow under it, so gold reads gold and not another blue. */
-.market-chip{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;color:rgb(var(--mk));
+.market-chip{width:var(--icon-well);height:var(--icon-well);display:grid;place-items:center;border-radius:var(--icon-well-radius);color:rgb(var(--mk));
   border:1px solid rgba(var(--mk),.62);background:linear-gradient(150deg,rgba(var(--mk),.42),rgba(var(--mk-2),.78));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 8px 18px -10px rgba(var(--mk-2),1),0 0 16px -6px rgba(var(--mk),.55);
   transition:border-color .35s var(--ease),box-shadow .35s var(--ease)}
-.market-chip svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.market-chip svg{width:var(--icon-size);height:var(--icon-size);fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 
 /* ---------- 6 · cashback: a white record, the table on its side, the two accounts beside each other ----------
    The record is `.mech.white` now, like Broker overview: no blue block behind it, the heading navy, the copy ink,
@@ -436,9 +436,7 @@ body{font-variant-numeric:normal}
   .reg-lic{grid-column:2;justify-self:start}
   .key-row,.account-row{grid-template-columns:1fr;gap:5px;padding:14px 16px}
   .key-row strong,.account-row strong{text-align:left}
-  .market-row{padding:15px 18px;grid-template-columns:36px minmax(0,1fr);gap:14px}
-  .market-chip{width:36px;height:36px;border-radius:11px}
-  .market-chip svg{width:19px;height:19px}
+  .market-row{padding:15px 18px;gap:14px}
   /* 316px of phone for four columns: the chip stacks its name over its share, the figures drop to the
      small size and the cells give up their side padding. Fixed columns keep the four inside the pane, so
      the table is read where it stands instead of scrolling sideways under a thumb. */

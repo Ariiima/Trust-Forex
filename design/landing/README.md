@@ -33,7 +33,13 @@ page that carries a `<!--NAV <Page>-->` marker and `blog/build.mjs` reads it for
 page. Edit the nav in cb8 only, then run both. Icons are Iconly Lottie files in `cb8/ico/` (the ids are
 listed in `_qa/iconly.py`); a slot keeps an inline stand-in glyph (`svg.fb`) that shows only if
 its file is missing. Each icon rests on its last frame, plays once on reveal and once per hover;
-`data-rest="<frame>"` on a slot picks another resting frame. Chapter sentences take one of six
+`data-rest="<frame>"` on a slot picks another resting frame. Every icon glyph, Iconly or the
+Brokers market chips, renders at `--icon-size` (24px), and every box an icon sits in is
+`--icon-well` (40px, radius `--icon-well-radius`) at every width (founder 2026-09-12). A glyph that
+filled a 44px box on a phone and a 52px one on a laptop read as two sizes, so boxes do not shrink.
+Never size the glyph in a slot; where the box is the `.ico` itself it pads down to the token, because
+the player sets its svg to 100% of the box. `node _qa/icon-sizes.mjs` fails on any other size. Inline glyphs
+inside text (arrows, socials, plan ticks) are not icons for this rule. Chapter sentences take one of six
 gradients via `data-grad="1…6"` on the section (`cb8/style.css`).
 
 Forms on glass use two shared controls, both in `cb8/style.css` and both built on `.tile`:
