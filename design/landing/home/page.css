@@ -14,30 +14,60 @@
 #record .grid2{grid-template-columns:minmax(0,.92fr) minmax(520px,1.08fr);gap:88px}
 #record .grid2>div:first-child{max-width:590px}
 #record .copy{max-width:560px}
-.weekly-record{min-height:430px;padding:14px 20px 22px;display:grid;grid-template-rows:auto 1fr auto}
-.weekly-head{min-height:82px;padding:15px 18px;margin-bottom:24px;border-radius:18px;background:var(--soft);
+/* The record card runs green on blue (founder, 2026-09-12). Green is the colour of a target that
+   was hit, so the win-rate plot reads in it — but green bars on the white pane sat flat against the
+   paper, so the card takes the service card's ground: the paper screen's frame paints its pane
+   white (../cb8/style.css), and this one paints it blue instead. The ramp is the brand's state
+   green stepping down in lightness, brightest bar = the target reached most often. */
+.weekly-record{--r-1:#48D48A;--r-2:#35BC79;--r-3:#24A166;--r-4:#1A7F51;
+  min-height:430px;padding:14px 18px 20px;display:grid;grid-template-rows:auto 1fr auto}
+/* No frame, and the pane is the mechanics panel's glass (founder, 2026-09-12). The bezel read as a
+   border, and a translucent wash over paper read pale — so this is 03's factor pane exactly: an
+   opaque --blue base under the translucent layers, a light-blue rim, the streak that crosses on the
+   screen's own --ground timeline, and a specular under the pointer. ::before, which stood 14px proud
+   as the frame, is the pane; ::after, which was the white ground, is its light. */
+.screen-paper .weekly-record{border:0;
+  transform:perspective(1200px) rotateX(calc(var(--ty,0) * -3deg)) rotateY(calc(var(--tx,0) * 3deg));transition:transform .6s var(--ease)}
+.screen-paper .weekly-record.lit{transition-duration:.15s}
+html.reduce .screen-paper .weekly-record{transform:none;transition:none}
+.screen-paper .weekly-record::before{inset:0;border-radius:inherit;border:1px solid rgba(160,196,255,.55);
+  background:radial-gradient(120% 90% at 12% 0%,rgba(var(--rgb-600),.38),transparent 66%),
+    linear-gradient(160deg,rgba(var(--rgb-900),.18),rgba(var(--rgb-abyss),.26)),
+    linear-gradient(var(--blue),var(--blue));
+  box-shadow:0 0 34px rgba(96,156,255,.3),inset 0 1px 0 rgba(255,255,255,.38),inset 0 0 0 1px rgba(160,196,255,.18),
+    inset 0 0 64px rgba(96,156,255,.14),0 30px 60px -28px rgba(var(--rgb-shadow),.8)}
+.screen-paper .weekly-record::after{border-radius:inherit;transition:--lit .45s var(--ease);
+  animation:glass-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%;background:
+  radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,var(--lit)),transparent 70%) no-repeat 0 0/auto,
+  linear-gradient(115deg,transparent 32%,rgba(255,255,255,.18) 46%,rgba(255,255,255,.05) 52%,transparent 62%) no-repeat 100% 0/220% 100%}
+.screen-paper .weekly-record.lit{--lit:.1}
+html.reduce .screen-paper .weekly-record::after{animation:none;transition:none}
+/* the header block is a tinted tile on that pane — lit along its top edge, no rim line */
+.weekly-head{min-height:82px;padding:15px 18px;margin-bottom:24px;border-radius:18px;
+  background:linear-gradient(150deg,rgba(var(--rgb-500),.42),rgba(var(--rgb-abyss),.32));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -1px 0 rgba(var(--rgb-shadow),.26),0 10px 24px -18px rgba(var(--rgb-shadow),.8);
   display:flex;align-items:center;justify-content:space-between;gap:24px}
-.weekly-head span{display:block;font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.065em;text-transform:uppercase;color:var(--muted)}
-.weekly-head strong{display:block;margin-top:5px;font-size:var(--text-week-period);letter-spacing:-.025em;color:var(--navy)}
-.weekly-total{text-align:right}
-.weekly-total b{display:block;font-size:var(--text-week-total);line-height:1;letter-spacing:-.045em;color:var(--navy)}
-.weekly-total small{display:block;margin-top:4px;font-size:var(--text-label);color:var(--muted)}
+.weekly-head span{display:block;font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.065em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.weekly-head strong{display:block;margin-top:6px;font-size:var(--text-week-period);letter-spacing:-.025em;color:#fff}
+.weekly-total{flex:none;text-align:right}
+.weekly-total b{display:block;font-size:var(--text-week-total);line-height:1;letter-spacing:-.045em;color:#fff}
+.weekly-total small{display:block;margin-top:5px;font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.065em;text-transform:uppercase;white-space:nowrap;color:rgba(255,255,255,.7)}
 /* the plot: gridlines behind, four columns growing off the floor. The label above a bar is placed
    against the bar's own top edge, so it travels with --rate and never collides with a gridline. */
 .weekly-chart{position:relative;min-height:285px;padding:14px 10px 36px 48px}
 .weekly-grid{position:absolute;inset:14px 10px 36px 0}
-.weekly-grid div{position:absolute;left:48px;right:0;border-top:1px solid var(--line)}
-.weekly-grid span{position:absolute;right:calc(100% + 8px);top:0;transform:translateY(-50%);font-size:var(--text-micro);color:var(--muted)}
+.weekly-grid div{position:absolute;left:48px;right:0;border-top:1px solid rgba(255,255,255,.18)}
+.weekly-grid span{position:absolute;right:calc(100% + 8px);top:0;transform:translateY(-50%);font-size:var(--text-micro);color:rgba(255,255,255,.6)}
 .weekly-bars{position:relative;height:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:18px;align-items:end}
 .weekly-bar{height:var(--rate);min-height:2px;border-radius:7px 7px 2px 2px;background:var(--bar);position:relative}
-/* TP1 to TP4 walk down the primary ramp — the darkest bar is the target reached most often */
-.weekly-bar:nth-child(1){--bar:var(--p-950)}
-.weekly-bar:nth-child(2){--bar:var(--p-900)}
-.weekly-bar:nth-child(3){--bar:var(--p-700)}
-.weekly-bar:nth-child(4){--bar:var(--p-400)}
-.weekly-bar b{position:absolute;left:50%;top:-28px;transform:translateX(-50%);font-size:var(--text-panel-title);letter-spacing:-.025em;color:var(--navy)}
+/* TP1 to TP4 walk down the green ramp — the brightest bar is the target reached most often */
+.weekly-bar:nth-child(1){--bar:var(--r-1)}
+.weekly-bar:nth-child(2){--bar:var(--r-2)}
+.weekly-bar:nth-child(3){--bar:var(--r-3)}
+.weekly-bar:nth-child(4){--bar:var(--r-4)}
+.weekly-bar b{position:absolute;left:50%;top:-28px;transform:translateX(-50%);font-size:var(--text-panel-title);letter-spacing:-.025em;color:#fff}
 .weekly-bar span{position:absolute;left:50%;top:calc(100% + 11px);transform:translateX(-50%);white-space:nowrap;
-  font:var(--weight-heavy) var(--text-label)/1 var(--sans);color:var(--muted)}
+  font:var(--weight-heavy) var(--text-label)/1 var(--sans);color:rgba(255,255,255,.72)}
 /* The bars grow from the floor once the screen arrives, on the reveal's own curve. Height, not
    scaleY: the figure above a bar is pinned to that bar's top edge, so it has to ride up with it —
    a scale would stretch the digits instead. Four elements, once, off the scroll path. */
@@ -46,8 +76,13 @@
 .weekly-bar:nth-child(3){--n:2}.weekly-bar:nth-child(4){--n:3}
 @keyframes bar-grow{from{height:0}to{height:var(--rate)}}
 html.reduce .screen.in .weekly-bar{animation:none}
+@media (prefers-reduced-transparency:reduce){
+  .screen-paper .weekly-record::before{backdrop-filter:none;-webkit-backdrop-filter:none}
+  .screen-paper .weekly-record::after{animation:none;background:none}
+  .weekly-head{background:rgba(var(--rgb-abyss),.55)}
+}
 .record-link{margin-top:20px;display:inline-flex;align-items:center;gap:8px;justify-self:start;
-  font-size:var(--text-guide);font-weight:var(--weight-strong);color:var(--accent)}
+  font-size:var(--text-guide);font-weight:var(--weight-strong);color:var(--r-1)}
 .record-link:hover .ext{transform:translateX(3px)}
 
 /* ---------- 3 · the chapters: the wireframe's one chapter size, on the light one too ---------- */
@@ -178,17 +213,39 @@ html.reduce #benefits::after{animation:none}
 .benefits-intro .h2{max-width:520px;margin:0;font-size:var(--text-title-benefits)}
 .benefits-intro .copy{max-width:460px;margin:24px 0 0;font-size:var(--text-copy)}
 .benefit-system{width:100%;max-width:548px;justify-self:end;display:grid;gap:10px}
-.benefit-row{min-height:132px;padding:17px 18px;border:1px solid var(--line);border-radius:18px;background:var(--paper);display:flex;flex-direction:column}
+/* Each benefit carries one faint colour of its own — Cashback the mint it uses everywhere, Referral the
+   brand blue — held in --acc for the corner wash and the rim, and in --acc-ink for anything that has to
+   read as text on white. The glass is frosted, not tinted: a high white base the page shows through,
+   blurred and saturated, with the colour held in one corner so the card stays clean where the copy sits. */
+.benefit-row{--acc:46,178,134;--acc-ink:#16855D;
+  position:relative;isolation:isolate;min-height:132px;padding:17px 18px;display:flex;flex-direction:column;
+  border:1px solid rgba(var(--acc),.34);border-radius:18px;
+  background:radial-gradient(120% 130% at 0% 0%,rgba(var(--acc),.22),rgba(var(--acc),0) 58%),rgba(255,255,255,.66);
+  backdrop-filter:blur(22px) saturate(190%);-webkit-backdrop-filter:blur(22px) saturate(190%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 2px 6px -3px rgba(var(--rgb-shadow),.10),0 26px 50px -30px rgba(var(--rgb-shadow),.55)}
+.benefit-row:nth-child(2){--acc:44,94,210;--acc-ink:var(--accent)}
+/* the specular: one still highlight across the top corner, the same light the blue sections' tiles carry
+   but at the strength a white card can hold. It is a ::after under the content, not a moving streak —
+   a travelling band on a pale card reads as a smudge. */
+.benefit-row::after{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(150deg,rgba(255,255,255,.85),rgba(255,255,255,0) 42%)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .benefit-row{background:radial-gradient(120% 130% at 0% 0%,rgba(var(--acc),.18),rgba(var(--acc),0) 58%),#fff}}
 .benefit-top{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .benefit-name{display:flex;align-items:center;gap:9px;font-size:var(--text-benefit-name);font-weight:740;letter-spacing:-.04em;color:var(--navy)}
-.benefit-icon{width:30px;height:30px;flex:0 0 30px;display:grid;place-items:center;border-radius:10px;background:#fff;color:var(--accent)}
+.benefit-icon{width:30px;height:30px;flex:0 0 30px;display:grid;place-items:center;border-radius:10px;
+  border:1px solid rgba(var(--acc),.32);background:rgba(var(--acc),.16);color:var(--acc-ink)}
+.benefit-row .ico.benefit-icon{stroke:var(--acc-ink)}
 .benefit-icon svg{width:17px;height:17px}
+/* the copy sits on the card's floor, so the name and the copy hold the two edges instead of leaving
+   the lower third of the card empty */
 .benefit-desc{max-width:470px;margin:14px 0 0;font-size:var(--text-guide);line-height:1.4;color:var(--muted)}
+.benefit-row .benefit-desc{margin-top:auto;padding-top:14px}
 /* the wireframe's late change: the link became a pill, and it holds its size beside the name */
 .benefit-link{flex:0 0 auto;min-height:32px;padding:7px 12px;display:inline-flex;align-items:center;gap:6px;
-  border:1px solid var(--navy);border-radius:999px;line-height:1;font-size:var(--text-guide);font-weight:var(--weight-strong);color:var(--navy);
-  transition:background-color .3s var(--ease),color .3s var(--ease)}
-.benefit-link:hover{background:var(--navy);color:#fff}
+  border:1px solid rgba(var(--acc),.45);border-radius:999px;line-height:1;font-size:var(--text-guide);font-weight:var(--weight-strong);color:var(--acc-ink);
+  transition:background-color .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease)}
+.benefit-link:hover{background:var(--acc-ink);border-color:var(--acc-ink);color:#fff}
 .benefit-link .ext{width:13px;height:13px}
 /* the rate track: the wireframe's black bar, in the page's blue, its four points in their metals */
 .rate-track{padding:8px;border-radius:16px;background:var(--blue);color:#fff;--grad:var(--grad-light);

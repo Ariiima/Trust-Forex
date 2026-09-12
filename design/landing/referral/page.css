@@ -15,10 +15,10 @@
 /* ---------- 2 · the evidence: three rows on the blue card, a marker on each ---------- */
 /* The card turns blue (founder, 2026-09-12): on paper the white pane read as another sheet of the
    page, so the evidence now sits on the record pages' own deep blue, each row a tile on it with a
-   leading icon. The Results row takes the brand's green — the one row about what stays public. */
-.marker{width:92px;padding:7px 9px;border:1px solid rgba(160,196,255,.5);border-radius:999px;text-align:center;font-size:var(--text-label);font-weight:var(--weight-strong);color:#fff;background:rgba(255,255,255,.12)}
-.proof-row.tracked .marker{border-color:rgba(var(--rgb-success),.55);color:var(--success);background:rgba(var(--rgb-success),.16)}
-.proof-canvas{--rgb-success:72,212,138;   /* the state green as a triplet, so the tracked row can tint with it */
+   leading icon. Each row then carries one faint colour of its own — sky, green, amber — at the same
+   strength, so the three read as one family and no row shouts over the other two. Every part of a row
+   (rim, tint, icon, marker) takes that colour from --acc, so a row is recoloured in one line. */
+.proof-canvas{--rgb-sky:160,196,255;--sky:#A0C4FF;--rgb-success:72,212,138;--rgb-amber:240,168,104;--amber:#F0A868;
   min-height:356px;padding:14px;display:grid;grid-template-rows:repeat(3,minmax(100px,auto));gap:10px;border-radius:24px}
 /* the paper screen's frame paints its pane white behind the content (style.css); this one is blue,
    and both pseudos follow the card's own 24px corner rather than the 28px card radius */
@@ -26,19 +26,19 @@
   radial-gradient(120% 90% at 12% 0%,rgba(var(--rgb-600),.5),transparent 66%),
   linear-gradient(165deg,rgba(var(--rgb-900),.92),var(--blue) 58%,var(--p-deep))}
 .screen-paper .proof-canvas::before{border-radius:38px}
-.proof-row{--tint:rgba(var(--rgb-600),.34);--tint2:rgba(var(--rgb-900),.26);--rim:rgba(160,196,255,.34);
+.proof-row{--acc:var(--rgb-sky);--acc-solid:var(--sky);
   min-height:100px;padding:16px 18px;display:grid;grid-template-columns:52px minmax(0,1fr) 92px;gap:16px;align-items:center;
-  border:1px solid var(--rim);border-radius:16px;color:#fff;
-  background:linear-gradient(150deg,var(--tint),var(--tint2));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
-.proof-row.tracked{--rim:rgba(var(--rgb-success),.4);background:linear-gradient(105deg,rgba(var(--rgb-success),.34),rgba(var(--rgb-900),.3) 72%)}
+  border:1px solid rgba(var(--acc),.34);border-radius:16px;color:#fff;
+  background:linear-gradient(150deg,rgba(var(--acc),.18),rgba(var(--rgb-deep),.32));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
+.proof-row.tracked{--acc:var(--rgb-success);--acc-solid:var(--success)}
+.proof-row:nth-child(3){--acc:var(--rgb-amber);--acc-solid:var(--amber)}
 .proof-row>div{min-width:0}
 .proof-icon{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;
-  border:1px solid rgba(160,196,255,.42);background:linear-gradient(150deg,rgba(var(--rgb-500),.4),rgba(var(--rgb-900),.3));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
-.proof-row.tracked .proof-icon{border-color:rgba(var(--rgb-success),.45);background:linear-gradient(150deg,rgba(var(--rgb-success),.32),rgba(var(--rgb-900),.3))}
-.proof-row .ico{stroke:#fff}
-.proof-row.tracked .ico{stroke:var(--success)}
+  border:1px solid rgba(var(--acc),.4);background:linear-gradient(150deg,rgba(var(--acc),.2),rgba(var(--rgb-deep),.3));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+.proof-row .ico{stroke:var(--acc-solid)}
+.marker{width:92px;padding:7px 9px;border:1px solid rgba(var(--acc),.5);border-radius:999px;text-align:center;font-size:var(--text-label);font-weight:var(--weight-strong);color:var(--acc-solid);background:rgba(var(--acc),.14)}
 .proof-row h3{margin:0 0 5px;font-size:var(--text-panel-title);line-height:1.2;letter-spacing:-.015em;font-weight:var(--weight-strong);color:#fff;white-space:nowrap}
 .proof-row p{margin:0;max-width:360px;font-size:var(--text-meta);line-height:1.4;color:rgba(255,255,255,.82)}
 
@@ -93,9 +93,15 @@ html.reduce #m2 .block{animation:none}
 /* each point carries its icon on a small glass tile and a faint colour of its own: blue for the connection,
    the TP green for rewards arriving, plain for the rule that never expires (founder, 2026-09-09: "can be improved") */
 .glass .lifetime-icon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;padding:0;--streak:.16}
-.glass .lifetime-point:nth-child(1){--tint:rgba(38,104,224,.42);--tint2:rgba(20,70,190,.3);--rim:rgba(130,178,255,.55)}
-.glass .lifetime-point:nth-child(2){--tint:rgba(46,178,134,.26);--tint2:rgba(20,90,70,.3);--rim:rgba(150,230,190,.45)}
-.glass .lifetime-point:nth-child(2) .lifetime-icon .ico{stroke:var(--success)}
+/* the same per-row colour the evidence card takes, in its own three: rose, cyan, lime. One --acc a row,
+   carried by the rim, the tint, the icon tile and the icon stroke. */
+.glass .lifetime-story{--rgb-rose:255,157,174;--rose:#FF9DAE;--rgb-cyan:111,216,232;--cyan:#6FD8E8;--rgb-lime:183,227,107;--lime:#B7E36B}
+.glass .lifetime-point{--acc:var(--rgb-rose);--acc-solid:var(--rose);
+  --tint:rgba(var(--acc),.20);--tint2:rgba(var(--rgb-abyss),.30);--rim:rgba(var(--acc),.40)}
+.glass .lifetime-point:nth-child(2){--acc:var(--rgb-cyan);--acc-solid:var(--cyan)}
+.glass .lifetime-point:nth-child(3){--acc:var(--rgb-lime);--acc-solid:var(--lime)}
+.glass .lifetime-point .lifetime-icon{--tint:rgba(var(--acc),.20);--tint2:rgba(var(--rgb-abyss),.28);--rim:rgba(var(--acc),.42)}
+.glass .lifetime-point .lifetime-icon .ico{stroke:var(--acc-solid)}
 .glass .lifetime-point h3{margin:0 0 4px;font-size:var(--text-panel-title);line-height:1.2;letter-spacing:-.015em;font-weight:var(--weight-strong);color:#fff}
 .glass .lifetime-point p{margin:0;max-width:400px;color:rgba(255,255,255,.8);font-size:var(--text-meta);line-height:1.4}
 /* the summary closes the three points, so it is the brightest tile in the stack — not a different
