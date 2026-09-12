@@ -11,17 +11,50 @@
 .copy{max-width:610px}
 
 
-/* ---------- the two chapters: the wireframe's one chapter size for both (it draws both dark; the closing one is the
+/* ---------- 2 · use cases: the wireframe's .9fr / 1.1fr split, 76 apart; three rows on the blue card ---------- */
+/* The card turns blue, the same move the Referral evidence card took (founder, 2026-09-12): on paper the
+   white pane read as another sheet of the page, so the goals now sit on the record pages' own deep blue,
+   each row a tile on it with a leading icon and a marker. The reward row takes the brand's green. */
+#cases .grid2{grid-template-columns:minmax(0,.9fr) minmax(500px,1.1fr);gap:76px}
+#cases .grid2>div:first-child{max-width:520px}
+.marker{width:92px;padding:7px 9px;border:1px solid rgba(160,196,255,.5);border-radius:999px;text-align:center;font-size:var(--text-label);font-weight:var(--weight-strong);color:#fff;background:rgba(255,255,255,.12)}
+.case-row.valued .marker{border-color:rgba(var(--rgb-success),.55);color:var(--success);background:rgba(var(--rgb-success),.16)}
+.case-list{--rgb-success:72,212,138;   /* the state green as a triplet, so the reward row can tint with it */
+  width:100%;max-width:590px;justify-self:end;
+  min-height:356px;padding:14px;display:grid;grid-template-rows:repeat(3,minmax(100px,auto));gap:10px;border-radius:24px}
+/* the paper screen's frame paints its pane white behind the content (style.css); this one is blue,
+   and both pseudos follow the card's own 24px corner rather than the 28px card radius */
+.screen-paper .case-list::after{border-radius:24px;background:
+  radial-gradient(120% 90% at 12% 0%,rgba(var(--rgb-600),.5),transparent 66%),
+  linear-gradient(165deg,rgba(var(--rgb-900),.92),var(--blue) 58%,var(--p-deep))}
+.screen-paper .case-list::before{border-radius:38px}
+.case-row{--tint:rgba(var(--rgb-600),.34);--tint2:rgba(var(--rgb-900),.26);--rim:rgba(160,196,255,.34);
+  min-height:100px;padding:16px 18px;display:grid;grid-template-columns:52px minmax(0,1fr) 92px;gap:16px;align-items:center;
+  border:1px solid var(--rim);border-radius:16px;color:#fff;
+  background:linear-gradient(150deg,var(--tint),var(--tint2));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
+.case-row.valued{--rim:rgba(var(--rgb-success),.4);background:linear-gradient(105deg,rgba(var(--rgb-success),.34),rgba(var(--rgb-900),.3) 72%)}
+.case-row>div{min-width:0}
+.case-icon{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;
+  border:1px solid rgba(160,196,255,.42);background:linear-gradient(150deg,rgba(var(--rgb-500),.4),rgba(var(--rgb-900),.3));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.case-row.valued .case-icon{border-color:rgba(var(--rgb-success),.45);background:linear-gradient(150deg,rgba(var(--rgb-success),.32),rgba(var(--rgb-900),.3))}
+.case-row .ico{stroke:#fff}
+.case-row.valued .ico{stroke:var(--success)}
+.case-row h3{margin:0 0 5px;font-size:var(--text-panel-title);line-height:1.2;letter-spacing:-.015em;font-weight:var(--weight-strong);color:#fff;white-space:nowrap}
+.case-row p{margin:0;max-width:360px;font-size:var(--text-meta);line-height:1.4;color:rgba(255,255,255,.82)}
+
+/* ---------- 3 and 9 · the two chapters: the wireframe's one chapter size for both (it draws both dark; the closing one is the
      light hand-off into the blue request page, as cb8's "Ready to activate?") ---------- */
 .chapter .h2,.chapter-2 .h2{font-size:var(--text-chapter-pitch);line-height:.98;letter-spacing:-.062em;max-width:1064px}   /* the wireframe's 980 was drawn in the system font; Inter needs ~8% more for the same breaks (README) */
 
-/* ---------- 01–03 · how it works: the wireframe's 1.08fr / .92fr (visual never under 430), 78 apart ---------- */
+/* ---------- 4–6 · how it works (01–03): the wireframe's 1.08fr / .92fr (visual never under 430), 78 apart ---------- */
 .glass .mech-grid{grid-template-columns:minmax(0,1.08fr) minmax(430px,.92fr);column-gap:78px}
 .mech-copy h3{font-size:var(--text-title-how);line-height:.98;letter-spacing:-.06em;max-width:650px;margin-bottom:24px}
 .mech-copy p{max-width:600px}
 .mech-copy .page-number{margin-bottom:26px;font-size:var(--text-small);letter-spacing:.12em}   /* the wireframe's story number */
 .glass .panel{width:100%;max-width:520px;justify-self:end;padding:14px;border-radius:24px}
-.bmark{width:48px;height:48px;flex:none;display:grid;place-items:center;border:1px solid rgba(255,255,255,.45);border-radius:50%;background:rgba(255,255,255,.1);color:#fff}
+.bmark{width:48px;height:48px;flex:none;display:grid;place-items:center;border:1px solid rgba(255,255,255,.45);border-radius:14px;background:rgba(255,255,255,.1);color:#fff}
 .bmark svg{width:23px;height:23px}
 
 /* 01 · the sponsor row and the two protected points, each with an icon tile and a touch of colour (blue for
@@ -67,7 +100,7 @@ html.reduce .swap,html.reduce .access-switch .tile:hover{animation:none;transfor
 .glass .app-shell{display:grid;gap:12px}
 .glass .app-broker{min-height:86px;padding:16px 20px;display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:center;border-radius:16px;
   --tint:rgba(38,104,224,.5);--tint2:rgba(20,70,190,.36);--rim:rgba(130,178,255,.6)}
-.app-broker .bmark{width:44px;height:44px}
+.app-broker .bmark{width:44px;height:44px;border-radius:13px}
 .app-broker strong{display:block;font-size:var(--text-panel-title)}
 .app-broker span{display:block;margin-top:3px;font-size:var(--text-label);color:rgba(255,255,255,.75)}
 .glass .app-campaign{padding:31px 24px 24px;text-align:center;border-radius:16px}
@@ -79,39 +112,6 @@ html.reduce .swap,html.reduce .access-switch .tile:hover{animation:none;transfor
 .glass .app-action strong{font-size:var(--text-small);color:var(--navy)}   /* over .glass .tile strong's white */
 .app-action svg{width:18px;height:18px;flex:none}
 
-/* ---------- 2 · use cases: the wireframe's .9fr / 1.1fr split, 76 apart; three rows on the blue card ---------- */
-/* The card turns blue, the same move the Referral evidence card took (founder, 2026-09-12): on paper the
-   white pane read as another sheet of the page, so the goals now sit on the record pages' own deep blue,
-   each row a tile on it with a leading icon and a marker. The reward row takes the brand's green. */
-#cases .grid2{grid-template-columns:minmax(0,.9fr) minmax(500px,1.1fr);gap:76px}
-#cases .grid2>div:first-child{max-width:520px}
-.marker{width:92px;padding:7px 9px;border:1px solid rgba(160,196,255,.5);border-radius:999px;text-align:center;font-size:var(--text-label);font-weight:var(--weight-strong);color:#fff;background:rgba(255,255,255,.12)}
-.case-row.valued .marker{border-color:rgba(var(--rgb-success),.55);color:var(--success);background:rgba(var(--rgb-success),.16)}
-.case-list{--rgb-success:72,212,138;   /* the state green as a triplet, so the reward row can tint with it */
-  width:100%;max-width:590px;justify-self:end;
-  min-height:356px;padding:14px;display:grid;grid-template-rows:repeat(3,minmax(100px,auto));gap:10px;border-radius:24px}
-/* the paper screen's frame paints its pane white behind the content (style.css); this one is blue,
-   and both pseudos follow the card's own 24px corner rather than the 28px card radius */
-.screen-paper .case-list::after{border-radius:24px;background:
-  radial-gradient(120% 90% at 12% 0%,rgba(var(--rgb-600),.5),transparent 66%),
-  linear-gradient(165deg,rgba(var(--rgb-900),.92),var(--blue) 58%,var(--p-deep))}
-.screen-paper .case-list::before{border-radius:38px}
-.case-row{--tint:rgba(var(--rgb-600),.34);--tint2:rgba(var(--rgb-900),.26);--rim:rgba(160,196,255,.34);
-  min-height:100px;padding:16px 18px;display:grid;grid-template-columns:52px minmax(0,1fr) 92px;gap:16px;align-items:center;
-  border:1px solid var(--rim);border-radius:16px;color:#fff;
-  background:linear-gradient(150deg,var(--tint),var(--tint2));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
-.case-row.valued{--rim:rgba(var(--rgb-success),.4);background:linear-gradient(105deg,rgba(var(--rgb-success),.34),rgba(var(--rgb-900),.3) 72%)}
-.case-row>div{min-width:0}
-.case-icon{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;
-  border:1px solid rgba(160,196,255,.42);background:linear-gradient(150deg,rgba(var(--rgb-500),.4),rgba(var(--rgb-900),.3));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
-.case-row.valued .case-icon{border-color:rgba(var(--rgb-success),.45);background:linear-gradient(150deg,rgba(var(--rgb-success),.32),rgba(var(--rgb-900),.3))}
-.case-row .ico{stroke:#fff}
-.case-row.valued .ico{stroke:var(--success)}
-.case-row h3{margin:0 0 5px;font-size:var(--text-panel-title);line-height:1.2;letter-spacing:-.015em;font-weight:var(--weight-strong);color:#fff;white-space:nowrap}
-.case-row p{margin:0;max-width:360px;font-size:var(--text-meta);line-height:1.4;color:rgba(255,255,255,.82)}
-
 /* ---------- 7 · the pilot: .screen-paper (cb8/style.css); the card on the blue with its own light ---------- */
 .pilot-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,.92fr);gap:90px;align-items:center}
 .pilot-copy .h2{max-width:560px}
@@ -122,16 +122,16 @@ html.reduce .swap,html.reduce .access-switch .tile:hover{animation:none;transfor
 .pilot-card>:not(.rayfield){position:relative;z-index:1}
 .pilot-card .rayfield.k i,.pilot-card .tile::after{animation-timeline:--ground}   /* the arcs and the tile streaks travel with the page */
 .pilot-head{min-height:58px;margin:-2px 0 22px;padding-bottom:16px;display:grid;grid-template-columns:42px 1fr auto;gap:13px;align-items:center;border-bottom:1px solid rgba(255,255,255,.22)}
-.pilot-head .bmark{width:42px;height:42px}
+.pilot-head .bmark{width:42px;height:42px;border-radius:12px}
 .pilot-head .bmark svg{width:20px;height:20px}
 .pilot-head strong{display:block;font-size:var(--text-ui)}
 .pilot-head span{display:block;margin-top:3px;font-size:var(--text-label);color:rgba(255,255,255,.7)}
-/* "Ready to configure": the calculator's live pill, its dot pulsing */
-.ready{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid rgba(255,255,255,.34);border-radius:999px;background:rgba(255,255,255,.14);
+/* "Ready to configure": the calculator's live pill (style.css scopes its own to #calculator), its dot pulsing */
+.live{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid rgba(255,255,255,.34);border-radius:999px;background:rgba(255,255,255,.14);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
   font:var(--weight-strong) var(--text-micro)/1 var(--sans);color:#fff;white-space:nowrap}
-.ready i{width:8px;height:8px;border-radius:50%;background:var(--success);animation:live-pulse 1.8s var(--ease) infinite}
-html.reduce .ready i{animation:none}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--success);animation:live-pulse 1.8s var(--ease) infinite}
+html.reduce .live i{animation:none}
 .pilot-card h3{max-width:420px;margin:0 0 26px;font-size:var(--text-pilot);line-height:1.04;letter-spacing:-.045em;font-weight:var(--weight-strong);color:#fff;text-wrap:balance}
 .pilot-path{list-style:none;margin:0;padding:0 0 0 46px;position:relative}
 .pilot-path::before{content:'';position:absolute;left:15px;top:15px;bottom:15px;width:1px;background:rgba(255,255,255,.28)}
@@ -184,7 +184,7 @@ html.reduce .ready i{animation:none}
 .goal-grid span{min-height:52px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--paper);display:flex;align-items:center;gap:10px;
   font-size:var(--text-small);font-weight:var(--weight-strong);line-height:1.3;color:var(--body);transition:background-color .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease)}
 .goal-grid span::before{content:'';width:17px;height:17px;flex:0 0 17px;display:grid;place-items:center;border:1px solid var(--line-strong);border-radius:50%;background:#fff;
-  font:900 10px/1 var(--sans);color:var(--navy)}
+  font:var(--weight-heavy) var(--text-micro)/1 var(--sans);color:var(--navy)}
 .goal-grid label:hover span{border-color:var(--line-strong)}
 .goal-grid input:checked+span{background:var(--navy);border-color:var(--navy);color:#fff}
 .goal-grid input:checked+span::before{content:'✓';border-color:#fff}
@@ -220,7 +220,7 @@ html.reduce .ready i{animation:none}
   .glass .app-campaign{padding:27px 18px 18px}
   .case-row{grid-template-columns:52px minmax(0,1fr);row-gap:12px;padding:16px}.marker{grid-column:2}
   .case-icon{width:44px;height:44px;border-radius:13px}.case-row h3{white-space:normal}
-  .pilot-card{padding:24px}.pilot-head{grid-template-columns:40px 1fr}.pilot-head>b{grid-column:2;width:max-content}.pilot-offer{grid-template-columns:1fr}
+  .pilot-card{padding:24px}.pilot-head{grid-template-columns:40px 1fr}.pilot-head>.live{grid-column:2;width:max-content}.pilot-offer{grid-template-columns:1fr}
   .faq-q{font-size:17px}.faq-a p{font-size:15px;padding-right:10px}
   .fld-grid,.goal-grid{grid-template-columns:1fr}.form-card{padding:18px;border-radius:18px}.send{min-height:52px}
   .hero-center .btn,.pilot-copy .btn{width:100%}
