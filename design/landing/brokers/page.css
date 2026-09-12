@@ -99,32 +99,12 @@ html.js #hero.in .display{visibility:visible;animation:none}
 html.reduce .broker-card,html.reduce .broker-dot{transition:none}
 html.reduce #hero :is(.display,.lede),html.reduce .facts li{transition:none;transform:none}
 
-/* ---------- wayfinding: the rail, named ----------
+/* ---------- wayfinding ----------
    This page carried a sticky strip of six anchors under a fixed nav — two bars, 104px of chrome over
-   every record, and a third navigation (the rail) already built at the right. The strip is gone, and
-   the rail it duplicated says what each dot is instead: page.js writes the screen's data-name onto the
-   dot, and pointing at the rail names the dot under the pointer and the record you are on. It takes no
-   page height, and it is only there where there is margin to put it in (the 1199px rule at the foot). */
+   every record. The strip went, and for a while the rail at the right named each record in its place.
+   The rail is off now too (founder, 2026-09-12), the way style.css already has it for the rest of the
+   cb8 system: the records scroll plainly and the nav is the only chrome over them. */
 .records{position:relative}
-/* style.css turns the rail off for the whole cb8 system (founder, 2026-09-05: it was the only chrome
-   sitting over the blocks, and that deck snaps to a screen on its own). The premise is the narrative
-   deck's, and this page is the one that departs from it — nothing pins here, nine records scroll
-   plainly, and the reader needs a way back to one. So the rail comes back on this page only, named.
-   base.css's `html:not(.snap) #rail` still wins below 1024px: a phone gets one bar and a scroll. */
-#rail{display:flex}
-#rail .dot{position:relative}
-#rail .dot::after{content:attr(data-label);position:absolute;right:calc(100% + 12px);top:50%;transform:translateY(-50%);
-  padding:5px 10px;border-radius:999px;white-space:nowrap;pointer-events:none;
-  font:var(--weight-label) var(--text-label)/1 var(--sans);letter-spacing:-.005em;color:var(--navy);
-  background:rgba(255,255,255,.82);box-shadow:0 8px 20px -14px rgba(var(--rgb-shadow),.7);
-  backdrop-filter:saturate(180%) blur(14px);-webkit-backdrop-filter:saturate(180%) blur(14px);
-  opacity:0;transition:opacity .22s var(--ease)}
-/* one label at a time, and only while the rail is being used: nine names stacked at an 11px pitch
-   would overlap each other, and a name parked beside the reader all the way down the page is the
-   chrome the ruling above was about. Pointing at the rail also names the record you are on. */
-#rail .dot:is(:hover,:focus-visible)::after,#rail:hover .dot[aria-current=true]::after{opacity:1}
-html.dark-now #rail .dot::after{color:#fff;background:rgba(var(--rgb-abyss),.5)}
-html.reduce #rail .dot::after{transition:none}
 
 /* ---------- one corner per pane ----------
    A paper pane is three boxes: the element carries the border, ::after carries the white fill and
@@ -427,9 +407,6 @@ body{font-variant-numeric:normal}
 .panel,.value-panel,.rate-table,.market-panel{font-variant-numeric:tabular-nums}
 
 /* ---------- laptops and phones ---------- */
-/* the rail lives in the margin beside the content. Under about 1200px there is no margin left —
-   at 1024 the dots stand on the text — so it goes before it can sit on anything. */
-@media (max-width:1199px){#rail{display:none}}
 @media (max-width:1023px){
   /* The neighbours stand 64% of a 420px card off centre, so they need 479px of half-window to land in.
      They were hidden below 560px, which fixed the phone and left the tablet: at 768 the next card ran

@@ -150,18 +150,6 @@
     render(i >= 0 ? i : 0, false);
   });
 
-  /* ---------- the rail says which record each dot is ----------
-     This page used to carry a sticky strip of six anchors as well, which put a second bar under the
-     fixed nav over every record. The rail was already there and already tracked the same sections, so
-     it does the naming too: main.js builds one dot per .screen in document order, and each screen
-     carries the name on data-name. page.css draws the label off data-label on hover, focus and the
-     current dot. main.js owns aria-current, so nothing here has to observe the scroll. */
-  const named = [...document.querySelectorAll('#deck .screen')];
-  [...document.querySelectorAll('#rail .dot')].forEach((dot, i) => {
-    const label = named[i] && named[i].dataset.name;
-    if (label) dot.dataset.label = label;
-  });
-
   /* the shipped broker: the URL first, otherwise the card the HTML marks active. This one paints at once
      — .is-live is what tells every later change to fade instead. */
   const start = indexOf(requested());
@@ -227,13 +215,6 @@
       const claimed = cents(document.getElementById('ovCashback').textContent);
       if (claimed !== top) fails.push(`the overview claims ${claimed / 100} per lot, the tables top out at ${top / 100}`);
     }
-    /* the rail is the page's only wayfinding now, so every dot must know what it points at */
-    const rails = [...document.querySelectorAll('#rail .dot')];
-    if (rails.length && rails.length !== named.length) fails.push(`${rails.length} rail dots for ${named.length} screens`);
-    named.forEach((el, i) => {
-      if (!el.dataset.name) fails.push(`#${el.id || i} has no data-name, so its rail dot cannot be labelled`);
-      else if (rails[i] && rails[i].dataset.label !== el.dataset.name) fails.push(`rail dot ${i} reads "${rails[i].dataset.label}", the screen is "${el.dataset.name}"`);
-    });
 
     console.log(fails.length ? 'BROKERS CHECK FAIL\n' + fails.join('\n')
       : `BROKERS CHECK OK — ${cards.length} brokers, showing ${showing}, ${tables.length ? `${top / 100} per lot at the top of ${tables.length} tables` : 'its record pending'}`);
