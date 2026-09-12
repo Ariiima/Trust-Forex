@@ -256,33 +256,63 @@ html.reduce #benefits::after{animation:none}
 .rate-point small{display:block;font-size:var(--text-nano);color:var(--label,rgba(255,255,255,.85))}
 .rate-point b{display:block;margin-top:1px;font-size:var(--text-rate-point);line-height:1.15;letter-spacing:var(--tracking-stat);color:#fff}
 
-/* ---------- 11 · the plans: the guide, the three durations and the one action, on the blue block ---------- */
+/* ---------- 11 · the plans: three tiers in their own colour, on the blue block ----------
+   The app already draws these three plans, and it draws them as badges — a silver shield, a
+   gold crown, a violet diamond (src/assets/plans/badge-*.png, copied to ../cb8/img/plans/).
+   The landing page sells the same three, so it uses the same art: the tier arrives as an
+   object with a shape rather than as a wash, and the page and the app read as one product.
+   Everything else here is cb8's existing tier system, not a new palette — [data-tier] in
+   ../cb8/style.css already hands each card its --tint, --rim and --label, and those are what
+   the halo, the border and the tier ink below are made of. Silver is cool, Gold is amber,
+   Diamond is violet; the badges agree with all three. */
 .plans-shell{display:grid}
 .plans-intro{margin-bottom:26px}
 .plans-intro .h2{max-width:780px;margin:0;font-size:var(--text-title-plans)}
-.plan-guide{margin-bottom:12px;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(320px,1fr);gap:10px}
-.glass .plan-guide-group{min-height:62px;padding:10px 12px 10px 16px;border-radius:18px;display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center}
-.plan-guide-label{font-size:var(--text-guide);color:rgba(255,255,255,.7)}
-.plan-guide-items{display:grid;gap:6px}
-.plan-guide-main .plan-guide-items{grid-template-columns:repeat(3,1fr)}
-.plan-guide-change .plan-guide-items{grid-template-columns:repeat(2,1fr)}
-/* the wireframe's last pass turned these chips into plain words parted by a rule */
-.plan-guide-item{padding:2px 12px 2px 0;font-size:var(--text-guide);color:#fff}
-.plan-guide-item+.plan-guide-item{padding-left:12px;border-left:1px solid rgba(255,255,255,.22)}
-.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.glass .plan-col{min-height:220px;padding:22px;border-radius:22px;display:flex;flex-direction:column}
-.plan-head{min-height:32px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.plan-head h3{margin:0;font-size:var(--text-plan-name);letter-spacing:var(--tracking-card);color:#fff}
-.duration{font-weight:650;font-size:var(--text-ui);color:var(--label,rgba(255,255,255,.85))}
-.price{margin:18px 0 0;font-size:var(--text-plan-price);line-height:1;font-weight:750;letter-spacing:-.05em;color:#fff}
-.equiv{min-height:18px;margin-top:7px;font-size:var(--text-guide);color:rgba(255,255,255,.7)}
-.plan-rate{margin-top:auto;padding:13px 0 0;border-top:1px solid rgba(255,255,255,.2);
-  display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:var(--text-label);color:rgba(255,255,255,.8)}
-.plan-rate b{font-size:var(--text-plan-rate);line-height:1;letter-spacing:var(--tracking-stat);color:#fff}
-.glass .plan-cta{min-height:62px;margin-top:12px;padding:9px 10px 9px 17px;border-radius:18px;
-  display:flex;align-items:center;justify-content:space-between;gap:20px}
-.plan-cta-copy{font-size:var(--text-meta);color:rgba(255,255,255,.8)}
-.plan-cta-button{min-height:42px;padding:10px 17px;font-size:var(--text-meta);white-space:nowrap}
+/* the sentence the two guide tiles used to be: what is the same, and what the term changes */
+.plans-lede{max-width:620px;margin:14px 0 0;font-size:var(--text-ui);line-height:1.5;color:rgba(255,255,255,.72)}
+/* end-aligned, so Gold's taller card stands proud of the other two rather than centring in them */
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:end}
+/* The card keeps .tile's rim and light and replaces only its fill: the tier tint is pulled up
+   into a halo behind the badge, and the body falls back to near-neutral so the price still
+   reads as the brightest thing in the column. ::before and ::after belong to .glass .tile
+   (the rim and the specular sweep) and are left alone. */
+.glass .plan-col{position:relative;min-height:220px;padding:26px 22px 22px;border-radius:22px;
+  display:flex;flex-direction:column;
+  background:radial-gradient(112% 62% at 50% -8%,var(--tint),transparent 64%),
+    linear-gradient(150deg,rgba(255,255,255,.1),rgba(255,255,255,.04))}
+.glass .plan-col--lead{padding-top:34px;padding-bottom:26px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),0 0 52px -14px var(--rim),
+    0 32px 64px -28px rgba(var(--rgb-shadow),.9)}
+.plan-badge{display:block;width:62px;height:62px;margin:0 0 14px;
+  filter:drop-shadow(0 10px 20px rgba(var(--rgb-shadow),.55))}
+.plan-col--lead .plan-badge{width:74px;height:74px}
+/* the app's own two tags, which this page used to drop entirely */
+.plan-flag{position:absolute;top:-11px;left:22px;display:inline-flex;align-items:center;height:23px;padding:0 10px;
+  border-radius:999px;font-size:var(--text-micro);font-weight:700;letter-spacing:.075em;text-transform:uppercase;
+  white-space:nowrap;background:var(--label);color:var(--blue)}
+.plan-head{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.plan-head h3{margin:0;font-size:var(--text-plan-name);letter-spacing:var(--tracking-card);color:var(--label,#fff)}
+.duration{font-weight:650;font-size:var(--text-ui);color:rgba(255,255,255,.85)}
+.price{margin:20px 0 0;font-size:var(--text-plan-price);line-height:1;font-weight:750;letter-spacing:-.05em;color:#fff}
+.equiv{min-height:18px;margin-top:8px;font-size:var(--text-guide);line-height:1.45;color:rgba(255,255,255,.7)}
+/* what stays with the buyer, in the record card's green — the page already reads green as a gain */
+.plan-save{color:#48D48A;font-weight:650}
+.plan-rate{margin-top:auto;padding:15px 0 0;border-top:1px solid var(--rim);
+  display:flex;align-items:flex-end;justify-content:space-between;gap:14px;font-size:var(--text-label);color:rgba(255,255,255,.8)}
+.plan-rate span{max-width:112px;line-height:1.35;letter-spacing:.065em;text-transform:uppercase;color:rgba(255,255,255,.62)}
+.plan-rate b{font-size:var(--text-plan-rate);line-height:1;letter-spacing:var(--tracking-stat);color:var(--label,#fff)}
+/* One action a column, in that column's colour, instead of one shared bar at the foot. The
+   two-class selector is deliberate: base.css's .on-dark .btn would otherwise win and paint all
+   three buttons the same white. */
+.plan-col .plan-choose{margin-top:18px;width:100%;border-color:var(--label);color:var(--label)}
+.plan-col .plan-choose:hover{background:var(--label);border-color:var(--label);color:var(--blue)}
+/* "included in every plan", demoted to one line where it stops competing with the prices */
+.plan-all{margin-top:18px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;
+  font-size:var(--text-guide);color:rgba(255,255,255,.82)}
+.plan-all b{font-size:var(--text-label);font-weight:650;letter-spacing:.055em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.plan-all i{font-style:normal;display:inline-flex;align-items:center;gap:7px}
+.plan-tick{width:15px;height:15px;flex:none;color:rgba(255,255,255,.55)}
+.plan-tick path{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 
 /* ---------- 12–13 · the questions and the close ---------- */
 .faq-wrap{max-width:880px}
@@ -305,10 +335,9 @@ body{font-variant-numeric:normal}
   .benefit-desc{font-size:var(--text-ui)}
   .rate-track{grid-template-columns:1fr;gap:10px}
   .rate-label{padding-left:0}
-  .plan-guide{grid-template-columns:1fr}
-  .glass .plan-guide-group{grid-template-columns:145px 1fr}
-  .plans-grid{grid-template-columns:1fr}
+  .plans-grid{grid-template-columns:1fr;align-items:stretch}
   .glass .plan-col{min-height:auto}
+  .glass .plan-col--lead{padding-top:34px}
   .step-title{translate:-28px 0}
   .step-copy{translate:28px 0}
 }
@@ -326,11 +355,10 @@ body{font-variant-numeric:normal}
   .step-copy{font-size:var(--text-row-title);max-width:340px;translate:10px 0}
   .benefit-name{font-size:var(--text-answer)}
   .rate-flow{grid-template-columns:1fr 1fr}
-  .plan-guide-main .plan-guide-items{grid-template-columns:1fr}
-  .plan-guide-item+.plan-guide-item{padding-left:0;padding-top:8px;border-left:0;border-top:1px solid rgba(255,255,255,.22)}
-  .glass .plan-guide-group{grid-template-columns:1fr;gap:8px;padding:13px}
-  .glass .plan-cta{flex-direction:column;align-items:flex-start;padding:14px}
-  .plan-cta-button{width:100%}
+  /* the badge is the card's biggest object, so it is the first thing that gives ground */
+  .plan-badge,.plan-col--lead .plan-badge{width:54px;height:54px;margin-bottom:12px}
+  .glass .plan-col{padding:22px 18px 18px}
+  .plan-all{gap:9px 14px}
 }
 
 /* the questions heading holds one line, so its size is measured off this page's own question:
