@@ -8,8 +8,8 @@
 <link rel="preload" href="../shared/fonts/Inter-VF.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-2 -2 29 30%27%3E%3Cg fill=%27%23144CCD%27%3E%3Cpath d=%27M9.447 21.464l-.039-6.979c-.002-1.612-1.409-2.918-3.143-2.918H.259c.24 1.032.52 2.69.875 3.702 1.594 4.322 4.496 7.606 8.313 10.024z%27/%3E%3Cpath d=%27M18.037 11.567c-1.568 0-2.84 1.18-2.842 2.638v11.068c3.797-2.414 6.686-5.689 8.276-10.003.362-1.012.649-2.671.889-3.703z%27/%3E%3Cpath d=%27M24.615 5.29V3.216C20.628 1.712 16.646.61 12.424 0 8.128.602 4.013 1.717 0 3.263V5.29z%27/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="../cb8/grounds.css?v=348acab3">
-<link rel="stylesheet" href="../cb8/style.css?v=602792ab">
-<link rel="stylesheet" href="page.css?v=f1824581">
+<link rel="stylesheet" href="../cb8/style.css?v=c2c720a4">
+<link rel="stylesheet" href="page.css?v=4aa49fc4">
 </head>
 <body>
 <svg id="liquid-svg" width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="liquid" x="-4%" y="-8%" width="108%" height="116%" color-interpolation-filters="sRGB">
@@ -177,37 +177,45 @@
 </section>
 </div>
 
-<!-- 10 · BENEFITS — the two benefits, each with its own way in, and all four shared rates under them -->
+<!-- 10 · BENEFITS — the benefit as the customer meets it: the two notifications the bot sends when
+     Cashback or Referral pays, and the Earning balance both land in (home/benefits-lab.html, round
+     three, F3). The words inside the notifications are the bot's own templates (server/admin.mjs
+     cashback_earned / referral_earned, the broker name dropped); the uses are the app's own labels.
+     The amounts are an example, and the foot line says so; page.js ?check=1 proves they add up. -->
 <section class="screen benefits-section" id="benefits" data-name="Benefits" aria-labelledby="benefits-h">
   <div class="wrap">
     <div class="benefits-intro">
       <h2 class="h2 words" id="benefits-h">Get more from the activity already around your trading.</h2>
       <p class="copy rv" style="--i:1">Your trading and recommendations already create value. Cashback and Referral return part of that value to you through two separate benefits.</p>
     </div>
-    <div class="benefit-system rv" style="--i:2">
-      <article class="benefit-row">
-        <div class="benefit-top">
-          <div class="benefit-name"><span class="ico benefit-icon ico-success" data-lottie="../cb8/ico/dollar-receive.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h14.5A1.5 1.5 0 0 1 20 9v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18V6a1.5 1.5 0 0 1 1.5-1.5H17"/><path d="M15 11h5v5h-5a2.5 2.5 0 0 1 0-5Z"/></svg></span><span>Cashback</span></div>
-          <a class="benefit-link" href="../cb8/">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <div class="benefit-feed rv" style="--i:2" id="benefit-feed">
+      <div class="feed-slot" data-benefit="referral"><div>
+        <div class="feed-note">
+          <span class="feed-avatar" aria-hidden="true"><svg viewBox="-2 -2 29 30"><path d="M9.447 21.464l-.039-6.979c-.002-1.612-1.409-2.918-3.143-2.918H.259c.24 1.032.52 2.69.875 3.702 1.594 4.322 4.496 7.606 8.313 10.024z"/><path d="M18.037 11.567c-1.568 0-2.84 1.18-2.842 2.638v11.068c3.797-2.414 6.686-5.689 8.276-10.003.362-1.012.649-2.671.889-3.703z"/><path d="M24.615 5.29V3.216C20.628 1.712 16.646.61 12.424 0 8.128.602 4.013 1.717 0 3.263V5.29z"/></svg></span>
+          <div><p class="feed-head"><b>Trust Forex</b><time>11:02</time></p><p class="feed-text"><b>&#x1F91D; Referral Paid.</b> Your Referral reward of $36.00 from user 1002 has been added to your Earning Balance.</p></div>
         </div>
-        <p class="benefit-desc">A share of eligible broker generated revenue from your own trading activity.</p>
-      </article>
-      <article class="benefit-row">
-        <div class="benefit-top">
-          <div class="benefit-name"><span class="ico benefit-icon" data-lottie="../cb8/ico/add-user.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 19c.5-3.2 2.2-5 5-5s4.5 1.8 5 5M14 15c.8-.7 1.8-1 3-1 2.3 0 3.7 1.4 4 4"/></svg></span><span>Referral</span></div>
-          <a class="benefit-link" href="../referral/">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div></div>
+      <div class="feed-slot" data-benefit="cashback"><div>
+        <div class="feed-note">
+          <span class="feed-avatar" aria-hidden="true"><svg viewBox="-2 -2 29 30"><path d="M9.447 21.464l-.039-6.979c-.002-1.612-1.409-2.918-3.143-2.918H.259c.24 1.032.52 2.69.875 3.702 1.594 4.322 4.496 7.606 8.313 10.024z"/><path d="M18.037 11.567c-1.568 0-2.84 1.18-2.842 2.638v11.068c3.797-2.414 6.686-5.689 8.276-10.003.362-1.012.649-2.671.889-3.703z"/><path d="M24.615 5.29V3.216C20.628 1.712 16.646.61 12.424 0 8.128.602 4.013 1.717 0 3.263V5.29z"/></svg></span>
+          <div><p class="feed-head"><b>Trust Forex</b><time>09:41</time></p><p class="feed-text"><b>&#x1F4B0; Cashback Paid.</b> Your Cashback of $20.00 has been added to your Earning Balance.</p></div>
         </div>
-        <p class="benefit-desc">A share of eligible revenue generated by users you refer through Subscription and Cashback activity.</p>
-      </article>
-      <div class="rate-track glass" aria-label="Shared rate by plan">
-        <div class="rate-label">Shared rate by plan</div>
-        <div class="rate-flow">
-          <div class="tile rate-point" data-tier="standard"><small>Standard</small><b>10%</b></div>
-          <div class="tile rate-point" data-tier="silver"><small>Silver</small><b>15%</b></div>
-          <div class="tile rate-point" data-tier="gold"><small>Gold</small><b>20%</b></div>
-          <div class="tile rate-point" data-tier="diamond"><small>Diamond</small><b>30%</b></div>
-        </div>
+      </div></div>
+      <div class="feed-balance">
+        <span class="feed-label">Earning balance</span>
+        <p class="feed-figure" id="feed-figure">$56.00</p>
+        <div class="feed-bar" aria-hidden="true"><i data-benefit="cashback" style="--w:20"></i><i data-benefit="referral" style="--w:36"></i></div>
+        <p class="feed-legend"><span data-benefit="cashback"><i></i>Cashback <b>$20.00</b></span><span data-benefit="referral"><i></i>Referral <b>$36.00</b></span></p>
+        <ul class="feed-uses">
+          <li><span class="ico" data-lottie="../cb8/ico/send.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21 4-7.5 16-3.8-6.1L4 10.7 21 4Z"/><path d="m9.7 13.9 4.2-3.8"/></svg></span>Withdraw earnings</li>
+          <li><span class="ico" data-lottie="../cb8/ico/wallet-check.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A3.5 3.5 0 0 1 6.5 5h11A3.5 3.5 0 0 1 21 8.5v8a3.5 3.5 0 0 1-3.5 3.5h-11A3.5 3.5 0 0 1 3 16.5v-8Z"/><path d="M15 12.5h6M9 12.5l1.8 1.8 3.2-3.5"/></svg></span>Use earning balance on your next plan</li>
+        </ul>
       </div>
+      <div class="feed-links">
+        <a class="benefit-link" data-benefit="cashback" href="../cb8/">How Cashback works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a class="benefit-link" data-benefit="referral" href="../referral/">How Referral works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+      <p class="feed-foot">Notifications as the Trust Forex bot words them; the amounts are an example.</p>
     </div>
   </div>
 </section>
@@ -215,7 +223,7 @@
 <!-- 11 · PLANS — the three tiers in their own colour, each carrying the badge the app draws it
      with. On the blue block, so the prices are the page's brightest surface. Prices, durations,
      rates and the two tags are the app's own (src/screens/plans/plans-data.ts); page.js asserts
-     the rates against the benefits section's rate track and divides the monthly equivalents out
+     the rates against the app's own and divides the monthly equivalents out
      of the prices, so a figure edited here and nowhere else fails the page's own check.
      The wireframe's two guide tiles are gone (founder, 2026-09-12 — variant 04 of
      plans-lab.html): "what changes by plan" is the lede's sentence now, and "included in every
@@ -328,7 +336,7 @@
 
 <script src="../cb8/ico/lottie_light.min.js"></script>
 <script src="../cb8/main.js?v=88feb48b"></script>
-<script src="page.js?v=8cf07381"></script>
+<script src="page.js?v=58c85861"></script>
 <script>if (document.documentElement.classList.contains('reduce')) document.getElementById('liquid-svg').pauseAnimations();</script>
 </body>
 </html>

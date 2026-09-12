@@ -6,7 +6,7 @@
    feDisplacementMap (#liquid in index.html) in backdrop-filter, Chromium only; every other
    engine gets the same glass without the bend. The data stays opaque white — the founder's
    "white chart" — so figures never sit on a translucent ground. */
-@import url('base.css?v=24dd05fd');
+@import url('base.css?v=e25380a1');
 
 /* ---------- structure behind the glass: a faint grid in every blue ground ---------- */
 .rayfield.k::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:

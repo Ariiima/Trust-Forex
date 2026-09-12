@@ -71,9 +71,9 @@
   --text-step-copy: 20px;                           /* a protocol step's sentence */
   --text-week-period: 17px;                         /* the week the record covers */
   --text-service-title: 17px;                       /* a service tile's name */
-  --text-rate-point: 16.5px;                        /* a shared-rate figure */
+  --text-benefit-balance: clamp(64px, 7vw, 96px);   /* the Earning balance the benefits column counts in (2026-09-13) */
   --text-service-copy: 12.5px;                      /* a service tile's line */
-  --text-guide: 11.5px;                             /* plan guide, rate-track label, benefit link */
+  --text-guide: 11.5px;                             /* plan guide, benefit link */
   /* role added 2026-09-12 for the questions section: its heading stands alone above the rows,
      so it runs one step over --text-title instead of sharing a section heading's size. It is
      also the one heading ruled to hold one line (founder, 2026-09-12), so its size is measured

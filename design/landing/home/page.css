@@ -294,53 +294,74 @@ html:not(.js) .step .rv{opacity:1;transform:none}
   animation:paper-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%}
 html.reduce #benefits::after{animation:none}
 
-/* ---------- 10 · the benefits: the two of them beside the heading, the four rates under them ----------
-   The wireframe's ≥851px layout: heading left, the benefit system right in a 548 column. */
+/* ---------- 10 · the benefits: the heading, and the benefit as the customer meets it ----------
+   The wireframe's ≥851px layout: heading left, a 548 column right. What fills the column changed
+   (founder, 2026-09-13; home/benefits-lab.html, round three, F3). Not two cards and a bar of all four
+   rates — the Plans block one screen below prints every rate again on its own card — but the two
+   messages the bot sends when a benefit pays, and the Earning balance both of them land in. No card
+   holds any of it: the notifications are the only surfaces, and the balance is type. */
 .benefits-section>.wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(460px,548px);gap:68px;align-items:center}
 .benefits-intro .h2{max-width:520px;margin:0;font-size:var(--text-title-benefits)}
 .benefits-intro .copy{max-width:460px;margin:24px 0 0;font-size:var(--text-copy)}
-.benefit-system{width:100%;max-width:548px;justify-self:end;display:grid;gap:10px}
-/* Each benefit carries one faint colour of its own — Cashback the mint it uses everywhere, Referral the
-   brand blue — held in --acc for the corner wash and the rim, and in --acc-ink for anything that has to
-   read as text on white. The glass is frosted, not tinted: a high white base the page shows through,
-   blurred and saturated, with the colour held in one corner so the card stays clean where the copy sits. */
-.benefit-row{--acc:46,178,134;--acc-ink:#16855D;
-  position:relative;isolation:isolate;min-height:132px;padding:17px 18px;display:flex;flex-direction:column;
-  border:1px solid rgba(var(--acc),.34);border-radius:18px;
-  background:radial-gradient(120% 130% at 0% 0%,rgba(var(--acc),.22),rgba(var(--acc),0) 58%),rgba(255,255,255,.66);
-  backdrop-filter:blur(22px) saturate(190%);-webkit-backdrop-filter:blur(22px) saturate(190%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 2px 6px -3px rgba(var(--rgb-shadow),.10),0 26px 50px -30px rgba(var(--rgb-shadow),.55)}
-.benefit-row:nth-child(2){--acc:44,94,210;--acc-ink:var(--accent)}
-/* the specular: one still highlight across the top corner, the same light the blue sections' tiles carry
-   but at the strength a white card can hold. It is a ::after under the content, not a moving streak —
-   a travelling band on a pale card reads as a smudge. */
-.benefit-row::after{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;
-  background:linear-gradient(150deg,rgba(255,255,255,.85),rgba(255,255,255,0) 42%)}
-@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  .benefit-row{background:radial-gradient(120% 130% at 0% 0%,rgba(var(--acc),.18),rgba(var(--acc),0) 58%),#fff}}
-.benefit-top{display:flex;align-items:center;justify-content:space-between;gap:16px}
-.benefit-name{display:flex;align-items:center;gap:9px;font-size:var(--text-benefit-name);font-weight:740;letter-spacing:-.04em;color:var(--navy)}
-.benefit-icon{width:var(--icon-well);height:var(--icon-well);flex:none;padding:calc((var(--icon-well) - var(--icon-size))/2 - 1px);display:grid;place-items:center;border-radius:var(--icon-well-radius);
-  border:1px solid rgba(var(--acc),.32);background:rgba(var(--acc),.16);color:var(--acc-ink)}
-.benefit-row .ico.benefit-icon{stroke:var(--acc-ink)}
-/* the copy sits on the card's floor, so the name and the copy hold the two edges instead of leaving
-   the lower third of the card empty */
-.benefit-desc{max-width:470px;margin:14px 0 0;font-size:var(--text-guide);line-height:1.4;color:var(--muted)}
-.benefit-row .benefit-desc{margin-top:auto;padding-top:14px}
-/* the wireframe's late change: the link became a pill, and it holds its size beside the name */
+.benefit-feed{width:100%;max-width:548px;justify-self:end;display:grid}
+/* each benefit keeps one colour of its own — Cashback the mint it uses everywhere, Referral the brand
+   blue — as --acc for fills and --acc-ink for anything read as text on white */
+.benefit-feed [data-benefit=cashback]{--acc:46,178,134;--acc-ink:#16855D}
+.benefit-feed [data-benefit=referral]{--acc:44,94,210;--acc-ink:var(--accent)}
+/* a notification as it reaches a phone: the bot's mark, its name, the time, and the message in the
+   bot's own words. Newest on top, so Referral sits above Cashback. The slot is a one-row grid so the
+   message can open from nothing when it arrives — grid-template-rows animates, height:auto does not. */
+.feed-slot{display:grid;grid-template-rows:1fr;transition:grid-template-rows .6s var(--ease),opacity .45s var(--ease)}
+.feed-slot>div{min-height:0;overflow:hidden}
+.feed-note{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;margin-bottom:10px;padding:12px 14px;border-radius:18px;
+  background:rgba(255,255,255,.88);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);
+  box-shadow:0 1px 2px rgba(var(--rgb-shadow),.12),0 8px 8px -8px rgba(var(--rgb-shadow),.22)}
+.feed-avatar{width:36px;height:36px;display:grid;place-items:center;border-radius:50%;background:var(--p-900)}
+.feed-avatar svg{width:18px;height:18px;fill:#fff}
+.feed-head{display:flex;justify-content:space-between;gap:10px;margin:0;font-size:var(--text-small);line-height:1.3}
+.feed-head b{font-weight:700;color:var(--ink)}
+.feed-head time{color:var(--muted)}
+.feed-text{margin:3px 0 0;font-size:var(--text-small);line-height:1.45;color:var(--body)}
+.feed-text b{color:var(--ink)}
+/* the balance: the largest type in the column, set as a counter. page.js turns each digit into a strip
+   of 0–9 that slides to its value, so $20.00 to $56.00 rolls the ones digit through 1–5 on its way to 6.
+   The tens column closes to nothing while all it would show is a leading zero. */
+.feed-balance{margin-top:20px;padding-top:22px;border-top:1px solid rgba(var(--rgb-300),.6)}
+.feed-label{font-size:var(--text-ui);font-weight:var(--weight-strong);color:var(--muted)}
+.feed-figure{display:flex;align-items:flex-start;margin:10px 0 0;font-size:var(--text-benefit-balance);line-height:1;font-weight:760;letter-spacing:-.035em;color:var(--navy)}
+.odo-c,.odo-d{display:inline-block;height:1em;line-height:1}
+.odo-d{overflow:hidden;max-width:.7em;transition:max-width .5s var(--ease)}
+.odo-d[data-zero]{max-width:0}
+.odo-d i{display:block;font-style:normal;transition:transform var(--roll,.9s) var(--ease)}
+.odo-d i span{display:block;height:1em}
+.odo-hold .odo-d,.odo-hold .odo-d i{transition:none}
+.feed-bar{display:flex;gap:3px;height:8px;margin-top:18px;border-radius:99px;overflow:hidden;background:rgba(var(--rgb-300),.35)}
+.feed-bar i{flex:var(--w) 1 0;min-width:0;border-radius:99px;background:rgb(var(--acc));transition:flex-grow .8s var(--ease)}
+.feed-legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin:9px 0 0;font-size:var(--text-small);color:var(--muted)}
+.feed-legend span{display:inline-flex;align-items:center;gap:7px;transition:opacity .4s var(--ease)}
+.feed-legend i{width:7px;height:7px;border-radius:50%;background:rgb(var(--acc))}
+.feed-legend b{font-weight:600;color:var(--ink)}
+/* what the balance is for, in the app's own words (EarningMain.tsx, Checkout.tsx), each glyph in the
+   site's one icon well */
+.feed-uses{display:flex;flex-wrap:wrap;gap:10px 28px;margin:22px 0 0;padding:0;list-style:none}
+.feed-uses li{display:flex;align-items:center;gap:10px;font-size:var(--text-ui);font-weight:650;color:var(--navy)}
+.feed-uses .ico{width:var(--icon-well);height:var(--icon-well);padding:calc((var(--icon-well) - var(--icon-size))/2 - 1px);display:grid;place-items:center;border-radius:var(--icon-well-radius);
+  border:1px solid rgba(var(--rgb-900),.18);background:rgba(var(--rgb-900),.07)}
+.feed-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.feed-foot{margin:12px 2px 0;font-size:var(--text-small);line-height:1.5;color:var(--muted)}
+/* the way in to each benefit's own page */
 .benefit-link{flex:0 0 auto;min-height:32px;padding:7px 12px;display:inline-flex;align-items:center;gap:6px;
   border:1px solid rgba(var(--acc),.45);border-radius:999px;line-height:1;font-size:var(--text-guide);font-weight:var(--weight-strong);color:var(--acc-ink);
   transition:background-color .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease)}
 .benefit-link:hover{background:var(--acc-ink);border-color:var(--acc-ink);color:#fff}
 .benefit-link .ext{width:13px;height:13px}
-/* the rate track: the wireframe's black bar, in the page's blue, its four points in their metals */
-.rate-track{padding:8px;border-radius:16px;background:var(--blue);color:#fff;--grad:var(--grad-light);
-  display:grid;grid-template-columns:132px 1fr;gap:8px;align-items:center}
-.rate-label{padding-left:3px;font-size:var(--text-guide);color:rgba(255,255,255,.78)}
-.rate-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-.glass .rate-point{padding:6px 5px;border-radius:10px;text-align:center}
-.rate-point small{display:block;font-size:var(--text-nano);color:var(--label,rgba(255,255,255,.85))}
-.rate-point b{display:block;margin-top:1px;font-size:var(--text-rate-point);line-height:1.15;letter-spacing:var(--tracking-stat);color:#fff}
+/* the arrival, told once by page.js the first time the column is read: Cashback lands and the counter
+   rolls to it, then Referral lands on top and it rolls again. data-step holds the story back; no
+   attribute is the finished state, which is what ships and what no-JS and html.reduce see. */
+.benefit-feed[data-step="0"] .feed-slot,.benefit-feed[data-step="1"] .feed-slot[data-benefit=referral]{grid-template-rows:0fr;opacity:0}
+.benefit-feed[data-step="0"] .feed-bar i,.benefit-feed[data-step="1"] .feed-bar i[data-benefit=referral]{flex-grow:0}
+.benefit-feed[data-step="0"] .feed-legend span,.benefit-feed[data-step="1"] .feed-legend [data-benefit=referral]{opacity:.35}
+html.reduce .feed-slot,html.reduce .feed-bar i,html.reduce .odo-d,html.reduce .odo-d i{transition:none}
 
 /* ---------- 11 · the plans: three tiers in their own colour, on the blue block ----------
    The app already draws these three plans, and it draws them as badges — a silver shield, a
@@ -407,20 +428,16 @@ html.reduce #benefits::after{animation:none}
 
 /* cb8 sets tabular figures on the whole body, which widens Inter's letters by about 2% and not only
    its digits. Every page built after it turns that off and keeps tabular figures where columns of
-   numbers actually have to line up: here, the record's plot, the rate rail and the three prices. */
+   numbers actually have to line up: here, the record's plot, the benefits' balance and the three prices. */
 body{font-variant-numeric:normal}
-.weekly-record,.rate-track,.plans-grid{font-variant-numeric:tabular-nums}
+.weekly-record,.benefit-feed,.plans-grid{font-variant-numeric:tabular-nums}
 
 /* ---------- narrower: the wireframe's own two steps ---------- */
 @media (max-width:1023px){
   #record .grid2,.service-section .grid2{grid-template-columns:1fr;gap:38px}
   .benefits-section>.wrap{grid-template-columns:1fr;gap:30px}
   .benefits-intro .h2{max-width:none}
-  .benefit-system{max-width:none;justify-self:stretch}
-  .benefit-row{min-height:146px;padding:18px 19px;border-radius:19px}
-  .benefit-desc{font-size:var(--text-ui)}
-  .rate-track{grid-template-columns:1fr;gap:10px}
-  .rate-label{padding-left:0}
+  .benefit-feed{max-width:none;justify-self:stretch}
   .plans-grid{grid-template-columns:1fr;align-items:stretch}
   .glass .plan-col{min-height:auto}
   .glass .plan-col--lead{padding-top:34px}
@@ -436,8 +453,6 @@ body{font-variant-numeric:normal}
   .access-visual .tile{padding:16px;gap:12px}
   .step-title{font-size:clamp(58px,20vw,78px)}
   .step-copy{font-size:var(--text-row-title);max-width:340px}
-  .benefit-name{font-size:var(--text-answer)}
-  .rate-flow{grid-template-columns:1fr 1fr}
   /* the badge is the card's biggest object, so it is the first thing that gives ground */
   .plan-badge,.plan-col--lead .plan-badge{width:54px;height:54px;margin-bottom:12px}
   .glass .plan-col{padding:22px 18px 18px}

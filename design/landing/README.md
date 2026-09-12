@@ -251,14 +251,36 @@ Two more were cut earlier and are not in the table: a sticky rail threading the 
 wireframe gives them no such element) and a glow riding a wipe across Measure as a `drop-shadow` on a
 transforming element.
 
+### The benefits
+
+The column beside the heading held two cards and a bar of all four rates. The bar went first: the
+Plans block one screen below prints each plan's rate on its own card, so the page said every rate
+twice. Three rounds of `home/benefits-lab.html` looked for what should replace the rest (founder,
+2026-09-13). Round one rearranged the same cards and rates four ways, and every arrangement still read
+as a table. Round two stopped listing rates and showed where the money comes from and where it lands:
+two loops meeting at "you", a ribbon whose thickness was the share, and the one that was picked — the
+two messages the bot sends when a benefit pays, landing in the Earning balance. Round three told that
+one story five ways. The version that shipped (F3) has no card in it at all.
+
+Two notifications, newest on top, then the balance as the largest type in the column. Every word in
+them is the product's own: the bot's `cashback_earned` and `referral_earned` templates in
+`server/admin.mjs` (with the broker name dropped), and the app's "Withdraw earnings" and "Use earning
+balance". The amounts are an example, and the line under the column says so.
+
+The balance is a counter. `page.js` splits it into one strip of 0–9 per digit, and CSS slides each
+strip to its value, so going from $20.00 to $56.00 rolls the ones digit through 1–5 on the way to 6.
+The script writes four transforms per step and runs no frame loop. The column ships finished. `page.js`
+sets it back to its opening only while it is still below the fold and motion is allowed, and plays
+it once when it reaches the protocol steps' reading band.
+
 `page.js` holds the record module. Its figures are the last completed week of the Results page's
 own weekly series, recomputed here from that page's rule — same base win rates, same per-period
 shift, same rounding — so the two pages cannot print different numbers for the same week. The
 HTML ships those values too, so the module reads without JavaScript. `?check=1` proves the shipped
 markup equals what the rule returns, that a further target is never reached more often than a
-nearer one, that each plan's rate matches the shared rate the benefits section promised and each
-monthly equivalent divides out of its price — and it fetches `../results/page.js` to confirm the
-constants it borrowed are still the ones that page uses.
+nearer one, that the benefits column's balance is the sum of its two amounts, that each plan's rate
+is the one the app pays and each monthly equivalent divides out of its price — and it fetches
+`../results/page.js` to confirm the constants it borrowed are still the ones that page uses.
 
 ```sh
 node _qa/screens.mjs 'http://localhost:5311/home/?check=1' /tmp/home.png
