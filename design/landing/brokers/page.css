@@ -133,8 +133,6 @@ html.reduce #rail .dot::after{transition:none}
    its tray at 42: a visible double curve at every corner, worst where the card is smallest. The fill
    inherits the pane's corner now, and the tray is that corner plus its own offset. */
 .screen-paper .panel::after{border-radius:inherit}
-.screen-paper :is(.market-panel,.note-panel){border-radius:var(--r)}
-.screen-paper :is(.market-panel,.note-panel)::before{inset:calc(0px - var(--tray));border-radius:calc(var(--r) + var(--tray))}
 
 /* ---------- every record opens the same way: number, heading, one line ----------
    The white record's number is the paper record's number. cb8 writes `.mech.white .page-number` as a
@@ -172,7 +170,10 @@ html.reduce #rail .dot::after{transition:none}
    pane takes the larger half here; the copy beside it is a heading and two lines and does not need it. */
 /* min-width, not a bare rule: an id beats base.css's one-column .record-grid at every width, and the
    520px floor then held a 390px document open sideways (the QA sweep's overflow check). */
-@media (min-width:1024px){#regulation .record-grid{grid-template-columns:minmax(0,.95fr) minmax(520px,1.05fr)}}
+/* Markets takes the same split, because it is the same record: two panes of the same width at the same
+   side of the page, one at 02 and one at 04. Its rows are shorter than a licence's, so the floor is the
+   one that keeps the two panes the same object and not the one its own content needs. */
+@media (min-width:1024px){#regulation .record-grid,#markets .record-grid{grid-template-columns:minmax(0,.95fr) minmax(520px,1.05fr)}}
 .reg-stack{height:100%}
 .reg-panel{min-height:min(560px,60vh)}
 .record-copy .data-head{margin-bottom:0}
@@ -201,13 +202,61 @@ html.reduce #rail .dot::after{transition:none}
 .account-row span{font-size:var(--text-small);color:rgba(255,255,255,.76)}
 .glass .account-row strong{font-size:var(--text-ui);font-weight:var(--weight-strong);letter-spacing:-.01em;text-align:right}
 
-/* ---------- 5 · markets: one table, centred, on the paper field ---------- */
-.market-panel{--r:24px;--tray:14px;width:min(880px,100%);margin-inline:auto;padding:0;overflow:hidden}
-.market-row{min-height:60px;padding:14px 28px;display:grid;grid-template-columns:.7fr 1.3fr;gap:40px;align-items:center;border-top:1px solid var(--line)}
-.market-row:first-child{border-top:0}
-.market-row.head{min-height:44px;background:var(--soft);font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.market-row strong{font-size:var(--text-ui);font-weight:var(--weight-strong);color:var(--navy)}
-.market-row>span:last-child{font-size:var(--text-meta);line-height:1.45;color:var(--muted)}
+/* ---------- 5 · markets: the coverage list on one blue pane, centred on the paper field ----------
+   The record was a white table on a white field — the only one on the page with no colour in it
+   (founder, 2026-09-12). It is the Regulation record now, whole: .record-grid, with the heading and its
+   line on the paper at the left and one .value-panel at the right — the deep blue, the liquid frame,
+   the rayfield inside it and the shine that travels the pane as the screen passes. The two centred
+   objects this page carried are one shape seen twice, at its second record and its fifth.
+   The pane's own rows are told to take their content's height; the licence pane's equal rows are for
+   five rows of two lines, and these are seven. */
+.market-panel{height:auto;min-height:0;border-radius:24px;grid-auto-rows:auto}
+.market-panel .value-copy{padding-right:8px}
+/* the seven hues. Each row names its own pair — the light one the chip's glyph and rim take, the deep
+   one its underside and its drop — and the row's leading edge washes in the light one. Gold for metals,
+   amber for energy, cyan for indices, green for shares, violet for crypto (the tier metals' own violet,
+   style.css), rose for futures; Forex keeps the brand blue, because it is the market this page is about. */
+[data-market=forex]  {--mk:150,190,255;--mk-2:24,84,205}
+[data-market=metals] {--mk:240,208,130;--mk-2:146,106,26}
+[data-market=energy] {--mk:255,176,116;--mk-2:168,78,26}
+[data-market=indices]{--mk:126,222,238;--mk-2:16,116,150}
+[data-market=shares] {--mk:132,232,182;--mk-2:18,128,90}
+[data-market=crypto] {--mk:196,166,250;--mk-2:88,58,178}
+[data-market=futures]{--mk:255,162,192;--mk-2:176,58,110}
+/* the row is the licence row: the chip where the authority's code stands, and the market's name over
+   the line that names it (founder, 2026-09-12: "place items like in this section"). Two columns, not
+   three — a market is one short word and a sentence, and holding them apart in a wide table left a
+   third of the pane empty between them. The pane's own divider comes with .value-row. */
+.market-row{position:relative;z-index:1;padding:18px 24px;grid-template-columns:44px minmax(0,1fr);gap:18px}
+.market-row .value-copy strong{font-size:var(--text-ui);letter-spacing:-.01em}
+.market-row .value-copy p{margin-top:4px;font-size:var(--text-meta);line-height:1.45;color:rgba(255,255,255,.78)}
+/* the wash: the hue enters at the row's leading edge and is gone by its middle, so the colour names the
+   row without tinting the words in it. It is half-lit at rest and full under the pointer — the row the
+   eye is on is the row that is lit — and the chip lifts a shade with it. */
+.market-row::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(90deg,rgba(var(--mk),.3),rgba(var(--mk),.09) 38%,transparent 62%);
+  opacity:.62;transition:opacity .35s var(--ease)}
+.market-row:hover::before{opacity:1}
+/* and the rail: the hue as a mark on the pane's own edge, so the seven read as a list of seven colours
+   from across the room, before any one row is picked out. It stops short of the row's ends, so the
+   marks are seven strokes down the edge and not one unbroken bar. */
+.market-row::after{content:'';position:absolute;left:0;top:15px;bottom:15px;width:3px;
+  border-radius:0 3px 3px 0;pointer-events:none;
+  background:linear-gradient(180deg,rgb(var(--mk)),rgba(var(--mk-2),.85));
+  box-shadow:0 0 12px -2px rgba(var(--mk),.6);
+  transition:box-shadow .35s var(--ease)}
+.market-row:hover::after{box-shadow:0 0 18px 0 rgba(var(--mk),.9)}
+.market-row:hover .market-chip{border-color:rgba(var(--mk),.92);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),0 10px 22px -10px rgba(var(--mk-2),1),0 0 20px -4px rgba(var(--mk),.6)}
+html.reduce .market-row::before,html.reduce .market-row::after,html.reduce .market-chip{transition:none}
+/* the chip carries the hue at full strength — it is 40px on a deep blue pane, and the tints the tiles
+   use on the blue records disappear at that size. A dark base of the hue's own deep end, the light end
+   on the rim and in the glyph, and a small glow under it, so gold reads gold and not another blue. */
+.market-chip{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;color:rgb(var(--mk));
+  border:1px solid rgba(var(--mk),.62);background:linear-gradient(150deg,rgba(var(--mk),.42),rgba(var(--mk-2),.78));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 8px 18px -10px rgba(var(--mk-2),1),0 0 16px -6px rgba(var(--mk),.55);
+  transition:border-color .35s var(--ease),box-shadow .35s var(--ease)}
+.market-chip svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 
 /* ---------- 6 · cashback: one pane per account type, the four plans in their metals ---------- */
 .rate-pane{padding:0;overflow:hidden;border-radius:22px}
@@ -226,7 +275,7 @@ html.reduce #rail .dot::after{transition:none}
 .rate-table td{padding:13px 14px;border-radius:12px;font-size:var(--text-ui);font-weight:var(--weight-label);color:rgba(255,255,255,.88);background:rgba(255,255,255,.05)}
 .rate-table td.peak{color:#fff;font-weight:var(--weight-strong);border:1px solid var(--rim);background:linear-gradient(150deg,var(--tint),var(--tint2))}
 
-/* ---------- the numbered rules: the cashback notes on glass, the bonus offers on paper ---------- */
+/* ---------- the numbered rules: the cashback notes, on glass ---------- */
 .note-panel{--r:22px;--tray:14px;padding:0;overflow:hidden;border-radius:var(--r)}
 .glass .note-panel{margin-top:1.125rem}
 .note-panel h3{margin:0;padding:17px 20px;border-bottom:1px solid var(--line);font-size:var(--text-row-title);font-weight:var(--weight-strong);letter-spacing:-.02em;color:var(--navy)}
@@ -239,9 +288,51 @@ html.reduce #rail .dot::after{transition:none}
 .glass .note-line{border-top-color:rgba(255,255,255,.14)}
 .glass .note-line>span:last-child{color:rgba(255,255,255,.84)}
 .glass .note-num{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff}
+/* ---------- 7 · bonuses: the two offers as two panes, each with its own figure and its own light ----------
+   Two white cards of six hairline rules, on a white field — the record Markets was before it (founder,
+   2026-09-12: "the same love treatment"). Each offer is a .value-panel now, so both take the deep blue,
+   the liquid frame, a rayfield of their own and the shine, exactly as the licence pane and the coverage
+   pane do. What the record was missing is a subject: "100% Deposit Bonus" was a line of text, and the
+   figure that is the whole offer had no more weight than the word beside it. The figure is a chip at the
+   pane's head now — the licence code's place — and the pane's hue runs from behind it down over the
+   rules, so each offer is read as one object from its number down.
+
+   The hue is a pair the page has not spent: a bright brand blue for the larger offer, cyan for the
+   smaller. Copper and violet are the two account types, gold and silver are two columns of the rate
+   table, and green is the eligibility pill — an offer wearing any of those would name something it is
+   not. The two hues are a ladder, so the bigger figure is the warmer, nearer one. */
 .bonus-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
-.bonus-card{background:rgba(255,255,255,.62);border-color:rgba(255,255,255,.95);
-  backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%)}
+.bonus-card{height:auto;min-height:0;margin-left:0;border-radius:24px;grid-auto-rows:auto;
+  --bn:186,214,255;--bn-2:30,92,225}
+.bonus-card[data-bonus=b]{--bn:126,222,238;--bn-2:16,116,150}
+/* the hue enters at the head and is gone by the fourth rule: shading down the pane, not a tint on it */
+.bonus-card::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(180deg,rgba(var(--bn),.22),rgba(var(--bn-2),.1) 46%,transparent 78%)}
+.bonus-head{position:relative;z-index:1;display:flex;align-items:center;gap:15px;padding:20px 22px;
+  border-bottom:1px solid rgba(255,255,255,.22)}
+.bonus-head h3{margin:0;font-size:var(--text-row-title);line-height:var(--leading-card);letter-spacing:-.02em;
+  font-weight:var(--weight-strong);color:#fff}
+/* the figure is the offer. It takes the market chip's recipe at the size the number needs — the hue's
+   deep end under it, its light end on the rim, and a glow, so it reads as the pane's one lit object. */
+.bonus-figure{padding:9px 15px;border-radius:15px;white-space:nowrap;
+  font-size:var(--text-card-title);line-height:1;letter-spacing:var(--tracking-card);font-weight:var(--weight-heavy);color:#fff;
+  border:1px solid rgba(var(--bn),.62);background:linear-gradient(150deg,rgba(var(--bn),.42),rgba(var(--bn-2),.82));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 8px 18px -10px rgba(var(--bn-2),1),0 0 16px -6px rgba(var(--bn),.55)}
+.bonus-line{position:relative;z-index:1;min-height:56px;padding:13px 22px;
+  grid-template-columns:26px minmax(0,1fr);gap:14px;align-items:center}
+.bonus-line p{margin:0;font-size:var(--text-meta);line-height:1.45;color:rgba(255,255,255,.82)}
+/* the rule under the pointer is the rule you are on, and its numeral lights with it */
+.bonus-line::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(90deg,rgba(var(--bn),.2),rgba(var(--bn),.05) 46%,transparent 74%);
+  opacity:0;transition:opacity .35s var(--ease)}
+.bonus-line:hover::before{opacity:1}
+.bonus-line:hover .bonus-num{border-color:rgba(var(--bn),.9);box-shadow:0 0 14px -3px rgba(var(--bn),.7)}
+.bonus-num{width:26px;height:26px;display:grid;place-items:center;border-radius:50%;
+  font:var(--weight-heavy) var(--text-micro)/1 var(--sans);color:rgb(var(--bn));
+  border:1px solid rgba(var(--bn),.48);background:rgba(var(--bn-2),.5);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.26);
+  transition:border-color .35s var(--ease),box-shadow .35s var(--ease)}
+html.reduce .bonus-line::before,html.reduce .bonus-num{transition:none}
 
 /* ---------- a broker whose record is not published yet: the section says so, in its own ground's register ---------- */
 .placeholder{padding:34px 26px;border-radius:20px;border:1px dashed var(--line-strong);background:rgba(255,255,255,.5);
@@ -277,7 +368,9 @@ body{font-variant-numeric:normal}
   .reg-lic{grid-column:2;justify-self:start}
   .key-row,.account-row{grid-template-columns:1fr;gap:5px;padding:14px 16px}
   .key-row strong,.account-row strong{text-align:left}
-  .market-row{padding:14px 18px;grid-template-columns:.8fr 1.2fr;gap:16px}
+  .market-row{padding:15px 18px;grid-template-columns:36px minmax(0,1fr);gap:14px}
+  .market-chip{width:36px;height:36px;border-radius:11px}
+  .market-chip svg{width:19px;height:19px}
   .rate-head{flex-direction:column;align-items:flex-start;gap:6px}
   .rate-scroll{padding:10px}
   .note-line{padding:13px 16px}
