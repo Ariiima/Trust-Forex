@@ -123,9 +123,13 @@ because the figure above a bar is pinned to that bar's top edge and has to ride 
 ### The protocol steps
 
 The four steps are the one place on the site that does not use the ordinary reveal, and all four use
-the same move: the word is tracked wide open at a weight it never keeps, and closes onto the weight
-and the tracking it holds for good. Nothing translates, nothing staggers, and nothing is added to
-the screens to carry it — the wireframe gives these four type and only type.
+the same move. The word is tracked wide open at a weight it never keeps, out of focus, and closes
+onto the weight, the tracking and the sharpness it holds for good — a word not yet read becoming the
+one you keep. Its sentence follows it in along the composition's own axis (the title sits 44px left
+of centre, the sentence 44px right of it, so the sentence arrives from the word's side rather than
+from below) and is unveiled left to right behind a soft mask edge. The word itself never translates
+and never staggers, and nothing is added to the screens to carry any of it: the wireframe gives
+these four type and only type, and the type is still the whole of it.
 
 Four *different* arrivals were built here first and thrown out. A corridor where each screen does
 its own trick reads as a slideshow of effects rather than as one place, and the reader spends the
@@ -166,19 +170,46 @@ padding cannot be: those headings still reveal through the mask, and `.w{overflo
 taller span straight back off. Fixing it site-wide means changing `--grad-light`'s foot or the mask
 itself, which is a decision about every page, not about this one.
 
-Animating a weight and a tracking is a text relayout, so it is measured rather than assumed. Over a
-220-notch scroll of the four steps at 1440×900, five runs of each interleaved:
+**The arrival did not run at all until 2026-09-12.** A comment above the rule closed one line early,
+so the prose that followed it was parsed as a selector and swallowed the `html.js .step-title`
+from-state whole. The four words shipped at their finished weight and never moved, and the table that
+used to sit here — 158 long frames with the arrival against 155 without — was measuring the arrival
+against itself. Both numbers below are re-measured with the rule actually in the sheet.
 
-| Long frames (>20ms) | With the arrivals | Without |
+Animating a weight and a tracking is a text relayout, so it is measured rather than assumed.
+`_qa/perf-corridor.mjs` runs it: 220 notches down the four steps at 1440×900, five interleaved runs
+an arm, medians of frames over 20ms. Absolute counts do not travel between machines — the harness is
+headless Chromium and composites in software — but the gap between two arms does.
+
+| Long frames (>20ms), 220 notches | Median | Spread |
 |---|---|---|
-| The four steps, 220 notches | 158 | 155 |
+| Four still screens | 91 | 81–94 |
+| The word and its sentence (ships) | 97 | 87–99 |
 
-That difference is inside the run-to-run spread, so the arrival costs nothing worth counting.
-Anything added here should be measured the same way before it ships. Three earlier versions were cut
-on that number or on their own noise: a sticky rail threading the four screens (the wireframe gives
-them no such element), a ground drift behind Stay fixed (its halos are 90–140px blurs, and a blurred
-box that moves is re-rasterised every frame whether or not it is promoted — `will-change` measured no
-difference), and a glow riding a wipe across Measure as a `drop-shadow` on a transforming element.
+Six long frames, inside the run-to-run spread, so the arrival costs nothing worth counting.
+
+**Anything added to the ground here has to be measured, and four things now have been.** The corridor
+is the one run on the site whose ground never changes, and four screens with one word each is exactly
+where a reader loses count, so lighting it is the obvious next move. It does not survive contact with
+the harness:
+
+| Lighting the corridor | Long frames over still |
+|---|---|
+| The halos drift on the scroll timeline | +57 |
+| A third halo cross-fades in as the drift's destination | +46 |
+| The two existing halos trade opacity — nothing added, nothing moved | +33 |
+| The travelling band every other blue ground carries | +16 |
+
+The pattern is the layer, not the technique. k09's halos are 70–80px blurs over a full screen, and on
+four stacked 100dvh sections any per-frame work on that surface is re-rasterised or re-blended; the
+cheapest version of the idea still cost five times what the whole arrival costs. Read it as a budget
+rather than as taste — a GPU-composited browser may pay less than this harness does. Anyone who wants
+the light back should get the harness onto a real compositor and re-run these arms, not re-derive
+them a fifth time.
+
+Two more were cut earlier and are not in the table: a sticky rail threading the four screens (the
+wireframe gives them no such element) and a glow riding a wipe across Measure as a `drop-shadow` on a
+transforming element.
 
 `page.js` holds the record module. Its figures are the last completed week of the Results page's
 own weekly series, recomputed here from that page's rule — same base win rates, same per-period

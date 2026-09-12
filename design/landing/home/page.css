@@ -82,7 +82,7 @@ html.reduce .screen.in .weekly-bar{animation:none}
   .weekly-head{background:rgba(var(--rgb-abyss),.55)}
 }
 .record-link{margin-top:20px;display:inline-flex;align-items:center;gap:8px;justify-self:start;
-  font-size:var(--text-guide);font-weight:var(--weight-strong);color:var(--r-1)}
+  font-size:var(--text-guide);font-weight:var(--weight-strong);color:#fff}
 .record-link:hover .ext{transform:translateX(3px)}
 
 /* ---------- 3 · the chapters: the wireframe's one chapter size, on the light one too ---------- */
@@ -112,8 +112,9 @@ html.reduce .screen.in .weekly-bar{animation:none}
 
 /* ---------- the four steps arrive the same way, and nothing is on these screens but the words ----------
    One move, repeated: the word is tracked wide open at a weight it never keeps, and closes onto the
-   weight and the tracking it holds for good. Nothing translates, nothing staggers, nothing is added
-   to the screens to carry it — the wireframe gives these four type and only type.
+   weight and the tracking it holds for good. The word itself never translates and never staggers,
+   and nothing is added to the screens to carry it — the wireframe gives these four type and only
+   type, and the type is still the whole of it.
 
    Four different arrivals were tried here first and thrown out: a corridor where each screen does
    its own trick reads as a slideshow of effects rather than as one place, and the reader spends the
@@ -126,17 +127,57 @@ html.reduce .screen.in .weekly-bar{animation:none}
    frame cost is measured (README) rather than assumed — one heading, once, off the scroll path.
 
    The from-state is gated on html.js. main.js sets that class, and it is also what splits .words and
-   what adds .in; without it the headings are plain text that no rule would ever reveal. */
+   what adds .in; without it the headings are plain text that no rule would ever reveal.
+
    The gate is .step-here, not .in. main.js sets .in at threshold .25 of the screen, which on a
    100dvh step puts the word 137px below the fold when its arrival starts — measured — so the whole
    move plays off screen and the reader only ever meets the finished word. page.js watches the word
    instead of the screen and only opens the gate once the word is in reading position. The sentence
    hangs off the same gate, or it lands a screen ahead of the word it belongs to. */
-html.js .step-title{font-weight:180;letter-spacing:.085em;opacity:0;
-  transition:font-weight .78s var(--ease) .1s,letter-spacing .78s var(--ease) .1s,opacity .38s linear}
-html.js .step.step-here .step-title{font-weight:var(--weight-display);letter-spacing:-.065em;opacity:1}
-html.js .step .rv{opacity:0;transform:translateY(18px)}
-html.js .step.step-here .rv{opacity:1;transform:none}
+html.js .step-title{font-weight:180;letter-spacing:.085em;opacity:0;filter:blur(.11em);transition:none}
+html.js:not(.reduce) .step.step-here .step-title{font-weight:var(--weight-display);letter-spacing:-.065em;opacity:1;filter:blur(0);
+  transition:font-weight .78s var(--ease) .1s,letter-spacing .78s var(--ease) .1s,
+    filter .86s var(--ease) .1s,opacity .38s linear}
+/* The transition is declared on the arrived state, not on the from-state, and the from-state says
+   `transition:none`. html.js is written by main.js, which means the from-state does not exist for the
+   first frames of the page — the browser resolves the words at their finished weight, then the class
+   lands and they change. With the transition on the from-state that change is itself a transition, so
+   all four headings ran their whole 880ms move at load, off screen, before a reader had scrolled a
+   pixel: work thrown away, and the gate's promise (the move plays where it can be seen) quietly
+   broken. Declared on the destination it fires in the direction that matters and in no other. */
+/* The blur is the same move, not a second one: a word that is light, wide and soft is a word not yet
+   read, and it firms up and sharpens onto the one you keep. It is also what makes the move affordable
+   to look at — a font-weight and a letter-spacing animation is a text relayout, so the glyphs are
+   re-fitted every frame, and at 104px the reader can see them shuffle. Under .11em of blur there is
+   nothing to see shuffling, and the sharpening lands exactly when the shuffling stops. In em, so the
+   focus pull is the same depth at the clamp's 64px floor as at its 104px ceiling. */
+
+/* ---------- the sentence is the second half of that move, not a second reveal ----------
+   It arrives along the composition's own axis. The title sits 44px left of centre and the sentence
+   44px right of it, so a sentence travelling in from the word's side reads as drawn out of the word
+   rather than as a fresh element landing under it. The ink is unveiled left to right behind a soft
+   mask edge, travelling the same way, so the pair read as one gesture and not as two reveals.
+   --wipe is registered: an unregistered percentage in a gradient stop swaps at the halfway mark
+   instead of interpolating, and the wipe would be a jump cut.
+   :not(.step-here) rather than a plain from-state, because base.css's `.screen.in .rv` sets opacity
+   back to 1 the moment .in lands — threshold .25 of a 100dvh screen, a screen too early, which is
+   the whole reason these four carry their own gate. An unqualified from-state loses to it. */
+@property --wipe{syntax:'<percentage>';inherits:false;initial-value:100%}
+html.js:not(.reduce) .step .step-copy{
+  -webkit-mask-image:linear-gradient(90deg,#000,#000 var(--wipe),transparent calc(var(--wipe) + 16%));
+  mask-image:linear-gradient(90deg,#000,#000 var(--wipe),transparent calc(var(--wipe) + 16%))}
+/* `transition:none` for the same reason the word carries it, and for one more: .rv brings a transition
+   of its own from base.css, so without this the sentence tweened from .rv's 18px drop to this rule's
+   24px offset the moment html.js landed — two from-states arguing, at load, off screen. */
+html.js:not(.reduce) .step:not(.step-here) .step-copy{--wipe:0%;opacity:0;transform:translateX(-24px);transition:none}
+html.js:not(.reduce) .step.step-here .step-copy{
+  transition:--wipe .7s linear .4s,opacity .5s var(--ease) .4s,transform .9s var(--ease) .4s}
+/* The wipe is linear and the two movements are not. --ease is ease-out-expo, which is right for a
+   thing arriving in place and wrong for an edge crossing a distance: on the expo curve the wipe was
+   92% across by 750ms of its 950ms, so it read as the sentence appearing rather than as anything
+   travelling. A sweep has to hold its speed to be a sweep, which is why the site's own travelling
+   light (style.css, ground-light) is linear too. Opacity and the offset keep the expo curve — they
+   are the sentence settling, and settling should decelerate. */
 /* the site's word mask is off on these four: the wrapper stops clipping and the inner span gives up
    its resting offset. Both halves together — that offset parks a word a full line below its own box
    until its screen arrives, which is invisible while the wrapper clips and is a line of overflow the
@@ -153,9 +194,43 @@ html.js .step.step-here .rv{opacity:1;transform:none}
    box is not clipped again on its way out. */
 .step-title .w i{padding-bottom:.4em;margin-bottom:-.4em}
 
-/* motion off: the words sit at the weight and tracking they end on */
-html.reduce .step-title{opacity:1;font-weight:var(--weight-display);letter-spacing:-.065em;transition:none}
+/* ---------- the ground stays a still picture, and that is a finding, not an omission ----------
+   The obvious next move is to light the corridor: these four are the only blue grounds on the site
+   whose ground never changes, and a run of four identical screens is exactly where a reader loses
+   count. Four versions of it were built and all four were measured out (_qa/perf-corridor.mjs,
+   220 notches down the run, five interleaved runs an arm, medians of long frames >20ms):
+
+     the halos drift on the scroll timeline        +57
+     a third halo cross-fades in as the walk's end +46   (`i3 static` showed the layer, not the move)
+     the two existing halos trade opacity          +33   (nothing added, nothing moved)
+     the travelling band the other grounds carry   +16
+
+   The arrival above, for comparison, is +5 to +7 — inside the run-to-run spread on every run of it.
+
+   The pattern across all four is the layer, not the technique. k09's halos are 70–80px blurs over a
+   full screen, and on four stacked 100dvh sections any per-frame work on that surface is re-rasterised
+   or re-blended; the cheapest version, an opacity trade between two layers that already existed and
+   never moved, still cost five times what the whole arrival costs. This page threw out a ground drift
+   here once before on the same finding. It is now measured four ways.
+
+   So the corridor's motion is entirely in the type, which is a small surface, and the ground is left
+   alone. Read that as a budget, not as taste: the harness composites in software (headless Chromium),
+   so the gap may overstate what a GPU-composited browser would pay. Anyone who wants the light back
+   should get the harness onto a real compositor first and re-run these arms — not re-derive them. */
+
+/* motion off: the word sits at the weight and tracking it ends on, the sentence unmasked and in
+   place. The type is the only thing that moves on these four, so it is the only thing to park.
+   .step-copy's from-state is gated on html.js:not(.reduce), so the mask and the offset are never
+   written in the first place and .rv's own reduce rule (base.css) is all that is left holding it. */
+html.reduce .step-title{opacity:1;font-weight:var(--weight-display);letter-spacing:-.065em;filter:none;transition:none}
 html.reduce .step .rv{opacity:1;transform:none;transition:none}
+
+/* Without JavaScript the word is simply there — every from-state above is gated on html.js. The
+   sentence was not: .rv's own hidden state (base.css) is unconditional and nothing arrives to undo it,
+   so these four screens shipped their word and no sentence at all to a reader without scripting.
+   A reveal has to enhance something already readable, so the steps opt out of .rv when there is
+   nothing that could ever reveal it. */
+html:not(.js) .step .rv{opacity:1;transform:none}
 
 /* ---------- 8 · the service: the wireframe's columns, three tiles on one blue panel ---------- */
 /* The card turns blue (founder, 2026-09-12), the Referral evidence card's treatment: on paper the
