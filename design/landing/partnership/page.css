@@ -129,9 +129,12 @@ html.reduce .ready i{animation:none}
 .faq-a p{font-size:var(--text-body)}
 
 /* ---------- 10 · the request: the wireframe's .8fr / 1.2fr grid, 88 apart, the copy pinned beside the form ---------- */
-#final{padding-top:calc(var(--nav-h) + 60px)}
+/* base.css clips #final with overflow:hidden, which makes it a scroll container — a sticky child then
+   pins to that box, never scrolls, and only sits its own top offset lower. overflow:clip cuts the same
+   edge without a scrollport, so the copy sticks to the viewport the way About's story headings do. */
+#final{overflow:clip;padding-top:calc(var(--nav-h) + 60px)}
 .request-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,.8fr) minmax(520px,1.2fr);gap:88px;align-items:start;padding-bottom:110px}
-.request-copy{position:sticky;top:calc(var(--nav-h) + 36px)}
+.request-copy{position:sticky;top:calc(var(--nav-h) + 28px)}   /* About's offset: the heading keeps its place while the form scrolls */
 .request-copy .h2{max-width:570px;color:#fff}
 .request-copy .copy{color:rgba(255,255,255,.78)}
 .form-card{padding:28px;border-radius:24px;background:#fff;color:var(--ink);box-shadow:0 34px 70px -30px rgba(var(--rgb-shadow),.8)}
