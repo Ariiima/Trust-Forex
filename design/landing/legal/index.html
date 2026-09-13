@@ -8,8 +8,8 @@
 <link rel="preload" href="../shared/fonts/Inter-VF.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-2 -2 29 30%27%3E%3Cg fill=%27%23144CCD%27%3E%3Cpath d=%27M9.447 21.464l-.039-6.979c-.002-1.612-1.409-2.918-3.143-2.918H.259c.24 1.032.52 2.69.875 3.702 1.594 4.322 4.496 7.606 8.313 10.024z%27/%3E%3Cpath d=%27M18.037 11.567c-1.568 0-2.84 1.18-2.842 2.638v11.068c3.797-2.414 6.686-5.689 8.276-10.003.362-1.012.649-2.671.889-3.703z%27/%3E%3Cpath d=%27M24.615 5.29V3.216C20.628 1.712 16.646.61 12.424 0 8.128.602 4.013 1.717 0 3.263V5.29z%27/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="../cb8/grounds.css?v=348acab3">
-<link rel="stylesheet" href="../cb8/style.css?v=1a8aeab6">
-<link rel="stylesheet" href="page.css?v=4ad61ecd">
+<link rel="stylesheet" href="../cb8/style.css?v=7e2d6d25">
+<link rel="stylesheet" href="page.css?v=defdaa9b">
 </head>
 <body>
 <svg id="liquid-svg" width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="liquid" x="-4%" y="-8%" width="108%" height="116%" color-interpolation-filters="sRGB">
@@ -64,7 +64,6 @@
 
   <section class="legal-top">
     <div class="wrap legal-wrap">
-      <span class="label">Legal</span>
       <h1>Legal Center</h1>
     </div>
   </section>
@@ -79,8 +78,6 @@
     <div class="wrap legal-wrap">
     <article class="doc" data-doc="terms">
     <h2>Terms of Service</h2>
-    <p class="doc-lede">The master agreement for access, eligibility, payments, rewards, broker features, support and acceptable use.</p>
-    <p class="doc-meta">Version 4.0 · Last updated 12 September 2026 · English</p>
     <section class="group">
       <h3 id="terms-integrated-legal-framework">Integrated Legal Framework</h3>
       <p>These Terms, the Risk Disclosure, the Privacy Policy, the Cookie Settings, every current schedule incorporated by them and every transaction-specific notice shown before an action form one integrated legal framework. The User normally accepts the mandatory contractual framework once before first access.</p>
@@ -281,8 +278,6 @@
 
     <article class="doc" data-doc="risk">
     <h2>Risk Disclosure</h2>
-    <p class="doc-lede">Trading risk, no-personal-advice terms and the complete rules used to measure signals, Results and Scalp Levels.</p>
-    <p class="doc-meta">Version 4.0 · Last updated 12 September 2026 · English</p>
     <section class="group">
       <h3 id="risk-trading-risk-and-no-personal-advice-disclosure">Trading Risk and No Personal Advice Disclosure</h3>
       <h4 id="risk-trading-risk-and-no-personal-advice-disclosure-high-risk-activity">High risk activity</h4>
@@ -342,8 +337,6 @@
 
     <article class="doc" data-doc="privacy">
     <h2>Privacy Policy</h2>
-    <p class="doc-lede">How TrustForex collects, uses, shares, protects, retains and transfers personal data across the website and Telegram interfaces.</p>
-    <p class="doc-meta">Version 4.0 · Last updated 12 September 2026 · English</p>
     <section class="group">
       <h3 id="privacy-privacy-data-rights-and-security-notice">Privacy Data Rights and Security Notice</h3>
       <h4 id="privacy-privacy-data-rights-and-security-notice-controller-and-scope">Controller and scope</h4>
@@ -401,8 +394,6 @@
 
     <article class="doc" data-doc="cookies">
     <h2>Cookie Settings</h2>
-    <p class="doc-lede">How cookies and similar technologies are used, and how optional analytics and marketing choices can be controlled.</p>
-    <p class="doc-meta">Version 4.0 · Last updated 12 September 2026 · English</p>
     <section class="group">
       <h3 id="cookies-cookies-analytics-and-communications-notice">Cookies Analytics and Communications Notice</h3>
       <h4 id="cookies-cookies-analytics-and-communications-notice-technologies-covered">Technologies covered</h4>
@@ -415,6 +406,13 @@
       <p>The live preference interface identifies the current category, purpose, provider and duration or persistence of non-essential technologies in a practical form. TrustForex may update vendors or tools prospectively and will refresh consent where the change legally requires it.</p>
       <h4 id="cookies-cookies-analytics-and-communications-notice-control">Control</h4>
       <p>Where legally required, Users can accept, reject or later change non-essential choices without losing core access. Browser or device settings may also affect technologies, but rejecting optional tracking must be as easy as accepting it.</p>
+    </section>
+    <!-- Not the wireframe's text: the live control that text describes (cb8/consent.js fills the
+         status and unhides the button). Without JS nothing optional can run, so there is nothing to set. -->
+    <section class="group">
+      <h3 id="cookies-your-choices">Your choices</h3>
+      <p data-consent-status>Cookie choices need JavaScript. Without it, no optional cookies are set.</p>
+      <div class="consent-actions" hidden><button type="button" class="btn" data-consent-open>Change your consent</button></div>
     </section>
   </article>
     </div>
@@ -460,5 +458,6 @@
 
 </main>
 <script src="page.js?v=b0b8896d"></script>
+<script src="../cb8/consent.js?v=5d3e2c28"></script>
 </body>
 </html>

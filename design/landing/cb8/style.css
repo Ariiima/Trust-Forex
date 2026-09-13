@@ -7,6 +7,7 @@
    engine gets the same glass without the bend. The data stays opaque white — the founder's
    "white chart" — so figures never sit on a translucent ground. */
 @import url('base.css?v=e02974b6');
+@import url('consent.css?v=07fd8694');
 
 /* ---------- structure behind the glass: a faint grid in every blue ground ---------- */
 .rayfield.k::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:

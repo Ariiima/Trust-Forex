@@ -62,7 +62,9 @@ page title, 24px document title, 18px section headings, 16px subheadings, no num
 2026-09-12: "completely black and white and simple, like every other privacy policy"). Titles are
 medium weight, not bold, and the page lede is gone (same day: "edit the boldness of titles, make
 them simple text and make them smaller"). That replaced a first pass the same day where every heading was body size in body
-ink. `page.css` does it by resetting the site's colour tokens at `:root`, so the nav, footer and
+ink. The "Legal" eyebrow, each document's lede and its version line are gone too, and the
+24px document title is off screen once a tab is open, since the tab already names it (founder,
+2026-09-13); it still shows without JS, in print, and to a screen reader. `page.css` does it by resetting the site's colour tokens at `:root`, so the nav, footer and
 focus ring follow. A row of plain text links, sticky under the nav, switches documents; the open
 one is black and underlined. The text is the wireframe's verbatim, nothing rewritten, less one
 clause: the wireframe's "One Time Acceptance" paragraph is the Mini App's sign-up checkbox, not
@@ -70,6 +72,21 @@ part of a document, so it is not on this page (founder, 2026-09-12). Nothing is 
 all four documents in order, which is also what prints and what a crawler reads. Every page's
 footer links here. `node _qa/legal.test.mjs` covers the switch, the history, the no-JS
 fallback, the hierarchy, and that no computed colour on the page has a hue.
+
+Cookie consent is one script, `cb8/consent.js` (its styles are `cb8/consent.css`, imported by
+`style.css`), loaded by every page here and by every page `blog/build.mjs` writes. It is the
+pattern most sites use (founder, 2026-09-13: "see what's common and expected … we should do the
+same"). A first visit gets a banner, bottom left, with Reject all and Accept all side by side at the
+same size and Manage preferences under them. The dialog lists Strictly necessary (always on),
+Analytics and Marketing (off until switched on), each with its cookies' provider, purpose and
+duration. The Cookie Settings tab ends on the saved choice and a "Change your consent" button. The
+choice is one first-party cookie, `tf_consent`, kept six months; raising `VERSION` in the script
+asks everyone again. No optional tool is in use yet, so both optional lists read "None in use." A
+new tool goes into its category's list and loads as `<script type="text/plain"
+data-consent="analytics">`, which the script releases once that category is allowed; withdrawing a
+category whose script already ran reloads the page. `node _qa/consent.test.mjs` covers the banner,
+both one-click answers, the choice across pages, the dialog, Escape, a stale version, a phone and
+the gate. Fresh browsers in the other `_qa` scripts now see the banner too.
 
 The footer is one markup on every page (`blog/build.mjs` writes its own copy), and `cb8/base.css`
 `.fsig` owns it. It stands on its own navy floor (`--p-abyss`) under the closing screen, rounded at

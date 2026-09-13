@@ -36,12 +36,19 @@ assert.deepEqual(await plain.$$eval('[data-doc]:not([hidden])', e => e.map(x => 
 const chars = await plain.evaluate(() => document.querySelector('.legal-body').innerText.length);
 assert.ok(chars > 50000, 'no-JS text present: ' + chars);
 
-// 3 — a standard hierarchy: document title > section heading > subheading = body, meta below body
+// 3 — a standard hierarchy: document title > section heading > subheading = body. The document
+// title is off screen once a tab is open (the tab names it), and nothing sits between the tabs
+// and the first section.
 await pg.goto(base + '?document=terms', { waitUntil: 'networkidle' });
-const size = await pg.evaluate(() => Object.fromEntries(['h2', 'h3', 'h4', '.group p', '.doc-meta'].map(s =>
+const size = await pg.evaluate(() => Object.fromEntries(['h2', 'h3', 'h4', '.group p'].map(s =>
   [s, parseFloat(getComputedStyle(document.querySelector('.doc:not([hidden]) ' + s)).fontSize)])));
-assert.ok(size.h2 > size.h3 && size.h3 > size.h4 && size.h4 === size['.group p'] && size['.doc-meta'] < size.h4,
+assert.ok(size.h2 > size.h3 && size.h3 > size.h4 && size.h4 === size['.group p'],
   'hierarchy: ' + JSON.stringify(size));
+const head = await pg.evaluate(() => ({
+  h2: document.querySelector('.doc:not([hidden]) h2').getBoundingClientRect().height,
+  extra: document.querySelectorAll('.legal-top .label, .doc-lede, .doc-meta').length,
+}));
+assert.deepEqual(head, { h2: 1, extra: 0 }, 'document head still shown: ' + JSON.stringify(head));
 
 // 4 — black and white: no computed colour on the page has a hue
 const hued = await pg.evaluate(() => {

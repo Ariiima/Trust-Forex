@@ -15,7 +15,7 @@ const cats = JSON.parse(readFileSync(join(BLOG, 'categories.json'), 'utf8'));
 const catById = Object.fromEntries(cats.map(c => [c.id, c]));
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const digest = f => createHash('sha1').update(readFileSync(f)).digest('hex').slice(0, 8);
-const V = { grounds: digest(join(LANDING, 'cb8/grounds.css')), style: digest(join(LANDING, 'cb8/style.css')), page: digest(join(BLOG, 'page.css')), main: digest(join(LANDING, 'cb8/main.js')), blog: digest(join(BLOG, 'blog.js')), editor: digest(join(BLOG, 'editor.js')), render: digest(join(BLOG, 'render.js')) };
+const V = { grounds: digest(join(LANDING, 'cb8/grounds.css')), style: digest(join(LANDING, 'cb8/style.css')), page: digest(join(BLOG, 'page.css')), main: digest(join(LANDING, 'cb8/main.js')), blog: digest(join(BLOG, 'blog.js')), editor: digest(join(BLOG, 'editor.js')), render: digest(join(BLOG, 'render.js')), consent: digest(join(LANDING, 'cb8/consent.js')) };
 const fmtDate = d => { const [y, m, day] = String(d).split('-').map(Number); return `${day} ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][m - 1]} ${y}`; };
 
 /* ---- the posts ---- */
@@ -118,6 +118,7 @@ ${body}
 <script src="${rel}cb8/ico/lottie_light.min.js"></script>
 <script src="${rel}cb8/main.js?v=${V.main}"></script>
 ${scripts}
+<script src="${rel}cb8/consent.js?v=${V.consent}"></script>
 <script>if (document.documentElement.classList.contains('reduce')) document.getElementById('liquid-svg').pauseAnimations();</script>
 </body>
 </html>

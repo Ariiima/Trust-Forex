@@ -35,7 +35,7 @@ body{background:#fff;color:var(--body);font-variant-numeric:normal}
 /* ---------- the head: page title, then the four documents ---------- */
 .legal-top{padding:calc(var(--nav-h) + 56px) 0 0}
 .legal-wrap{max-width:calc(var(--copy) + 2 * var(--content-gutter))}
-.legal-top h1{margin:12px 0 0;font-size:28px;line-height:1.25;letter-spacing:-.01em;font-weight:500;color:#000}
+.legal-top h1{margin:0;font-size:28px;line-height:1.25;letter-spacing:-.01em;font-weight:500;color:#000}
 
 /* The document switch: four plain text links, the open one black and underlined. It stays stuck
    under the nav while you read — on a 74-clause Terms of Service it is the only thing telling you
@@ -43,7 +43,9 @@ body{background:#fff;color:var(--body);font-variant-numeric:normal}
    parked in the head it would come unstuck the moment the head scrolled past. */
 .doc-tabs{position:sticky;top:var(--nav-h);z-index:20;margin:28px 0 0;
   background:#fff;border-bottom:1px solid var(--line)}
-.doc-tabs-row{display:flex;gap:28px}
+/* Centred in the column (founder, 2026-09-13). "safe": on a phone the row is wider than the
+   screen and scrolls, and plain centring would push Terms of Service off the left edge. */
+.doc-tabs-row{display:flex;justify-content:safe center;gap:28px}
 .doc-tabs a{position:relative;flex:none;padding:14px 0;font-size:15px;font-weight:var(--weight-label);
   color:var(--muted);transition:color .2s var(--ease)}
 .doc-tabs a:hover,.doc-tabs a[aria-current="page"]{color:#000}
@@ -54,13 +56,17 @@ body{background:#fff;color:var(--body);font-variant-numeric:normal}
 .doc[hidden]{display:none}
 .doc h2,.doc h3,.doc h4{color:#000;text-wrap:balance}
 .doc h2{margin:40px 0 0;font-size:24px;line-height:1.3;letter-spacing:-.01em;font-weight:500}
+/* Once page.js has picked one document, the open tab already names it, so the title above the
+   text is dropped (founder, 2026-09-13). It stays in the markup for screen readers, and shows
+   without JS, where all four documents run in order and it is the only thing between them. */
+.legal-wrap:has(.doc[hidden]) .doc h2{position:absolute;width:1px;height:1px;margin:0;overflow:hidden;
+  clip-path:inset(50%);white-space:nowrap}
 .doc p{margin:12px 0 0;font-size:var(--text-body);line-height:1.7;color:var(--body);text-wrap:pretty}
-.doc .doc-lede{font-size:17px;line-height:1.6;color:var(--muted)}
-.doc .doc-meta{margin:8px 0 0;padding:0 0 32px;border-bottom:1px solid var(--line);
-  font-size:var(--text-ui);color:var(--muted);text-wrap:balance}
 .group h3{margin:40px 0 0;font-size:18px;line-height:1.4;font-weight:500}
 .group h4{margin:28px 0 0;font-size:var(--text-body);line-height:1.5;font-weight:600}
 .group h4 + p{margin-top:4px}
+/* the Cookie Settings tab ends on the visitor's saved choice and the button that changes it */
+.consent-actions{margin-top:16px}
 
 /* ---------- the footer, on a black floor ----------
    Class only, and the section carries no id: base.css paints #final blue and a full screen
@@ -89,9 +95,12 @@ body{background:#fff;color:var(--body);font-variant-numeric:normal}
 /* Printing is how a legal document is kept. Drop the chrome, keep the text, and print the
    document that is open rather than all four. */
 @media print{
-  .nav,.doc-tabs,.footer-only{display:none!important}
+  .nav,.doc-tabs,.footer-only,.consent-actions{display:none!important}
   .legal-top{padding-top:0}
   .legal-wrap{max-width:none;padding:0}
+  /* the tabs do not print, so the printed document needs its title back */
+  .legal-wrap:has(.doc[hidden]) .doc h2{position:static;width:auto;height:auto;margin-top:24px;
+    overflow:visible;clip-path:none;white-space:normal}
   .doc h2,.doc h3,.doc h4{break-after:avoid}
   .doc p{break-inside:avoid}
 }
