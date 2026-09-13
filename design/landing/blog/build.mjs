@@ -76,8 +76,8 @@ const footer = rel => `<!-- the footer, every page: its own navy floor under the
         <a class="fsig-chan" href="#" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3 11l5 2 2 6 3-4 5 4 3-15Z"/></svg>Weekly results on Telegram</a>
       </div>
       <nav class="fsig-cols" aria-label="Footer">
-        <div><h3>The site</h3><ul><li><a href="${rel}results/">Results</a></li><li><a href="${rel}cb8/">Cashback</a></li><li><a href="${rel}referral/">Referral</a></li><li><a href="${rel}blog/">Blog</a></li></ul></div>
-        <div><h3>Partners</h3><ul><li><a href="${rel}brokers/">Partner brokers</a></li><li><a href="${rel}partnership/">Broker partnership</a></li><li><a href="${rel}brokers/#cashback">Partner broker rules</a></li><li><a href="${rel}about/">About us</a></li></ul></div>
+        <div><h3>The site</h3><ul><li><a href="${rel}home/">Home</a></li><li><a href="${rel}results/">Results</a></li><li><a href="${rel}cb8/">Cashback</a></li><li><a href="${rel}referral/">Referral</a></li></ul></div>
+        <div><h3>Company</h3><ul><li><a href="${rel}partnership/">Broker partnership</a></li><li><a href="${rel}brokers/#cashback">Partner broker rules</a></li><li><a href="${rel}about/">About us</a></li><li><a href="${rel}blog/">Blog</a></li></ul></div>
         <div><h3>Legal</h3><ul><li><a href="${rel}legal/?document=terms">Terms of service</a></li><li><a href="${rel}legal/?document=privacy">Privacy policy</a></li><li><a href="${rel}legal/?document=risk">Risk disclosure</a></li><li><a href="${rel}legal/?document=cookies">Cookie settings</a></li></ul></div>
       </nav>
     </div>

@@ -94,8 +94,9 @@ the shoulders, with the wordmark under the links tall enough to read and masked 
 founder picked it on 2026-09-13 ("23 is the winner") out of rounds three and four in
 `cb8/footer-lab-3.html`. It replaced variant 02 of `cb8/footer-lab.html`, where the links sat on the
 closing screen's own blue with a hairline between, and the cropped wordmark ran under the small
-print and the socials. The links are 4 / 4 / 4: Home is the lockup, and Brokers was dropped because
-it was Partner brokers twice. The closing screen above it holds a full window of blue on its own and
+print and the socials. The links are 4 / 4 / 4. Brokers was dropped because it was Partner brokers
+twice, then Partner brokers because it was Partner broker rules twice (one page); Home came back to The
+site and Blog moved under Company to keep the columns even (founder, 2026-09-13). The closing screen above it holds a full window of blue on its own and
 the floor starts past the fold (founder, 2026-09-13): sized as one window with the footer inside, the
 closing words stood in about half the fold. The blog's floor rises out of paper unchanged. Legal's floor is black,
 so that page still has no hue.
