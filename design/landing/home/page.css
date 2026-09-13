@@ -14,74 +14,60 @@
 #record .grid2{grid-template-columns:minmax(0,.92fr) minmax(520px,1.08fr);gap:88px}
 #record .grid2>div:first-child{max-width:590px}
 #record .copy{max-width:560px}
-/* The record card runs green on blue (founder, 2026-09-12). Green is the colour of a target that
-   was hit, so the win-rate plot reads in it — but green bars on the white pane sat flat against the
-   paper, so the card takes the service card's ground: the paper screen's frame paints its pane
-   white (../cb8/style.css), and this one paints it blue instead. The green is one light behind
-   the plot, brightest where the target was reached most often (the bars, below). */
-.weekly-record{min-height:430px;padding:14px 18px 20px;display:grid;grid-template-rows:auto 1fr auto}
-/* No frame, and the pane is the mechanics panel's glass (founder, 2026-09-12). The bezel read as a
-   border, and a translucent wash over paper read pale — so this is 03's factor pane exactly: an
-   opaque --blue base under the translucent layers, a light-blue rim, the streak that crosses on the
-   screen's own --ground timeline, and a specular under the pointer. ::before, which stood 14px proud
-   as the frame, is the pane; ::after, which was the white ground, is its light. */
+/* The record card follows the founder's reference (2026-09-13): a deep blue pane inside the paper
+   screen's pale glass frame, a header tile that names the week beside a chart icon and counts its
+   signals in a pill, the plot, and the way out to the full record under a rule of its own. Green
+   is the colour of a target that was hit, so the win-rate plot reads in it. The frame is cb8's own
+   (::before, ../cb8/style.css), the one the service card below wears; ::after, which is the white
+   ground there, is this card's blue pane and its light. The tilt and the specular under the pointer
+   are the mechanics panel's (../cb8/main.js sets --tx/--ty/--mx/--my and .lit). */
+.weekly-record{min-height:430px;padding:16px 16px 0;display:grid;grid-template-rows:auto 1fr auto}
 .screen-paper .weekly-record{border:0;
   transform:perspective(1200px) rotateX(calc(var(--ty,0) * -3deg)) rotateY(calc(var(--tx,0) * 3deg));transition:transform .6s var(--ease)}
 .screen-paper .weekly-record.lit{transition-duration:.15s}
 html.reduce .screen-paper .weekly-record{transform:none;transition:none}
-.screen-paper .weekly-record::before{inset:0;border-radius:inherit;border:1px solid rgba(160,196,255,.55);
-  background:radial-gradient(120% 90% at 12% 0%,rgba(var(--rgb-600),.38),transparent 66%),
-    linear-gradient(160deg,rgba(var(--rgb-900),.18),rgba(var(--rgb-abyss),.26)),
-    linear-gradient(var(--blue),var(--blue));
-  box-shadow:0 0 34px rgba(96,156,255,.3),inset 0 1px 0 rgba(255,255,255,.38),inset 0 0 0 1px rgba(160,196,255,.18),
-    inset 0 0 64px rgba(96,156,255,.14),0 30px 60px -28px rgba(var(--rgb-shadow),.8)}
-.screen-paper .weekly-record::after{border-radius:inherit;transition:--lit .45s var(--ease);
+.screen-paper .weekly-record::after{transition:--lit .45s var(--ease);
   animation:glass-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%;background:
   radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,var(--lit)),transparent 70%) no-repeat 0 0/auto,
-  linear-gradient(115deg,transparent 32%,rgba(255,255,255,.18) 46%,rgba(255,255,255,.05) 52%,transparent 62%) no-repeat 100% 0/220% 100%}
+  linear-gradient(115deg,transparent 32%,rgba(255,255,255,.12) 46%,rgba(255,255,255,.04) 52%,transparent 62%) no-repeat 100% 0/220% 100%,
+  radial-gradient(120% 70% at 30% 0%,rgba(var(--rgb-600),.45),transparent 70%),
+  linear-gradient(180deg,var(--blue),var(--p-deep));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 0 0 1px rgba(160,196,255,.2)}
 .screen-paper .weekly-record.lit{--lit:.1}
 html.reduce .screen-paper .weekly-record::after{animation:none;transition:none}
-/* the header block is a tinted tile on that pane — lit along its top edge, no rim line */
-.weekly-head{min-height:82px;padding:15px 18px;margin-bottom:24px;border-radius:18px;
-  background:linear-gradient(150deg,rgba(var(--rgb-500),.42),rgba(var(--rgb-abyss),.32));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -1px 0 rgba(var(--rgb-shadow),.26),0 10px 24px -18px rgba(var(--rgb-shadow),.8);
-  display:flex;align-items:center;justify-content:space-between;gap:24px}
-.weekly-head span{display:block;font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.065em;text-transform:uppercase;color:rgba(255,255,255,.7)}
-.weekly-head strong{display:block;margin-top:6px;font-size:var(--text-week-period);letter-spacing:-.025em;color:#fff}
-.weekly-total{flex:none;text-align:right}
-.weekly-total b{display:block;font-size:var(--text-week-total);line-height:1;letter-spacing:-.045em;color:#fff}
-.weekly-total small{display:block;margin-top:5px;font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.065em;text-transform:uppercase;white-space:nowrap;color:rgba(255,255,255,.7)}
+/* the header tile: the chart icon in the site's one well, the week, and its signal count as a pill */
+.weekly-head{min-height:82px;padding:16px 18px;margin-bottom:24px;border-radius:18px;
+  display:grid;grid-template-columns:var(--icon-well) minmax(0,1fr) auto;align-items:center;gap:16px;
+  border:1px solid rgba(160,196,255,.2);
+  background:linear-gradient(150deg,rgba(255,255,255,.1),rgba(255,255,255,.03));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+.weekly-icon{width:var(--icon-well);height:var(--icon-well);padding:calc((var(--icon-well) - var(--icon-size))/2 - 1px);display:grid;place-items:center;
+  border:1px solid rgba(160,196,255,.32);border-radius:var(--icon-well-radius);stroke:#fff;
+  background:linear-gradient(150deg,rgba(255,255,255,.14),rgba(255,255,255,.04));box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+.weekly-title{min-width:0}
+.weekly-title strong{display:block;font-size:var(--text-week-period);line-height:1.25;letter-spacing:-.02em;color:#fff}
+.weekly-title span{display:block;margin-top:4px;font-size:var(--text-ui);color:rgba(255,255,255,.72)}
+.weekly-total{margin:0;display:inline-flex;align-items:center;gap:.3em;height:38px;padding:0 16px;
+  border:1px solid rgba(255,255,255,.32);border-radius:999px;background:rgba(255,255,255,.06);box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
+  font-size:var(--text-ui);font-weight:var(--weight-strong);white-space:nowrap;color:#fff}
+.weekly-total b{font-weight:inherit}
 /* the plot: gridlines behind, four columns growing off the floor. The label above a bar is placed
    against the bar's own top edge, so it travels with --rate and never collides with a gridline. */
 .weekly-chart{position:relative;min-height:285px;padding:14px 10px 36px 48px}
 .weekly-grid{position:absolute;inset:14px 10px 36px 0}
-.weekly-grid div{position:absolute;left:48px;right:0;border-top:1px solid rgba(255,255,255,.18)}
-.weekly-grid span{position:absolute;right:calc(100% + 8px);top:0;transform:translateY(-50%);font-size:var(--text-micro);color:rgba(255,255,255,.6)}
-.weekly-bars{--bars-gap:18px;position:relative;height:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:var(--bars-gap);align-items:end;
+.weekly-grid div{position:absolute;left:48px;right:0;border-top:1px solid rgba(255,255,255,.14)}
+.weekly-grid span{position:absolute;right:calc(100% + 8px);top:0;transform:translateY(-50%);font-size:var(--text-label);color:rgba(255,255,255,.62)}
+.weekly-bars{--bars-gap:22px;position:relative;height:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:var(--bars-gap);align-items:end;
   container-type:size}
-/* The four bars are windows onto ONE green light behind the plot (founder, 2026-09-13; README,
-   "The record's bars"). Each bar paints the slice of that light that falls behind its column: the
-   field is 100cqw × 100cqh of the bars row, pulled left by the column's own offset and pinned to
-   the floor, so a growing bar uncovers more of it instead of stretching it. TP1→TP4 is one light
-   falling across the chart, brightest at TP1, and the streak runs unbroken through the gaps the
-   way one sheet of glass reads through four slots. The light leans with the pane's --tx/--ty
-   (../cb8/main.js); registering them is what lets it ease instead of jump. */
-@property --tx{syntax:'<number>';inherits:true;initial-value:0}
-@property --ty{syntax:'<number>';inherits:true;initial-value:0}
-.weekly-bar{--col:calc((100cqw - 3 * var(--bars-gap)) / 4);height:var(--rate);min-height:2px;border-radius:8px 8px 3px 3px;position:relative;
-  transition:--tx .8s var(--ease),--ty .8s var(--ease);
-  background:
-    linear-gradient(115deg,transparent calc(22% + var(--tx) * 18%),rgba(255,255,255,.17) calc(42% + var(--tx) * 18%),
-      rgba(255,255,255,.05) calc(54% + var(--tx) * 18%),transparent calc(70% + var(--tx) * 18%)),
-    radial-gradient(100% 120% at calc(14% + var(--tx) * 16%) calc(4% + var(--ty) * 16%),#94F7C4 0%,#52DA94 26%,#2DB070 58%,#1A8150 100%);
-  background-repeat:no-repeat;background-size:100cqw 100cqh;
-  background-position:calc(-1 * var(--n) * (var(--col) + var(--bars-gap))) 100%;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
-/* reduced motion: the light stays where it rests */
-html.reduce .weekly-bar{--tx:0;--ty:0;transition:none}
-.weekly-bar b{position:absolute;left:50%;top:-28px;transform:translateX(-50%);font-size:var(--text-panel-title);letter-spacing:-.025em;color:#fff}
-.weekly-bar span{position:absolute;left:50%;top:calc(100% + 11px);transform:translateX(-50%);white-space:nowrap;
-  font:var(--weight-heavy) var(--text-label)/1 var(--sans);color:rgba(255,255,255,.72)}
+/* The bars are windows onto one green field the height of the plot (README, "The record's bars"):
+   bright at the 100% line, deep at the floor, pinned there, so a bar that reaches higher reaches
+   brighter green and a growing bar uncovers the field instead of stretching it. */
+.weekly-bar{height:var(--rate);min-height:2px;border-radius:8px 8px 0 0;position:relative;
+  background:linear-gradient(180deg,#8CEFBE,#5ADB9C 35%,#2DB474 75%,#1E9A62) no-repeat 0 100%/100% 100cqh;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45)}
+.weekly-bar b{position:absolute;left:50%;top:-28px;transform:translateX(-50%);font-size:var(--text-panel-title);letter-spacing:-.02em;color:#fff}
+.weekly-bar span{position:absolute;left:50%;top:calc(100% + 12px);transform:translateX(-50%);white-space:nowrap;
+  font:var(--weight-heavy) var(--text-small)/1 var(--sans);color:rgba(255,255,255,.86)}
 /* The bars grow from the floor once the screen arrives, on the reveal's own curve. Height, not
    scaleY: the figure above a bar is pinned to that bar's top edge, so it has to ride up with it —
    a scale would stretch the digits instead. Four elements, once, off the scroll path. */
@@ -91,13 +77,14 @@ html.reduce .weekly-bar{--tx:0;--ty:0;transition:none}
 @keyframes bar-grow{from{height:0}to{height:var(--rate)}}
 html.reduce .screen.in .weekly-bar{animation:none}
 @media (prefers-reduced-transparency:reduce){
-  .screen-paper .weekly-record::before{backdrop-filter:none;-webkit-backdrop-filter:none}
-  .screen-paper .weekly-record::after{animation:none;background:none}
+  .screen-paper .weekly-record::after{animation:none;background:linear-gradient(180deg,var(--blue),var(--p-deep))}
   .weekly-head{background:rgba(var(--rgb-abyss),.55)}
 }
-.record-link{margin-top:20px;display:inline-flex;align-items:center;gap:8px;justify-self:start;
-  font-size:var(--text-guide);font-weight:var(--weight-strong);color:#fff}
-.record-link:hover .ext{transform:translateX(3px)}
+/* the foot's rule runs the full width of the pane, so it pulls out through the card's side padding */
+.record-foot{margin:20px -16px 0;padding:18px 24px 20px;border-top:1px solid rgba(255,255,255,.14)}
+.record-link{display:inline-flex;align-items:center;gap:8px;
+  font-size:var(--text-ui);font-weight:var(--weight-strong);color:#fff}
+.record-link:hover .ext{transform:rotate(0)}
 
 /* ---------- 3 · the chapters: the wireframe's one chapter size, on the light one too ---------- */
 .chapter .h2{font-size:var(--text-chapter-home);max-width:1000px}
@@ -505,10 +492,13 @@ body{font-variant-numeric:normal}
   .glass .plan-col{min-height:auto}
 }
 @media (max-width:680px){
-  .weekly-record{min-height:400px;padding:12px 14px 18px}
-  .weekly-head{min-height:78px;padding:14px}
-  .weekly-head strong{font-size:var(--text-row-title)}
-  .weekly-total b{font-size:var(--text-answer)}
+  .weekly-record{min-height:400px;padding:12px 12px 0}
+  /* the pill drops under the week: beside it, the title and the date each broke onto two lines */
+  .weekly-head{min-height:78px;padding:14px;grid-template-columns:var(--icon-well) minmax(0,1fr);gap:10px 12px}
+  .weekly-icon{grid-row:1/3}
+  .weekly-title strong{font-size:var(--text-panel-title)}
+  .weekly-total{justify-self:start;height:30px;padding:0 12px}
+  .record-foot{margin-inline:-12px;padding:16px 18px 18px}
   .weekly-chart{min-height:255px;padding-left:38px}
   .weekly-grid div{left:38px}
   .weekly-bars{--bars-gap:10px}

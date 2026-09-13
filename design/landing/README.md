@@ -160,6 +160,13 @@ translucent green over the blue pane turns teal. Round 2 started from the data: 
 signal lit when it reached the target, the four targets as concentric rings, and last week's rate
 as a level across each bar. One light was chosen; the tiles were the runner-up.
 
+Reworked the same day against the founder's reference card. The light is now one vertical field the
+height of the plot, bright at the 100% line and deep at the floor, so a bar that reaches higher
+reaches brighter green. The radial hot spot, the streak through the gaps and the lean under the
+pointer went with it. The card took the reference too: the paper screen's glass frame is back (it
+had been removed on 2026-09-12 as reading like a border), the header is a tile with the chart icon,
+the week and an "11 signals" pill, and the link to the full record sits under a full-width rule.
+
 ### The protocol steps
 
 The four steps are the one place on the site that does not use the ordinary reveal, and all four use
