@@ -122,6 +122,36 @@ html.reduce .screen.in .weekly-bar{animation:none}
 .step-copy{width:min(100%,700px);max-width:none;margin:0 auto;
   font-size:var(--text-step-copy);line-height:var(--leading-step-copy);color:rgba(255,255,255,.76);text-wrap:balance}
 
+/* ---------- the four steps stack, the way the Cashback mechanics do (founder, 2026-09-13) ----------
+   Each step pins at the top for the site's hold, and the next one rises over it from below. It
+   arrives at 92% and grows to full size across its own entry, so the pinned step shows at its sides
+   while it comes, and the pinned step dims under a black veil as it is covered. This is base.css's
+   stack as the mechanics run it — the .stack/.hold markup, stack-in, stack-back and cover — changed in
+   one respect: the mechanics scale an inset block inside a white frame, and these four are full-bleed,
+   so the screen itself is what scales. Its own rayfield is its opaque ground, so the incoming step
+   hides the pinned one without a background of its own. Step 1 does not scale: it follows the chapter
+   up the page as an ordinary scroll, and there is no step under it to show at its sides.
+   A step the next one has fully covered turns invisible for the last 1% of that entry, as a covered
+   mechanics card does, so no more than two of these full-screen halo fields composite at once.
+   The incoming step rises with the mechanics card's 32px corners (founder, 2026-09-13: "round up
+   the edges as well"), and squares them off over the last 15% of its entry, as it fills the screen —
+   a full-bleed step that kept its corners at rest would notch the four corners of the viewport.
+   The corners are a clip-path, not border-radius and overflow, for base.css's reason: a rounded
+   overflow clip over composited children needs a mask redrawn every frame.
+   Hold modes only (html.snap): mobile, touch and reduced motion scroll the four plainly. */
+#deck{timeline-scope:--s2,--s3,--s4}
+#step-2{view-timeline-name:--s2}#step-3{view-timeline-name:--s3}#step-4{view-timeline-name:--s4}
+.step::after{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;background:#000;opacity:0}
+html.snap .protocol-run .step{will-change:transform}
+html.snap #step-1{animation:cover step-end both;animation-timeline:--s2;animation-range:entry 99% entry 100%}
+html.snap #step-2{animation:stack-in linear both,step-round linear both,cover step-end both;animation-timeline:--s2,--s2,--s3;animation-range:entry,entry,entry 99% entry 100%}
+html.snap #step-3{animation:stack-in linear both,step-round linear both,cover step-end both;animation-timeline:--s3,--s3,--s4;animation-range:entry,entry,entry 99% entry 100%}
+html.snap #step-4{animation:stack-in linear both,step-round linear both;animation-timeline:--s4,--s4;animation-range:entry,entry}
+@keyframes step-round{0%,85%{clip-path:inset(0 round 32px)}100%{clip-path:inset(0 round 0px)}}
+html.snap #step-1::after{animation:stack-back linear both;animation-timeline:--s2;animation-range:entry}
+html.snap #step-2::after{animation:stack-back linear both;animation-timeline:--s3;animation-range:entry}
+html.snap #step-3::after{animation:stack-back linear both;animation-timeline:--s4;animation-range:entry}
+
 /* ---------- the four steps arrive the same way, and nothing is on these screens but the words ----------
    One move, repeated: the word is tracked wide open at a weight it never keeps, and closes onto the
    weight and the tracking it holds for good. The word itself never translates and never staggers,

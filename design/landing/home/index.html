@@ -120,28 +120,38 @@
 <!-- 4–7 · THE PROTOCOL — four full screens, type only, on one continuous blue corridor (the
      wireframe's alternating dark run). The ground sits on the wrapper so the four read as one
      place; each step tilts its own tone, the title sits left of centre and the sentence right,
-     exactly as drawn. No panel: the wireframe gives these screens no data, so neither do we. -->
-<div class="protocol-run">
+     exactly as drawn. No panel: the wireframe gives these screens no data, so neither do we.
+     The four stack the way the Cashback mechanics do — .stack and one .hold per step, base.css —
+     each pinning while the next rises over it (page.css). -->
+<div class="protocol-run stack">
+  <div class="hold">
   <section class="screen screen-dark on-dark step" id="step-1" data-name="Prepare" aria-labelledby="s1">
     <div class="rayfield k k09" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
     <div class="wrap"><h3 class="step-title words" id="s1">Prepare</h3>
     <p class="step-copy rv" style="--i:3">An advance level comes first, giving you time to set an alert and be ready before the signal arrives.</p></div>
   </section>
+  </div>
+  <div class="hold">
   <section class="screen screen-dark on-dark step" id="step-2" data-name="Enter" aria-labelledby="s2">
     <div class="rayfield k k09" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
     <div class="wrap"><h3 class="step-title words" id="s2">Enter</h3>
     <p class="step-copy rv" style="--i:3">One market entry, a stop loss and defined take profit levels give you one clear setup to act on.</p></div>
   </section>
+  </div>
+  <div class="hold">
   <section class="screen screen-dark on-dark step" id="step-3" data-name="Stay fixed" aria-labelledby="s3">
     <div class="rayfield k k09" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
     <div class="wrap"><h3 class="step-title words" id="s3">Stay fixed</h3>
     <p class="step-copy rv" style="--i:3">Once published, the setup stays unchanged, so the result is judged against the same levels you received.</p></div>
   </section>
+  </div>
+  <div class="hold">
   <section class="screen screen-dark on-dark step" id="step-4" data-name="Measure" aria-labelledby="s4">
     <div class="rayfield k k09" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
     <div class="wrap"><h3 class="step-title words" id="s4">Measure</h3>
     <p class="step-copy rv" style="--i:3">Every signal remains in the record, with each target measured separately instead of only the best outcome.</p></div>
   </section>
+  </div>
 </div>
 
 <!-- 8 · THE SERVICE — one market, three elements, on one white panel -->

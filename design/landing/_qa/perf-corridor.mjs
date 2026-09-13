@@ -6,11 +6,13 @@
 //   node design/landing/_qa/perf-corridor.mjs
 //
 // 220 notches down the four steps at 1440x900 — a hard continuous flick, not a reader's pace, which
-// is the point: the corridor has to hold up at the speed someone skims it. Two arms, interleaved so
+// is the point: the corridor has to hold up at the speed someone skims it. Four arms, interleaved so
 // a warming machine cannot hand one of them a better score:
 //
-//   still     the corridor as four still pictures, nothing arriving
-//   shipped   what ships: the word and its sentence
+//   still     the corridor as four still pictures scrolling plainly, nothing arriving
+//   arrival   the word and its sentence, the four scrolling plainly (what shipped before the stack)
+//   square    the four stacking with square corners, and the arrival
+//   shipped   what ships: the four stacking, each rising over the pinned one with rounded corners
 //
 // GROUND_OFF is kept and unused on purpose. Four ways of lighting the corridor were built and all
 // four measured out (page.css carries the numbers and the reasoning); this arm is what to switch back
@@ -34,9 +36,22 @@ const NO_ARRIVAL = `
   html.js .step .step-copy{transition:none!important;opacity:1!important;transform:none!important;
     -webkit-mask-image:none!important;mask-image:none!important}`;
 const GROUND_OFF = `.protocol-run .step .rayfield.k i{animation:none!important}`;   // see above
+// the four as plain screens again: nothing pins, no gap after each, nothing scales, dims or hides
+const NO_STACK = `
+  html.snap .protocol-run .hold>.screen{position:relative!important}
+  .protocol-run .hold::after{display:none!important}
+  .protocol-run .step,.protocol-run .step::after{animation:none!important;will-change:auto!important}`;
+
+// the stack with square corners: the incoming step scales and the pinned one dims, nothing rounds
+const NO_ROUND = `
+  html.snap #step-2{animation:stack-in linear both,cover step-end both!important;animation-timeline:--s2,--s3!important;animation-range:entry,entry 99% entry 100%!important}
+  html.snap #step-3{animation:stack-in linear both,cover step-end both!important;animation-timeline:--s3,--s4!important;animation-range:entry,entry 99% entry 100%!important}
+  html.snap #step-4{animation:stack-in linear both!important;animation-timeline:--s4!important;animation-range:entry!important}`;
 
 const ARMS = {
-  still: NO_ARRIVAL,
+  still: NO_ARRIVAL + NO_STACK,
+  arrival: NO_STACK,
+  square: NO_ROUND,
   shipped: '',
 };
 
@@ -85,4 +100,7 @@ const gap = (a, c) => {
   const d = s[a].mid - s[c].mid;
   return `${(d >= 0 ? '+' : '') + d} (${overlap ? 'inside the spread' : 'OUTSIDE the spread'})`;
 };
-console.log(`\nthe word and its sentence  ${gap('shipped', 'still')}`);
+console.log(`\nthe word and its sentence  ${gap('arrival', 'still')}`);
+console.log(`the stack, square corners ${gap('square', 'arrival')}`);
+console.log(`the stack, rounded        ${gap('shipped', 'arrival')}`);
+console.log(`the corners alone         ${gap('shipped', 'square')}`);
