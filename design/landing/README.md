@@ -202,7 +202,7 @@ site's roles, and the Home-only roles were dropped from `shared/scale.css`. Phon
 | Benefits and Plans headings | 58 and 62 (44) | `--text-title`, 66 (40), every section heading's |
 | The Plans sentence | 14 | `--text-copy`, 18, every section paragraph's |
 | Closing statement | 88 (48) | `--text-display-close`, 88 (52), as Results and Referral |
-| Service tiles | 17px names, 12.5px lines | 15 and 13, the Referral evidence card they copy |
+| Service and benefit tiles | 17px names, 12.5px lines | 15 and 13, the Referral evidence card they copy |
 | "How it works" capsule | 11.5 | `--text-small`, 12 |
 
 At 78px "Stay fixed" had been breaking onto two lines on a 390px phone. At 1440 the benefits
