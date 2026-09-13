@@ -23,6 +23,16 @@
 .on-dark .btn-solid:hover{background:rgba(255,255,255,.3);border-color:rgba(255,255,255,.6);color:#fff}
 /* The closing CTA was white paper for a day (variant 15 of cta-lab.html); it is the glass capsule
    again, like every other CTA on blue (founder, 2026-09-13). */
+/* A backdrop reaches only as far as the nearest ancestor with opacity under 1, so while a .rv wrapper
+   faded, the capsule inside it blurred nothing — a clear outline with the grid showing through — and
+   turned blue the frame the fade ended (founder, 2026-09-14: "the cta takes a little while to load").
+   The wrapper keeps its rise; the capsule fades itself, because an element's own opacity does not cut
+   off its own backdrop. Paused until .in, so the flip changes no value and starts no transition. */
+.rv:has(> .btn-solid){opacity:1}
+.rv > .btn-solid{animation:rv-fade .62s var(--ease) calc(var(--i,0) * 90ms + 60ms) backwards paused}
+.screen.in .rv > .btn-solid{animation-play-state:running}
+html.reduce .rv > .btn-solid{animation:none}
+@keyframes rv-fade{from{opacity:0}}
 
 /* ---------- the white chart in a thick glass frame ---------- */
 /* Two pseudos behind the card's content, both at negative z inside the card's own stacking

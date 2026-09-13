@@ -106,6 +106,14 @@
 .broker-dot:hover{background:rgba(255,255,255,.72)}
 .broker-dot[aria-current=true]{width:24px;background:#fff;box-shadow:0 0 10px rgba(255,255,255,.6)}
 html.reduce .broker-card,html.reduce .broker-dot{transition:none}
+/* the stage reveals the way the CTAs on blue do (style.css, rv-fade). While the stage itself faded, the tiles'
+   frost had nothing behind it, so the neighbours' edges showed through the active tile and it clouded over the
+   frame the fade ended. The stage keeps its rise; the tiles and arrows fade themselves. The dots need nothing:
+   their capsule is the .rv, and an element's own opacity keeps its backdrop. */
+.broker-stage.rv{opacity:1}
+.broker-stage.rv > *{animation:rv-fade .62s var(--ease) calc(var(--i,0) * 90ms + 60ms) backwards paused}
+.screen.in .broker-stage.rv > *{animation-play-state:running}
+html.reduce .broker-stage.rv > *{animation:none}
 
 /* ---------- wayfinding ----------
    This page carried a sticky strip of six anchors under a fixed nav — two bars, 104px of chrome over
