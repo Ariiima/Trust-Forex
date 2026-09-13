@@ -141,18 +141,21 @@
   addEventListener('scroll', onScroll, { passive: true });   // support a document scroll container too
 
   /* ---------- go to a section: the browser's own smooth scroll, landing at the start of its hold ---------- */
-  function go(i) {
+  function go(i, instant) {
     i = Math.max(0, Math.min(screens.length - 1, i));
-    scroller().scrollTo({ top: destination(i), behavior: REDUCE ? 'instant' : 'smooth' });
+    scroller().scrollTo({ top: destination(i), behavior: REDUCE || instant ? 'instant' : 'smooth' });
   }
   window.__go = go;                       // for the QA pass
   document.getElementById('toTop').addEventListener('click', () => go(0));
+  // A nav or footer link to this page lands at once, as a link to another page does: the glide from the
+  // footer crosses the whole page in about two seconds, and a touch on the way left the reader wherever it had got to.
   document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
     const el = document.getElementById(a.getAttribute('href').slice(1));
     if (!el) return;
     e.preventDefault();
+    const instant = !!a.closest('#nav, footer');
     const s = el.closest('.screen');
-    if (s) go(screens.indexOf(s)); else el.scrollIntoView({ behavior: REDUCE ? 'auto' : 'smooth' });
+    if (s) go(screens.indexOf(s), instant); else el.scrollIntoView({ behavior: REDUCE || instant ? 'auto' : 'smooth' });
   }));
 
   addEventListener('resize', () => {

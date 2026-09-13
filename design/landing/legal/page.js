@@ -15,7 +15,7 @@
     const key = new URLSearchParams(location.search).get('document');
     return valid.has(key) ? key : 'terms';
   };
-  const show = (key, push) => {
+  const show = (key, push, instant) => {
     docs.forEach(d => { d.hidden = d.dataset.doc !== key; });
     tabs.forEach(t => t.setAttribute('aria-current', t.dataset.tab === key ? 'page' : 'false'));
     const tab = tabs.find(t => t.dataset.tab === key);
@@ -28,12 +28,13 @@
     url.searchParams.set('document', key);
     url.hash = '';
     history.pushState({ document: key }, '', url);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: instant ? 'instant' : 'smooth' });
   };
-  // The footer's legal column carries the same ?document= links; they switch in place too.
+  // The footer's legal column carries the same ?document= links; they switch in place too, and land
+  // at the top at once, as every footer link does — a glide up a whole document stops wherever a touch catches it.
   document.querySelectorAll('a[href^="?document="]').forEach(a => a.addEventListener('click', e => {
     e.preventDefault();
-    show(new URLSearchParams(a.getAttribute('href')).get('document'), true);
+    show(new URLSearchParams(a.getAttribute('href')).get('document'), true, !!a.closest('footer'));
   }));
   addEventListener('popstate', () => show(requested(), false));
   show(requested(), false);

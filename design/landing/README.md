@@ -101,6 +101,14 @@ the floor starts past the fold (founder, 2026-09-13): sized as one window with t
 closing words stood in about half the fold. The blog's floor rises out of paper unchanged. Legal's floor is black,
 so that page still has no hue.
 
+Every nav and footer link lands at the top of its page (founder, 2026-09-14: "touching a footer or
+header link should bring you to the top of that page, not somewhere random in the middle"). So
+Partner broker rules goes to `brokers/`, not `brokers/#cashback`; the Cashback page's in-body "View
+rules for each broker" link keeps the anchor. A nav or footer link to the page you are on jumps
+rather than glides (`cb8/main.js`, and the footer's legal column in `legal/page.js`): from the footer
+the glide took about two seconds, and a touch on the way stopped it mid-page. The back-to-top
+button, the rail dots and in-body anchors still glide.
+
 QA: `node _qa/screens.mjs <url> <out.png> [w h [frames]]` shoots every screen of a page into one
 sheet (`?check=1` prints CHECK OK/FAIL in the console); `node _qa/lines.mjs <wireframe file> <url>`
 compares every heading's line count and size against a wireframe.
