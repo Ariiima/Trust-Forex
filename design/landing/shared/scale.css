@@ -88,6 +88,7 @@
   --leading-vision: 1.72;                           /* vision paragraphs */
   --weight-body: 400;
   --weight-label: 500;
+  --weight-semi: 600;                               /* the calculator's step captions and its two figures */
   --weight-strong: 700;
   --weight-title: 700;
   --weight-display: 720;                            /* hero / final statement */

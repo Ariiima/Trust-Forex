@@ -73,9 +73,9 @@ body{background:#E9EEF8;color:var(--navy);font:400 15px/1.5 var(--sans);padding:
    Already shipped in style.css under #calculator. Restated here because the sheet draws the panel
    as .calcv, and .calcv .tile would otherwise outrank the shared .rate-cell block. Values are
    style.css's own — nothing new is being proposed on this line. */
-.vsel .rate-cell[aria-pressed=false][data-tier=standard]{--tint:rgba(226,150,96,.46);--tint2:rgba(150,84,50,.42);--rim:rgba(236,176,136,.46)}
+.vsel .rate-cell[aria-pressed=false][data-tier=standard]{--tint:rgba(227,125,39,.68);--tint2:rgba(147,70,4,.68);--rim:rgba(236,176,136,.46)}
 .vsel .rate-cell[aria-pressed=false][data-tier=silver]{--tint:rgba(204,218,238,.24);--tint2:rgba(118,144,184,.21);--rim:rgba(228,238,250,.46)}
-.vsel .rate-cell[aria-pressed=false][data-tier=gold]{--tint:rgba(238,196,102,.46);--tint2:rgba(170,124,40,.46);--rim:rgba(240,208,130,.5)}
+.vsel .rate-cell[aria-pressed=false][data-tier=gold]{--tint:rgba(218,157,38,.72);--tint2:rgba(140,90,0,.72);--rim:rgba(240,208,130,.5)}
 .vsel .rate-cell[aria-pressed=false][data-tier=diamond]{--tint:rgba(138,96,224,.32);--tint2:rgba(76,48,150,.29);--rim:rgba(196,166,250,.46)}
 .vsel .rate-cell[aria-pressed=false]{--streak:.32}
 .vsel .rate-cell[aria-pressed=false]:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.62);
@@ -83,9 +83,9 @@ body{background:#E9EEF8;color:var(--navy);font:400 15px/1.5 var(--sans);padding:
 .vsel .rate-cell[aria-pressed=true]{--streak:.42;transform:none;border-color:#fff;
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   box-shadow:inset 0 0 0 1px #fff,inset 0 1px 0 rgba(255,255,255,.5),0 0 0 4px rgba(255,255,255,.12),0 18px 34px -18px var(--rim)}
-.vsel .rate-cell[aria-pressed=true][data-tier=standard]{--tint:rgba(226,150,96,.62);--tint2:rgba(150,84,50,.6);--rim:rgba(236,176,136,.5);--label:#FFF1E6}
+.vsel .rate-cell[aria-pressed=true][data-tier=standard]{--tint:rgba(222,134,67,.8);--tint2:rgba(150,79,29,.8);--rim:rgba(236,176,136,.5);--label:#FFF1E6}
 .vsel .rate-cell[aria-pressed=true][data-tier=silver]{--tint:rgba(204,218,238,.36);--tint2:rgba(118,144,184,.32);--rim:rgba(228,238,250,.55)}
-.vsel .rate-cell[aria-pressed=true][data-tier=gold]{--tint:rgba(238,196,102,.66);--tint2:rgba(170,124,40,.66);--rim:rgba(240,208,130,.55);--label:#FFF6DF}
+.vsel .rate-cell[aria-pressed=true][data-tier=gold]{--tint:rgba(224,172,69,.84);--tint2:rgba(152,108,24,.84);--rim:rgba(240,208,130,.55);--label:#FFF6DF}
 .vsel .rate-cell[aria-pressed=true][data-tier=diamond]{--tint:rgba(138,96,224,.5);--tint2:rgba(76,48,150,.46);--rim:rgba(196,166,250,.55)}
 
 /* ================= .v3 — the arrangement, identical on all four cards =================
@@ -97,17 +97,21 @@ body{background:#E9EEF8;color:var(--navy);font:400 15px/1.5 var(--sans);padding:
 .v3 .fields{gap:14px}
 .v3 .well{padding:12px 16px 13px}
 .v3 .level-row{--cell-h:88px;gap:13px}
-.v3 .estimate{margin-top:22px;padding:20px 22px;background:rgba(255,255,255,.16)}
+.v3 .estimate{margin-top:22px;padding:14px 20px 14px 22px;align-items:baseline;background:rgba(var(--rgb-abyss),.3)}
+.v3 .estimate small{margin-bottom:0}
+.v3 .estimate strong em{margin-left:-5px}
 
 /* ================= .t4 — the type =================
    If the panel is two questions, the two questions should look like questions. The step captions
    leave the caption tier entirely and become small white headings at 15px; everything under them
    goes sentence case and quiet, so each step reads as a heading with its answer beneath. No uppercase
    anywhere except the metals' own shares, which are figures. */
-.t4 .step-cap{font:var(--weight-support) var(--text-panel-title)/1.2 var(--sans);letter-spacing:-.015em;text-transform:none;color:#fff}
+.t4 .step-cap{font:var(--weight-semi) var(--text-panel-title)/1.2 var(--sans);letter-spacing:-.015em;text-transform:none;color:#fff}
 .t4 .well>label{font:var(--weight-body) var(--text-small)/var(--leading-ui) var(--sans);letter-spacing:0;text-transform:none;color:rgba(255,255,255,.58)}
-.t4 .well select,.t4 .well input,.t4 .well-value{font-weight:var(--weight-support)}
+.t4 .well select,.t4 .well input,.t4 .well-value{font-weight:var(--weight-label)}
 .t4 .rate-cell small{font-weight:var(--weight-label)}
+.t4 .rate-cell strong,.t4 .estimate strong{font-weight:var(--weight-semi)}
+.t4 .estimate strong em{font-weight:var(--weight-body)}
 .t4 .estimate small{font:var(--weight-body) var(--text-meta)/var(--leading-ui) var(--sans);letter-spacing:0;text-transform:none;color:rgba(255,255,255,.6)}
 
 @media (max-width:1100px){.grid{max-width:none}}
@@ -140,7 +144,7 @@ const RAIL = TIERS.map(([t, n, r]) => `<button class="tile rate-cell level" type
 const WELLS = `<div class="field tile well"><label>Partner broker</label><select><option>GTCFX</option><option>XM</option><option>XS</option></select></div>
   <div class="field tile well"><label>Account type</label><select class="acct"><option value="1">Standard</option><option value="0.35">ECN</option></select></div>
   <div class="field tile well"><label>XAUUSD volume</label><input class="vol" type="number" min="0" max="10000000" step="1" inputmode="decimal" value="50"></div>`;
-const ESTIMATE = `<div class="estimate" role="status" aria-live="polite"><small>Estimated monthly Cashback</small><strong class="out">$170 <em>/ month</em></strong></div>`;
+const ESTIMATE = `<div class="estimate" role="status" aria-live="polite"><small>Estimated Cashback</small><strong class="out">$170 <em>/ month</em></strong></div>`;
 const RULES = `<a class="broker-rules" href="#">View rules for each broker ${EXT}</a>`;
 
 /* v3's arrangement — two steps, a rule between them, the answer on its own plate */
@@ -150,13 +154,13 @@ const PANEL = `${LIVE}
   ${ESTIMATE}${RULES}`;
 
 const SPEC = [
-  ['Step caption', '15px · 650 · sentence · white'],
+  ['Step caption', '15px · 600 · sentence · white'],
   ['Field label', '12px · 400 · sentence · 58% white'],
-  ['Field value', '18px · 650'],
+  ['Field value', '18px · 500'],
   ['Level name', '12px · 500'],
-  ['Level share', '27px · 700'],
+  ['Level share', '27px · 600'],
   ['Estimate caption', '13px · 400 · sentence · 60% white'],
-  ['Estimate figure', '44px · 700'],
+  ['Estimate figure', '44px · 600, "/ month" 400'],
 ];
 
 document.getElementById('grid').innerHTML = `<section class="case">

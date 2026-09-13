@@ -6,7 +6,7 @@
    feDisplacementMap (#liquid in index.html) in backdrop-filter, Chromium only; every other
    engine gets the same glass without the bend. The data stays opaque white — the founder's
    "white chart" — so figures never sit on a translucent ground. */
-@import url('base.css?v=86de4db6');
+@import url('base.css?v=1c0eb50d');
 @import url('consent.css?v=07fd8694');
 
 /* ---------- structure behind the glass: a faint grid in every blue ground ---------- */
@@ -199,7 +199,7 @@ html.reduce #calculator .panel::after{animation:none;transition:none}
   box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(var(--rgb-shadow),.1)}
 /* everything in the form that was ink on white is now light on blue; the fields themselves are not.
    The captions' own colours are set with the rest of their type, further down. */
-#calculator .estimate{background:rgba(255,255,255,.16)}   /* the wireframe's grey band, on the blue panel */
+#calculator .estimate{background:rgba(var(--rgb-abyss),.3)}   /* the wireframe's band, sunk into the blue: white at 16% read as a grey wash (founder, 2026-09-13) */
 #calculator .estimate strong{color:#fff}
 #calculator .estimate strong em{color:rgba(255,255,255,.6)}
 #calculator .broker-rules{color:var(--p-200)}
@@ -447,7 +447,7 @@ html.snap .mech.white .block::after{animation-name:stack-back-paper}
 #calculator .live{position:absolute;top:-13px;right:18px;z-index:1;display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;
   background:linear-gradient(150deg,rgba(var(--rgb-900),.9),rgba(var(--rgb-abyss),.94)),linear-gradient(var(--blue),var(--blue));
   border:1px solid rgba(160,196,255,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 10px 22px -12px rgba(var(--rgb-shadow),.9);
-  font:var(--weight-heavy) var(--text-micro)/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:#fff}
+  font:var(--weight-semi) var(--text-micro)/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:#fff}
 #calculator .live i{width:7px;height:7px;border-radius:50%;background:var(--success);animation:live-pulse 1.8s var(--ease) infinite}
 @keyframes live-pulse{0%{box-shadow:0 0 0 0 rgba(52,199,123,.6)}70%,100%{box-shadow:0 0 0 9px rgba(52,199,123,0)}}
 /* ---------- the panel asks one question at a time (founder, 2026-09-12) ----------
@@ -463,16 +463,25 @@ html.snap .mech.white .block::after{animation-name:stack-back-paper}
 #calculator .fields{gap:14px}
 #calculator .well{padding:12px 16px 13px}
 #calculator .level-row{--cell-h:88px;--cell-figure:var(--text-summary-stat);gap:13px}   /* 9 left the pick's 4px white halo 1px off its neighbour's edge, so the row read as one band */
-#calculator .estimate{margin-top:22px;padding:20px 22px}
+/* the plate reads as one line (founder, 2026-09-13: "tighten the estimate box"): caption, figure and unit on
+   one baseline, "/ month" against its figure rather than 10px off it, and 12px less height */
+#calculator .estimate{margin-top:22px;padding:14px 20px 14px 22px;align-items:baseline}
+#calculator .estimate small{margin-bottom:0}
+#calculator .estimate strong em{margin-left:-5px}   /* main.js writes a space before it at the figure's 44px; this takes most of it back */
 /* The type, and only the type. Nine bold things ran at once, so none of them led: four captions at
    800 uppercase, three values at 700, the level names and both figures. Here the two step captions
    leave the caption tier and become small white headings, everything under them goes sentence case
    and steps back on colour rather than on weight, and uppercase is gone from the panel's body — so
    the only things left at 700 are the two figures a visitor came to read. */
-#calculator .step-cap{font:var(--weight-support) var(--text-panel-title)/1.2 var(--sans);letter-spacing:-.015em;color:#fff}
+/* One step softer again (founder, 2026-09-13: "soften the text boldness"). The captions and both figures
+   leave 650/700 for 600, the three field values drop to 500, and "/ month" goes to body weight, so the
+   figure is the only heavy thing on its plate. */
+#calculator .step-cap{font:var(--weight-semi) var(--text-panel-title)/1.2 var(--sans);letter-spacing:-.015em;color:#fff}
 #calculator .well>label{font:var(--weight-body) var(--text-small)/var(--leading-ui) var(--sans);letter-spacing:0;text-transform:none;color:rgba(255,255,255,.58)}
-#calculator .well select,#calculator .well input,#calculator .well-value{font-weight:var(--weight-support)}
+#calculator .well select,#calculator .well input,#calculator .well-value{font-weight:var(--weight-label)}
 #calculator .rate-cell small{font-weight:var(--weight-label)}
+#calculator .rate-cell strong,#calculator .estimate strong{font-weight:var(--weight-semi)}
+#calculator .estimate strong em{font-weight:var(--weight-body)}
 #calculator .estimate small{font:var(--weight-body) var(--text-meta)/var(--leading-ui) var(--sans);letter-spacing:0;text-transform:none;color:rgba(255,255,255,.6)}
 /* The rail used to dim the three tiers you did not pick and rim the pick in its own metal (founder,
    2026-09-10). Reversed 2026-09-12: the Referral rail's selection is the one that ships on both
@@ -481,18 +490,21 @@ html.snap .mech.white .block::after{animation-name:stack-back-paper}
    The values below are the shared .rate-cell block's own, restated rather than inherited: on this
    page `#calculator .tile` sets the border and the shadow at id strength, and it would outrank the
    class the rail is written in. Referral's rail lives under `.glass .tile` and has no such problem. */
-#calculator .rate-cell[aria-pressed=false][data-tier=standard]{--tint:rgba(226,150,96,.46);--tint2:rgba(150,84,50,.42);--rim:rgba(236,176,136,.46)}
+/* Copper and gold at under half alpha mixed with the pane's #0C2E7B into mauve and olive grey (founder,
+   2026-09-13). Their tints are re-mixed for the blue they land on: warmer, less blue in them, and more
+   opaque, so the composite reads as the metal. Each composite stays dark enough for the white figure. */
+#calculator .rate-cell[aria-pressed=false][data-tier=standard]{--tint:rgba(227,125,39,.68);--tint2:rgba(147,70,4,.68);--rim:rgba(236,176,136,.46)}
 #calculator .rate-cell[aria-pressed=false][data-tier=silver]{--tint:rgba(204,218,238,.24);--tint2:rgba(118,144,184,.21);--rim:rgba(228,238,250,.46)}
-#calculator .rate-cell[aria-pressed=false][data-tier=gold]{--tint:rgba(238,196,102,.46);--tint2:rgba(170,124,40,.46);--rim:rgba(240,208,130,.5)}
+#calculator .rate-cell[aria-pressed=false][data-tier=gold]{--tint:rgba(218,157,38,.72);--tint2:rgba(140,90,0,.72);--rim:rgba(240,208,130,.5)}
 #calculator .rate-cell[aria-pressed=false][data-tier=diamond]{--tint:rgba(138,96,224,.32);--tint2:rgba(76,48,150,.29);--rim:rgba(196,166,250,.46)}
 #calculator .rate-cell[aria-pressed=false]{--streak:.32}
 #calculator .rate-cell[aria-pressed=false]:hover{border-color:rgba(255,255,255,.62);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(var(--rgb-shadow),.22),0 18px 32px -20px rgba(var(--rgb-shadow),.8)}
 #calculator .rate-cell[aria-pressed=true]{--streak:.42;border-color:#fff;
   box-shadow:inset 0 0 0 1px #fff,inset 0 1px 0 rgba(255,255,255,.5),0 0 0 4px rgba(255,255,255,.12),0 18px 34px -18px var(--rim)}
-#calculator .rate-cell[aria-pressed=true][data-tier=standard]{--tint:rgba(226,150,96,.62);--tint2:rgba(150,84,50,.6);--rim:rgba(236,176,136,.5);--label:#FFF1E6}
+#calculator .rate-cell[aria-pressed=true][data-tier=standard]{--tint:rgba(222,134,67,.8);--tint2:rgba(150,79,29,.8);--rim:rgba(236,176,136,.5);--label:#FFF1E6}
 #calculator .rate-cell[aria-pressed=true][data-tier=silver]{--tint:rgba(204,218,238,.36);--tint2:rgba(118,144,184,.32);--rim:rgba(228,238,250,.55)}
-#calculator .rate-cell[aria-pressed=true][data-tier=gold]{--tint:rgba(238,196,102,.66);--tint2:rgba(170,124,40,.66);--rim:rgba(240,208,130,.55);--label:#FFF6DF}
+#calculator .rate-cell[aria-pressed=true][data-tier=gold]{--tint:rgba(224,172,69,.84);--tint2:rgba(152,108,24,.84);--rim:rgba(240,208,130,.55);--label:#FFF6DF}
 #calculator .rate-cell[aria-pressed=true][data-tier=diamond]{--tint:rgba(138,96,224,.5);--tint2:rgba(76,48,150,.46);--rim:rgba(196,166,250,.55)}
 /* the wells and the cells take their streak from the screen's own timeline, as 02 and 04 do */
 #calculator .tile::after{animation-timeline:--ground}
