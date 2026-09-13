@@ -108,23 +108,35 @@
 #m2 .panel.access{padding:14px}
 
 /* the switch: one sunk track, two pills inside it. The inactive pill carries no tile ground of its own,
-   so the track is the only frame and the white pill is the only lit thing in it. The request form's
-   Telegram / WhatsApp choice is the same control, written in radios instead of pressed buttons. */
-.access-switch,.contact-toggle{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px;padding:5px;border-radius:19px;
+   so the track is the only frame and the white pill is the only lit thing in it. */
+.access-switch{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px;padding:5px;border-radius:19px;
   border:1px solid rgba(255,255,255,.14);background:rgba(var(--rgb-abyss),.42);
   box-shadow:inset 0 2px 6px rgba(var(--rgb-shadow),.45),inset 0 -1px 0 rgba(255,255,255,.06)}
-.access-switch .tile,.contact-toggle span{min-height:46px;border-radius:15px;font-size:var(--text-panel-title);font-weight:var(--weight-strong);
+.access-switch .tile{min-height:46px;border-radius:15px;font-size:var(--text-panel-title);font-weight:var(--weight-strong);
   color:rgba(255,255,255,.72);border-color:transparent;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;
   transition:background-color .3s var(--ease),color .3s var(--ease),box-shadow .3s var(--ease),transform .25s var(--ease)}
 .access-switch .tile::after,.access-switch .tile::before{display:none}   /* no streak, no specular: this is a control */
-.access-switch .tile:hover,.contact-toggle label:hover span{color:#fff;background:rgba(255,255,255,.08)}
-.access-switch .tile[aria-pressed=true],.contact-toggle input:checked+span{background:#fff;color:var(--navy);transform:translateY(-1px);
+.access-switch .tile:hover{color:#fff;background:rgba(255,255,255,.08)}
+.access-switch .tile[aria-pressed=true]{background:#fff;color:var(--navy);transform:translateY(-1px);
   box-shadow:0 1px 0 rgba(255,255,255,.9),0 10px 20px -10px rgba(var(--rgb-shadow),.6)}
 .access-switch .tile[aria-pressed=true]:hover{background:#fff;transform:translateY(-1px)}
-.access-switch .tile:focus-visible,.contact-toggle input:focus-visible+span{outline:2px solid rgba(255,255,255,.85);outline-offset:2px}
+.access-switch .tile:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:2px}
+
+/* the request form's Telegram / WhatsApp choice wears the Blog's chips instead of the track (2026-09-14):
+   two pills, each half the row at the fields' 46px. Not chosen is the Blog's on-dark chip, white glass
+   under a white rim; chosen is the Sort control's dark blue glass pill. The dark pill alone read as the
+   quieter of the two beside the lighter glass, so chosen also takes a white rim and a soft white halo. */
+.contact-toggle{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .contact-toggle label{position:relative;cursor:pointer}
 .contact-toggle input{position:absolute;opacity:0;pointer-events:none}
-.contact-toggle span{display:grid;place-items:center}
+.contact-toggle span{display:grid;place-items:center;min-height:46px;border-radius:999px;border:1px solid rgba(255,255,255,.4);
+  background:rgba(255,255,255,.14);color:#fff;font-size:var(--text-panel-title);font-weight:var(--weight-strong);
+  transition:background-color .25s var(--ease),border-color .25s var(--ease),box-shadow .25s var(--ease)}
+.contact-toggle label:hover span{border-color:rgba(255,255,255,.62);background:rgba(255,255,255,.2)}
+.contact-toggle input:checked+span{border-color:#fff;
+  background:linear-gradient(150deg,rgba(var(--rgb-900),.96),var(--blue));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.26),0 0 0 4px rgba(255,255,255,.18),0 16px 32px -22px rgba(var(--rgb-shadow),.6)}
+.contact-toggle input:focus-visible+span{outline:2px solid rgba(255,255,255,.85);outline-offset:4px}
 
 /* the rule: its own card, the statement on a violet bloom with a lit pip beside the eyebrow */
 .access-summary{padding:20px 22px 22px;border:1px solid rgba(var(--rgb-violet),.34);border-radius:17px;
