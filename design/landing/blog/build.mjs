@@ -58,10 +58,10 @@ const mini = (p, rel) => `<a class="mini" href="${url(p, rel)}"><div><b>${esc(p.
 /* ---- the shell every page shares ---- */
 const FAVICON = /<link rel="icon"[^>]*>/.exec(cb8)[0];
 const LIQUID = /<svg id="liquid-svg"[\s\S]*?<\/svg>/.exec(cb8)[0];
-/* the site footer (base.css .fsig). The blog closes on paper rather than on the blue, so
-   page.css inks this copy for paper; the markup is the other pages'. */
-const footer = rel => `<!-- the footer, every page: the links sit straight on the ground between two hairlines and
-     the wordmark under them is cropped by the page's own bottom edge, so the site signs off.
+/* the site footer (base.css .fsig). The blog closes on paper rather than on the blue,
+   and the footer's floor rises out of it unchanged; the markup is the other pages'. */
+const footer = rel => `<!-- the footer, every page: its own navy floor under the closing screen, rounded at the
+     shoulders, and under the links the wordmark, tall enough to read and fading into the floor.
      One markup for all eight pages (blog/build.mjs writes its own copy of it); base.css owns
      the treatment and cb8/main.js the arrival. -->
 <footer class="footer fsig">
@@ -73,16 +73,16 @@ const footer = rel => `<!-- the footer, every page: the links sit straight on th
           <svg class="brand-sub" viewBox="0 0 113 11" aria-hidden="true"><use href="#tf-sub"/></svg>
         </a>
         <p class="fsig-say">Built on rules. Measured by results.</p>
+        <a class="fsig-chan" href="#" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3 11l5 2 2 6 3-4 5 4 3-15Z"/></svg>Weekly results on Telegram</a>
       </div>
       <nav class="fsig-cols" aria-label="Footer">
-        <div><h3>The site</h3><ul><li><a href="${rel}home/">Home</a></li><li><a href="${rel}results/">Results</a></li><li><a href="${rel}cb8/">Cashback</a></li><li><a href="${rel}brokers/">Brokers</a></li><li><a href="${rel}referral/">Referral</a></li><li><a href="${rel}blog/">Blog</a></li></ul></div>
-        <div><h3>Partners</h3><ul><li><a href="${rel}about/">About us</a></li><li><a href="${rel}brokers/">Partner brokers</a></li><li><a href="${rel}partnership/">Broker partnership</a></li><li><a href="${rel}brokers/#cashback">Partner broker rules</a></li></ul></div>
+        <div><h3>The site</h3><ul><li><a href="${rel}results/">Results</a></li><li><a href="${rel}cb8/">Cashback</a></li><li><a href="${rel}referral/">Referral</a></li><li><a href="${rel}blog/">Blog</a></li></ul></div>
+        <div><h3>Partners</h3><ul><li><a href="${rel}brokers/">Partner brokers</a></li><li><a href="${rel}partnership/">Broker partnership</a></li><li><a href="${rel}brokers/#cashback">Partner broker rules</a></li><li><a href="${rel}about/">About us</a></li></ul></div>
         <div><h3>Legal</h3><ul><li><a href="${rel}legal/?document=terms">Terms of service</a></li><li><a href="${rel}legal/?document=privacy">Privacy policy</a></li><li><a href="${rel}legal/?document=risk">Risk disclosure</a></li><li><a href="${rel}legal/?document=cookies">Cookie settings</a></li></ul></div>
       </nav>
     </div>
     <div class="fsig-base">
       <p class="fsig-legal">© 2026 TrustForex. Trading carries risk. Credits follow each partner broker's own terms.</p>
-      <a class="fsig-chan" href="#" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3 11l5 2 2 6 3-4 5 4 3-15Z"/></svg>Weekly results on Telegram</a>
       <div class="social">
         <a href="#" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
         <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r=".9"/></svg></a>

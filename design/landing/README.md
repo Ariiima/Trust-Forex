@@ -68,6 +68,16 @@ all four documents in order, which is also what prints and what a crawler reads.
 footer links here. `node _qa/legal.test.mjs` covers the switch, the history, the no-JS
 fallback, the hierarchy, and that no computed colour on the page has a hue.
 
+The footer is one markup on every page (`blog/build.mjs` writes its own copy), and `cb8/base.css`
+`.fsig` owns it. It stands on its own navy floor (`--p-abyss`) under the closing screen, rounded at
+the shoulders, with the wordmark under the links tall enough to read and masked into the floor. The
+founder picked it on 2026-09-13 ("23 is the winner") out of rounds three and four in
+`cb8/footer-lab-3.html`. It replaced variant 02 of `cb8/footer-lab.html`, where the links sat on the
+closing screen's own blue with a hairline between, and the cropped wordmark ran under the small
+print and the socials. The links are 4 / 4 / 4: Home is the lockup, and Brokers was dropped because
+it was Partner brokers twice. The blog's floor rises out of paper unchanged. Legal's floor is black,
+so that page still has no hue.
+
 QA: `node _qa/screens.mjs <url> <out.png> [w h [frames]]` shoots every screen of a page into one
 sheet (`?check=1` prints CHECK OK/FAIL in the console); `node _qa/lines.mjs <wireframe file> <url>`
 compares every heading's line count and size against a wireframe.

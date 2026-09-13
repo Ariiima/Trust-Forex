@@ -62,24 +62,17 @@ body{background:#fff;color:var(--body);font-variant-numeric:normal}
 .group h4{margin:28px 0 0;font-size:var(--text-body);line-height:1.5;font-weight:600}
 .group h4 + p{margin-top:4px}
 
-/* ---------- the footer, on paper ----------
+/* ---------- the footer, on a black floor ----------
    Class only, and the section carries no id: base.css paints #final blue and a full screen
    tall for the closing statement every other page ends on, and out-specifying an id from here
-   is a fight this page can simply not have. */
+   is a fight this page can simply not have.
+   The house footer stands on a navy floor of its own (base.css .fsig). Here that floor is black
+   and the wordmark white at a seventh, so the page keeps no hue from the nav to the last line.
+   Its type is already white on that floor; only the focus ring, black on this page, turns white. */
 .footer-only{background:#fff;color:var(--muted)}
-.footer-only .footer{border-top:1px solid var(--line)}
-.footer-only .fsig-mark{color:#000}
-.footer-only .fsig-say{color:var(--body)}
-.footer-only .fsig-cols h3{color:var(--muted)}
-.footer-only .fsig-cols a{color:var(--body)}
-.footer-only .fsig-cols a:hover{color:#000}
-.footer-only .fsig-base{border-top-color:var(--line)}
-.footer-only .fsig-legal{color:var(--muted)}
-.footer-only .fsig-chan{color:var(--body)}
-.footer-only .fsig-chan:hover{color:#000}
-.footer-only .social a{border-color:var(--line);color:#000}
-.footer-only .social a:hover{background:var(--accent-soft)}
-.footer-only .fsig-sign svg{fill:rgba(0,0,0,.05)}
+.footer-only .fsig{background:#000;box-shadow:none}
+.footer-only .fsig :focus-visible{outline-color:#fff}
+.footer-only .fsig-sign svg{fill:rgba(255,255,255,.14)}
 
 @media (max-width:560px){
   .legal-top{padding-top:calc(var(--nav-h) + 36px)}

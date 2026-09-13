@@ -193,27 +193,21 @@ html.snap .story,html:not(.snap) .story{min-height:auto;padding:118px 0;justify-
 
 /* ---------- the pages end on the footer, on paper (founder, 2026-09-09: no closing statement on the blog) ---------- */
 html.snap .footer-only,html:not(.snap) .footer-only{min-height:auto;padding:0}
+/* base.css holds html:not(.snap) #final to a full viewport at 1-1-1, which the rule above cannot
+   beat: on a phone a footer shorter than the screen left a strip of paper under the floor */
+html:not(.snap) #final.footer-only{min-height:auto}
 /* The paper has to out-specify base.css's #final, which paints every other page's closing screen
    blue at 1-0-0: .footer-only alone never won that, so this screen has been rendering blue since
    it was written and its grey ink sat on it. Compounding the id with the class fixes the ruling
    this file records (founder, 2026-09-09: the blog ends on the footer, on paper). */
 #final.footer-only{background:var(--paper);color:var(--muted)}
-/* The blog carries the site footer (base.css .fsig) on paper: same markup, same arrival, ink and
-   hairlines inverted. The signature becomes the brand blue at a tenth of itself — white at .28 is
-   invisible on paper, and the mark still has to be the faintest thing on the page. */
-.footer-only .footer{border-top:1px solid var(--line)}
-.footer-only .fsig-mark{color:var(--navy)}
-.footer-only .fsig-say{color:var(--body)}
-.footer-only .fsig-cols h3{color:var(--muted)}
-.footer-only .fsig-cols a{color:var(--body)}
-.footer-only .fsig-cols a:hover{color:var(--accent-deep)}
-.footer-only .fsig-base{border-top-color:var(--line)}
-.footer-only .fsig-legal{color:var(--muted)}
-.footer-only .fsig-chan{color:var(--body)}
-.footer-only .fsig-chan:hover{color:var(--accent-deep)}
-.footer-only .social a{border-color:var(--line);color:var(--navy)}
-.footer-only .social a:hover{background:var(--accent-soft)}
-.footer-only .fsig-sign svg{fill:rgba(var(--rgb-900),.1)}
+/* The blog carries the site footer (base.css .fsig) as it is: its navy floor rises out of the
+   paper the way it rises out of the blue everywhere else, so nothing here re-inks it. Only the
+   upward shadow goes, which on paper is a grey haze above the floor rather than depth. */
+.footer-only .fsig{box-shadow:none}
+/* Nothing sits between the last section and the floor here, so base.css's 76px gap above the floor
+   was an empty grey band of #final's paper (founder, 2026-09-13). The floor meets the section above. */
+.footer-only .fsig{margin-top:0}
 
 /* ---------- the editor ---------- */
 #editor{background:var(--paper)}
