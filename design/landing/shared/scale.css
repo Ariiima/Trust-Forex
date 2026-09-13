@@ -42,8 +42,7 @@
   --text-row-title: 18px;                           /* proof / route / lifetime row titles, target steps, example figures */
   --text-nano: 9px;                                 /* ring caption, formula label, value index, the page-number's word */
   --text-destination: clamp(22px, 2.2vw, 28px);     /* "Every route counts" */
-  --text-summary: clamp(23px, 2vw, 28px);           /* "One introduction / One lasting connection" */
-  --text-result: clamp(22px, 2.1vw, 27px);          /* "First Bot Start / Connected to you" */
+  --text-summary: clamp(21px, 1.85vw, 26px);        /* "One introduction / One lasting connection" */
   /* roles added 2026-09-09 for the Broker Partnership page (Broker Partnership.html, verbatim) */
   --text-display-pitch: clamp(56px, 8vw, 96px);     /* Partnership hero */
   --text-title-pitch: clamp(42px, 5.5vw, 70px);     /* Partnership section heading */

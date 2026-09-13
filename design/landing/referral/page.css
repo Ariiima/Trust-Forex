@@ -75,9 +75,8 @@ html.reduce #chapter-routes::after{animation:none}
 .route-row h3{margin:0 0 6px;font-size:var(--text-panel-title);line-height:1.2;letter-spacing:-.015em;font-weight:var(--weight-strong);white-space:nowrap}
 .route-row p{margin:0;max-width:360px;color:rgba(255,255,255,.8);font-size:var(--text-meta);line-height:1.4}
 /* the destination closes the two routes the way the summary closes the points: the panel's own glass,
-   lifted, over a hairline — one material down the whole pane (founder, 2026-09-12). The sharing steps'
-   result (10) closes on the same band. */
-.shared-destination,.start-result{min-height:76px;padding:16px 18px;display:grid;place-items:center;text-align:center;color:#fff;
+   lifted, over a hairline — one material down the whole pane (founder, 2026-09-12). */
+.shared-destination{min-height:76px;padding:16px 18px;display:grid;place-items:center;text-align:center;color:#fff;
   border-top:1px solid rgba(255,255,255,.3);
   background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.08));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
@@ -113,8 +112,7 @@ html.reduce #m2 .block{animation:none}
 .glass .lifetime-summary{min-height:82px;padding:18px 20px;border-radius:14px;display:flex;align-items:center;justify-content:center;text-align:center;
   --tint:rgba(150,188,255,.34);--tint2:rgba(48,102,214,.26);--rim:rgba(176,208,255,.7);--streak:.32}
 .glass .lifetime-summary strong{display:block;max-width:430px;font-size:var(--text-summary);line-height:1.08;letter-spacing:-.04em;color:#fff}
-.glass .lifetime-summary strong span{display:block}
-.glass .lifetime-summary .t-blue{background:linear-gradient(180deg,#e6efff,#96b9ff);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;padding:0 .06em .06em;margin:0 -.06em}
+.glass .lifetime-summary strong span{display:block}   /* both lines plain white (founder, 2026-09-13: "simple and white") */
 
 /* ---------- 7 · the rates: the four tiers in their metals (style.css), the example beneath ---------- */
 .glass .rates-panel{width:100%;height:420px;padding:20px;display:flex;flex-direction:column;justify-content:center;border-radius:24px}
@@ -191,8 +189,19 @@ html.reduce .example-part b.swap{animation:none}
   border-color:rgba(160,196,255,.42);   /* 04's tiles catch the pane's streak as they scroll; these hold its lit corner at rest */
   background:linear-gradient(115deg,rgba(255,255,255,.2),rgba(255,255,255,.04) 50%,transparent 70%),linear-gradient(150deg,rgba(var(--rgb-900),.34),rgba(var(--rgb-abyss),.34));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 -1px 0 rgba(var(--rgb-shadow),.22),0 14px 30px -18px rgba(var(--rgb-shadow),.7)}
-.start-result{position:relative;z-index:1}   /* the last track of the value panel */
-.start-result strong{font-size:var(--text-result);line-height:1.05;letter-spacing:-.04em;white-space:nowrap}
+/* the result closes the steps the way the destination closes the routes (4): the same band, rim and top light, and
+   white words at .86 of the destination's size (the line is longer, and at full size it overruns the band at 1440).
+   The fade is green where 4's is white (founder, 2026-09-14, picked from three renders). See-through green over this
+   blue reads teal-green, not green; a near-solid green band and 4's white band with #A6EEC6 words were the other two.
+   Tried and dropped (2026-09-13/14): a lime tint, a lime glow, plain lime text, the Active badge's pill, that pill
+   with faded edges, a radial fill inside the text's box, mint letters glowing over a blurred green haze ("looks
+   ugly"), white words behind a green check ("the icon looks bad"), a caps label over the result, a label/value row,
+   and the words alone in the steps' 15px type with no band, first white, then soft green. */
+.start-result{position:relative;z-index:1;min-height:76px;padding:16px 18px;display:grid;place-items:center;text-align:center;color:#fff;
+  border-top:1px solid rgba(120,230,170,.45);
+  background:linear-gradient(180deg,rgba(88,224,150,.5),rgba(40,170,110,.22));
+  box-shadow:inset 0 1px 0 rgba(170,245,200,.45)}
+.start-result strong{font-size:calc(var(--text-destination) * .86);line-height:1.05;letter-spacing:-.04em;text-wrap:balance}
 
 /* ---------- 12 · the final statement, at the Referral wireframe's size ---------- */
 #final .display{font-size:var(--text-display-close);max-width:1000px}
@@ -222,7 +231,6 @@ html.reduce .example-part b.swap{animation:none}
   .toast{width:max-content;max-width:100%;margin:0 0 12px auto}.summary-grid{margin-top:0}.referral-list{margin-top:12px}
   .referral-list-head,.referral-row{grid-template-columns:1fr auto auto;gap:10px}
   .glass .balance-bar{margin-top:12px;align-items:flex-start;flex-direction:column}
-.start-result strong{font-size:24px;white-space:normal}
   #final .display{font-size:52px}
 }
 
