@@ -106,6 +106,26 @@ html.reduce .value-panel::after{animation:none}
 .value-panel .value-index{color:#fff;border-color:rgba(255,255,255,.5);
   background:linear-gradient(162deg,rgba(255,255,255,.38),rgba(255,255,255,.05) 62%);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.7),inset 0 -3px 7px -3px rgba(var(--rgb-shadow),.6),0 6px 14px -8px rgba(var(--rgb-shadow),.8)}
+/* Activation's four steps take Results' record card (results/page.css #record, founder 2026-09-13): the pane solid
+   blue under the pale glass rim, so the paper's 48px grid no longer shows through; no rayfield, so no grid of its
+   own; one soft diagonal streak; the numbers on 44px rounded tiles. The steps carry no caption, so the rows are
+   a little tighter than the record's and the card sits at its own height rather than the copy's. */
+#activation .value-panel{isolation:isolate;height:auto;min-height:0;align-self:center;
+  border:1px solid rgba(160,196,255,.55);background:var(--blue);backdrop-filter:none;-webkit-backdrop-filter:none;
+  box-shadow:0 0 34px rgba(96,156,255,.3),inset 0 1px 0 rgba(255,255,255,.38),inset 0 0 0 1px rgba(160,196,255,.18),inset 0 0 64px rgba(96,156,255,.14),0 30px 60px -28px rgba(var(--rgb-shadow),.8)}
+#activation .value-panel::after{inset:0;z-index:0;width:auto;filter:none;transform:none;
+  background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,.14) 46%,rgba(255,255,255,.04) 52%,transparent 62%) no-repeat 100% 0/220% 100%}
+@supports (animation-timeline:view()){#activation .value-panel::after{animation-name:activation-light}}
+@keyframes activation-light{from{background-position:100% 0}to{background-position:0 0}}
+#activation .value-row{padding:14px 18px;grid-template-columns:44px minmax(0,1fr);gap:14px;border-bottom-color:rgba(255,255,255,.18);box-shadow:none}
+#activation .value-copy strong{font-size:var(--text-panel-title);font-weight:var(--weight-strong);letter-spacing:-.015em;text-shadow:none}
+#activation .value-index{width:44px;height:44px;border-radius:13px;font-size:var(--text-label);color:#fff;
+  border-color:rgba(160,196,255,.42);
+  background:linear-gradient(115deg,rgba(255,255,255,.2),rgba(255,255,255,.04) 50%,transparent 70%),linear-gradient(150deg,rgba(var(--rgb-900),.34),rgba(var(--rgb-abyss),.34));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 -1px 0 rgba(var(--rgb-shadow),.22),0 14px 30px -18px rgba(var(--rgb-shadow),.7)}
+@media (max-width:560px){
+  #activation .value-row{padding:14px 16px;column-gap:12px;grid-template-columns:40px minmax(0,1fr)}#activation .value-index{width:40px;height:40px}
+}
 
 /* both neighbours are white: start on the calculator's #fff, peak, land on activation's paper */
 .chapter-2{background:linear-gradient(180deg,#fff,var(--p-100) 55%,var(--paper))}
