@@ -425,6 +425,24 @@ html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
 /* it follows the white mechanics, so its paper starts white and turns to paper over its first 120px:
    the two meet without a line (founder, 2026-09-13) */
 #record{background:linear-gradient(180deg,#fff,var(--paper) 120px)}
+/* the three values take Referral's Share card (referral/page.css #start, founder 2026-09-13): the pane solid blue
+   under the pale glass rim, so the paper's 48px grid no longer shows through it; no rayfield, so no grid of its own
+   and no bloom; one soft diagonal streak instead of cb8's vertical sheen; the numbers on 44px rounded tiles. The
+   card sits at its own height rather than the copy's. Rows keep their captions, so they stay equal-height. */
+#record .value-panel{isolation:isolate;height:auto;min-height:0;align-self:center;
+  border:1px solid rgba(160,196,255,.55);background:var(--blue);backdrop-filter:none;-webkit-backdrop-filter:none;
+  box-shadow:0 0 34px rgba(96,156,255,.3),inset 0 1px 0 rgba(255,255,255,.38),inset 0 0 0 1px rgba(160,196,255,.18),inset 0 0 64px rgba(96,156,255,.14),0 30px 60px -28px rgba(var(--rgb-shadow),.8)}
+#record .value-panel::after{inset:0;z-index:0;width:auto;filter:none;transform:none;
+  background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,.14) 46%,rgba(255,255,255,.04) 52%,transparent 62%) no-repeat 100% 0/220% 100%}
+@supports (animation-timeline:view()){#record .value-panel::after{animation-name:record-light}}
+@keyframes record-light{from{background-position:100% 0}to{background-position:0 0}}
+#record .value-row{padding:16px 18px;grid-template-columns:44px minmax(0,1fr);gap:14px;border-bottom-color:rgba(255,255,255,.18);box-shadow:none}
+#record .value-copy strong{font-size:var(--text-panel-title);font-weight:var(--weight-strong);letter-spacing:-.015em;text-shadow:none}
+#record .value-copy p{margin-top:4px}
+#record .value-index{width:44px;height:44px;border-radius:13px;font-size:var(--text-label);color:#fff;
+  border-color:rgba(160,196,255,.42);
+  background:linear-gradient(115deg,rgba(255,255,255,.2),rgba(255,255,255,.04) 50%,transparent 70%),linear-gradient(150deg,rgba(var(--rgb-900),.34),rgba(var(--rgb-abyss),.34));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 -1px 0 rgba(var(--rgb-shadow),.22),0 14px 30px -18px rgba(var(--rgb-shadow),.7)}
 
 /* ---------- 12 · the final statement, at the Results wireframe's size ---------- */
 #final .display{font-size:var(--text-display-close);max-width:1000px}
@@ -473,8 +491,8 @@ html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
   .average-metrics{gap:9px}.glass .average-formula{padding:13px 9px}.glass .average-formula>small{margin-bottom:8px}
   .average-calc{grid-template-columns:minmax(0,1fr) 12px auto;gap:4px}.average-fraction span{min-height:24px;padding:4px 2px;font-size:var(--text-nano)}
   .average-answer{gap:4px}.glass .average-answer b{font-size:18px}.glass .average-answer em{font-size:14px}
-  .value-row{padding:17px 16px;grid-template-columns:32px minmax(0,1fr);gap:13px}.value-index{width:30px;height:30px}
-  .value-copy strong{font-size:var(--text-ui)}.value-copy p{font-size:var(--text-micro)}
+  #record .value-row{padding:16px;column-gap:12px;grid-template-columns:40px minmax(0,1fr)}#record .value-index{width:40px;height:40px}
+  .value-copy p{font-size:var(--text-micro)}
   #final .display{font-size:52px}
 }
 
