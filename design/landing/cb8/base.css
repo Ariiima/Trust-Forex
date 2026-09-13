@@ -463,9 +463,12 @@ html.reduce .estimate strong.swap{animation:none}
 .faq-item{border-bottom:1px solid var(--line)}
 .faq-q{display:flex;width:100%;min-height:70px;justify-content:space-between;align-items:center;gap:24px;padding:20px 0;text-align:left;font-size:var(--text-question);font-weight:var(--weight-strong);letter-spacing:-.01em;color:var(--navy)}
 .plus{width:15px;height:15px;flex:none;position:relative;transition:transform .3s var(--ease)}
-/* one bar drawn twice, the second rotated 90° — identical geometry so neither line rasterises heavier than the other, closed or open */
-.plus::before,.plus::after{content:'';position:absolute;left:0;top:7px;width:15px;height:1px;background:var(--muted)}
-.plus::after{transform:rotate(90deg)}
+/* the bars are borders, not 1px fills: a border's width rounds to whole device pixels, a fill's height does not.
+   At 125–175% display scaling a 1px fill is 1.25–1.75 device pixels and landed on one row or two depending on
+   where its row sat, so every plus changed weight whenever another question opened (founder, 2026-09-14).
+   The vertical bar is its own box rather than the first one rotated: a rotated border is not rounded and draws soft. */
+.plus::before,.plus::after{content:'';position:absolute;left:0;top:7px;width:15px;height:0;border-top:1px solid var(--muted)}
+.plus::after{left:7px;top:0;width:0;height:15px;border:0;border-left:1px solid var(--muted)}
 .faq-item.open .plus{transform:rotate(45deg)}
 .faq-list{--faq-ms:380}   /* main.js reads it: the glass is suspended for exactly this long */
 .faq-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows calc(var(--faq-ms) * 1ms) var(--ease)}
