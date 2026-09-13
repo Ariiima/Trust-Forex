@@ -5,9 +5,8 @@
    screen, its name and role sit under the portrait with a direct way to LinkedIn. */
 :root{--content-width:1180px}
 
-/* ---------- 1 · the hero: label, title, lede, fact strip — the arrangement Home and Brokers use ---------- */
-#hero{min-height:78svh;padding-bottom:104px}   /* room for the strip, which sits on the foot of the field */
-.on-dark .label{color:rgba(255,255,255,.6);margin-bottom:18px}
+/* ---------- 1 · the hero: title and lede, no label and no fact strip (founder, 2026-09-13) ---------- */
+#hero{min-height:78svh;padding-bottom:40px}   /* base.css keeps 98px under every hero for the strip; this one has none */
 #hero .display{font-size:var(--text-display-story);line-height:1.02;letter-spacing:-.045em;max-width:900px;margin:0 auto 20px}
 #hero .lede{max-width:620px;font-size:var(--text-lede-story)}
 
@@ -90,7 +89,7 @@ html.reduce .story::after,html.reduce #founder::after,html.reduce .dark-run>.ray
 }
 @media (max-width:680px){
   :root{--content-gutter:20px}
-  #hero{min-height:auto;padding:86px 0 122px}
+  #hero{min-height:auto;padding:86px 0 64px}
   #hero .display{font-size:clamp(34px,9vw,46px)}
   html.snap .story,html:not(.snap) .story{padding:76px 0}
   .dark-run .story.second .story-grid{padding-top:62px}
