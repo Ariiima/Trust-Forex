@@ -24,6 +24,10 @@
    glass streaks from the stack's --m1…--m4, which this page has no stack to provide. Each record with glass panes in
    it names its own — including Cashback, whose block is white but whose panes are still blue. */
 #overview,#accounts,#cashback{view-timeline-name:--ground}
+/* the three white screens meet the paper ones between them on paper: the white turns to paper over the
+   120px at each paper seam, so no seam draws a line (founder, 2026-09-13). #overview's head is the hero. */
+#overview{background:linear-gradient(180deg,#fff calc(100% - 120px),var(--paper))}
+#accounts,#cashback{background:linear-gradient(180deg,var(--paper),#fff 120px,#fff calc(100% - 120px),var(--paper))}
 .glass .panel::after,.glass .tile::after,.glass .rayfield.k i{animation-timeline:--ground}
 /* the ground is a positioned layer (z-index 0), so a non-positioned child of the block paints UNDER it —
    base.css lifts .mech-grid and .grid2 for exactly this reason, and these records put their heading and

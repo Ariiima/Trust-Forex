@@ -423,6 +423,9 @@ html.reduce #m4 .block,html.reduce #m5 .block,html.reduce #m6 .block,html.reduce
 html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
 
 /* ---------- 10 · the record: .screen-paper + the record layout, both in cb8 now (base.css / style.css) ---------- */
+/* it follows the white mechanics, so its paper starts white and turns to paper over its first 120px:
+   the two meet without a line (founder, 2026-09-13) */
+#record{background:linear-gradient(180deg,#fff,var(--paper) 120px)}
 
 /* ---------- 12 · the final statement, at the Results wireframe's size ---------- */
 #final .display{font-size:var(--text-display-close);max-width:1000px}

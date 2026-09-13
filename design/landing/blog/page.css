@@ -52,7 +52,8 @@
   mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent),linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);mask-composite:intersect;
   animation:paper-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%}
 html.reduce #posts::after,html.reduce #related::after,html.reduce #article::after,html.reduce #from-blog::after,html.reduce #editor::after{animation:none}
-#related{background:#fff}
+/* white between two paper screens: it turns to paper over the 120px at each seam, so neither draws a line (2026-09-13) */
+#related{background:linear-gradient(180deg,var(--paper),#fff 120px,#fff calc(100% - 120px),var(--paper))}
 html.snap #posts,html.snap #related,html.snap #from-blog{min-height:auto;padding:var(--section-space) 0;justify-content:flex-start}
 .posts-head{display:grid;gap:24px;margin-bottom:32px}
 .posts-head .h2{margin:0}
@@ -94,7 +95,7 @@ html.snap #posts,html.snap #related,html.snap #from-blog{min-height:auto;padding
 .more{margin:32px auto 0;display:flex}
 
 /* ---------- "From the Blog": two large cards and the most-read list ---------- */
-#from-blog{background:#fff}
+#from-blog{background:linear-gradient(180deg,var(--paper),#fff 120px,#fff calc(100% - 120px),var(--paper))}   /* as #related: paper at both seams */
 .fb-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(320px,.82fr);gap:24px;align-items:stretch}
 .fb-popular{display:flex;flex-direction:column;justify-content:space-between;border:1px solid var(--line);border-radius:24px;padding:8px 24px;background:#fff}
 .mini{display:flex;flex:1;gap:16px;align-items:center;justify-content:space-between;padding:14px 0;border-top:1px solid var(--line)}

@@ -47,6 +47,11 @@
 /* ---------- 3 and 9 · the two chapters: the wireframe's one chapter size for both (it draws both dark; the closing one is the
      light hand-off into the blue request page, as cb8's "Ready to activate?") ---------- */
 .chapter .h2,.chapter-2 .h2{font-size:var(--text-chapter-pitch);line-height:.98;letter-spacing:-.062em;max-width:1064px}   /* the wireframe's 980 was drawn in the system font; Inter needs ~8% more for the same breaks (README) */
+/* light screens meet on one colour (founder, 2026-09-13). cb8 runs chapter 2 from white; here it follows the
+   paper questions, so it starts on paper. The pilot follows the white mechanics, so its paper starts white
+   and turns to paper over its first 120px. */
+#chapter-2{background:linear-gradient(180deg,var(--paper),var(--p-100) 55%,var(--paper))}
+#pilot{background:linear-gradient(180deg,#fff,var(--paper) 120px)}
 
 /* ---------- 4–6 · how it works (01–03): the wireframe's 1.08fr / .92fr (visual never under 430), 78 apart ---------- */
 .glass .mech-grid{grid-template-columns:minmax(0,1.08fr) minmax(430px,.92fr);column-gap:78px}

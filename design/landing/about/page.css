@@ -15,6 +15,10 @@
 html.snap .story,html:not(.snap) .story{min-height:auto;padding:118px 0;justify-content:flex-start}
 .story{background:var(--paper)}
 .story.paper{background:#fff}
+/* the white stories meet their paper neighbours on paper: the white turns to paper over the 120px at each
+   paper seam, so the four no longer meet on a hard line (founder, 2026-09-13). #s4's foot is the dark run. */
+#s2{background:linear-gradient(180deg,var(--paper),#fff 120px,#fff calc(100% - 120px),var(--paper))}
+#s4{background:linear-gradient(180deg,var(--paper),#fff 120px)}
 .story-grid{display:grid;grid-template-columns:minmax(280px,.72fr) minmax(470px,1.28fr);gap:106px;align-items:start}
 .story-heading{max-width:470px;position:sticky;top:calc(var(--nav-h) + 28px)}   /* the heading keeps its place while its article scrolls */
 .article{max-width:700px}
