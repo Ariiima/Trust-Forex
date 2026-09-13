@@ -63,10 +63,10 @@
   --text-step-title: clamp(64px, 8vw, 104px);       /* one protocol step: Prepare / Enter / Stay fixed / Measure */
   --text-title-benefits: clamp(44px, 4.25vw, 58px); /* the benefits heading */
   --text-title-plans: clamp(44px, 4.8vw, 62px);     /* "Choose your plan duration" */
-  --text-plan-price: 38px;                          /* a plan's price */
+  --text-plan-price: 60px;                          /* a plan's price (founder's reference, 2026-09-13) */
   --text-week-total: 28px;                          /* the week's signal count */
   --text-plan-rate: 27px;                           /* a plan's benefit rate */
-  --text-plan-name: 25px;                           /* Silver / Gold / Diamond */
+  --text-plan-name: 28px;                           /* Silver / Gold / Diamond */
   --text-benefit-name: 21px;                        /* Cashback / Referral */
   --text-step-copy: 20px;                           /* a protocol step's sentence */
   --text-week-period: 17px;                         /* the week the record covers */

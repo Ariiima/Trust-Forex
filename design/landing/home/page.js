@@ -123,6 +123,22 @@
       'Weekly target win rates: ' + TARGETS.map((t, i) => `${t.toUpperCase()} ${rates[i]} percent`).join(', '));
   }
 
+  /* ---------- the plans: the button under the cards follows the pick ----------
+     The cards are native radios (page.css), so picking one needs nothing from here. The button
+     does: the app's checkout takes ?plan= and opens on that plan (src/App.tsx), so its link
+     follows the checked card. The markup ships the app's own plan picker as the href, which is
+     where a reader without JavaScript should land rather than on a plan they did not pick.
+     The radios carry autocomplete="off": without it a reload brings back the last card picked
+     instead of Gold. */
+  const planCta = document.getElementById('plan-cta');
+  const planHref = (plan) => `https://app.trustforex.net/checkout?plan=${plan}`;
+  const syncPlan = () => {
+    const picked = document.querySelector('.plan-pick:checked');
+    if (planCta && picked) planCta.href = planHref(picked.value);
+  };
+  document.querySelectorAll('.plan-pick').forEach((r) => r.addEventListener('change', syncPlan));
+  syncPlan();
+
   /* ---------- self-check ---------- */
   if (new URLSearchParams(location.search).get('check') !== '1') return;
   const fails = [];
@@ -165,6 +181,19 @@
     if (want !== equiv) fails.push(`plan ${i + 1} monthly equivalent ${equiv} is not ${want}`);
     if (!col.querySelector('.equiv').textContent.includes(equiv)) fails.push(`plan ${i + 1} does not print ${equiv}`);
   });
+  // the plans open on Gold, and picking each card points the button at that card's checkout
+  const picks = [...document.querySelectorAll('.plan-pick')];
+  const opening = picks.find((r) => r.checked);
+  if (!opening || opening.value !== 'gold') fails.push(`the plans open with ${opening ? opening.value : 'nothing'} picked, not gold`);
+  picks.filter((r) => r.getAttribute('autocomplete') !== 'off').forEach((r) => fails.push(`the ${r.value} radio lets a reload restore the last pick over gold`));
+  if (!planCta) fails.push('the plans have no button to carry the pick');
+  else picks.forEach((r) => {
+    const tier = r.closest('.plan-col').dataset.tier;
+    if (r.value !== tier) fails.push(`the ${tier} card picks ${r.value}`);
+    r.click();
+    if (planCta.getAttribute('href') !== planHref(tier)) fails.push(`picking ${tier} leaves the button on ${planCta.getAttribute('href')}`);
+  });
+  if (opening) opening.click();
 
   /* the constants above are borrowed; if the Results page moves them, this page is lying. One
      fetch of that file, two assertions — cheaper than two pages drifting apart unnoticed. */

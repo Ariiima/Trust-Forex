@@ -377,49 +377,81 @@ html.reduce .feed-slot,html.reduce .feed-bar i,html.reduce .odo-d,html.reduce .o
 .plans-intro .h2{max-width:780px;margin:0;font-size:var(--text-title-plans)}
 /* the sentence the two guide tiles used to be: what is the same, and what the term changes */
 .plans-lede{max-width:620px;margin:14px 0 0;font-size:var(--text-ui);line-height:1.5;color:rgba(255,255,255,.72)}
-/* end-aligned, so Gold's taller card stands proud of the other two rather than centring in them */
-.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:end}
+/* stretched: the three cards are one size (founder, 2026-09-13). No card stands taller; the
+   picked one is the one lit. */
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch}
 /* The card keeps .tile's rim and light and replaces only its fill: the tier tint is pulled up
    into a halo behind the badge, and the body falls back to near-neutral so the price still
    reads as the brightest thing in the column. ::before and ::after belong to .glass .tile
    (the rim and the specular sweep) and are left alone. */
-.glass .plan-col{position:relative;min-height:220px;padding:26px 22px 22px;border-radius:22px;
+.glass .plan-col{position:relative;min-height:220px;padding:24px 22px 28px;border-radius:22px;
   display:flex;flex-direction:column;
   background:radial-gradient(112% 62% at 50% -8%,var(--tint),transparent 64%),
     linear-gradient(150deg,rgba(255,255,255,.1),rgba(255,255,255,.04))}
-.glass .plan-col--lead{padding-top:34px;padding-bottom:26px;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),0 0 52px -14px var(--rim),
+/* Picking a plan. Each card carries a native radio stretched over the whole of it, so a click
+   anywhere on the card picks it, the arrow keys move between the three, and the picked card
+   lights with no script at all. A card cannot be one <button> the way cb8's .rate-cell is: it
+   holds a heading and a list, and a button takes phrasing content only. page.js does one thing
+   here — it points the button under the cards at the picked plan. */
+.plan-pick{position:absolute;inset:0;z-index:2;width:100%;height:100%;margin:0;border-radius:inherit;
+  appearance:none;-webkit-appearance:none;background:none;cursor:pointer}
+.plan-pick:focus-visible{outline:none}
+.glass .plan-col:has(.plan-pick:focus-visible){outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
+/* the cards not picked keep a quiet white rim, so a rim in tier colour means "picked" */
+.glass .plan-col{border-color:rgba(255,255,255,.22)}
+.glass .plan-col:hover{border-color:rgba(255,255,255,.6)}
+/* The picked card shines (founder, 2026-09-13: "shine the selected plan more"): a doubled rim in
+   its tier ink, a soft ring and two glows of that ink round the card, and the halo inside
+   brightened. All of it is static, so nothing here repaints while the page scrolls. */
+.glass .plan-col:has(.plan-pick:checked){border-color:var(--label);
+  background:radial-gradient(120% 70% at 50% -10%,color-mix(in srgb,var(--label) 34%,transparent),transparent 66%),
+    radial-gradient(112% 62% at 50% -8%,var(--tint),transparent 64%),
+    linear-gradient(150deg,rgba(255,255,255,.16),rgba(255,255,255,.06));
+  box-shadow:inset 0 0 0 1px var(--label),inset 0 1px 0 rgba(255,255,255,.6),
+    0 0 0 4px color-mix(in srgb,var(--label) 16%,transparent),
+    0 0 44px -6px color-mix(in srgb,var(--label) 60%,transparent),
+    0 0 110px -10px color-mix(in srgb,var(--label) 30%,transparent),
     0 32px 64px -28px rgba(var(--rgb-shadow),.9)}
-.plan-badge{display:block;width:62px;height:62px;margin:0 0 14px;
-  filter:drop-shadow(0 10px 20px rgba(var(--rgb-shadow),.55))}
-.plan-col--lead .plan-badge{width:74px;height:74px}
+.plan-badge{display:block;flex:none;width:54px;height:54px;
+  filter:drop-shadow(0 8px 16px rgba(var(--rgb-shadow),.55))}
 /* the app's own two tags, which this page used to drop entirely */
 .plan-flag{position:absolute;top:-11px;left:22px;display:inline-flex;align-items:center;height:23px;padding:0 10px;
   border-radius:999px;font-size:var(--text-micro);font-weight:700;letter-spacing:.075em;text-transform:uppercase;
   white-space:nowrap;background:var(--label);color:var(--blue)}
-.plan-head{display:flex;align-items:center;justify-content:space-between;gap:16px}
+/* badge, name, and the term as an outlined pill at the far end — the reference's one line */
+.plan-head{display:flex;align-items:center;gap:14px}
 .plan-head h3{margin:0;font-size:var(--text-plan-name);letter-spacing:var(--tracking-card);color:var(--label,#fff)}
-.duration{font-weight:650;font-size:var(--text-ui);color:rgba(255,255,255,.85)}
-.price{margin:20px 0 0;font-size:var(--text-plan-price);line-height:1;font-weight:750;letter-spacing:-.05em;color:#fff}
-.equiv{min-height:18px;margin-top:8px;font-size:var(--text-guide);line-height:1.45;color:rgba(255,255,255,.7)}
-/* what stays with the buyer, in the record card's green — the page already reads green as a gain */
-.plan-save{color:#48D48A;font-weight:650}
-.plan-rate{margin-top:auto;padding:15px 0 0;border-top:1px solid var(--rim);
-  display:flex;align-items:flex-end;justify-content:space-between;gap:14px;font-size:var(--text-label);color:rgba(255,255,255,.8)}
-.plan-rate span{max-width:112px;line-height:1.35;letter-spacing:.065em;text-transform:uppercase;color:rgba(255,255,255,.62)}
+/* Silver's own ink is a white, and a white name reads as no tier at all; the reference draws it ice blue */
+.plan-col[data-tier=silver] .plan-head h3{color:#B9E1FF}
+.duration{margin-left:auto;display:inline-flex;align-items:center;height:36px;padding:0 16px;
+  border:1px solid rgba(255,255,255,.45);border-radius:999px;font-size:var(--text-ui);white-space:nowrap;color:#fff}
+.plan-col:has(.plan-pick:checked) .duration{border-color:var(--label)}
+.price{margin:18px 0 0;font-size:var(--text-plan-price);line-height:1;font-weight:750;letter-spacing:-.05em;color:#fff}
+/* The lower half, after the founder's reference (2026-09-13): the monthly figure and the share
+   each sit in their own small glass pane, then a rule, then what every plan includes. The panes
+   are plain frosted boxes, not .tile — a tile's rim and sweep animate on the scroll, and six of
+   them inside three tiles is six more layers on the one screen that already carries a rayfield. */
+.plan-pill{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;
+  border:1px solid rgba(255,255,255,.2);border-radius:14px;
+  background:linear-gradient(150deg,rgba(255,255,255,.1),rgba(255,255,255,.035));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+.equiv{min-height:40px;margin-top:14px;font-size:var(--text-ui);font-weight:600;color:#fff}
+.equiv span+span{font-weight:500;color:rgba(255,255,255,.78)}
+/* what the longer term saves, in the record card's green — the page already reads green as a gain */
+.equiv .plan-save{color:#48D48A;font-weight:650}
+.plan-rate{min-height:54px;margin-top:10px;font-size:var(--text-ui);color:rgba(255,255,255,.82)}
 .plan-rate b{font-size:var(--text-plan-rate);line-height:1;letter-spacing:var(--tracking-stat);color:var(--label,#fff)}
-/* One action a column, in that column's colour, instead of one shared bar at the foot. The
-   two-class selector is deliberate: base.css's .on-dark .btn would otherwise win and paint all
-   three buttons the same white. */
-.plan-col .plan-choose{margin-top:18px;width:100%;border-color:var(--label);color:var(--label)}
-.plan-col .plan-choose:hover{background:var(--label);border-color:var(--label);color:var(--blue)}
-/* "included in every plan", demoted to one line where it stops competing with the prices */
-.plan-all{margin-top:18px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;
-  font-size:var(--text-guide);color:rgba(255,255,255,.82)}
-.plan-all b{font-size:var(--text-label);font-weight:650;letter-spacing:.055em;text-transform:uppercase;color:rgba(255,255,255,.6)}
-.plan-all i{font-style:normal;display:inline-flex;align-items:center;gap:7px}
-.plan-tick{width:15px;height:15px;flex:none;color:rgba(255,255,255,.55)}
-.plan-tick path{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.plan-list{list-style:none;display:grid;gap:11px;margin:18px 0 0;padding:16px 4px 0;
+  border-top:1px solid rgba(255,255,255,.22);font-size:var(--text-body);color:rgba(255,255,255,.9)}
+.plan-list li{display:flex;align-items:center;gap:12px}
+.plan-tick{width:18px;height:18px;flex:none;color:#fff}
+.plan-tick path{fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+/* the one action under the three cards: the app's checkout, on the picked plan. Its arrow sits at
+   the far end, as the reference draws it, rather than beside the words. */
+.plans-shell .plan-cta{position:relative;width:100%;min-height:46px;margin-top:14px;padding:8px 52px;
+  border-color:rgba(255,255,255,.55);background:linear-gradient(150deg,rgba(255,255,255,.12),rgba(255,255,255,.04));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+.plans-shell .plan-cta .ext{position:absolute;top:50%;right:22px;margin-top:-.5em}
 
 /* ---------- 12–13 · the questions and the close ---------- */
 .faq-wrap{max-width:880px}
@@ -440,7 +472,6 @@ body{font-variant-numeric:normal}
   .benefit-feed{max-width:none;justify-self:stretch}
   .plans-grid{grid-template-columns:1fr;align-items:stretch}
   .glass .plan-col{min-height:auto}
-  .glass .plan-col--lead{padding-top:34px}
 }
 @media (max-width:680px){
   .weekly-record{min-height:400px;padding:12px 14px 18px}
@@ -454,9 +485,11 @@ body{font-variant-numeric:normal}
   .step-title{font-size:clamp(58px,20vw,78px)}
   .step-copy{font-size:var(--text-row-title);max-width:340px}
   /* the badge is the card's biggest object, so it is the first thing that gives ground */
-  .plan-badge,.plan-col--lead .plan-badge{width:54px;height:54px;margin-bottom:12px}
-  .glass .plan-col{padding:22px 18px 18px}
-  .plan-all{gap:9px 14px}
+  .plan-badge{width:44px;height:44px}
+  .plan-head{gap:10px}
+  .plan-head h3{font-size:var(--text-card-title)}
+  .duration{height:32px;padding:0 12px}
+  .glass .plan-col{padding:22px 18px 24px}
 }
 
 /* the questions heading holds one line, so its size is measured off this page's own question:

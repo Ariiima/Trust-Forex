@@ -273,6 +273,24 @@ The script writes four transforms per step and runs no frame loop. The column sh
 sets it back to its opening only while it is still below the fold and motion is allowed, and plays
 it once when it reaches the protocol steps' reading band.
 
+### The plans
+
+Built from the founder's two references (2026-09-13). The three cards are one size. Each has the
+badge, the name and the term on one line, a 60px price, then the monthly figure and the Cashback
+and Referral share, each in its own glass pane. A rule follows, then the three things every plan
+includes.
+
+A card is picked, not just read. Each carries a native radio stretched over the whole card, so a
+click anywhere picks it and the arrow keys move between the three. The picked card lights its rim
+and its term in its tier ink, glows in that ink and brightens its halo, with no script. The cards not
+picked keep a quiet white rim. Gold is picked on every load, as the app's "Most popular": the radios
+carry `autocomplete="off"`, so a reload does not restore the last card picked. A card
+is not a `<button>` like `.rate-cell`, because it holds a heading and a list. The one button under
+the cards opens the app's checkout on the pick: `src/App.tsx` hands `/checkout?plan=silver|gold|diamond`
+to Checkout as its starting plan. `page.js` keeps that link in step. The markup's own href is the
+app's plan picker, for a reader without JavaScript. `?check=1` picks each card in turn and fails if
+the button does not follow.
+
 `page.js` holds the record module. Its figures are the last completed week of the Results page's
 own weekly series, recomputed here from that page's rule — same base win rates, same per-period
 shift, same rounding — so the two pages cannot print different numbers for the same week. The
