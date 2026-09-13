@@ -392,7 +392,7 @@ html.reduce #benefits::after{animation:none}
 .benefit-feed[data-step="0"] .feed-legend span,.benefit-feed[data-step="1"] .feed-legend [data-benefit=referral]{opacity:.35}
 html.reduce .feed-slot,html.reduce .feed-bar i,html.reduce .odo-d,html.reduce .odo-d i{transition:none}
 
-/* ---------- 11 · the plans: three tiers in their own colour, on the blue block ----------
+/* ---------- 11 · the plans: three tiers in their own colour, on the blue, edge to edge ----------
    The app already draws these three plans, and it draws them as badges — a silver shield, a
    gold crown, a violet diamond (src/assets/plans/badge-*.png, copied to ../cb8/img/plans/).
    The landing page sells the same three, so it uses the same art: the tier arrives as an
@@ -401,6 +401,17 @@ html.reduce .feed-slot,html.reduce .feed-bar i,html.reduce .odo-d,html.reduce .o
    ../cb8/style.css already hands each card its --tint, --rim and --label, and those are what
    the halo, the border and the tier ink below are made of. Silver is cool, Gold is amber,
    Diamond is violet; the badges agree with all three. */
+/* full bleed (founder, 2026-09-13): the plans take the hero's ground edge to edge, where they were a
+   rounded block inset in a white frame, so the page's blue screens read as one family. The block
+   keeps its rayfield and centres the content; its top padding clears the nav wherever the nav stays
+   over it. screen-dark in the markup turns the rail and the back-to-top button light here. It sits
+   in a .hold (founder, 2026-09-13: landing it at exactly one screen was hard), so it pins full
+   screen for the site's 30vh --hold before it scrolls on. */
+#plans.screen-blue.fill{padding:0;background:var(--blue)}
+#plans::before{content:none}
+#plans .wrap{max-width:none;padding:0}
+#plans .block{min-height:100dvh;border-radius:0;padding-top:calc(var(--nav-h) + var(--block-space))}
+html:not(.snap) #plans .block{min-height:auto}
 .plans-shell{display:grid}
 .plans-intro{margin-bottom:26px}
 .plans-intro .h2{max-width:780px;margin:0;font-size:var(--text-title-plans)}
@@ -486,7 +497,7 @@ html.reduce .feed-slot,html.reduce .feed-bar i,html.reduce .odo-d,html.reduce .o
    end 8px short of the top, so it leaves just ahead of the screen's top edge instead of riding it
    (founder, 2026-09-13: "a bit earlier, like 8px"); the strip comes back down over
    the last 56px of the screen's exit and is whole again as the questions reach the top. The block
-   takes the strip's height: it sits --frame-inset off the viewport's top, not off the nav. Tied to
+   takes the strip's height: its top padding drops the nav's 56px while the nav is away. Tied to
    the scroll, no script. Hold mode only, where the cards fill one screen; on a phone the strip stays
    over the stacked cards. Both halves sit in the one @supports, so a browser without scroll-driven
    animations (Firefox) keeps the strip and the block keeps its room under it. A keyboard reader who
@@ -494,9 +505,10 @@ html.reduce .feed-slot,html.reduce .feed-bar i,html.reduce .odo-d,html.reduce .o
    forwards only, so before its range the push's held -100% is what shows. */
 @supports (animation-timeline:view()){
   body{timeline-scope:--plans}
-  #plans{view-timeline-name:--plans}
-  html.snap #plans{padding-top:var(--frame-inset)}
-  html.snap #plans .block{min-height:calc(100dvh - 2 * var(--frame-inset))}
+  /* named on the hold box, not the pinned screen, whose flow position keeps moving through the hold
+     (base.css .hold); --ground stays for anything that reads a hold's ground */
+  .plans-hold{view-timeline-name:--ground,--plans}
+  html.snap #plans .block{padding-top:var(--block-space)}
   html.snap .nav{animation:nav-away linear both,nav-back linear forwards;animation-timeline:--plans,--plans;
     animation-range:entry calc(100% - var(--nav-h) - 8px) entry calc(100% - 8px),exit calc(100% - var(--nav-h)) exit 100%}
   html.snap .nav:focus-within{animation:none}

@@ -306,12 +306,20 @@ to Checkout as its starting plan. `page.js` keeps that link in step. The markup'
 app's plan picker, for a reader without JavaScript. `?check=1` picks each card in turn and fails if
 the button does not follow.
 
-The header gives the plans its room (founder, 2026-09-13). In hold mode the plans screen's top edge
-pushes the nav up and out over the last 56px of its arrival. The nav comes back down over the last
-56px of the screen's exit. The block then sits 20px off the viewport's top, not off the nav, so the
-cards and the button gain 56px. It is CSS only, a view timeline on `#plans` in `page.css`. Phones and
-reduced motion keep the nav. Firefox has no scroll-driven animations, so it keeps the nav and the old
-spacing. `node _qa/nav-plans.test.mjs` measures the nav at each edge.
+The screen is blue edge to edge (founder, 2026-09-13), on the hero's ground with its streaks. It
+used to be a rounded blue block inset in a white frame. The sentence under the heading was cut and put
+back the same day. The screen also holds: it sits in a `.hold`, so it pins full
+screen for 30vh of scroll before it moves on. Landing on it at exactly one screen had been hard
+(founder, same day).
+
+The header gives the plans its room (founder, 2026-09-13). In hold mode the nav rises up and out over
+56px of the plans screen's arrival, ending 8px before the screen reaches the top, so it leaves just
+ahead of the screen's edge. The nav comes back down over the last 56px of the screen's exit. While
+the nav is away, the block's top padding drops the nav's 56px, so the cards and the button gain it.
+It is CSS only, a view timeline in `page.css` named on the hold box, because the pinned screen's flow
+position keeps moving through the hold. Phones and reduced motion keep the nav.
+Firefox has no scroll-driven animations, so it keeps the nav and the padding that clears it.
+`node _qa/nav-plans.test.mjs` measures the nav at each edge.
 
 `page.js` holds the record module. Its figures are the last completed week of the Results page's
 own weekly series, recomputed here from that page's rule — same base win rates, same per-period
