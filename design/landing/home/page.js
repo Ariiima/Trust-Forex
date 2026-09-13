@@ -124,18 +124,63 @@
   }
 
   /* ---------- the plans: the button under the cards follows the pick ----------
-     The cards are native radios (page.css), so picking one needs nothing from here. The button
-     does: the app's checkout takes ?plan= and opens on that plan (src/App.tsx), so its link
-     follows the checked card. The markup ships the app's own plan picker as the href, which is
-     where a reader without JavaScript should land rather than on a plan they did not pick.
+     The cards are native radios (page.css), so picking one, and its motion, needs nothing from
+     here. The button does: the app's checkout takes ?plan= and opens on that plan (src/App.tsx),
+     so its link follows the checked card, and it names that card ("Continue with Gold") and takes
+     its data-tier, which cb8's tier system turns into the ink page.css draws its rim in. The
+     markup ships the app's own plan picker as the href and "Choose Your Plan in the App" as the
+     words, which is where a reader without JavaScript should land rather than on a plan they did
+     not pick. A pick (not the first sync) restarts .swap: the words lift in, a ring leaves the rim.
      The radios carry autocomplete="off": without it a reload brings back the last card picked
      instead of Gold. */
   const planCta = document.getElementById('plan-cta');
+  const planLabel = planCta && planCta.querySelector('.plan-cta-label');
   const planHref = (plan) => `https://app.trustforex.net/checkout?plan=${plan}`;
-  const syncPlan = () => {
+  const planWords = (plan) => `Continue with ${document.getElementById(`plan-${plan}`).textContent.trim()}`;
+  const syncPlan = (e) => {
     const picked = document.querySelector('.plan-pick:checked');
-    if (planCta && picked) planCta.href = planHref(picked.value);
+    if (!planCta || !picked) return;
+    planCta.href = planHref(picked.value);
+    planCta.dataset.tier = picked.value;
+    if (planLabel) planLabel.textContent = planWords(picked.value);
+    if (e) { planCta.classList.remove('swap'); void planCta.offsetWidth; planCta.classList.add('swap'); countSave(picked.closest('.plan-col')); }
   };
+  /* The saving counts up from $0 to its figure each time its card is picked (founder, 2026-09-13).
+     A short frame loop on the one span, easing out so the last dollars land slowly. The markup keeps
+     the finished figure, which is what a reader without JavaScript, with html.reduce, or on Gold's
+     opening pick sees; a card left mid-count snaps to its figure. Not the calculator's rule
+     (cb8/base.css: "cross-fade, never a count-up"): that estimate changes as you type, this is one
+     fixed figure arriving on a pick. */
+  const saveAt = (text, p) => text.replace(/\$([\d,]+)/, (_, n) => `$${Math.round(+n.replace(/,/g, '') * p).toLocaleString('en-US')}`);
+  let saving = null;                          // the count in flight: its span, its figure, its frame
+  function countSave(col) {
+    if (saving) { cancelAnimationFrame(saving.frame); saving.el.textContent = saving.to; saving = null; }
+    const el = col.querySelector('.plan-save');
+    if (!el || document.documentElement.classList.contains('reduce')) return;
+    const run = saving = { el, to: el.textContent, frame: 0 };
+    const start = performance.now();
+    const tick = (now) => {
+      const t = Math.min(1, Math.max(0, (now - start) / 900));
+      el.textContent = saveAt(run.to, 1 - (1 - t) ** 3);
+      if (t < 1) run.frame = requestAnimationFrame(tick); else saving = null;
+    };
+    el.textContent = saveAt(run.to, 0);
+    run.frame = requestAnimationFrame(tick);
+  }
+  /* each character of the share gets a cell with its place in --n, so page.css can spring them up one
+     after another on a pick; the figure keeps its words for a screen reader, as the benefits balance
+     does, and its textContent stays "30%" for the self-check */
+  document.querySelectorAll('.plan-rate b').forEach((b) => {
+    const text = b.textContent.trim();
+    b.setAttribute('aria-label', text);
+    b.replaceChildren(...[...text].map((ch, n) => {
+      const cell = document.createElement('i');
+      cell.setAttribute('aria-hidden', 'true');
+      cell.style.setProperty('--n', n);
+      cell.textContent = ch;
+      return cell;
+    }));
+  });
   document.querySelectorAll('.plan-pick').forEach((r) => r.addEventListener('change', syncPlan));
   syncPlan();
 
@@ -188,7 +233,14 @@
     const want = months === 1 ? `$${n}` : `≈ $${n}`;
     if (want !== equiv) fails.push(`plan ${i + 1} monthly equivalent ${equiv} is not ${want}`);
     if (!col.querySelector('.equiv').textContent.includes(equiv)) fails.push(`plan ${i + 1} does not print ${equiv}`);
+    // a longer term saves the monthly plan's price times its months, less its own price
+    const save = col.querySelector('.plan-save');
+    const saved = `Save $${(+EQUIV[0][0].slice(1) * months - +price.replace(/[$,]/g, '')).toLocaleString('en-US')}`;
+    if (months > 1 && (!save || save.textContent.trim() !== saved)) fails.push(`plan ${i + 1} says ${save ? save.textContent.trim() : 'no saving'}, expected ${saved}`);
   });
+  // the count a pick plays starts at $0, keeps the words and the thousands comma, and lands on the figure
+  const frames = [0, 0.5, 1].map((p) => saveAt('Save $1,701', p)).join(' · ');
+  if (frames !== 'Save $0 · Save $851 · Save $1,701') fails.push(`the saving counts ${frames}`);
   // the plans open on Gold, and picking each card points the button at that card's checkout
   const picks = [...document.querySelectorAll('.plan-pick')];
   const opening = picks.find((r) => r.checked);
@@ -200,6 +252,8 @@
     if (r.value !== tier) fails.push(`the ${tier} card picks ${r.value}`);
     r.click();
     if (planCta.getAttribute('href') !== planHref(tier)) fails.push(`picking ${tier} leaves the button on ${planCta.getAttribute('href')}`);
+    if (planCta.dataset.tier !== tier) fails.push(`picking ${tier} leaves the button in ${planCta.dataset.tier} ink`);
+    if (!planLabel || planLabel.textContent !== planWords(tier)) fails.push(`picking ${tier} leaves the button saying ${planLabel ? planLabel.textContent : 'nothing'}`);
   });
   if (opening) opening.click();
 

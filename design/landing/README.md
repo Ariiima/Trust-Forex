@@ -316,6 +316,24 @@ to Checkout as its starting plan. `page.js` keeps that link in step. The markup'
 app's plan picker, for a reader without JavaScript. `?check=1` picks each card in turn and fails if
 the button does not follow.
 
+The pick moves (founder, 2026-09-13: "changing between the selected panel has no visual effect").
+A press sinks the card to 98%. The pick springs it up 6px to 102% on an overshooting curve, and the
+two cards left behind ease back and dim to 80%. Every tier-ink layer of the glow is scaled by one
+registered number, `--pick`, so the light fades out of the old card and into the new one instead
+of jumping. The Cashback and Referral share springs up on each pick, one character at a time: 3, then 0, then %,
+60ms apart, each 10px on the card's overshooting curve. A slide out of a clipped line at the
+figure's foot was tried first (same day) and cut as not pretty. Stacked cards grow 1.5%
+and do not lift, so the flag does not ride up into the card above. The button names the pick,
+"Continue with Gold", with its rim in the tier's ink and one ring of that ink on each change;
+without JavaScript it keeps "Choose Your Plan in the App". The saving ("Save $701") counts up from
+$0 to its figure over 900ms on each pick, easing out; a card left mid-count snaps to its figure, and
+the markup keeps the finished figure for a reader without JavaScript, reduced motion and Gold's
+opening pick. The calculator's estimate still never counts (cb8/base.css): it changes as you type,
+where this is one fixed figure arriving on a pick. `?check=1` holds each saving to the monthly
+plan's price times the term, less the plan's own price. All of it is CSS except the button's words
+and the count. Reduced motion keeps the lit card and drops the movement. Haptic feedback was offered and
+declined: the web has no vibration on iPhone except an unofficial switch-input trick.
+
 The screen is blue edge to edge (founder, 2026-09-13), on the hero's ground with its streaks. It
 used to be a rounded blue block inset in a white frame. The sentence under the heading was cut and put
 back the same day. The screen also holds: it sits in a `.hold`, so it pins full

@@ -426,8 +426,9 @@ html:not(.snap) #plans .block{min-height:auto}
    (the rim and the specular sweep) and are left alone. */
 .glass .plan-col{position:relative;min-height:220px;padding:24px 22px 28px;border-radius:22px;
   display:flex;flex-direction:column;
-  background:radial-gradient(112% 62% at 50% -8%,var(--tint),transparent 64%),
-    linear-gradient(150deg,rgba(255,255,255,.1),rgba(255,255,255,.04))}
+  background:radial-gradient(120% 70% at 50% -10%,color-mix(in srgb,var(--label) calc(var(--pick) * 34%),transparent),transparent 66%),
+    radial-gradient(112% 62% at 50% -8%,var(--tint),transparent 64%),
+    linear-gradient(150deg,rgba(255,255,255,calc(.1 + var(--pick) * .06)),rgba(255,255,255,calc(.04 + var(--pick) * .02)))}
 /* Picking a plan. Each card carries a native radio stretched over the whole of it, so a click
    anywhere on the card picks it, the arrow keys move between the three, and the picked card
    lights with no script at all. A card cannot be one <button> the way cb8's .rate-cell is: it
@@ -437,21 +438,36 @@ html:not(.snap) #plans .block{min-height:auto}
   appearance:none;-webkit-appearance:none;background:none;cursor:pointer}
 .plan-pick:focus-visible{outline:none}
 .glass .plan-col:has(.plan-pick:focus-visible){outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
-/* the cards not picked keep a quiet white rim, so a rim in tier colour means "picked" */
-.glass .plan-col{border-color:rgba(255,255,255,.22)}
-.glass .plan-col:hover{border-color:rgba(255,255,255,.6)}
 /* The picked card shines (founder, 2026-09-13: "shine the selected plan more"): a doubled rim in
-   its tier ink, a soft ring and two glows of that ink round the card, and the halo inside
-   brightened. All of it is static, so nothing here repaints while the page scrolls. */
-.glass .plan-col:has(.plan-pick:checked){border-color:var(--label);
-  background:radial-gradient(120% 70% at 50% -10%,color-mix(in srgb,var(--label) 34%,transparent),transparent 66%),
-    radial-gradient(112% 62% at 50% -8%,var(--tint),transparent 64%),
-    linear-gradient(150deg,rgba(255,255,255,.16),rgba(255,255,255,.06));
-  box-shadow:inset 0 0 0 1px var(--label),inset 0 1px 0 rgba(255,255,255,.6),
-    0 0 0 4px color-mix(in srgb,var(--label) 16%,transparent),
-    0 0 44px -6px color-mix(in srgb,var(--label) 60%,transparent),
-    0 0 110px -10px color-mix(in srgb,var(--label) 30%,transparent),
-    0 32px 64px -28px rgba(var(--rgb-shadow),.9)}
+   its tier ink, a soft ring and two glows of that ink round the card, and the halo inside (the
+   first layer of the fill above) brightened. Each of those is written once and scaled by --pick, a
+   registered number that is 0 on a card not picked and 1 on the picked one, so the light drains
+   out of the card left behind and blooms into the new one over .45s; a swapped gradient or shadow
+   list would just jump. None of it runs while the page scrolls. The cards not picked keep a quiet
+   white rim (--edge), so a rim in tier colour means "picked". */
+@property --pick{syntax:'<number>';inherits:false;initial-value:0}
+.glass .plan-col{--edge:rgba(255,255,255,.22);--lift:-6px;--grow:1.02;
+  border-color:color-mix(in srgb,var(--label) calc(var(--pick) * 100%),var(--edge));
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--label) calc(var(--pick) * 100%),transparent),
+    inset 0 1px 0 rgba(255,255,255,calc(.42 + var(--pick) * .18)),
+    0 0 0 calc(var(--pick) * 4px) color-mix(in srgb,var(--label) calc(var(--pick) * 16%),transparent),
+    0 0 44px -6px color-mix(in srgb,var(--label) calc(var(--pick) * 60%),transparent),
+    0 0 110px -10px color-mix(in srgb,var(--label) calc(var(--pick) * 30%),transparent),
+    0 calc(14px + var(--pick) * 18px) calc(30px + var(--pick) * 34px) calc(-18px - var(--pick) * 10px) rgba(var(--rgb-shadow),calc(.7 + var(--pick) * .2))}
+/* The pick moves (founder, 2026-09-13: "add some motion to it … more visual change so it's
+   satisfying"). A press sinks the card to 98%; the pick springs it up 6px to 102% on an overshooting
+   curve, so it lands a touch past and settles; the two left behind ease back to rest and dim to .8,
+   and come back to full under the pointer. The move is transform and opacity only. The transition
+   lists run --pick, border-color, opacity, transform, in that order, and each state that changes
+   the move's timing restates all four. */
+.glass .plan-col{opacity:.8;transition-property:--pick,border-color,opacity,transform;
+  transition-duration:.45s,.45s,.4s,.45s;transition-timing-function:var(--ease)}
+@media (hover:hover){.glass .plan-col:hover{--edge:rgba(255,255,255,.6);opacity:1;transform:translateY(-2px)}}
+.glass .plan-col:has(.plan-pick:checked){--pick:1;z-index:1;opacity:1;transform:translateY(var(--lift)) scale(var(--grow));
+  transition-duration:.45s,.45s,.4s,.6s;transition-timing-function:var(--ease),var(--ease),var(--ease),cubic-bezier(.34,1.56,.64,1)}
+.glass .plan-col:has(.plan-pick:active){transform:scale(.98);transition-duration:.45s,.45s,.4s,.12s;transition-timing-function:var(--ease)}
+.glass .plan-col:has(.plan-pick:checked:active){transform:translateY(var(--lift)) scale(.99)}
+html.reduce .glass .plan-col:has(.plan-pick){transition:none}
 .plan-badge{display:block;flex:none;width:54px;height:54px;
   filter:drop-shadow(0 8px 16px rgba(var(--rgb-shadow),.55))}
 /* the app's own two tags, which this page used to drop entirely */
@@ -465,6 +481,7 @@ html:not(.snap) #plans .block{min-height:auto}
 .plan-col[data-tier=silver] .plan-head h3{color:#B9E1FF}
 .duration{margin-left:auto;display:inline-flex;align-items:center;height:36px;padding:0 16px;
   border:1px solid rgba(255,255,255,.45);border-radius:999px;font-size:var(--text-ui);white-space:nowrap;color:#fff}
+.duration{transition:border-color .45s var(--ease)}
 .plan-col:has(.plan-pick:checked) .duration{border-color:var(--label)}
 .price{margin:18px 0 0;font-size:var(--text-plan-price);line-height:1;font-weight:750;letter-spacing:-.05em;color:#fff}
 /* The lower half, after the founder's reference (2026-09-13): the monthly figure and the share
@@ -481,6 +498,18 @@ html:not(.snap) #plans .block{min-height:auto}
 .equiv .plan-save{color:#48D48A;font-weight:650}
 .plan-rate{min-height:54px;margin-top:10px;font-size:var(--text-ui);color:rgba(255,255,255,.82)}
 .plan-rate b{font-size:var(--text-plan-rate);line-height:1;letter-spacing:var(--tracking-stat);color:var(--label,#fff)}
+/* The share is what the pick changes, so it arrives again on every pick (founder, 2026-09-13: "load
+   up smoothly from below"; a slide out of a clipped line was tried the same day and cut as not
+   pretty). page.js gives each character its own cell with its place in --n, and they spring up 10px
+   in turn, 60ms apart, on the card's own overshooting curve. The fade is a second, shorter animation:
+   on the spring's curve the opacity would reach full early and sit clamped. */
+.plan-rate b i{display:inline-block;font-style:normal}
+.glass .plan-col:has(.plan-pick:checked) .plan-rate b i{
+  animation:share-spring .55s cubic-bezier(.34,1.56,.64,1) both,share-fade .25s ease-out both;
+  animation-delay:calc(.06s + var(--n,0) * 60ms),calc(.06s + var(--n,0) * 60ms)}
+@keyframes share-spring{from{transform:translateY(10px)}}
+@keyframes share-fade{from{opacity:0}}
+@keyframes pick-rise{from{opacity:0;transform:translateY(.5em)}}
 .plan-list{list-style:none;display:grid;gap:11px;margin:18px 0 0;padding:16px 4px 0;
   border-top:1px solid rgba(255,255,255,.22);font-size:var(--text-body);color:rgba(255,255,255,.9)}
 .plan-list li{display:flex;align-items:center;gap:12px}
@@ -492,6 +521,15 @@ html:not(.snap) #plans .block{min-height:auto}
   border-color:rgba(255,255,255,.55);background:linear-gradient(150deg,rgba(255,255,255,.12),rgba(255,255,255,.04));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
 .plans-shell .plan-cta .ext{position:absolute;top:50%;right:22px;margin-top:-.5em}
+/* the button names the pick (page.js): "Continue with Gold", its rim in that tier's ink. page.js
+   hands it the card's data-tier, which cb8's tier system turns into --label; each new pick lifts the
+   words in again and sends one ring of the ink out from the rim. */
+.plans-shell .plan-cta[data-tier]{border-color:color-mix(in srgb,var(--label) 70%,transparent)}
+.plan-cta.swap{animation:cta-flash .9s var(--ease)}
+.plan-cta.swap .plan-cta-label{animation:pick-rise .45s var(--ease)}
+@keyframes cta-flash{from{box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 0 0 5px color-mix(in srgb,var(--label) 30%,transparent),
+  0 0 40px -6px color-mix(in srgb,var(--label) 70%,transparent)}}
+html.reduce .glass .plan-col:has(.plan-pick:checked) .plan-rate b i,html.reduce .plan-cta.swap,html.reduce .plan-cta.swap .plan-cta-label{animation:none}
 /* The header gives the plans its room (founder, 2026-09-13: "only when seeing plans, the header
    scrolls away for more space"). The strip rises up and out over 56px of the screen's arrival that
    end 8px short of the top, so it leaves just ahead of the screen's top edge instead of riding it
@@ -534,7 +572,8 @@ body{font-variant-numeric:normal}
   .benefits-intro .h2{max-width:none}
   .benefit-feed{max-width:none;justify-self:stretch}
   .plans-grid{grid-template-columns:1fr;align-items:stretch}
-  .glass .plan-col{min-height:auto}
+  /* stacked, a 6px lift carries the picked card's flag up into the card above: it only grows */
+  .glass .plan-col{min-height:auto;--lift:0px;--grow:1.015}
 }
 @media (max-width:680px){
   .weekly-record{min-height:400px;padding:12px 12px 0}
