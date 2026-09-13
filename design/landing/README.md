@@ -466,7 +466,11 @@ takes its content's height; 208px steps with the number and line at opposite end
 
 The structure is the founder's Broker Profile skeleton, kept as drawn; the treatment is cb8's.
 Two departures, both commented in `page.css`: the records **flow** at their own height rather
-than hold a screen each (a licence table that pins for 30vh is a page you cannot read), and
+than hold a screen each (a licence table that pins for 30vh is a page you cannot read). For a day
+each record also kept a one-screen floor; once the intro lines and the closing screen were cut, the
+short records stood in ~400px of bare paper and the page read naked (founder, 2026-09-13), so the
+floor went: a record is its content plus `--section-space` above and below. Each record also carries
+one soft glow beside its card, left and right in turn, as a layer of its own background. And
 anything a `.block` puts straight on its ground is lifted to `z-index:1` — base.css does that for
 `.mech-grid` alone, and a heading placed directly in a block paints *under* the rayfield without it.
 

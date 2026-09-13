@@ -8,26 +8,32 @@
    a licence table that holds the viewport for 30vh is a page you cannot read — so every record section flows at its
    own height (.data below) while the hero and the final keep the full screen. */
 
-/* ---------- a record holds a screen, and only as much more as it needs ----------
-   Nothing pins and nothing stacks (the head of this file), but letting every record flow at its own
-   height was the other extreme: the two short ones, 01 and 02, stood in about two thirds of the window
-   with the next record's heading already showing beneath them (founder, 2026-09-12). A record now takes
-   at least one screen and sits in the middle of it, so one is read out before the next appears. A record
-   that carries more than a screen — the two rate tables, the bonus offers — is taller than the floor and
-   scrolls exactly as it did. The floor is a window and one nav bar, not a window exactly: at exactly
-   100dvh the next record's top lands on the fold, and the founder asked for the scroll to be needed
-   (2026-09-12, "a little more so you scroll to see the next section"). The head clearance is the nav and
-   nothing else: the reference strip that used to sit under it is gone, so 56px of the old 112px was
-   clearing a bar that has left. */
-.records .screen.data{min-height:calc(100dvh + var(--nav-h));padding:calc(var(--nav-h) + 40px) 0 var(--section-space);justify-content:center}
+/* ---------- the records' rhythm: each at its own height, one section space apart ----------
+   Nothing pins and nothing stacks (the head of this file). From 2026-09-12 every record held at least a
+   window and a nav bar and sat in the middle of it, so one was read out before the next appeared. Once the
+   intro lines, the hero label and the closing screen were cut, that floor was mostly bare paper: a short
+   record stood in ~950px with ~400px of empty ground between its card and the next, and the page read
+   naked (founder, 2026-09-13). A record is its content's height again, with the system's section space
+   above and below it (176px between two cards), and the side glows below keep the ground from going
+   bare. 88px over a heading still clears the 56px nav when a link lands on a record's id. */
+.records .screen.data{min-height:0;padding:var(--section-space) 0}
 /* the light crosses a blue record as it crosses a paper one: cb8 names --ground on .screen-paper and drives the
    glass streaks from the stack's --m1…--m4, which this page has no stack to provide. Each record with glass panes in
    it names its own — including Cashback, whose block is white but whose panes are still blue. */
 #overview,#accounts,#cashback{view-timeline-name:--ground}
 /* the three white screens meet the paper ones between them on paper: the white turns to paper over the
    120px at each paper seam, so no seam draws a line (founder, 2026-09-13). #overview's head is the hero. */
-#overview{background:linear-gradient(180deg,#fff calc(100% - 120px),var(--paper))}
-#accounts,#cashback{background:linear-gradient(180deg,var(--paper),#fff 120px,#fff calc(100% - 120px),var(--paper))}
+#overview{background:var(--glow),linear-gradient(180deg,#fff calc(100% - 120px),var(--paper))}
+#accounts,#cashback{background:var(--glow),linear-gradient(180deg,var(--paper),#fff 120px,#fff calc(100% - 120px),var(--paper))}
+/* ---------- the side glows: a soft light beside each record's card, left and right in turn ----------
+   At their own height the records still stood on flat ground (founder, 2026-09-13: "naked"). Each carries one
+   glow in the field's own recipe (style.css: --rgb-300 at .42, fading out), centred just inside the window's
+   edge at the record's middle: left on the odd records, right on the even, so Regulation's and Markets'
+   panes, which stand at the right, have theirs behind them. It is a layer of the record's own background
+   and is spent well inside the record, so it never reaches a seam or pushes the page sideways. */
+.records>.screen.data{--side:4%;--glow:radial-gradient(40% 44% at var(--side) 50%,rgba(var(--rgb-300),.42),rgba(var(--rgb-200),.16) 58%,transparent)}
+.records>.screen.data:nth-of-type(even){--side:96%}
+.records>.screen-paper.data{background:var(--glow),var(--paper)}
 .glass .panel::after,.glass .tile::after,.glass .rayfield.k i{animation-timeline:--ground}
 /* the ground is a positioned layer (z-index 0), so a non-positioned child of the block paints UNDER it —
    base.css lifts .mech-grid and .grid2 for exactly this reason, and these records put their heading and
