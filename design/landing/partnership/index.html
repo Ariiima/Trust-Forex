@@ -9,7 +9,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-2 -2 29 30%27%3E%3Cg fill=%27%23144CCD%27%3E%3Cpath d=%27M9.447 21.464l-.039-6.979c-.002-1.612-1.409-2.918-3.143-2.918H.259c.24 1.032.52 2.69.875 3.702 1.594 4.322 4.496 7.606 8.313 10.024z%27/%3E%3Cpath d=%27M18.037 11.567c-1.568 0-2.84 1.18-2.842 2.638v11.068c3.797-2.414 6.686-5.689 8.276-10.003.362-1.012.649-2.671.889-3.703z%27/%3E%3Cpath d=%27M24.615 5.29V3.216C20.628 1.712 16.646.61 12.424 0 8.128.602 4.013 1.717 0 3.263V5.29z%27/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="../cb8/grounds.css?v=348acab3">
 <link rel="stylesheet" href="../cb8/style.css?v=f3aeb01b">
-<link rel="stylesheet" href="page.css?v=291f59a7">
+<link rel="stylesheet" href="page.css?v=e20c3885">
 </head>
 <body>
 <svg id="liquid-svg" width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="liquid" x="-4%" y="-8%" width="108%" height="116%" color-interpolation-filters="sRGB">
@@ -231,35 +231,47 @@
       <h2 class="h2 words" id="request-h">Tell us what you want to test</h2>
       <p class="copy rv" style="--i:1">Share your broker details and the client goal you want to test, and we will contact you through Telegram or WhatsApp to shape a focused pilot around it.</p>
     </div>
-    <div class="form-card rv" style="--i:2" id="form-card">
+    <!-- the form on glass: the calculator's pane, wells and step headings, 02's switch, and the rate
+         rail's white rim on a picked goal. The pane is .glass's .panel, so main.js lights it. -->
+    <div class="glass request-pane rv" style="--i:2">
+    <div class="panel form-card" id="form-card">
       <form id="partnership-form">
-        <div class="fld-grid">
-          <label class="fld"><span>Full Name</span><input name="name" autocomplete="name" required></label>
-          <label class="fld"><span>Job Title</span><input name="role" autocomplete="organization-title"></label>
-          <label class="fld"><span>Broker Name</span><input name="broker" autocomplete="organization" required></label>
-          <label class="fld"><span>Broker Website</span><input name="website" type="url" required placeholder="https://"></label>
+        <div class="step">
+          <p class="step-cap">You and your broker</p>
+          <div class="well-grid">
+            <div class="tile well"><label for="pf-name">Full name</label><input id="pf-name" name="name" autocomplete="name" required></div>
+            <div class="tile well"><label for="pf-role">Job title</label><input id="pf-role" name="role" autocomplete="organization-title"></div>
+            <div class="tile well"><label for="pf-broker">Broker name</label><input id="pf-broker" name="broker" autocomplete="organization" required></div>
+            <div class="tile well"><label for="pf-website">Broker website</label><input id="pf-website" name="website" type="url" required placeholder="https://"></div>
+            <div class="tile well wide"><label for="pf-email">Work email</label><input id="pf-email" name="email" type="email" autocomplete="email" required placeholder="name@broker.com"></div>
+          </div>
         </div>
-        <label class="fld"><span>Work Email</span><input name="email" type="email" autocomplete="email" required placeholder="name@broker.com"></label>
-        <fieldset class="fset"><legend>Preferred Contact</legend><div class="contact-toggle"><label><input type="radio" name="contact" value="telegram" checked><span>Telegram</span></label><label><input type="radio" name="contact" value="whatsapp"><span>WhatsApp</span></label></div></fieldset>
-        <label class="fld"><span id="contact-label">Telegram ID</span><input id="contact-input" name="contact_detail" required placeholder="@username" autocomplete="off"></label>
-        <fieldset class="fset"><legend>What would you like to explore?</legend><div class="goal-grid">
-          <label><input type="checkbox" name="goal" value="reactivate"><span>Reactivate inactive clients</span></label>
-          <label><input type="checkbox" name="goal" value="funded"><span>Encourage account funding</span></label>
-          <label><input type="checkbox" name="goal" value="vip"><span>Reward active or VIP clients</span></label>
-          <label><input type="checkbox" name="goal" value="retention"><span>Strengthen client retention</span></label>
-          <label><input type="checkbox" name="goal" value="campaign"><span>Promote a broker campaign</span></label>
-          <label><input type="checkbox" name="goal" value="custom"><span>Explore a custom partnership</span></label>
-        </div></fieldset>
-        <label class="fld"><span>Proposal</span><textarea name="proposal" placeholder="Briefly describe what you would like to test."></textarea></label>
+        <div class="step"><fieldset class="fset">
+          <legend class="step-cap">Preferred contact</legend>
+          <div class="contact-toggle"><label><input type="radio" name="contact" value="telegram" checked><span>Telegram</span></label><label><input type="radio" name="contact" value="whatsapp"><span>WhatsApp</span></label></div>
+          <div class="tile well"><label for="contact-input" id="contact-label">Telegram ID</label><input id="contact-input" name="contact_detail" required placeholder="@username" autocomplete="off"></div>
+        </fieldset></div>
+        <div class="step">
+          <fieldset class="fset"><legend class="step-cap">What would you like to explore?</legend><div class="goal-grid">
+            <label class="goal"><input type="checkbox" name="goal" value="reactivate"><span class="tile"><i aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m3.5 8.5 3 3 6-6.5"/></svg></i>Reactivate inactive clients</span></label>
+            <label class="goal"><input type="checkbox" name="goal" value="funded"><span class="tile"><i aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m3.5 8.5 3 3 6-6.5"/></svg></i>Encourage account funding</span></label>
+            <label class="goal"><input type="checkbox" name="goal" value="vip"><span class="tile"><i aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m3.5 8.5 3 3 6-6.5"/></svg></i>Reward active or VIP clients</span></label>
+            <label class="goal"><input type="checkbox" name="goal" value="retention"><span class="tile"><i aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m3.5 8.5 3 3 6-6.5"/></svg></i>Strengthen client retention</span></label>
+            <label class="goal"><input type="checkbox" name="goal" value="campaign"><span class="tile"><i aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m3.5 8.5 3 3 6-6.5"/></svg></i>Promote a broker campaign</span></label>
+            <label class="goal"><input type="checkbox" name="goal" value="custom"><span class="tile"><i aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m3.5 8.5 3 3 6-6.5"/></svg></i>Explore a custom partnership</span></label>
+          </div></fieldset>
+          <div class="tile well"><label for="pf-proposal">Proposal</label><textarea id="pf-proposal" name="proposal" placeholder="Briefly describe what you would like to test."></textarea></div>
+        </div>
         <label class="sr" aria-hidden="true">Company<input name="company" tabindex="-1" autocomplete="off"></label>
         <p class="form-error" id="form-error" role="alert" hidden></p>
-        <button class="btn btn-solid send" type="submit">Send Partnership Request</button>
+        <button class="btn btn-solid send" type="submit">Send Partnership Request <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </form>
       <div class="form-success" role="status" aria-live="polite"><div>
         <span class="success-mark"><span class="ico ico-success" data-lottie="../cb8/ico/tick-circle.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.3 2.3 4.7-5"/></svg></span></span>
         <h3>Request received</h3>
         <p>We will contact you through your preferred method.</p>
       </div></div>
+    </div>
     </div>
   </div>
   <!-- the footer, every page: its own navy floor under the closing screen, rounded at the
@@ -302,7 +314,7 @@
 
 <script src="../cb8/ico/lottie_light.min.js"></script>
 <script src="../cb8/main.js?v=88feb48b"></script>
-<script src="page.js?v=7752e3f1"></script>
+<script src="page.js?v=2aa7d628"></script>
 <script>if (document.documentElement.classList.contains('reduce')) document.getElementById('liquid-svg').pauseAnimations();</script>
 </body>
 </html>

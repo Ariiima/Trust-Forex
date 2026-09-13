@@ -47,7 +47,10 @@ Forms on glass use two shared controls, both in `cb8/style.css` and both built o
 tier chooser that the Referral rate rail and the Cashback calculator now share. Size a rail with
 `--cell-h` and `--cell-figure` on the row rather than restyling the cell. `cb8/main.js` turns any
 `<select>` inside a well into the page's own listbox and hides the select behind it as the value,
-so the OS never draws its list; without JS the select is untouched and still works.
+so the OS never draws its list; without JS the select is untouched and still works. The
+Partnership request form is built from the same parts (founder, 2026-09-13): its fields are wells
+in a `.glass .panel`, its contact choice is the 02 access switch, and a picked goal wears the rate
+cell's white rim.
 
 `legal/` is the exception to everything above: four documents (Terms of Service, Risk
 Disclosure, Privacy Policy, Cookie Settings) on one page and one URL space,

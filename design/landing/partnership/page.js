@@ -23,7 +23,7 @@
   const contact = document.getElementById('contact-input');
   document.querySelectorAll('input[name="contact"]').forEach((r) => r.addEventListener('change', () => {
     const wa = r.value === 'whatsapp';
-    label.textContent = wa ? 'WhatsApp Number' : 'Telegram ID';
+    label.textContent = wa ? 'WhatsApp number' : 'Telegram ID';
     contact.placeholder = wa ? '+00 000 000 0000' : '@username';
     contact.type = wa ? 'tel' : 'text';
   }));
@@ -78,7 +78,7 @@
     if (done.length !== 1 || done[0] !== steps.at(-1)) fails.push('the unlocked mark belongs on the last step, and only there');
 
     const wa = document.querySelector('input[name="contact"]:checked')?.value === 'whatsapp';
-    if (label.textContent.trim() !== (wa ? 'WhatsApp Number' : 'Telegram ID')) fails.push(`contact label reads "${label.textContent.trim()}", the checked method asks for another`);
+    if (label.textContent.trim() !== (wa ? 'WhatsApp number' : 'Telegram ID')) fails.push(`contact label reads "${label.textContent.trim()}", the checked method asks for another`);
     if (contact.placeholder !== (wa ? '+00 000 000 0000' : '@username')) fails.push(`contact placeholder "${contact.placeholder}" is not the checked method's`);
 
     const REQUIRED = ['name', 'broker', 'website', 'email', 'contact_detail'];   // server/partnership.mjs

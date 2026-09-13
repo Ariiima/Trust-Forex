@@ -103,19 +103,23 @@
 #m2 .panel.access{padding:14px}
 
 /* the switch: one sunk track, two pills inside it. The inactive pill carries no tile ground of its own,
-   so the track is the only frame and the white pill is the only lit thing in it. */
-.access-switch{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px;padding:5px;border-radius:19px;
+   so the track is the only frame and the white pill is the only lit thing in it. The request form's
+   Telegram / WhatsApp choice is the same control, written in radios instead of pressed buttons. */
+.access-switch,.contact-toggle{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px;padding:5px;border-radius:19px;
   border:1px solid rgba(255,255,255,.14);background:rgba(var(--rgb-abyss),.42);
   box-shadow:inset 0 2px 6px rgba(var(--rgb-shadow),.45),inset 0 -1px 0 rgba(255,255,255,.06)}
-.access-switch .tile{min-height:46px;border-radius:15px;font-size:var(--text-panel-title);font-weight:var(--weight-strong);
+.access-switch .tile,.contact-toggle span{min-height:46px;border-radius:15px;font-size:var(--text-panel-title);font-weight:var(--weight-strong);
   color:rgba(255,255,255,.72);border-color:transparent;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;
   transition:background-color .3s var(--ease),color .3s var(--ease),box-shadow .3s var(--ease),transform .25s var(--ease)}
 .access-switch .tile::after,.access-switch .tile::before{display:none}   /* no streak, no specular: this is a control */
-.access-switch .tile:hover{color:#fff;background:rgba(255,255,255,.08)}
-.access-switch .tile[aria-pressed=true]{background:#fff;color:var(--navy);transform:translateY(-1px);
+.access-switch .tile:hover,.contact-toggle label:hover span{color:#fff;background:rgba(255,255,255,.08)}
+.access-switch .tile[aria-pressed=true],.contact-toggle input:checked+span{background:#fff;color:var(--navy);transform:translateY(-1px);
   box-shadow:0 1px 0 rgba(255,255,255,.9),0 10px 20px -10px rgba(var(--rgb-shadow),.6)}
 .access-switch .tile[aria-pressed=true]:hover{background:#fff;transform:translateY(-1px)}
-.access-switch .tile:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:2px}
+.access-switch .tile:focus-visible,.contact-toggle input:focus-visible+span{outline:2px solid rgba(255,255,255,.85);outline-offset:2px}
+.contact-toggle label{position:relative;cursor:pointer}
+.contact-toggle input{position:absolute;opacity:0;pointer-events:none}
+.contact-toggle span{display:grid;place-items:center}
 
 /* the rule: its own card, the statement on a violet bloom with a lit pip beside the eyebrow */
 .access-summary{padding:20px 22px 22px;border:1px solid rgba(var(--rgb-violet),.34);border-radius:17px;
@@ -263,46 +267,90 @@ html.reduce .live i{animation:none}
 .request-copy{position:sticky;top:calc(var(--nav-h) + 28px)}   /* About's offset: the heading keeps its place while the form scrolls */
 .request-copy .h2{max-width:570px;color:#fff}
 .request-copy .copy{color:rgba(255,255,255,.78)}
-.form-card{padding:28px;border-radius:24px;background:#fff;color:var(--ink);box-shadow:0 34px 70px -30px rgba(var(--rgb-shadow),.8)}
-.fld-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.fld{display:block;margin-bottom:12px;padding:10px 14px 9px;border:1px solid var(--line);border-radius:13px;background:var(--paper);
-  transition:border-color .18s var(--ease),box-shadow .18s var(--ease)}
-.fld-grid .fld{margin-bottom:0}
-.fld:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--rgb-900),.12)}
-.fld>span{display:block;margin-bottom:2px;font:var(--weight-heavy) var(--text-micro)/1.5 var(--sans);letter-spacing:.04em;color:var(--muted)}
-.fld input,.fld textarea{width:100%;border:0;outline:0;border-radius:0;background:transparent;padding:2px 0 0;font:var(--weight-body) var(--text-ui)/1.5 var(--sans);color:var(--ink)}
-.fld input{min-height:25px}
-.fld textarea{min-height:88px;resize:vertical}
-.fld input::placeholder,.fld textarea::placeholder{color:var(--line-strong)}
-.fset{border:0;padding:0;margin:8px 0 20px;min-width:0}
-.fset legend{display:block;width:100%;margin-bottom:10px;padding:0;font:var(--weight-heavy) var(--text-label)/1.5 var(--sans);letter-spacing:.04em;color:var(--body)}
-.contact-toggle{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:5px;border:1px solid var(--line);border-radius:999px;background:var(--paper)}
-.contact-toggle label,.goal-grid label{position:relative;cursor:pointer}
-.contact-toggle input,.goal-grid input{position:absolute;opacity:0;pointer-events:none}
-.contact-toggle span{min-height:calc(var(--control-height) - 8px);border-radius:999px;display:grid;place-items:center;font-size:var(--text-meta);font-weight:var(--weight-strong);color:var(--muted);
-  transition:background-color .2s var(--ease),color .2s var(--ease)}
-.contact-toggle input:checked+span{background:var(--navy);color:#fff}
-.contact-toggle input:focus-visible+span,.goal-grid input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
-.goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.goal-grid span{min-height:52px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--paper);display:flex;align-items:center;gap:10px;
-  font-size:var(--text-small);font-weight:var(--weight-strong);line-height:1.3;color:var(--body);transition:background-color .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease)}
-.goal-grid span::before{content:'';width:17px;height:17px;flex:0 0 17px;display:grid;place-items:center;border:1px solid var(--line-strong);border-radius:50%;background:#fff;
-  font:var(--weight-heavy) var(--text-micro)/1 var(--sans);color:var(--navy)}
-.goal-grid label:hover span{border-color:var(--line-strong)}
-.goal-grid input:checked+span{background:var(--navy);border-color:var(--navy);color:#fff}
-.goal-grid input:checked+span::before{content:'✓';border-color:#fff}
-.send{width:100%;margin-top:4px}
-/* the button sits on the white card, not on the blue: navy, not the glass capsule */
-.form-card .btn-solid{background:var(--navy);color:#fff;border-color:var(--navy);backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none}
-.form-card .btn-solid:hover{background:var(--accent);border-color:var(--accent)}
+/* The form was a white card of grey paper fields with navy picks, drawn before the site had glass
+   (founder, 2026-09-13: "pretty old, it can use an update in style"). It now wears what every other
+   control on blue wears: the calculator's pane, wells and step headings, 02's switch, and on a picked
+   goal the rate rail's white rim and halo. Each goal takes one faint hue of its own, the way the use
+   cases and 01's rows do. The type follows the calculator's: sentence case, weight only on the headings. */
+.request-pane{min-width:0}
+/* 520px and 14px are the held cards' pane (above), not this one. And no lean: a pane that tilts under
+   the pointer moves the field being typed into. */
+.glass .panel.form-card{max-width:none;padding:24px 26px 26px;border-radius:24px;transform:none}
+#final .glass .panel::after,#final .glass .tile::after{animation-timeline:--ground}   /* the streaks travel with the screen, as the calculator's do */
+.form-card .step+.step{margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.16)}
+.form-card .step-cap{display:block;width:100%;margin:0 0 13px;padding:0;font:var(--weight-support) var(--text-panel-title)/1.2 var(--sans);letter-spacing:-.015em;color:#fff}
+.fset{min-width:0;margin:0;padding:0;border:0}
+.well-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.well-grid .wide{grid-column:1/-1}
+/* the wells: the shared control (cb8/style.css) at the calculator's padding and label. Typed text is
+   16px, not the calculator's 18px figures, and never under 16px: iOS zooms into a smaller field. */
+/* No pointer light on this pane (founder, 2026-09-13: "there's a glow when you hover, remove it"): the
+   specular under the cursor, the tile rims it lights, and the well's white hover wash all go. The
+   wells and goals also sit on a deeper ground under a quieter streak than the held cards' tiles — the
+   same fix 01's rows took (style.css, "readability"): white text wants a dark ground, and this pane
+   floats over the brightest part of the closing screen's halo. */
+.glass .panel.form-card.lit{--lit:0}
+.glass .panel.form-card.lit .tile::before{opacity:0}
+.glass .form-card .well{--streak:.06;--tint:rgba(var(--rgb-abyss),.46);--tint2:rgba(var(--rgb-abyss),.58);--rim:rgba(160,196,255,.36)}
+.glass .form-card .well:hover{--tint:rgba(var(--rgb-abyss),.46);--rim:rgba(255,255,255,.52)}
+.glass .form-card .well:focus-within{--rim:#fff}
+.form-card .well{padding:12px 16px 13px}
+.form-card .well>label{font:var(--weight-body) var(--text-small)/var(--leading-ui) var(--sans);letter-spacing:0;text-transform:none;color:rgba(255,255,255,.78)}
+.form-card .well :is(input,textarea){display:block;width:100%;margin:0;padding:0;border:0;border-radius:0;outline:0;background:transparent;box-shadow:none;
+  color:#fff;caret-color:#fff;color-scheme:dark;font:var(--weight-label) var(--text-body)/1.45 var(--sans);letter-spacing:-.01em}
+.form-card .well textarea{min-height:84px;resize:vertical}
+.form-card .well :is(input,textarea)::placeholder{color:rgba(255,255,255,.5)}
+.form-card .well input:-webkit-autofill{-webkit-text-fill-color:#fff;transition:background-color 100000s 0s}   /* the browser's autofill slab never lands on the glass */
+.fset+.well{margin-top:12px}
+/* the goals: a tile each, in one hue each. Picked, a goal carries more of its hue inside the white rim
+   and halo a picked rate cell wears, and its disc fills with the hue under a navy tick. */
+.goal-grid{--rgb-peri:157,180,255;--peri:#9DB4FF;--rgb-teal:95,210,194;--teal:#5FD2C2;--rgb-gold:245,200,107;--gold:#F5C86B;
+  --rgb-violet:185,167,255;--violet:#B9A7FF;--rgb-coral:255,158,122;--coral:#FF9E7A;--rgb-lime:183,227,107;--lime:#B7E36B;
+  display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.goal{--acc:var(--rgb-peri);--acc-solid:var(--peri);position:relative;display:flex;cursor:pointer}
+.goal:nth-child(2){--acc:var(--rgb-teal);--acc-solid:var(--teal)}
+.goal:nth-child(3){--acc:var(--rgb-gold);--acc-solid:var(--gold)}
+.goal:nth-child(4){--acc:var(--rgb-violet);--acc-solid:var(--violet)}
+.goal:nth-child(5){--acc:var(--rgb-coral);--acc-solid:var(--coral)}
+.goal:nth-child(6){--acc:var(--rgb-lime);--acc-solid:var(--lime)}
+.goal input{position:absolute;opacity:0;pointer-events:none}
+/* the hue is a wash over a dark plate, not the plate itself, so the label always reads on navy */
+.glass .goal .tile{--streak:.06;--tint:rgba(var(--acc),.2);--tint2:rgba(var(--acc),.05);--rim:rgba(var(--acc),.42);
+  background:linear-gradient(150deg,var(--tint),var(--tint2)),rgba(var(--rgb-abyss),.5);
+  flex:1;min-height:54px;padding:12px 14px;display:flex;align-items:center;gap:11px;border-radius:14px;
+  font:var(--weight-label) var(--text-ui)/1.3 var(--sans);color:#fff;
+  transition:border-color .3s var(--ease),box-shadow .3s var(--ease),transform .3s var(--ease),color .3s var(--ease)}
+.goal i{width:18px;height:18px;flex:none;display:grid;place-items:center;border:1px solid rgba(var(--acc),.7);border-radius:50%;background:rgba(var(--acc),.14);color:var(--navy);
+  transition:background-color .2s var(--ease),border-color .2s var(--ease)}
+.goal i svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:opacity .2s var(--ease)}
+.goal:hover input:not(:checked)+.tile{transform:translateY(-2px);border-color:rgba(255,255,255,.62);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(var(--rgb-shadow),.22),0 18px 32px -20px rgba(var(--rgb-shadow),.8)}
+.glass .goal input:checked+.tile{--streak:.12;--tint:rgba(var(--acc),.42);--tint2:rgba(var(--acc),.16);border-color:#fff;color:#fff;
+  box-shadow:inset 0 0 0 1px #fff,inset 0 1px 0 rgba(255,255,255,.5),0 0 0 4px rgba(255,255,255,.12),0 18px 34px -18px rgba(var(--acc),.55)}
+.goal input:checked+.tile i{background:var(--acc-solid);border-color:var(--acc-solid)}
+.goal input:checked+.tile i svg{opacity:1}
+.goal input:focus-visible+.tile{outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
+/* the send: the one white thing on the pane, as 03's action is on its screen */
+.form-card .send{width:100%;min-height:50px;margin-top:22px}
+.form-card .btn-solid{background:#fff;color:var(--navy);border-color:#fff;backdrop-filter:none;-webkit-backdrop-filter:none;
+  box-shadow:0 1px 0 rgba(255,255,255,.9),0 14px 28px -14px rgba(var(--rgb-shadow),.75);
+  transition:box-shadow .3s var(--ease),transform .25s var(--ease)}
+.form-card .btn-solid:hover{background:#fff;color:var(--navy);border-color:#fff;transform:translateY(-1px);
+  box-shadow:0 0 0 4px rgba(255,255,255,.14),0 18px 32px -14px rgba(var(--rgb-shadow),.85)}
+.form-card .btn-solid:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
 .form-card .btn-solid[disabled]{opacity:.6;pointer-events:none}
-.form-error{margin:0 0 12px;font-size:var(--text-meta);line-height:1.45;color:var(--danger)}
+/* the error: the page's red is for white paper, so on glass it is a tinted plate with light text */
+.form-error{margin:18px 0 0;padding:11px 14px;border:1px solid rgba(255,138,128,.5);border-radius:12px;background:rgba(255,110,100,.14);
+  font-size:var(--text-meta);line-height:1.45;color:#FFD6D0}
 .form-success{display:none;min-height:420px;place-items:center;text-align:center}
 .form-card.sent>form{display:none}
 .form-card.sent .form-success{display:grid}
-.success-mark{width:var(--icon-well);height:var(--icon-well);margin:0 auto 18px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:var(--success-bg)}
-.form-success h3{margin:0 0 9px;font-size:var(--text-received);line-height:1.2;letter-spacing:-.04em;font-weight:var(--weight-strong);color:var(--navy)}
-.form-success p{max-width:390px;margin:0 auto;font-size:var(--text-ui);color:var(--muted)}
+.success-mark{width:var(--icon-well);height:var(--icon-well);margin:0 auto 18px;display:grid;place-items:center;border:1px solid rgba(150,230,190,.6);border-radius:50%;
+  background:linear-gradient(150deg,rgba(72,212,138,.3),rgba(16,92,70,.3));box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 0 7px rgba(72,212,138,.12)}
+.form-success h3{margin:0 0 9px;font-size:var(--text-received);line-height:1.2;letter-spacing:-.04em;font-weight:var(--weight-strong);color:#fff}
+.form-success p{max-width:390px;margin:0 auto;font-size:var(--text-ui);color:rgba(255,255,255,.78)}
+html.reduce .goal .tile,html.reduce .goal i,html.reduce .goal i svg,html.reduce .contact-toggle span,html.reduce .form-card .btn-solid{transition:none}
+html.reduce .goal:hover input:not(:checked)+.tile,html.reduce .form-card .btn-solid:hover{transform:none}
 
 /* ---------- laptops and phones ---------- */
 @media (max-width:1023px){
@@ -336,7 +384,7 @@ html.reduce .live i{animation:none}
   .case-row h3{white-space:normal}
   .pilot-card{padding:24px}.pilot-head{grid-template-columns:40px 1fr}.pilot-head>.live{grid-column:2;width:max-content}.pilot-offer{grid-template-columns:1fr}
   .faq-q{font-size:17px}.faq-a p{font-size:15px;padding-right:10px}
-  .fld-grid,.goal-grid{grid-template-columns:1fr}.form-card{padding:18px;border-radius:18px}.send{min-height:52px}
+  .well-grid,.goal-grid{grid-template-columns:1fr}.glass .panel.form-card{padding:18px;border-radius:18px}.form-card .send{min-height:52px}
   .hero-center .btn,.pilot-copy .btn{width:100%}
 }
 
