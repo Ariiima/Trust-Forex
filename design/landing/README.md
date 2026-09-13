@@ -270,6 +270,14 @@ Two more were cut earlier and are not in the table: a sticky rail threading the 
 wireframe gives them no such element) and a glow riding a wipe across Measure as a `drop-shadow` on a
 transforming element.
 
+**The glass on the four is painted, and measured free** (founder, 2026-09-13). A backdrop-filter
+over a full screen that scales as it stacks would re-blur every frame, so the sheet is drawn and
+nothing on it moves: a translucent tint over the halos, the grid under a static blur, an edge light
+and a doubled band. The harness's `noglass` arm against what ships: −1 long frame, inside the spread.
+The rim line started at .36 white and read too shiny along the incoming step's top edge; it is .1
+now. The incoming step's rounded clip cuts that line where the corner turns. Rounding the sheet with
+the clip measured −5, also inside the spread, and was not taken once the line was dimmed.
+
 ### The benefits
 
 The column beside the heading held two cards and a bar of all four rates. The bar went first: the
