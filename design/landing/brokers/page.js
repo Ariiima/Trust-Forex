@@ -9,8 +9,8 @@
   const PENDING = 'Data pending';
   const pending = (name) => ({
     name,
-    products: PENDING, accounts: PENDING, spread: PENDING, leverage: PENDING, cashback: PENDING,
-    platforms: PENDING, connection: PENDING,
+    products: 'Broker data pending', accounts: PENDING, spread: PENDING, leverage: PENDING, cashback: PENDING,
+    platforms: PENDING,
     stdDeposit: PENDING, stdLeverage: PENDING, stdSpread: PENDING, stdCommission: PENDING, stdPlatforms: PENDING,
     ecnDeposit: PENDING, ecnLeverage: PENDING, ecnSpread: PENDING, ecnCommission: PENDING, ecnPlatforms: PENDING,
   });
@@ -26,7 +26,6 @@
       leverage: 'Up to 1:2000',
       cashback: 'Up to $2.40 / lot',
       platforms: 'MT4, MT5, and GTC Go',
-      connection: 'New accounts through TrustForex only',
       stdDeposit: 'No minimum', stdLeverage: 'Up to 1:2000', stdSpread: 'Average 1.0 pips',
       stdCommission: '$0', stdPlatforms: 'MT4, MT5, GTC Go',
       ecnDeposit: 'From $3,000', ecnLeverage: 'Up to 1:2000', ecnSpread: 'From 0.0 pips',
@@ -39,7 +38,7 @@
   /* which element takes which field */
   const BIND = {
     ovBroker: 'name', ovProducts: 'products', ovAccounts: 'accounts', ovSpread: 'spread',
-    ovLeverage: 'leverage', ovCashback: 'cashback', ovPlatforms: 'platforms', ovConnection: 'connection',
+    ovLeverage: 'leverage', ovCashback: 'cashback', ovPlatforms: 'platforms',
     stdDeposit: 'stdDeposit', stdLeverage: 'stdLeverage', stdSpread: 'stdSpread',
     stdCommission: 'stdCommission', stdPlatforms: 'stdPlatforms',
     ecnDeposit: 'ecnDeposit', ecnLeverage: 'ecnLeverage', ecnSpread: 'ecnSpread',
@@ -50,7 +49,7 @@
   const dots = [...document.querySelectorAll('.broker-dot')];
   const name = document.getElementById('h1');
   /* the published sections, kept as they ship so returning to GTCFX restores the real markup */
-  const SECTIONS = { regGrid: 'Regulation', rateTables: 'Cashback rates', bonusGrid: 'Bonus offers' };
+  const SECTIONS = { regGrid: 'Regulation data', rateTables: 'Cashback rates', bonusGrid: 'Bonus data' };
   const published = Object.fromEntries(Object.keys(SECTIONS).map((id) => [id, document.getElementById(id).innerHTML]));
   if (!cards.length) return;
 
@@ -75,9 +74,9 @@
     /* the three broker-data sections: the published markup, or one line saying whose record is still coming */
     Object.entries(SECTIONS).forEach(([id, what]) => {
       document.getElementById(id).innerHTML = key === 'gtcfx' ? published[id]
-        : `<div class="placeholder">${what} for ${data.name} will be published here.</div>`;
+        : `<div class="placeholder">${what} for ${data.name} will appear here.</div>`;
     });
-    document.title = `${data.name} — Partner Broker — TrustForex`;
+    document.title = `${data.name} Broker Details | TrustForex`;
   };
 
   const render = (i, push = true) => {

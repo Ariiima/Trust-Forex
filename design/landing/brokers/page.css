@@ -108,6 +108,14 @@ html.reduce .broker-card,html.reduce .broker-dot{transition:none}
    cb8 system: the records scroll plainly and the nav is the only chrome over them. */
 .records{position:relative}
 
+/* ---------- the page ends on the footer, on paper ----------
+   The closing screen went (founder, 2026-09-13): a full screen of blue holding only the button Connect's
+   pane already ends on. The section carries no id, as Legal's does not, so base.css's #final blue and
+   full height never apply. The floor meets Connect's own bottom space, with no 76px band of paper
+   above it, and without the upward shadow, which on paper is a grey haze rather than depth. */
+.footer-only{background:var(--paper);color:var(--muted)}
+.footer-only .fsig{margin-top:0;box-shadow:none}
+
 /* ---------- one corner per pane ----------
    A paper pane is three boxes: the element carries the border, ::after carries the white fill and
    ::before carries the tray behind it (style.css). Both pseudos hard-code the system radius — the fill
@@ -119,7 +127,7 @@ html.reduce .broker-card,html.reduce .broker-dot{transition:none}
 
 /* ---------- every record opens the same way: heading, one line ----------
    The number above each heading went (founder, 2026-09-13): the records open on their heading. The
-   connection steps keep their 01–04, which are the steps' order and not the record's. */
+   connection steps keep their numbers, which are the steps' order and not the record's. */
 .data-head{max-width:700px;margin-bottom:var(--block-space)}
 .data-head.centred{max-width:780px;margin-inline:auto;text-align:center}
 .data-head .copy{max-width:640px}
@@ -139,12 +147,12 @@ html.reduce .broker-card,html.reduce .broker-dot{transition:none}
    Five cards in a row was the wrong shape twice over. It left the record standing in 391px of a 956px
    window with a heading floating over a thin strip (founder, 2026-09-12: "looks dead and there's too
    much empty space"), and at 213px each the cards could not hold an entity name without breaking it
-   over three lines. The record now takes the layout the Connect screen already uses at the foot of this
-   page — .record-grid: the copy on the paper at the left, one pane at the right — so the two ends of
-   the page rhyme. The pane is the blue object on a white field, which is the same balance the Overview
+   over three lines. The record now takes .record-grid: the copy on the paper at the left, one pane at
+   the right — the layout the Connect screen had at the foot of this page until it became one card
+   (record 8). The pane is the blue object on a white field, which is the same balance the Overview
    record was given. Five rows, each the full width of the pane: the authority, where it licenses, the
    entity that holds it, and the number, which is a chip because it is the thing a reader checks. */
-/* base.css splits .record-grid 1.15 / .85 for Connect, whose rows are one short line each. A licence
+/* base.css splits .record-grid 1.15 / .85 for step lists, whose rows are one short line each. A licence
    row is four facts wide, and at .85 the entity broke over two lines in three rows out of five. The
    pane takes the larger half here; the copy beside it is a heading and two lines and does not need it. */
 /* min-width, not a bare rule: an id beats base.css's one-column .record-grid at every width, and the
@@ -155,7 +163,8 @@ html.reduce .broker-card,html.reduce .broker-dot{transition:none}
 @media (min-width:1024px){#regulation .record-grid,#markets .record-grid{grid-template-columns:minmax(0,.95fr) minmax(520px,1.05fr)}}
 .reg-stack{height:100%}
 .reg-panel{min-height:min(560px,60vh)}
-/* the blue cards drop the ground's 48px grid (style.css .rayfield.k::before); the section grounds keep it */
+/* the blue cards drop the ground's 48px grid (style.css .rayfield.k::before); the section grounds keep it, and so
+   does Connect's pane (record 8) */
 .value-panel .rayfield.k::before{content:none}
 .record-copy .data-head{margin-bottom:0}
 /* the footnote is an aside to the record, not a second paragraph of it: it sits off the copy on its
@@ -374,6 +383,40 @@ html.reduce .market-row::before,html.reduce .market-row::after,html.reduce .mark
   transition:border-color .35s var(--ease),box-shadow .35s var(--ease)}
 html.reduce .bonus-line::before,html.reduce .bonus-num{transition:none}
 
+/* ---------- 8 · connect: the four steps across one blue pane, the button in its foot ----------
+   The record was copy and a button on the paper at the left and the four steps down a pane at the right —
+   Regulation's shape. The founder's reference (2026-09-13) sets the heading over one card instead: the steps
+   side by side, a number over each line, and the button filling a strip along the card's foot. The pane keeps
+   the page's blue glass; the numbers are the pane's own lit beads, 1–4 like every numbered list on the page.
+   The first cut held each step at 208px with its number and its line pushed to the two ends, which left
+   most of the pane empty (founder, 2026-09-13: "using too much space"). A step is its content's height now,
+   the number over the line at the gap a label keeps from its value. */
+/* the heading runs on one line over the card, as drawn (.data-head's 700px broke it in two), and sits as close
+   to it as Accounts' heading sits to its panes */
+#connect .data-head{max-width:none;margin-bottom:1.625rem}
+.connect-panel{height:auto;min-height:0;margin-left:0;grid-auto-rows:auto}
+/* the ground's 48px grid comes back on this one pane (founder, 2026-09-13): the lines every blue ground on the
+   site carries (style.css), which the other panes on this page drop */
+.connect-panel .rayfield.k::before{content:''}
+.connect-steps{position:relative;z-index:1;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.connect-step{padding:20px 18px 22px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.connect-step .value-index{flex:none}
+/* the pane's rule turned upright: a light edge with a dark one beside it, as .value-row draws it across */
+.connect-step+.connect-step{border-left:1px solid rgba(255,255,255,.26);box-shadow:inset 1px 0 0 rgba(var(--rgb-shadow),.22)}
+.connect-step strong{max-width:230px;font-size:var(--text-row-title);line-height:var(--leading-step);font-weight:var(--weight-strong);letter-spacing:-.02em;
+  text-wrap:balance;text-shadow:0 1px 2px rgba(var(--rgb-shadow),.45)}
+/* the foot is a darker strip of the same glass, and the button fills it with the pane's corner run inward */
+.connect-foot{position:relative;z-index:1;padding:10px;border-top:1px solid rgba(255,255,255,.26);background:rgba(var(--rgb-shadow),.24)}
+.connect-foot .btn{width:100%;min-height:48px;border-radius:14px}
+/* the one white thing on the pane, as the partnership form's send is on its card */
+.connect-foot .btn-solid{background:#fff;color:var(--navy);border-color:#fff;
+  box-shadow:0 1px 0 rgba(255,255,255,.9),0 14px 28px -14px rgba(var(--rgb-shadow),.75);
+  transition:box-shadow .3s var(--ease),transform .25s var(--ease)}
+.connect-foot .btn-solid:hover{background:#fff;color:var(--navy);border-color:#fff;transform:translateY(-1px);
+  box-shadow:0 0 0 4px rgba(255,255,255,.14),0 18px 32px -14px rgba(var(--rgb-shadow),.85)}
+.connect-foot .btn-solid:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
+html.reduce .connect-foot .btn-solid,html.reduce .connect-foot .btn-solid:hover{transition:none;transform:none}
+
 /* ---------- a broker whose record is not published yet: the section says so, in its own ground's register ---------- */
 .placeholder{padding:34px 26px;border-radius:20px;border:1px dashed var(--line-strong);background:rgba(255,255,255,.5);
   text-align:center;font-size:var(--text-panel-title);color:var(--muted)}
@@ -403,6 +446,10 @@ body{font-variant-numeric:normal}
   #cashback .note-panel{grid-template-columns:1fr}
   #cashback .note-panel h3+.note-line+.note-line{border-top:1px solid rgba(255,255,255,.14)}
   #cashback .note-line:nth-child(odd){border-left:0}
+  /* four steps across a tablet break every line three times: two rows of two, the rule between the rows */
+  .connect-steps{grid-template-columns:1fr 1fr}
+  .connect-step:nth-child(odd){border-left:0;box-shadow:none}
+  .connect-step:nth-child(n+3){border-top:1px solid rgba(255,255,255,.26)}
 }
 @media (max-width:560px){
   .broker-card{padding:0 18px;border-radius:20px}
@@ -426,4 +473,9 @@ body{font-variant-numeric:normal}
   .rate-table thead b{display:block}
   .rate-table :is(tbody th,td){font-size:var(--text-small)}
   .note-line{padding:13px 16px}
+  /* on a phone the steps are the list they were: one per row, the number beside its line */
+  .connect-steps{grid-template-columns:1fr}
+  .connect-step{padding:14px 16px;flex-direction:row;gap:14px;text-align:left}
+  .connect-step+.connect-step{border-left:0;box-shadow:none;border-top:1px solid rgba(255,255,255,.26)}
+  .connect-step strong{max-width:none;font-size:var(--text-body)}
 }

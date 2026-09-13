@@ -457,13 +457,27 @@ its own colours (the founder's reference, 2026-09-13), and dots on a glass capsu
 broker name and the fact marquee were cut. A carousel on a full screen of blue read empty; four
 glass figure tiles and a CTA under it were tried and cut the same day, and the hero band now
 shrinks to the rail instead of holding a screen. Then the records: overview, regulation,
-accounts, markets, cashback, bonuses, and the Cashback page's own four connection steps.
+accounts, markets, cashback, bonuses, and the Cashback page's own four connection steps. Connect
+was Regulation's shape, copy and button at the left and the steps down a pane at the right; the
+founder's reference (2026-09-13) makes it the heading over one blue pane, the four steps side by
+side and the button filling the pane's foot. Two rows of two below 1024px, one list below 560px.
+The pane carries the ground's 48px grid, the one blue pane on the page that does, and each step
+takes its content's height; 208px steps with the number and line at opposite ends read as empty.
 
 The structure is the founder's Broker Profile skeleton, kept as drawn; the treatment is cb8's.
 Two departures, both commented in `page.css`: the records **flow** at their own height rather
 than hold a screen each (a licence table that pins for 30vh is a page you cannot read), and
 anything a `.block` puts straight on its ground is lifted to `z-index:1` — base.css does that for
 `.mech-grid` alone, and a heading placed directly in a block paints *under* the rayfield without it.
+
+The words are that skeleton's too, line for line (founder, 2026-09-13: "match the text 1-on-1").
+That cut the hero's label, the intro line under every record heading, the Regulation footnote, the
+Connect paragraph, and the closing screen's headline and lede. The closing screen then held only
+its button, a full screen of blue with one pill in it, and went too (founder, 2026-09-13): Connect's
+pane already ends on the same button, so the page ends on the footer, on paper, as Legal does.
+Three places keep the design over the skeleton: each account card lists the rows that differ first,
+the Markets pane has no "Market / Examples" column head, and the rail keeps GTCFX, XM and XS where
+the skeleton has placeholder brokers.
 
 `page.js` holds the broker table. GTCFX is published; a broker with no record yet keeps the same
 shape with its figures pending, and regulation, rates and bonuses say so rather than leaving the
