@@ -120,13 +120,9 @@ html.reduce .broker-card,html.reduce .broker-dot{transition:none}
    inherits the pane's corner now, and the tray is that corner plus its own offset. */
 .screen-paper .panel::after{border-radius:inherit}
 
-/* ---------- every record opens the same way: number, heading, one line ----------
-   The white record's number is the paper record's number. cb8 writes `.mech.white .page-number` as a
-   chip — a background and a border — because on Results it IS a chip (`width:max-content`, inline-flex,
-   a label beside the figure). Here it is the bare word "01" on base.css's `display:block`, so that
-   background painted a pale bar the full width of the block. No chip, and the accent the paper records
-   already give 02, 04 and 06: eight numbers down the page, one treatment. */
-.white .data-head .page-number{background:none;border-color:transparent;color:var(--accent)}
+/* ---------- every record opens the same way: heading, one line ----------
+   The number above each heading went (founder, 2026-09-13): the records open on their heading. The
+   connection steps keep their 01–04, which are the steps' order and not the record's. */
 .data-head{max-width:700px;margin-bottom:var(--block-space)}
 .data-head.centred{max-width:780px;margin-inline:auto;text-align:center}
 .data-head .copy{max-width:640px}
@@ -157,7 +153,7 @@ html.reduce .broker-card,html.reduce .broker-dot{transition:none}
 /* min-width, not a bare rule: an id beats base.css's one-column .record-grid at every width, and the
    520px floor then held a 390px document open sideways (the QA sweep's overflow check). */
 /* Markets takes the same split, because it is the same record: two panes of the same width at the same
-   side of the page, one at 02 and one at 04. Its rows are shorter than a licence's, so the floor is the
+   side of the page, one in Regulation and one here. Its rows are shorter than a licence's, so the floor is the
    one that keeps the two panes the same object and not the one its own content needs. */
 @media (min-width:1024px){#regulation .record-grid,#markets .record-grid{grid-template-columns:minmax(0,.95fr) minmax(520px,1.05fr)}}
 .reg-stack{height:100%}
@@ -194,7 +190,6 @@ html.reduce .broker-card,html.reduce .broker-dot{transition:none}
    fainter tile with a white figure, so the pair reads as "same rule, different price" before a word of
    it is read. Green stays the one state colour on this page: the eligibility pill, and nothing else. */
 #accounts .data-head{margin-bottom:1.625rem}
-#accounts .data-head .page-number{margin-bottom:12px}
 #accounts .data-head .h2{margin-bottom:12px}
 .accounts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:start}
 .account-pane{display:grid;gap:.375rem;align-content:start;padding:16px 16px 14px;
