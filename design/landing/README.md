@@ -269,10 +269,18 @@ two loops meeting at "you", a ribbon whose thickness was the share, and the one 
 two messages the bot sends when a benefit pays, landing in the Earning balance. Round three told that
 one story five ways. The version that shipped (F3) has no card in it at all.
 
-Two notifications, newest on top, then the balance as the largest type in the column. Every word in
-them is the product's own: the bot's `cashback_earned` and `referral_earned` templates in
-`server/admin.mjs` (with the broker name dropped), and the app's "Withdraw earnings" and "Use earning
-balance". The amounts are an example, and the line under the column says so.
+Two notifications, newest on top, then the balance as the largest type in the column. The
+notifications cut the bot's `cashback_earned` and `referral_earned` templates in `server/admin.mjs`
+to one short sentence each, amount first ("$20.00 Cashback added."). The full sentences ran two lines
+each and buried the amount (founder, 2026-09-13). The amounts are an example. The line under the
+column that said so was cut the same day.
+
+Under the balance, the two benefits and the four rates came back the same day, from the founder's
+reference of the column that was cut. They return as two rows between hairlines and one blue strip,
+not as cards, so the notifications stay the only raised surfaces. The strip repeats the Plans block's
+three rates, which is what cut the bar the first time, and adds Standard, the no-plan rate the Plans
+block does not show. `page.js ?check=1` holds all four to the app's rates. The rows replaced
+"Withdraw earnings" and "Use earning balance", dropped to keep the column short.
 
 The balance is a counter. `page.js` splits it into one strip of 0–9 per digit, and CSS slides each
 strip to its value, so going from $20.00 to $56.00 rolls the ones digit through 1–5 on the way to 6.

@@ -165,11 +165,19 @@
       if (w !== cents(amounts[i])) fails.push(`the ${b} bar is weighted ${w}, its amount is ${amounts[i]}`);
     });
   }
-  // a plan's rate on the pricing block must be the rate the app pays on that plan (src/screens/plans/plans-data.ts)
-  const SHARE = { silver: '15%', gold: '20%', diamond: '30%' };
+  // a rate on the pricing block or the benefits' strip must be the rate the app pays on that plan
+  // (src/screens/plans/plans-data.ts); Standard is no plan at all (server/ledger.mjs TIER_PCT.none)
+  const SHARE = { standard: '10%', silver: '15%', gold: '20%', diamond: '30%' };
   document.querySelectorAll('.plan-col').forEach((col) => {
     const shown = col.querySelector('.plan-rate b').textContent.trim();
     if (SHARE[col.dataset.tier] !== shown) fails.push(`the ${col.dataset.tier} plan shows ${shown}, the app pays ${SHARE[col.dataset.tier]}`);
+  });
+  const points = [...document.querySelectorAll('.rate-points li')];
+  const tiers = points.map((li) => li.dataset.tier).join(', ');
+  if (tiers !== Object.keys(SHARE).join(', ')) fails.push(`the rate strip lists ${tiers}, the app has ${Object.keys(SHARE).join(', ')}`);
+  points.forEach((li) => {
+    const shown = li.querySelector('b').textContent.trim();
+    if (SHARE[li.dataset.tier] !== shown) fails.push(`the rate strip shows ${li.dataset.tier} at ${shown}, the app pays ${SHARE[li.dataset.tier]}`);
   });
   // the monthly equivalents must divide out of the prices the app charges
   const EQUIV = [['$200', 1, '$200'], ['$499', 3, '≈ $166'], ['$1,699', 12, '≈ $142']];

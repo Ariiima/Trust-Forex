@@ -9,7 +9,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-2 -2 29 30%27%3E%3Cg fill=%27%23144CCD%27%3E%3Cpath d=%27M9.447 21.464l-.039-6.979c-.002-1.612-1.409-2.918-3.143-2.918H.259c.24 1.032.52 2.69.875 3.702 1.594 4.322 4.496 7.606 8.313 10.024z%27/%3E%3Cpath d=%27M18.037 11.567c-1.568 0-2.84 1.18-2.842 2.638v11.068c3.797-2.414 6.686-5.689 8.276-10.003.362-1.012.649-2.671.889-3.703z%27/%3E%3Cpath d=%27M24.615 5.29V3.216C20.628 1.712 16.646.61 12.424 0 8.128.602 4.013 1.717 0 3.263V5.29z%27/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="../cb8/grounds.css?v=348acab3">
 <link rel="stylesheet" href="../cb8/style.css?v=da8ae213">
-<link rel="stylesheet" href="page.css?v=e8e2feec">
+<link rel="stylesheet" href="page.css?v=ae303498">
 </head>
 <body>
 <svg id="liquid-svg" width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="liquid" x="-4%" y="-8%" width="108%" height="116%" color-interpolation-filters="sRGB">
@@ -190,9 +190,10 @@
 
 <!-- 10 · BENEFITS — the benefit as the customer meets it: the two notifications the bot sends when
      Cashback or Referral pays, and the Earning balance both land in (home/benefits-lab.html, round
-     three, F3). The words inside the notifications are the bot's own templates (server/admin.mjs
-     cashback_earned / referral_earned, the broker name dropped); the uses are the app's own labels.
-     The amounts are an example, and the foot line says so; page.js ?check=1 proves they add up. -->
+     three, F3). The notifications cut the bot's templates (server/admin.mjs cashback_earned /
+     referral_earned) to one short sentence each, amount first. Under the balance sit the two benefits
+     and the four shared rates, which page.js ?check=1 holds to the app's own. The amounts are an
+     example; the same check proves they add up. -->
 <section class="screen benefits-section" id="benefits" data-name="Benefits" aria-labelledby="benefits-h">
   <div class="wrap">
     <div class="benefits-intro">
@@ -203,13 +204,13 @@
       <div class="feed-slot" data-benefit="referral"><div>
         <div class="feed-note">
           <span class="feed-avatar" aria-hidden="true"><svg viewBox="-2 -2 29 30"><path d="M9.447 21.464l-.039-6.979c-.002-1.612-1.409-2.918-3.143-2.918H.259c.24 1.032.52 2.69.875 3.702 1.594 4.322 4.496 7.606 8.313 10.024z"/><path d="M18.037 11.567c-1.568 0-2.84 1.18-2.842 2.638v11.068c3.797-2.414 6.686-5.689 8.276-10.003.362-1.012.649-2.671.889-3.703z"/><path d="M24.615 5.29V3.216C20.628 1.712 16.646.61 12.424 0 8.128.602 4.013 1.717 0 3.263V5.29z"/></svg></span>
-          <div><p class="feed-head"><b>Trust Forex</b><time>11:02</time></p><p class="feed-text"><b>&#x1F91D; Referral Paid.</b> Your Referral reward of $36.00 from user 1002 has been added to your Earning Balance.</p></div>
+          <div><p class="feed-head"><b>Trust Forex</b><time>11:02</time></p><p class="feed-text">&#x1F91D; $36.00 Referral reward added.</p></div>
         </div>
       </div></div>
       <div class="feed-slot" data-benefit="cashback"><div>
         <div class="feed-note">
           <span class="feed-avatar" aria-hidden="true"><svg viewBox="-2 -2 29 30"><path d="M9.447 21.464l-.039-6.979c-.002-1.612-1.409-2.918-3.143-2.918H.259c.24 1.032.52 2.69.875 3.702 1.594 4.322 4.496 7.606 8.313 10.024z"/><path d="M18.037 11.567c-1.568 0-2.84 1.18-2.842 2.638v11.068c3.797-2.414 6.686-5.689 8.276-10.003.362-1.012.649-2.671.889-3.703z"/><path d="M24.615 5.29V3.216C20.628 1.712 16.646.61 12.424 0 8.128.602 4.013 1.717 0 3.263V5.29z"/></svg></span>
-          <div><p class="feed-head"><b>Trust Forex</b><time>09:41</time></p><p class="feed-text"><b>&#x1F4B0; Cashback Paid.</b> Your Cashback of $20.00 has been added to your Earning Balance.</p></div>
+          <div><p class="feed-head"><b>Trust Forex</b><time>09:41</time></p><p class="feed-text">&#x1F4B0; $20.00 Cashback added.</p></div>
         </div>
       </div></div>
       <div class="feed-balance">
@@ -217,16 +218,30 @@
         <p class="feed-figure" id="feed-figure">$56.00</p>
         <div class="feed-bar" aria-hidden="true"><i data-benefit="cashback" style="--w:20"></i><i data-benefit="referral" style="--w:36"></i></div>
         <p class="feed-legend"><span data-benefit="cashback"><i></i>Cashback <b>$20.00</b></span><span data-benefit="referral"><i></i>Referral <b>$36.00</b></span></p>
-        <ul class="feed-uses">
-          <li><span class="ico" data-lottie="../cb8/ico/send.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21 4-7.5 16-3.8-6.1L4 10.7 21 4Z"/><path d="m9.7 13.9 4.2-3.8"/></svg></span>Withdraw earnings</li>
-          <li><span class="ico" data-lottie="../cb8/ico/wallet-check.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A3.5 3.5 0 0 1 6.5 5h11A3.5 3.5 0 0 1 21 8.5v8a3.5 3.5 0 0 1-3.5 3.5h-11A3.5 3.5 0 0 1 3 16.5v-8Z"/><path d="M15 12.5h6M9 12.5l1.8 1.8 3.2-3.5"/></svg></span>Use earning balance on your next plan</li>
+      </div>
+      <div class="benefit-rows">
+        <article class="benefit-row" data-benefit="cashback">
+          <span class="ico benefit-icon" data-lottie="../cb8/ico/dollar-receive.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h14.5A1.5 1.5 0 0 1 20 9v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18V6a1.5 1.5 0 0 1 1.5-1.5H17"/><path d="M15 11h5v5h-5a2.5 2.5 0 0 1 0-5Z"/></svg></span>
+          <h3 class="benefit-name">Cashback</h3>
+          <p class="benefit-desc">A share of broker revenue from your own trading.</p>
+          <a class="benefit-link" href="../cb8/" aria-label="How it works, Cashback">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+        <article class="benefit-row" data-benefit="referral">
+          <span class="ico benefit-icon" data-lottie="../cb8/ico/add-user.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 19c.5-3.2 2.2-5 5-5s4.5 1.8 5 5M14 15c.8-.7 1.8-1 3-1 2.3 0 3.7 1.4 4 4"/></svg></span>
+          <h3 class="benefit-name">Referral</h3>
+          <p class="benefit-desc">A share of revenue from the traders you refer.</p>
+          <a class="benefit-link" href="../referral/" aria-label="How it works, Referral">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+      </div>
+      <div class="rate-strip">
+        <p class="rate-label" id="rate-label">Your share by plan</p>
+        <ul class="rate-points" aria-labelledby="rate-label">
+          <li data-tier="standard"><small>Standard</small><b>10%</b></li>
+          <li data-tier="silver"><small>Silver</small><b>15%</b></li>
+          <li data-tier="gold"><small>Gold</small><b>20%</b></li>
+          <li data-tier="diamond"><small>Diamond</small><b>30%</b></li>
         </ul>
       </div>
-      <div class="feed-links">
-        <a class="benefit-link" data-benefit="cashback" href="../cb8/">How Cashback works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-        <a class="benefit-link" data-benefit="referral" href="../referral/">How Referral works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-      </div>
-      <p class="feed-foot">Notifications as the Trust Forex bot words them; the amounts are an example.</p>
     </div>
   </div>
 </section>
@@ -358,7 +373,7 @@
 
 <script src="../cb8/ico/lottie_light.min.js"></script>
 <script src="../cb8/main.js?v=88feb48b"></script>
-<script src="page.js?v=f120c598"></script>
+<script src="page.js?v=8749e86e"></script>
 <script>if (document.documentElement.classList.contains('reduce')) document.getElementById('liquid-svg').pauseAnimations();</script>
 </body>
 </html>
