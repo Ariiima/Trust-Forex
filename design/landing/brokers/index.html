@@ -10,7 +10,7 @@
 <style>html{background:#0C2E7B}</style>   <!-- the ground, before any stylesheet arrives: a slow first paint is the brand blue, not a white page -->
 <link rel="stylesheet" href="../cb8/grounds.css?v=348acab3">
 <link rel="stylesheet" href="../cb8/style.css?v=e8c9e91b">
-<link rel="stylesheet" href="page.css?v=868673df">
+<link rel="stylesheet" href="page.css?v=8d1f7a17">
 </head>
 <body>
 <svg id="liquid-svg" width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="liquid" x="-4%" y="-8%" width="108%" height="116%" color-interpolation-filters="sRGB">
@@ -230,34 +230,29 @@
     <h2 class="h2 words" id="cb-h">Cashback</h2>
     <p class="copy rv" style="--i:1">What one eligible standard lot pays you at each Signal plan's share. These are final figures, not a rebate to be split again.</p>
   </div>
-  <!-- Turned on its side. The same twenty-four figures, but a plan is a row and a market is a column, so
-       the four plans stack into one ladder per account. The accounts stand one over the other, full width,
-       so a market added later is one more column with room for it: add its <col class="mk">, its <th>
-       and one <td> per plan, and the markets re-split the width on their own. -->
+  <!-- A market is a row and a plan is a column, as the founder's table has it (2026-09-13). The four plans
+       are the fixed axis, so they take the columns; markets are the axis that grows, so a market added later
+       is one more <tr>: its name in the <th> and one figure per plan, No plan to Diamond. -->
   <div id="rateTables" class="rate-grid rv" style="--i:2">
     <div class="panel rate-pane">
       <div class="rate-head"><h3>Standard Account</h3><span>Final cashback for 1 eligible standard lot</span></div>
       <div class="rate-scroll"><table class="rate-table">
-        <colgroup><col><col class="mk"><col class="mk"><col class="mk"></colgroup>
-        <thead><tr><th scope="col">Plan</th><th scope="col">Gold — XAUUSD</th><th scope="col">Forex</th><th scope="col">Other markets</th></tr></thead>
+        <thead><tr><th scope="col">Symbol / Market</th><th scope="col">No plan <b>10%</b></th><th scope="col">Silver <b>15%</b></th><th scope="col">Gold <b>20%</b></th><th scope="col">Diamond <b>30%</b></th></tr></thead>
         <tbody>
-          <tr data-tier="standard"><th scope="row" class="tile tier"><small>No plan</small><b>10%</b></th><td>$0.80</td><td>$0.60</td><td>$0.60</td></tr>
-          <tr data-tier="silver"><th scope="row" class="tile tier"><small>Silver</small><b>15%</b></th><td>$1.20</td><td>$0.90</td><td>$0.90</td></tr>
-          <tr data-tier="gold"><th scope="row" class="tile tier"><small>Gold</small><b>20%</b></th><td>$1.60</td><td>$1.20</td><td>$1.20</td></tr>
-          <tr data-tier="diamond" class="peak"><th scope="row" class="tile tier"><small>Diamond</small><b>30%</b></th><td>$2.40</td><td>$1.80</td><td>$1.80</td></tr>
+          <tr><th scope="row">Gold — XAUUSD</th><td>$0.80</td><td>$1.20</td><td>$1.60</td><td>$2.40</td></tr>
+          <tr><th scope="row">Forex</th><td>$0.60</td><td>$0.90</td><td>$1.20</td><td>$1.80</td></tr>
+          <tr><th scope="row">Other markets</th><td>$0.60</td><td>$0.90</td><td>$1.20</td><td>$1.80</td></tr>
         </tbody>
       </table></div>
     </div>
     <div class="panel rate-pane">
       <div class="rate-head"><h3>ECN Account</h3><span>Final cashback for 1 eligible standard lot</span></div>
       <div class="rate-scroll"><table class="rate-table">
-        <colgroup><col><col class="mk"><col class="mk"><col class="mk"></colgroup>
-        <thead><tr><th scope="col">Plan</th><th scope="col">Gold — XAUUSD</th><th scope="col">Forex</th><th scope="col">Other markets</th></tr></thead>
+        <thead><tr><th scope="col">Symbol / Market</th><th scope="col">No plan <b>10%</b></th><th scope="col">Silver <b>15%</b></th><th scope="col">Gold <b>20%</b></th><th scope="col">Diamond <b>30%</b></th></tr></thead>
         <tbody>
-          <tr data-tier="standard"><th scope="row" class="tile tier"><small>No plan</small><b>10%</b></th><td>$0.20</td><td>$0.10</td><td>$0.10</td></tr>
-          <tr data-tier="silver"><th scope="row" class="tile tier"><small>Silver</small><b>15%</b></th><td>$0.30</td><td>$0.15</td><td>$0.15</td></tr>
-          <tr data-tier="gold"><th scope="row" class="tile tier"><small>Gold</small><b>20%</b></th><td>$0.40</td><td>$0.20</td><td>$0.20</td></tr>
-          <tr data-tier="diamond" class="peak"><th scope="row" class="tile tier"><small>Diamond</small><b>30%</b></th><td>$0.60</td><td>$0.30</td><td>$0.30</td></tr>
+          <tr><th scope="row">Gold — XAUUSD</th><td>$0.20</td><td>$0.30</td><td>$0.40</td><td>$0.60</td></tr>
+          <tr><th scope="row">Forex</th><td>$0.10</td><td>$0.15</td><td>$0.20</td><td>$0.30</td></tr>
+          <tr><th scope="row">Other markets</th><td>$0.10</td><td>$0.15</td><td>$0.20</td><td>$0.30</td></tr>
         </tbody>
       </table></div>
     </div>
@@ -373,7 +368,7 @@
 <button class="to-top" id="toTop" type="button" aria-label="Back to top"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 
 <script src="../cb8/main.js?v=88feb48b"></script>
-<script src="page.js?v=2f033333"></script>
+<script src="page.js?v=4461cd55"></script>
 <script>if (document.documentElement.classList.contains('reduce')) document.getElementById('liquid-svg').pauseAnimations();</script>
 </body>
 </html>

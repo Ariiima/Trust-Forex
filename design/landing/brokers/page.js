@@ -189,25 +189,22 @@
       fails.push('the published broker is showing no rate table');
     }
 
-    /* the table is on its side now: a row is a plan, a column is a market. So the share arithmetic is read
-       DOWN a column — every plan pays its share of the no-plan figure for that market — and the plan names
-       its own row through data-tier, which is what carries the row's metal. */
+    /* a row is a market, a column is a plan. So the share arithmetic is read ACROSS a row — every plan pays
+       its share of that market's no-plan figure — and each plan's share is read from its column head. The
+       last column is the one page.css fills, so it has to be the top share. */
     let top = 0;
     tables.forEach((table) => {
       const where = table.closest('.rate-pane').querySelector('.rate-head h3').textContent.trim();
-      const markets = [...table.querySelectorAll('thead th')].slice(1).map((th) => th.textContent.trim());
-      const rows = [...table.querySelectorAll('tbody tr')];
-      const shares = rows.map((r) => parseInt(r.querySelector('.tier b').textContent, 10));
+      const shares = [...table.querySelectorAll('thead th b')].map((b) => parseInt(b.textContent, 10));
       if (shares.join() !== '10,15,20,30') fails.push(`${where}: the plan shares read ${shares.join('/')}, not 10/15/20/30`);
-      if (rows.some((r) => !r.dataset.tier)) fails.push(`${where}: a plan row carries no data-tier, so it loses its metal`);
-      const grid = rows.map((r) => [...r.querySelectorAll('td')].map((td) => cents(td.textContent)));
-      grid.flat().forEach((c) => { if (c > top) top = c; });
-      if (grid.some((r) => r.length !== markets.length))
-        return fails.push(`${where}: a plan row carries ${grid.find((r) => r.length !== markets.length).length} figures for ${markets.length} markets`);
-      markets.forEach((market, col) => {
+      [...table.querySelectorAll('tbody tr')].forEach((row) => {
+        const market = row.querySelector('th').textContent.trim();
+        const figures = [...row.querySelectorAll('td')].map((td) => cents(td.textContent));
+        figures.forEach((c) => { if (c > top) top = c; });
+        if (figures.length !== shares.length) return fails.push(`${where} / ${market}: ${figures.length} figures for ${shares.length} plans`);
         shares.forEach((share, n) => {
-          const want = Math.round(grid[0][col] * share / shares[0]);
-          if (grid[n][col] !== want) fails.push(`${where} / ${market}: ${share}% pays ${grid[n][col] / 100}, ${share / shares[0]}× the no-plan figure is ${want / 100}`);
+          const want = Math.round(figures[0] * share / shares[0]);
+          if (figures[n] !== want) fails.push(`${where} / ${market}: ${share}% pays ${figures[n] / 100}, ${share / shares[0]}× the no-plan figure is ${want / 100}`);
         });
       });
     });

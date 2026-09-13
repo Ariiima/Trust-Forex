@@ -1,7 +1,7 @@
 /* TrustForex Partner Brokers — page rules over the Cashback system (../cb8/style.css → base.css → ../shared/scale.css).
    No wireframe: the structure is the founder's Broker Profile skeleton (Broker Profile.html, 2026-09-12) kept as drawn —
    the picker, the eight-row overview, five licences, two account cards, the market table, the rate tables and their
-   notes (turned on their side on 2026-09-12, see record 6), the two bonus cards, the four connection steps — and the treatment is cb8's: blue grounds, glass panes and
+   notes (a market per row, a plan per column since 2026-09-13, see record 6), the two bonus cards, the four connection steps — and the treatment is cb8's: blue grounds, glass panes and
    tiles, the travelling light, and the four plans in the tier metals style.css already gives them.
 
    One thing departs from cb8 on purpose: this is a reference page, not a narrative. Nothing pins and nothing stacks —
@@ -276,62 +276,37 @@ html.reduce .market-row::before,html.reduce .market-row::after,html.reduce .mark
    and the panes the one blue thing on it. Its head is `.centred`, so the number, the heading and the sentence
    stand over the middle of the two panes rather than off their left edge (founder, 2026-09-12).
 
-   Two stacked panes of three market rows under four plan chips ran the record to 1732px — a screen and
-   three quarters of scrolling for twenty-four figures, with the two account types 400px apart, which is
-   to say the one comparison the record exists for could not be made (founder, 2026-09-12). Nothing is
-   dropped; the table is turned. A PLAN is a row now and a MARKET is a column, so the ladder that the
-   section head describes — what one lot pays at each plan's share — runs straight down the pane.
+   The table was a plan per row and a market per column, each figure its own tile rimmed in its plan's
+   metal. It read, but it grew the wrong way: every market added was a column, and the phone had four
+   columns of tiles already. The founder's table (2026-09-13, "simple and scalable for the future") stands
+   it upright: a market per row, the four plans across, so a new market is one more row at any width.
 
-   The two accounts stood side by side for a while, then went back to one over the other (founder,
-   2026-09-12): markets are columns, and more markets are coming. Half a record's width holds three
-   before the figures crowd; the full width holds the next several.
-
-   Hue answers one question only: the plan. Each row carries its metal on the chip that names it and on
-   the rim around each of its figures (where that metal can live is its own note, below). The panes stay
-   white-rimmed — copper and violet are two of those four rows, and the Accounts record two screens up
-   already spends that pair on these same two account types, so a copper pane over a copper row would be
-   one hue answering two questions. */
+   And it is plain. One header band, a hairline between rows, the figures right-aligned under their plan.
+   No chips and no metal rims: the one mark left is the Diamond column, filled from its head to the pane's
+   foot, because it is the top of the ladder. It is violet — the diamond metal — since violet sits beside
+   blue rather than opposite it and is the one metal that survives this ground as a wash (2026-09-12:
+   copper and gold came out brown, olive and grey at every alpha that was tried). */
 .rate-grid{display:grid;grid-template-columns:1fr;gap:1rem}
-.rate-pane{padding:0;overflow:hidden;border-radius:22px}
-.rate-head{padding:15px 18px 13px;display:flex;flex-direction:column;gap:3px;border-bottom:1px solid rgba(255,255,255,.18)}
+/* the id, because the glass recipe pads every pane 28px and outranks a class: the header band and the Diamond
+   column run to the pane's own edge and foot, and on a phone those 56px are a fifth of the table's width */
+#cashback .rate-pane{padding:0;overflow:hidden;border-radius:22px}
+.rate-head{padding:18px 22px;display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:4px 20px}
 .rate-head h3{margin:0;font-size:var(--text-row-title);font-weight:var(--weight-strong);letter-spacing:-.02em;color:#fff}
 .rate-head span{font-size:var(--text-small);color:rgba(255,255,255,.72)}
-.rate-scroll{overflow-x:auto;padding:12px}
-/* separated cells, so each plan's chip is its own metal and the Diamond row reads as the top of the
-   ladder; fixed layout, so the plan column is one measure and the markets split what is left evenly —
-   a fourth market added to the markup takes its share without a width being edited, the two panes line
-   up column for column, and "Forex" does not get a narrower column than the money in it needs */
-.rate-table{width:100%;min-width:0;table-layout:fixed;border-collapse:separate;border-spacing:7px;text-align:right}
-.rate-table col:first-child{width:250px}
-.rate-table thead th{padding:2px 10px 6px;font:var(--weight-heavy) var(--text-label)/1.35 var(--sans);letter-spacing:.08em;
-  text-transform:uppercase;color:rgba(255,255,255,.6);vertical-align:bottom}
-.rate-table thead th:first-child{text-align:left}
-/* the chip is the row's handle: name left, share right, one line, so a plan row is a plan row's height */
-.rate-table .tier{padding:10px 12px;border-radius:13px;text-align:left;
-  display:flex;align-items:baseline;justify-content:space-between;gap:10px}
-.rate-table .tier small{font:var(--weight-body) var(--text-micro)/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--label,rgba(255,255,255,.85))}
-.rate-table .tier b{font-size:var(--text-ui);font-weight:var(--weight-strong);color:#fff}
-.rate-table td{padding:11px 12px;border-radius:12px;font-size:var(--text-ui);font-weight:var(--weight-label);color:#fff;
-  border:1px solid var(--row-rim,rgba(255,255,255,.12));background:linear-gradient(150deg,var(--row),var(--row2))}
-
-/* the four metals, mixed for this page's deeper blue: style.css blends them for the Cashback page's own
-   ground, where No plan came out mud here and Gold came out olive. Same four hues, carried further. */
-.rate-table tr[data-tier=standard] .tier{--tint:rgba(234,142,72,.86);--tint2:rgba(158,80,36,.82);--rim:rgba(250,196,154,.78);--label:#FFEAD9}
-.rate-table tr[data-tier=silver]   .tier{--tint:rgba(206,222,244,.52);--tint2:rgba(116,146,190,.52);--rim:rgba(240,248,255,.75);--label:#FBFDFF}
-.rate-table tr[data-tier=gold]     .tier{--tint:rgba(246,202,72,.82);--tint2:rgba(152,108,14,.78);--rim:rgba(252,224,150,.8);--label:#FFF4CC}
-.rate-table tr[data-tier=diamond]  .tier{--tint:rgba(146,98,240,.78);--tint2:rgba(72,42,162,.74);--rim:rgba(208,182,255,.78);--label:#EFE6FF}
-/* Where each metal is allowed to live. Copper and gold are the blue ground's near-opposites, so a
-   translucent wash of either mixes back to grey — every alpha between .2 and .55 was tried and the row
-   came out brown, then olive, then grey (2026-09-12). A metal only survives on this ground where it is
-   nearly opaque. So it is spent where it can be: the chip, which is the plan's name, and the 1px rim
-   around each of the plan's figures. The fills behind the figures step by WEIGHT instead — each plan a
-   little lighter than the one above it — so the four rows still read as a ladder from across the screen.
-   Diamond is the exception and keeps a filled row: violet sits beside blue rather than opposite it, so it
-   is the one metal that survives the wash, and it is the top of the ladder anyway. */
-.rate-table tr[data-tier=standard] td{--row:rgba(255,255,255,.07);--row2:rgba(255,255,255,.03);--row-rim:rgba(250,186,138,.62)}
-.rate-table tr[data-tier=silver]   td{--row:rgba(255,255,255,.1);--row2:rgba(255,255,255,.05);--row-rim:rgba(238,246,255,.66)}
-.rate-table tr[data-tier=gold]     td{--row:rgba(255,255,255,.14);--row2:rgba(255,255,255,.07);--row-rim:rgba(252,218,124,.72)}
-.rate-table tr.peak td{--row:rgba(158,116,250,.5);--row2:rgba(96,58,206,.44);--row-rim:rgba(206,182,255,.75);font-weight:var(--weight-strong)}
+.rate-scroll{overflow-x:auto}
+/* fixed layout: the market column is one measure and the four plans split the rest evenly, so the two
+   panes line up column for column whatever a market is called */
+.rate-table{width:100%;table-layout:fixed;border-collapse:collapse;text-align:right}
+.rate-table :is(th,td){padding:15px 22px;border-top:1px solid rgba(255,255,255,.14)}
+.rate-table tr>:first-child{width:34%;text-align:left}
+.rate-table thead th{padding-block:12px;background:rgba(255,255,255,.08);vertical-align:bottom;
+  font:var(--weight-strong) var(--text-small)/1.3 var(--sans);color:rgba(255,255,255,.72)}
+.rate-table thead b{font-weight:inherit}
+.rate-table :is(tbody th,td){font-size:var(--text-ui);font-weight:var(--weight-strong);color:#fff}
+.rate-table tbody tr:hover>*{background:rgba(255,255,255,.05)}
+/* the top plan: Diamond is the last column, and its column is the one filled thing in the pane */
+.rate-table tr>:last-child,.rate-table tbody tr:hover>:last-child{background:rgba(120,80,226,.58);color:#fff}
+.rate-table thead th:last-child{background:rgba(96,58,200,.78)}
 
 /* ---------- the numbered rules: the cashback notes, on glass ---------- */
 .note-panel{--r:22px;--tray:14px;padding:0;overflow:hidden;border-radius:var(--r)}
@@ -421,8 +396,6 @@ body{font-variant-numeric:normal}
   /* base.css drops .record-grid to one column and takes the pane's left margin off with it */
   .reg-stack>.placeholder{margin-left:0}
   .accounts-grid,.bonus-grid,.key-panel{grid-template-columns:1fr}
-  /* a 250px plan column leaves a 664px tablet pane 99px a market; a third of the pane leaves them 120 */
-  .rate-table col:first-child{width:34%}
   /* one column of notes below a tablet, so every rule takes back the hairline above it */
   #cashback .note-panel{grid-template-columns:1fr}
   #cashback .note-panel h3+.note-line+.note-line{border-top:1px solid rgba(255,255,255,.14)}
@@ -443,15 +416,15 @@ body{font-variant-numeric:normal}
   .key-row,.account-row{grid-template-columns:1fr;gap:5px;padding:14px 16px}
   .key-row strong,.account-row strong{text-align:left}
   .market-row{padding:15px 18px;gap:14px}
-  /* 316px of phone for four columns: the chip stacks its name over its share, the figures drop to the
-     small size and the cells give up their side padding. Fixed columns keep the four inside the pane, so
+  /* a phone pane for five columns: each plan's name stacks over its share, the figures drop to the small
+     size and the cells give up their side padding. Fixed columns keep all four plans inside the pane, so
      the table is read where it stands instead of scrolling sideways under a thumb. */
-  .rate-scroll{padding:8px}
-  .rate-table{border-spacing:5px}
-  .rate-table thead th{padding:0 6px 5px;font-size:9px;letter-spacing:.04em}
-  .rate-table .tier{flex-direction:column;align-items:flex-start;gap:2px;padding:8px 9px}
-  .rate-table .tier small{font-size:9px;letter-spacing:.05em}
-  .rate-table .tier b{font-size:var(--text-small)}
-  .rate-table td{padding:9px 8px;font-size:var(--text-small)}
+  .rate-head{padding:15px 16px}
+  .rate-table :is(th,td){padding:12px 4px}
+  .rate-table tr>:first-child{width:27%;padding-left:14px}
+  .rate-table tr>:last-child{padding-right:8px}
+  .rate-table thead th{font-size:9px}
+  .rate-table thead b{display:block}
+  .rate-table :is(tbody th,td){font-size:var(--text-small)}
   .note-line{padding:13px 16px}
 }
