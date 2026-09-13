@@ -476,7 +476,10 @@ anything a `.block` puts straight on its ground is lifted to `z-index:1` — bas
 
 The words are that skeleton's too, line for line (founder, 2026-09-13: "match the text 1-on-1").
 That cut the hero's label, the intro line under every record heading, the Regulation footnote, the
-Connect paragraph, and the closing screen's headline and lede. The closing screen then held only
+Connect paragraph, and the closing screen's headline and lede. The Connect paragraph came back
+(founder, 2026-09-14), under its heading and over the pane; the button stays in the pane's foot.
+The rate tables' four plan columns took the Cashback page's tier metals the same day, each column
+filled in its tile's glass; before that only Diamond's column was filled. The closing screen then held only
 its button, a full screen of blue with one pill in it, and went too (founder, 2026-09-13): Connect's
 pane already ends on the same button, so the page ends on the footer, on paper, as Legal does.
 Three places keep the design over the skeleton: each account card lists the rows that differ first,

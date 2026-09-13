@@ -296,11 +296,11 @@ html.reduce .market-row::before,html.reduce .market-row::after,html.reduce .mark
    columns of tiles already. The founder's table (2026-09-13, "simple and scalable for the future") stands
    it upright: a market per row, the four plans across, so a new market is one more row at any width.
 
-   And it is plain. One header band, a hairline between rows, the figures right-aligned under their plan.
-   No chips and no metal rims: the one mark left is the Diamond column, filled from its head to the pane's
-   foot, because it is the top of the ladder. It is violet — the diamond metal — since violet sits beside
-   blue rather than opposite it and is the one metal that survives this ground as a wash (2026-09-12:
-   copper and gold came out brown, olive and grey at every alpha that was tried). */
+   And it is plain. One header band, a hairline between rows, the figures centred under their plan.
+   No chips and no metal rims. For a day only the Diamond column was filled, violet, since copper and gold
+   came out brown, olive and grey as a wash on this ground (2026-09-12). The founder wants that look
+   (2026-09-14, the Cashback page's 02 tiles as the reference): every plan column is filled from its head
+   to the pane's foot in its own metal, with the tiles' own glass and the plan's name in its label ink. */
 .rate-grid{display:grid;grid-template-columns:1fr;gap:1rem}
 /* the id, because the glass recipe pads every pane 28px and outranks a class: the header band and the Diamond
    column run to the pane's own edge and foot, and on a phone those 56px are a fifth of the table's width */
@@ -318,10 +318,17 @@ html.reduce .market-row::before,html.reduce .market-row::after,html.reduce .mark
   font:var(--weight-strong) var(--text-small)/1.3 var(--sans);color:rgba(255,255,255,.72)}
 .rate-table thead b{font-weight:inherit}
 .rate-table :is(tbody th,td){font-size:var(--text-ui);font-weight:var(--weight-strong);color:#fff}
-.rate-table tbody tr:hover>*{background:rgba(255,255,255,.05)}
-/* the top plan: Diamond is the last column, and its column is the one filled thing in the pane */
-.rate-table tr>:last-child,.rate-table tbody tr:hover>:last-child{background:rgba(120,80,226,.58);color:#fff}
-.rate-table thead th:last-child{background:rgba(96,58,200,.78)}
+/* the hover is the background colour, so it lifts a metal cell from under its glass instead of replacing it */
+.rate-table tbody tr:hover>*{background-color:rgba(255,255,255,.05)}
+/* the four plans in their metals: cb8/style.css's 02 tier tiles, value for value — No plan copper, Silver,
+   Gold, Diamond violet. Every cell of a column takes the tile's glass, so the column reads as one plate. */
+.rate-table tr>:nth-child(2){--tint:rgba(200,128,88,.4);--tint2:rgba(120,70,48,.36);--label:#F1C4A6}
+.rate-table tr>:nth-child(3){--tint:rgba(204,218,238,.3);--tint2:rgba(118,144,184,.26);--label:#EDF3FB}
+.rate-table tr>:nth-child(4){--tint:rgba(210,172,86,.4);--tint2:rgba(124,96,40,.36);--label:#F3D896}
+.rate-table tr>:nth-child(5){--tint:rgba(138,96,224,.42);--tint2:rgba(76,48,150,.38);--label:#DFD0FA}
+/* a plan and its figures stand centred in their plate (founder, 2026-09-14) */
+.rate-table tr>:nth-child(n+2){text-align:center;background-image:linear-gradient(150deg,var(--tint),var(--tint2))}
+.rate-table thead th:nth-child(n+2){color:var(--label)}
 
 /* ---------- the numbered rules: the cashback notes, on glass ---------- */
 .note-panel{--r:22px;--tray:14px;padding:0;overflow:hidden;border-radius:var(--r)}
