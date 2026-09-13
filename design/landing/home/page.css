@@ -470,6 +470,27 @@ html.reduce .feed-slot,html.reduce .feed-bar i,html.reduce .odo-d,html.reduce .o
   border-color:rgba(255,255,255,.55);background:linear-gradient(150deg,rgba(255,255,255,.12),rgba(255,255,255,.04));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
 .plans-shell .plan-cta .ext{position:absolute;top:50%;right:22px;margin-top:-.5em}
+/* The header gives the plans its room (founder, 2026-09-13: "only when seeing plans, the header
+   scrolls away for more space"). The screen's top edge pushes the strip up and out over the last
+   56px of its arrival, so the strip's bottom edge rides that edge; the strip comes back down over
+   the last 56px of the screen's exit and is whole again as the questions reach the top. The block
+   takes the strip's height: it sits --frame-inset off the viewport's top, not off the nav. Tied to
+   the scroll, no script. Hold mode only, where the cards fill one screen; on a phone the strip stays
+   over the stacked cards. Both halves sit in the one @supports, so a browser without scroll-driven
+   animations (Firefox) keeps the strip and the block keeps its room under it. A keyboard reader who
+   tabs into the hidden strip gets it back. Two animations on one transform: the return fills
+   forwards only, so before its range the push's held -100% is what shows. */
+@supports (animation-timeline:view()){
+  body{timeline-scope:--plans}
+  #plans{view-timeline-name:--plans}
+  html.snap #plans{padding-top:var(--frame-inset)}
+  html.snap #plans .block{min-height:calc(100dvh - 2 * var(--frame-inset))}
+  html.snap .nav{animation:nav-away linear both,nav-back linear forwards;animation-timeline:--plans,--plans;
+    animation-range:entry calc(100% - var(--nav-h)) entry 100%,exit calc(100% - var(--nav-h)) exit 100%}
+  html.snap .nav:focus-within{animation:none}
+}
+@keyframes nav-away{from{transform:none}to{transform:translateY(-100%)}}
+@keyframes nav-back{from{transform:translateY(-100%)}to{transform:none}}
 
 /* ---------- 12–13 · the questions and the close ---------- */
 .faq-wrap{max-width:880px}

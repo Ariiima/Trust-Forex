@@ -298,6 +298,13 @@ to Checkout as its starting plan. `page.js` keeps that link in step. The markup'
 app's plan picker, for a reader without JavaScript. `?check=1` picks each card in turn and fails if
 the button does not follow.
 
+The header gives the plans its room (founder, 2026-09-13). In hold mode the plans screen's top edge
+pushes the nav up and out over the last 56px of its arrival. The nav comes back down over the last
+56px of the screen's exit. The block then sits 20px off the viewport's top, not off the nav, so the
+cards and the button gain 56px. It is CSS only, a view timeline on `#plans` in `page.css`. Phones and
+reduced motion keep the nav. Firefox has no scroll-driven animations, so it keeps the nav and the old
+spacing. `node _qa/nav-plans.test.mjs` measures the nav at each edge.
+
 `page.js` holds the record module. Its figures are the last completed week of the Results page's
 own weekly series, recomputed here from that page's rule — same base win rates, same per-period
 shift, same rounding — so the two pages cannot print different numbers for the same week. The
