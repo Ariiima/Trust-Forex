@@ -270,6 +270,24 @@ html:not(.js) .step .rv{opacity:1;transform:none}
 .service-section .grid2>div:first-child{max-width:560px}
 .access-visual{--rgb-sky:160,196,255;--sky:#A0C4FF;--rgb-success:72,212,138;--rgb-amber:240,168,104;--amber:#F0A868;
   min-height:356px;padding:14px;display:grid;grid-template-rows:repeat(3,minmax(100px,auto));gap:10px;border-radius:24px}
+/* the market, named once above the three (the wireframe's pill, founder 2026-09-13). It is the
+   Cashback calculator's "Live estimate" pill (cb8/style.css #calculator .live) — the pane's blue, its
+   own rim — but it stands on the pane's top edge rather than straddling it, 4px into the pane and the
+   rest over the frame, so the card does not grow and the first tile keeps its top. Its icon is the
+   Partner Brokers page's Metals chip — the gold bars, in its gold — where the calculator has its dot,
+   and the pill is a size up from the calculator's (34px, 11px type) so the chip has room. The chip is
+   round and inset 4px on three sides, so it is concentric with the pill's rounded end; a square chip
+   in a round end sat off it. */
+.service-market{--mk:240,208,130;--mk-2:146,106,26;
+  position:absolute;bottom:calc(100% - 4px);right:18px;z-index:1;
+  margin:0;display:inline-flex;align-items:center;gap:8px;padding:4px 14px 4px 4px;border-radius:999px;
+  background:linear-gradient(150deg,rgba(var(--rgb-900),.9),rgba(var(--rgb-abyss),.94)),linear-gradient(var(--blue),var(--blue));
+  border:1px solid rgba(160,196,255,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 8px 18px -14px rgba(var(--rgb-shadow),.6);
+  font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:#fff}
+.market-icon{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;color:rgb(var(--mk));
+  border:1px solid rgba(var(--mk),.62);background:linear-gradient(150deg,rgba(var(--mk),.42),rgba(var(--mk-2),.78));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 12px -4px rgba(var(--mk),.55)}
+.market-icon svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 /* the paper screen's frame paints its pane white behind the content (../cb8/style.css); this one is
    blue, and both pseudos follow the card's own 24px corner rather than the 28px card radius */
 .screen-paper .access-visual::after{border-radius:24px;background:
@@ -284,7 +302,7 @@ html:not(.js) .step .rv{opacity:1;transform:none}
   background:linear-gradient(150deg,rgba(var(--acc),.18),rgba(var(--rgb-deep),.32));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
 .access-visual .tile.live{--acc:var(--rgb-success);--acc-solid:var(--success)}
-.access-visual .tile:nth-child(3){--acc:var(--rgb-amber);--acc-solid:var(--amber)}
+.access-visual .tile:last-child{--acc:var(--rgb-amber);--acc-solid:var(--amber)}
 /* the well is the .ico itself, and the player sizes its svg to 100% of the box — so the padding, not
    an svg rule, is what holds the glyph at --icon-size (half the well less the glyph, less the 1px rim) */
 .access-visual .tile-icon{width:var(--icon-well);height:var(--icon-well);padding:calc((var(--icon-well) - var(--icon-size))/2 - 1px);display:grid;place-items:center;border-radius:var(--icon-well-radius);stroke:var(--acc-solid);
@@ -603,6 +621,6 @@ body{font-variant-numeric:normal}
 }
 
 /* the questions heading holds one line, so its size is measured off this page's own question:
-   "Questions, answered clearly." is 11.85 times its font-size wide
+   "What to know before you start" is 12.78 times its font-size wide
    (shared/scale.css --text-title-faq divides the content width by it). */
-:root{--faq-ratio:11.85}
+:root{--faq-ratio:12.78}
