@@ -119,6 +119,33 @@ html.reduce .screen.in .weekly-bar{animation:none}
 .step-copy{width:min(100%,700px);max-width:none;margin:0 auto;
   font-size:var(--text-mech-copy);line-height:var(--leading-step-copy);color:rgba(255,255,255,.76);text-wrap:balance}
 
+/* ---------- the light travels these four too (founder, 2026-09-13) ----------
+   The band every other blue ground carries (../cb8/style.css, "the light travels every screen"; Results'
+   #chapter-scalp and About's .dark-run take it the same way): one soft diagonal in the rayfield's spare
+   fourth <i>, crossing the screen as the screen crosses the viewport. Not on --ground: inside .stack a
+   .hold is display:contents (base.css), so the name is on no box and the band never moves. Each step
+   runs it on its own timeline instead, as the stacked mechanics do (Cashback's #m2/#m4, Results' #m5/#m6).
+   Steps 2 and 4 mirror their rayfield, which would mirror the band
+   and run it the other way; `scale` composes before the animated transform, so it flips the layer back
+   without touching the travel. Its frame cost is measured (_qa/perf-corridor.mjs, the bare arm). */
+#step-1{view-timeline-name:--s1}
+.step .rayfield.k i:nth-child(4){display:block;position:absolute;inset:0;z-index:1;border-radius:0;filter:none;pointer-events:none;
+  background:linear-gradient(115deg,transparent 36%,rgba(255,255,255,.11) 47%,rgba(255,255,255,.03) 53%,transparent 64%);
+  -webkit-mask-image:var(--beam-edges);mask-image:var(--beam-edges);
+  animation:ground-light linear both;animation-range:entry 0% exit 100%}
+/* Pinned, a step's view timeline does not end when the step is covered: Chromium carries its exit to
+   the stack's release, the same pixel for all four (measured: step-1 1908→7488px, step-2 3078→7488px),
+   so over exit 100% the band crawled and never crossed. A step is on screen for its own entry, the
+   30vh hold and the next step's entry, 230% of its entry range; step 4's entry, hold and release come to
+   the same. The band crosses over exactly that. */
+html.snap .step .rayfield.k i:nth-child(4){animation-range:entry 0% entry 230%}
+#step-1 .rayfield.k i:nth-child(4){animation-timeline:--s1}
+#step-2 .rayfield.k i:nth-child(4){animation-timeline:--s2}
+#step-3 .rayfield.k i:nth-child(4){animation-timeline:--s3}
+#step-4 .rayfield.k i:nth-child(4){animation-timeline:--s4}
+#step-2 .rayfield.k i:nth-child(4),#step-4 .rayfield.k i:nth-child(4){scale:-1 1}
+html.reduce .step .rayfield.k i:nth-child(4){animation:none}
+
 /* ---------- the four are glass (founder, 2026-09-13) ----------
    Painted, not filtered. The corridor has already refused four ways of changing this ground on the
    frame budget (README, "The protocol steps"), and a backdrop-filter over a full screen that scales

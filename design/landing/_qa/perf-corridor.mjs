@@ -6,13 +6,14 @@
 //   node design/landing/_qa/perf-corridor.mjs
 //
 // 220 notches down the four steps at 1440x900 — a hard continuous flick, not a reader's pace, which
-// is the point: the corridor has to hold up at the speed someone skims it. Five arms, interleaved so
+// is the point: the corridor has to hold up at the speed someone skims it. Six arms, interleaved so
 // a warming machine cannot hand one of them a better score:
 //
 //   still     the corridor as four still pictures scrolling plainly, nothing arriving
 //   arrival   the word and its sentence, the four scrolling plainly (what shipped before the stack)
 //   square    the four stacking with square corners, and the arrival
-//   noglass   the four stacking, each rising over the pinned one with rounded corners, on plain blue
+//   bare      the four stacking with rounded corners, and the arrival, no travelling band
+//   noglass   the band back on, but the four on their plain blue ground
 //   shipped   what ships: all of that, and the painted glass (page.css, "the four are glass"; founder, 2026-09-13)
 //
 // GROUND_OFF is kept and unused on purpose. Four ways of lighting the corridor were built and all
@@ -49,6 +50,9 @@ const NO_ROUND = `
   html.snap #step-3{animation:stack-in linear both,cover step-end both!important;animation-timeline:--s3,--s4!important;animation-range:entry,entry 99% entry 100%!important}
   html.snap #step-4{animation:stack-in linear both!important;animation-timeline:--s4!important;animation-range:entry!important}`;
 
+// the travelling band (page.css, "the light travels these four too"), taken off
+const NO_BAND = `.protocol-run .step .rayfield.k i:nth-child(4){display:none!important}`;
+
 // the painted glass (page.css, "the four are glass"), taken off: the sheet, the softened grid, and the
 // band back to its single reflection
 const NO_GLASS = `.protocol-run .step .rayfield.k i:nth-child(3){display:none!important}
@@ -56,9 +60,10 @@ const NO_GLASS = `.protocol-run .step .rayfield.k i:nth-child(3){display:none!im
   .protocol-run .step .rayfield.k i:nth-child(4){background:linear-gradient(115deg,transparent 36%,rgba(255,255,255,.11) 47%,rgba(255,255,255,.03) 53%,transparent 64%)!important}`;
 
 const ARMS = {
-  still: NO_ARRIVAL + NO_STACK + NO_GLASS,
-  arrival: NO_STACK + NO_GLASS,
-  square: NO_ROUND + NO_GLASS,
+  still: NO_ARRIVAL + NO_STACK + NO_BAND + NO_GLASS,
+  arrival: NO_STACK + NO_BAND + NO_GLASS,
+  square: NO_ROUND + NO_BAND + NO_GLASS,
+  bare: NO_BAND + NO_GLASS,
   noglass: NO_GLASS,
   shipped: '',
 };
@@ -110,6 +115,7 @@ const gap = (a, c) => {
 };
 console.log(`\nthe word and its sentence  ${gap('arrival', 'still')}`);
 console.log(`the stack, square corners ${gap('square', 'arrival')}`);
-console.log(`the stack, rounded        ${gap('noglass', 'arrival')}`);
-console.log(`the corners alone         ${gap('noglass', 'square')}`);
+console.log(`the stack, rounded        ${gap('bare', 'arrival')}`);
+console.log(`the corners alone         ${gap('bare', 'square')}`);
+console.log(`the travelling band       ${gap('noglass', 'bare')}`);
 console.log(`the painted glass         ${gap('shipped', 'noglass')}`);
