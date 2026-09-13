@@ -329,26 +329,42 @@ twice. Three rounds of `home/benefits-lab.html` looked for what should replace t
 as a table. Round two stopped listing rates and showed where the money comes from and where it lands:
 two loops meeting at "you", a ribbon whose thickness was the share, and the one that was picked — the
 two messages the bot sends when a benefit pays, landing in the Earning balance. Round three told that
-one story five ways. The version that shipped (F3) has no card in it at all.
+one story five ways. The version that shipped (F3) had no card in it at all.
 
-Two notifications, newest on top, then the balance as the largest type in the column. The
-notifications cut the bot's `cashback_earned` and `referral_earned` templates in `server/admin.mjs`
-to one short sentence each, amount first ("$20.00 Cashback added."). The full sentences ran two lines
-each and buried the amount (founder, 2026-09-13). The amounts are an example. The line under the
-column that said so was cut the same day.
+F3 put two notifications, newest on top, over the balance. The notifications cut the bot's `cashback_earned` and
+`referral_earned` templates in `server/admin.mjs` to one short sentence each, amount first ("$20.00
+Cashback added."). The full sentences ran two lines each and buried the amount (founder, 2026-09-13).
+The amounts are an example. The line under the column that said so was cut the same day.
 
-Under the balance, the two benefits and the four rates came back the same day, from the founder's
-reference of the column that was cut. They return as two rows between hairlines and one blue strip,
-not as cards, so the notifications stay the only raised surfaces. The strip repeats the Plans block's
-three rates, which is what cut the bar the first time, and adds Standard, the no-plan rate the Plans
-block does not show. `page.js ?check=1` holds all four to the app's rates. The rows replaced
-"Withdraw earnings" and "Use earning balance", dropped to keep the column short.
+Under them, the two benefits and the four rates came back the same day, from the founder's reference
+of the column that was cut: first as two rows between hairlines and one blue strip. The strip repeats
+the Plans block's three rates, which is what cut the bar the first time, and adds Standard, the no-plan
+rate the Plans block does not show. `page.js ?check=1` holds all four to the app's rates. The rows
+replaced "Withdraw earnings" and "Use earning balance", dropped to keep the column short.
 
-The balance is a counter. `page.js` splits it into one strip of 0–9 per digit, and CSS slides each
-strip to its value, so going from $20.00 to $56.00 rolls the ones digit through 1–5 on the way to 6.
-The script writes four transforms per step and runs no frame loop. The column ships finished. `page.js`
-sets it back to its opening only while it is still below the fold and motion is allowed, and plays
-it once when it reaches the protocol steps' reading band.
+The F3 Earning balance ($56.00 as the column's largest type, a digit-strip counter, a split bar and
+its legend) was cut the same day (founder, 2026-09-13). The column then took the page's own format:
+it moved onto the service panel's blue glass, with the same frame, pane and tiles. The two rows became
+tiles in the service tiles' rim, tint and icon well, Cashback in the green and Referral in the sky,
+each with a "How it works" capsule in its colour on the right edge. The rates became a third tile with
+no colour of its own. The section borrows `.screen-paper` for the field, the beam and the frame. It
+kept the body's white ground at first, then took the paper grey so it meets chapter 2 on one colour.
+Chapter 2 runs from paper to light blue and back to paper on Home, where cb8 runs it from white to
+paper, so the service, chapter 2 and the benefits meet without a line (founder, 2026-09-13).
+
+Paper ramps at every blue screen's seams were tried the same day, each blue screen fading into the
+paper beside it as it scrolled in or out, and reverted the same day as too much fade everywhere.
+
+The screen pins full screen for the site's 30vh hold, as Plans does (founder, 2026-09-13: "full
+screen, with some scroll between this section, the previous one and the next"). It was one window
+tall before too, but it scrolled straight through, so it never rested framed in the window.
+
+The notifications were cut the same day too (founder, 2026-09-13), with the arrival `page.js` played
+as they landed. The panel now holds only the two benefit tiles and the rates tile. Each of the four
+rates wears its plan's colour from cb8's tier system (`cb8/style.css [data-tier]`), the palette the
+Plans cards are lit in: the tint as a halo from the top, the rim, and the figure in the tier's ink.
+Standard takes the calculator's copper. Silver's figure takes the ice blue its Plans card uses for
+its name, because Silver's own ink is a white.
 
 ### The plans
 
@@ -423,7 +439,7 @@ own weekly series, recomputed here from that page's rule — same base win rates
 shift, same rounding — so the two pages cannot print different numbers for the same week. The
 HTML ships those values too, so the module reads without JavaScript. `?check=1` proves the shipped
 markup equals what the rule returns, that a further target is never reached more often than a
-nearer one, that the benefits column's balance is the sum of its two amounts, that each plan's rate
+nearer one, that each plan's rate
 is the one the app pays and each monthly equivalent divides out of its price — and it fetches
 `../results/page.js` to confirm the constants it borrowed are still the ones that page uses.
 

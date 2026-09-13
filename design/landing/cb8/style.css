@@ -335,10 +335,10 @@ html.reduce .glass .panel::after,html.reduce .glass .tile::after,html.reduce .gl
 /* ---------- 02 · the tiers in their own metals (founder ref 2026-09-07) ----------
    Bronze for Standard, silver, gold, and Diamond in violet — each tile's glass, rim and label carry
    the tier's colour, the figure stays white. Labels uppercase, as in the reference. */
-.glass [data-tier=standard],#calculator [data-tier=standard]{--tint:rgba(200,128,88,.4);--tint2:rgba(120,70,48,.36);--rim:rgba(236,176,136,.5);--label:#F1C4A6}
-.glass [data-tier=silver],#calculator [data-tier=silver]{--tint:rgba(204,218,238,.3);--tint2:rgba(118,144,184,.26);--rim:rgba(228,238,250,.55);--label:#EDF3FB}
-.glass [data-tier=gold],#calculator [data-tier=gold]{--tint:rgba(210,172,86,.4);--tint2:rgba(124,96,40,.36);--rim:rgba(240,208,130,.55);--label:#F3D896}
-.glass [data-tier=diamond],#calculator [data-tier=diamond]{--tint:rgba(138,96,224,.42);--tint2:rgba(76,48,150,.38);--rim:rgba(196,166,250,.55);--label:#DFD0FA}
+.glass [data-tier=standard],#calculator [data-tier=standard],.rate-points [data-tier=standard]{--tint:rgba(200,128,88,.4);--tint2:rgba(120,70,48,.36);--rim:rgba(236,176,136,.5);--label:#F1C4A6}
+.glass [data-tier=silver],#calculator [data-tier=silver],.rate-points [data-tier=silver]{--tint:rgba(204,218,238,.3);--tint2:rgba(118,144,184,.26);--rim:rgba(228,238,250,.55);--label:#EDF3FB}
+.glass [data-tier=gold],#calculator [data-tier=gold],.rate-points [data-tier=gold]{--tint:rgba(210,172,86,.4);--tint2:rgba(124,96,40,.36);--rim:rgba(240,208,130,.55);--label:#F3D896}
+.glass [data-tier=diamond],#calculator [data-tier=diamond],.rate-points [data-tier=diamond]{--tint:rgba(138,96,224,.42);--tint2:rgba(76,48,150,.38);--rim:rgba(196,166,250,.55);--label:#DFD0FA}
 .glass .rate small{text-transform:uppercase;letter-spacing:.08em;font-size:var(--text-micro);font-weight:var(--weight-body);color:var(--label)}
 /* 01: room for "Partner broker" on one line at base size */
 .glass .p-broker{grid-template-columns:1fr 1.15fr}

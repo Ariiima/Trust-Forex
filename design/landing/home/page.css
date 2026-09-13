@@ -94,6 +94,10 @@ html.reduce .screen.in .weekly-bar{animation:none}
    keeps the chapter size, as Referral's does. */
 .chapter .h2{max-width:1000px}
 .chapter-2 .h2{font-size:var(--text-chapter)}
+/* cb8 runs chapter 2 from white to paper, between its white calculator and its paper Activation. Here
+   it stands between two paper screens, the service and the benefits, so it starts and ends on paper
+   and keeps its light blue for the middle: no line at either edge. */
+.chapter-2{background:linear-gradient(180deg,var(--paper),var(--p-100) 55%,var(--paper))}
 
 /* ---------- 4–7 · the protocol: one blue corridor, four screens, nothing but type ----------
    Four screens, one ground. Each step carries its own rayfield rather than sharing one stretched
@@ -294,8 +298,8 @@ html:not(.js) .step .rv{opacity:1;transform:none}
    --acc, so a tile is recoloured in one line (founder, 2026-09-13). Live Signals keeps the green. */
 .service-section .grid2{grid-template-columns:minmax(0,.9fr) minmax(500px,1.1fr);gap:78px}
 .service-section .grid2>div:first-child{max-width:560px}
-.access-visual{--rgb-sky:160,196,255;--sky:#A0C4FF;--rgb-success:72,212,138;--rgb-amber:240,168,104;--amber:#F0A868;
-  min-height:356px;padding:14px;display:grid;grid-template-rows:repeat(3,minmax(100px,auto));gap:10px;border-radius:24px}
+.access-visual,.benefit-feed{--rgb-sky:160,196,255;--sky:#A0C4FF;--rgb-success:72,212,138;--rgb-amber:240,168,104;--amber:#F0A868}
+.access-visual{min-height:356px;padding:14px;display:grid;grid-template-rows:repeat(3,minmax(100px,auto));gap:10px;border-radius:24px}
 /* the market, named once above the three (the wireframe's pill, founder 2026-09-13). It is the
    Cashback calculator's "Live estimate" pill (cb8/style.css #calculator .live) — the pane's blue, its
    own rim — but it stands on the pane's top edge rather than straddling it, 4px into the pane and the
@@ -316,13 +320,14 @@ html:not(.js) .step .rv{opacity:1;transform:none}
 .market-icon svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 /* the paper screen's frame paints its pane white behind the content (../cb8/style.css); this one is
    blue, and both pseudos follow the card's own 24px corner rather than the 28px card radius */
-.screen-paper .access-visual::after{border-radius:24px;background:
+.screen-paper .access-visual::after,.screen-paper .benefit-feed::after{border-radius:24px;background:
   radial-gradient(120% 90% at 12% 0%,rgba(var(--rgb-600),.5),transparent 66%),
   linear-gradient(165deg,rgba(var(--rgb-900),.92),var(--blue) 58%,var(--p-deep))}
-.screen-paper .access-visual::before{border-radius:38px}
+.screen-paper .access-visual::before,.screen-paper .benefit-feed::before{border-radius:38px}
 /* .tile has no plain form in base.css — on blue the glass rules own it, on paper each page draws
-   its own. This is the evidence card's: a tinted tile, the icon in a lit well on its left. */
-.access-visual .tile{--acc:var(--rgb-sky);--acc-solid:var(--sky);
+   its own. This is the evidence card's: a tinted tile, the icon in a lit well on its left. The
+   benefits column (section 10) wears the same pane and tiles. */
+.access-visual .tile,.benefit-feed .tile{--acc:var(--rgb-sky);--acc-solid:var(--sky);
   min-height:100px;padding:16px 18px;display:grid;grid-template-columns:var(--icon-well) minmax(0,1fr);gap:16px;align-items:center;
   border:1px solid rgba(var(--acc),.34);border-radius:16px;color:#fff;
   background:linear-gradient(150deg,rgba(var(--acc),.18),rgba(var(--rgb-deep),.32));
@@ -331,112 +336,65 @@ html:not(.js) .step .rv{opacity:1;transform:none}
 .access-visual .tile:last-child{--acc:var(--rgb-amber);--acc-solid:var(--amber)}
 /* the well is the .ico itself, and the player sizes its svg to 100% of the box — so the padding, not
    an svg rule, is what holds the glyph at --icon-size (half the well less the glyph, less the 1px rim) */
-.access-visual .tile-icon{width:var(--icon-well);height:var(--icon-well);padding:calc((var(--icon-well) - var(--icon-size))/2 - 1px);display:grid;place-items:center;border-radius:var(--icon-well-radius);stroke:var(--acc-solid);
+.access-visual .tile-icon,.benefit-feed .tile-icon{width:var(--icon-well);height:var(--icon-well);padding:calc((var(--icon-well) - var(--icon-size))/2 - 1px);display:grid;place-items:center;border-radius:var(--icon-well-radius);stroke:var(--acc-solid);
   border:1px solid rgba(var(--acc),.4);background:linear-gradient(150deg,rgba(var(--acc),.2),rgba(var(--rgb-deep),.3));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
 /* the line sits right under its name, as on the Referral card — no min-height pushing the two apart.
    The type is that card's too (referral/page.css .proof-row): the names ran 17px and the lines 12.5,
    where every tile name on the site is 15 */
 .tile-copy{min-width:0}
-.tile-copy b{display:block;margin-bottom:4px;font-size:var(--text-panel-title);line-height:1.2;letter-spacing:-.015em;color:#fff}
+.tile-copy b,.tile-copy h3{display:block;margin:0 0 4px;font-size:var(--text-panel-title);line-height:1.2;font-weight:var(--weight-strong);letter-spacing:-.015em;color:#fff}
 .tile-copy span{display:block;max-width:400px;
   font-size:var(--text-meta);line-height:1.4;color:rgba(255,255,255,.82)}
 
-/* the benefits screen takes its ground from the body, so it was the one white screen on the page
-   with neither the field nor the beam every other white screen carries (founder, 2026-09-12) */
-#benefits{view-timeline-name:--ground}
-#benefits::before{content:'';position:absolute;inset:0;pointer-events:none;background:
-  radial-gradient(46% 56% at 10% -4%,rgba(var(--rgb-300),.42),transparent 70%),
-  radial-gradient(40% 52% at 94% 104%,rgba(var(--rgb-200),.5),transparent 70%),
-  repeating-linear-gradient(0deg,rgba(var(--rgb-300),.10) 0 1px,transparent 1px 48px),
-  repeating-linear-gradient(90deg,rgba(var(--rgb-300),.10) 0 1px,transparent 1px 48px);
-  -webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent);mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent)}
-#benefits::after{content:'';position:absolute;inset:0 auto 0 0;width:40%;z-index:0;pointer-events:none;
-  background:linear-gradient(115deg,transparent 18%,rgba(var(--rgb-200),.5) 50%,transparent 82%);
-  -webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent),linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);-webkit-mask-composite:source-in;
-  mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent),linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);mask-composite:intersect;
-  animation:paper-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%}
-html.reduce #benefits::after{animation:none}
+/* the benefits screen borrows .screen-paper for the field, the beam, the glass frame its panel wears
+   and the paper ground, so it meets chapter 2 above on one colour (founder, 2026-09-12: the field and
+   the beam; 2026-09-13: the panel and the paper). It pins for the site's hold, as Plans below it does
+   (founder, 2026-09-13: "full screen, with some scroll between this section, the previous one and the
+   next"), so its timelines are the .hold box's, as base.css asks of every held screen. */
+#benefits{view-timeline-name:none}
 
-/* ---------- 10 · the benefits: the heading, and the benefit as the customer meets it ----------
+/* ---------- 10 · the benefits: the heading, and the two benefits on the service panel's glass ----------
    The wireframe's ≥851px layout: heading left, a 548 column right. What fills the column changed
    (founder, 2026-09-13; home/benefits-lab.html, round three, F3): the two messages the bot sends when
-   a benefit pays, and the Earning balance both of them land in. Under the balance, the two benefits
-   and the four shared rates came back the same day as rows and one strip, not as cards. */
+   a benefit pays, over the Earning balance they landed in. The same day the balance was cut, the
+   column moved onto the service panel's blue glass, and then the messages went too, leaving the two
+   benefits and the four shared rates as tiles in the service tiles' own rim, tint and icon well. */
 .benefits-section>.wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(460px,548px);gap:68px;align-items:center}
 .benefits-intro .h2{max-width:520px;margin:0}
 .benefits-intro .copy{max-width:460px;margin:24px 0 0;font-size:var(--text-copy)}
-.benefit-feed{width:100%;max-width:548px;justify-self:end;display:grid}
-/* each benefit keeps one colour of its own — Cashback the mint it uses everywhere, Referral the brand
-   blue — as --acc for fills and --acc-ink for anything read as text on white */
-.benefit-feed [data-benefit=cashback]{--acc:46,178,134;--acc-ink:#16855D}
-.benefit-feed [data-benefit=referral]{--acc:44,94,210;--acc-ink:var(--accent)}
-/* a notification as it reaches a phone: the bot's mark, its name, the time, and the bot's message cut
-   to one short sentence, amount first. Newest on top, so Referral sits above Cashback. The slot is a
-   one-row grid so the message can open from nothing when it arrives — grid-template-rows animates,
-   height:auto does not. */
-.feed-slot{display:grid;grid-template-rows:1fr;transition:grid-template-rows .6s var(--ease),opacity .45s var(--ease)}
-.feed-slot>div{min-height:0;overflow:hidden}
-.feed-note{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;margin-bottom:10px;padding:12px 14px;border-radius:18px;
-  background:rgba(255,255,255,.88);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);
-  box-shadow:0 1px 2px rgba(var(--rgb-shadow),.12),0 8px 8px -8px rgba(var(--rgb-shadow),.22)}
-.feed-avatar{width:36px;height:36px;display:grid;place-items:center;border-radius:50%;background:var(--p-900)}
-.feed-avatar svg{width:18px;height:18px;fill:#fff}
-.feed-head{display:flex;justify-content:space-between;gap:10px;margin:0;font-size:var(--text-small);line-height:1.3}
-.feed-head b{font-weight:700;color:var(--ink)}
-.feed-head time{color:var(--muted)}
-.feed-text{margin:3px 0 0;font-size:var(--text-small);line-height:1.45;color:var(--body)}
-/* the balance: the largest type in the column, set as a counter. page.js turns each digit into a strip
-   of 0–9 that slides to its value, so $20.00 to $56.00 rolls the ones digit through 1–5 on its way to 6.
-   The tens column closes to nothing while all it would show is a leading zero. */
-.feed-balance{margin-top:20px;padding-top:22px;border-top:1px solid rgba(var(--rgb-300),.6)}
-.feed-label{font-size:var(--text-ui);font-weight:var(--weight-strong);color:var(--muted)}
-.feed-figure{display:flex;align-items:flex-start;margin:10px 0 0;font-size:var(--text-benefit-balance);line-height:1;font-weight:760;letter-spacing:-.035em;color:var(--navy)}
-.odo-c,.odo-d{display:inline-block;height:1em;line-height:1}
-.odo-d{overflow:hidden;max-width:.7em;transition:max-width .5s var(--ease)}
-.odo-d[data-zero]{max-width:0}
-.odo-d i{display:block;font-style:normal;transition:transform var(--roll,.9s) var(--ease)}
-.odo-d i span{display:block;height:1em}
-.odo-hold .odo-d,.odo-hold .odo-d i{transition:none}
-.feed-bar{display:flex;gap:3px;height:8px;margin-top:18px;border-radius:99px;overflow:hidden;background:rgba(var(--rgb-300),.35)}
-.feed-bar i{flex:var(--w) 1 0;min-width:0;border-radius:99px;background:rgb(var(--acc));transition:flex-grow .8s var(--ease)}
-.feed-legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin:9px 0 0;font-size:var(--text-small);color:var(--muted)}
-.feed-legend span{display:inline-flex;align-items:center;gap:7px;transition:opacity .4s var(--ease)}
-.feed-legend i{width:7px;height:7px;border-radius:50%;background:rgb(var(--acc))}
-.feed-legend b{font-weight:600;color:var(--ink)}
-/* what each benefit is, under the balance it fills (founder's reference, 2026-09-13): a row between
-   hairlines, not a card, so the notifications stay the column's only raised surfaces. The mark spans
-   the name and its line, and the way in holds the right edge. */
-.benefit-rows{margin-top:22px;border-top:1px solid rgba(var(--rgb-300),.6)}
-.benefit-row{display:grid;grid-template-columns:var(--icon-well) minmax(0,1fr) auto;align-items:center;gap:2px 14px;padding:14px 0;border-bottom:1px solid rgba(var(--rgb-300),.6)}
-.benefit-icon{grid-row:1/3;width:var(--icon-well);height:var(--icon-well);padding:calc((var(--icon-well) - var(--icon-size))/2 - 1px);display:grid;place-items:center;border-radius:var(--icon-well-radius);
-  border:1px solid rgba(var(--acc),.32);background:rgba(var(--acc),.14)}
-.benefit-row .ico.benefit-icon{stroke:var(--acc-ink)}
-.benefit-name{margin:0;font-size:var(--text-benefit-name);line-height:1.15;font-weight:740;letter-spacing:-.04em;color:var(--navy)}
-.benefit-desc{grid-column:2;margin:0;font-size:var(--text-small);line-height:1.4;color:var(--muted)}
-.benefit-row .benefit-link{grid-row:1/3;grid-column:3}
-/* the four shares in one strip, the reference's black bar in the page's blue. Standard is the app's
-   name for no plan (server/ledger.mjs TIER_PCT.none, CashbackOverview.tsx); page.js ?check=1 holds
-   all four to the app's rates. */
-.rate-strip{margin-top:14px;padding:6px 6px 6px 16px;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:14px;border-radius:16px;background:var(--blue)}
-.rate-label{max-width:78px;margin:0;font-size:var(--text-small);line-height:1.3;font-weight:600;color:rgba(255,255,255,.8)}
-.rate-points{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin:0;padding:0;list-style:none}
-.rate-points li{padding:7px 4px 6px;border-radius:10px;text-align:center;background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
-.rate-points small{display:block;font-size:var(--text-micro);line-height:1.2;color:rgba(255,255,255,.75)}
-.rate-points b{display:block;margin-top:2px;font-size:var(--text-row-title);line-height:1.1;font-weight:700;letter-spacing:var(--tracking-stat);color:#fff}
-/* the way in to each benefit's own page */
-.benefit-link{flex:0 0 auto;min-height:32px;padding:7px 12px;display:inline-flex;align-items:center;gap:6px;
-  border:1px solid rgba(var(--acc),.45);border-radius:999px;line-height:1;font-size:var(--text-small);font-weight:var(--weight-strong);color:var(--acc-ink);
-  transition:background-color .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease)}
-.benefit-link:hover{background:var(--acc-ink);border-color:var(--acc-ink);color:#fff}
-.benefit-link .ext{width:13px;height:13px}
-/* the arrival, told once by page.js the first time the column is read: Cashback lands and the counter
-   rolls to it, then Referral lands on top and it rolls again. data-step holds the story back; no
-   attribute is the finished state, which is what ships and what no-JS and html.reduce see. */
-.benefit-feed[data-step="0"] .feed-slot,.benefit-feed[data-step="1"] .feed-slot[data-benefit=referral]{grid-template-rows:0fr;opacity:0}
-.benefit-feed[data-step="0"] .feed-bar i,.benefit-feed[data-step="1"] .feed-bar i[data-benefit=referral]{flex-grow:0}
-.benefit-feed[data-step="0"] .feed-legend span,.benefit-feed[data-step="1"] .feed-legend [data-benefit=referral]{opacity:.35}
-html.reduce .feed-slot,html.reduce .feed-bar i,html.reduce .odo-d,html.reduce .odo-d i{transition:none}
+.benefit-feed{width:100%;max-width:548px;justify-self:end;display:grid;padding:14px;border-radius:24px}
+/* each benefit keeps one colour of its own, from the service tiles' three: Cashback the green, Referral the sky */
+.benefit-feed [data-benefit=cashback]{--acc:var(--rgb-success);--acc-solid:var(--success)}
+.benefit-feed [data-benefit=referral]{--acc:var(--rgb-sky);--acc-solid:var(--sky)}
+/* what each benefit is: a service tile each, the way in to its page holding the right edge */
+.benefit-rows{display:grid;gap:10px}
+.benefit-feed .tile{grid-template-columns:var(--icon-well) minmax(0,1fr) auto}
+/* the way in to each benefit's own page: a capsule in the tile's own colour, filling on hover */
+.benefit-link{flex:0 0 auto;min-height:32px;padding:7px 12px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+  border:1px solid rgba(var(--acc),.5);border-radius:999px;background:rgba(var(--acc),.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.2);
+  line-height:1;font-size:var(--text-small);font-weight:var(--weight-strong);color:#fff;
+  transition:background-color .3s var(--ease),border-color .3s var(--ease)}
+.benefit-link:hover{background:rgba(var(--acc),.32);border-color:rgba(var(--acc),.85)}
+.benefit-link .ext{width:13px;height:13px;color:var(--acc-solid)}
+/* the four shares in a third tile with no colour of its own, since both benefits pay them. Standard is
+   the app's name for no plan (server/ledger.mjs TIER_PCT.none, CashbackOverview.tsx); page.js ?check=1
+   holds all four to the app's rates. Each share wears its plan's colour from cb8's tier system
+   (../cb8/style.css [data-tier]), the one the Plans cards below are lit in: the tint as a halo from
+   the top, the rim, and the figure in the tier's ink. Standard takes the calculator's copper. Silver's
+   ink is a white, so its figure takes the ice blue its Plans card names it in (founder, 2026-09-13). */
+.rate-strip{margin-top:10px;padding:8px 8px 8px 18px;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:14px;
+  border:1px solid rgba(var(--rgb-sky),.3);border-radius:16px;
+  background:linear-gradient(150deg,rgba(255,255,255,.07),rgba(var(--rgb-deep),.32));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
+.rate-label{max-width:78px;margin:0;font-size:var(--text-small);line-height:1.3;font-weight:600;color:rgba(255,255,255,.82)}
+.rate-points{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0;padding:0;list-style:none}
+.rate-points li{padding:8px 4px 7px;border:1px solid var(--rim);border-radius:10px;text-align:center;
+  background:radial-gradient(120% 100% at 50% -20%,var(--tint),transparent 72%),linear-gradient(150deg,rgba(255,255,255,.08),rgba(255,255,255,.03));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
+.rate-points small{display:block;font-size:var(--text-micro);line-height:1.2;color:rgba(255,255,255,.8)}
+.rate-points b{display:block;margin-top:2px;font-size:var(--text-row-title);line-height:1.1;font-weight:700;letter-spacing:var(--tracking-stat);color:var(--label)}
+.rate-points [data-tier=silver] b{color:#B9E1FF}
 
 /* ---------- 11 · the plans: three tiers in their own colour, on the blue, edge to edge ----------
    The app already draws these three plans, and it draws them as badges — a silver shield, a
@@ -626,9 +584,9 @@ html.reduce .glass .plan-col:has(.plan-pick:checked) .plan-rate b i,html.reduce 
 
 /* cb8 sets tabular figures on the whole body, which widens Inter's letters by about 2% and not only
    its digits. Every page built after it turns that off and keeps tabular figures where columns of
-   numbers actually have to line up: here, the record's plot, the benefits' balance and the three prices. */
+   numbers actually have to line up: here, the record's plot and the three prices. */
 body{font-variant-numeric:normal}
-.weekly-record,.benefit-feed,.plans-grid{font-variant-numeric:tabular-nums}
+.weekly-record,.plans-grid{font-variant-numeric:tabular-nums}
 
 /* ---------- narrower: the wireframe's own two steps ---------- */
 @media (max-width:1023px){
@@ -661,9 +619,10 @@ body{font-variant-numeric:normal}
   .plan-head{gap:10px}
   .duration{height:32px;padding:0 12px}
   .glass .plan-col{padding:22px 18px 24px}
-  /* the line takes the row's full width under the name, and the rates' label goes above the four */
-  .benefit-desc{grid-column:2/4}
-  .benefit-row .benefit-link{grid-row:1}
+  /* the way in drops under its line, which beside it had about a hundred pixels to run in, and the
+     rates' label goes above the four */
+  .benefit-feed .tile{grid-template-columns:var(--icon-well) minmax(0,1fr);align-items:start;padding:16px;gap:10px 12px}
+  .benefit-link{grid-column:2;justify-self:start}
   .rate-strip{grid-template-columns:1fr;gap:8px;padding:10px 6px 6px}
   .rate-label{max-width:none;padding-left:8px}
 }
