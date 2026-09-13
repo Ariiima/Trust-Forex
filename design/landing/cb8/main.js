@@ -315,6 +315,29 @@
   });
   addEventListener('pointerdown', e => { if (shut && !e.target.closest('.well.open')) shut(); }, true);
 
+  /* ---------- the volume well gets a stepper: the pickers' chevron, up and down (founder, 2026-09-13) ----------
+     The number field's native spin buttons are hidden (style.css .well input), so this puts two back in
+     the page's own chevron. stepUp/stepDown keep the field's min, max and step, and the input event they
+     send is the one the calculator below already listens for. The buttons stay out of the tab order: the
+     field itself takes the arrow keys. Without JS the field is typed into, as before. */
+  const volField = document.getElementById('volume');
+  if (volField && volField.parentElement.classList.contains('well')) {
+    const stepper = document.createElement('span');
+    stepper.className = 'stepper';
+    [['up', 'Increase', 'stepUp'], ['down', 'Decrease', 'stepDown']].forEach(([dir, verb, move]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.tabIndex = -1;
+      b.className = `stepper-${dir}`;
+      b.setAttribute('aria-label', `${verb} XAUUSD volume`);
+      b.innerHTML = CARET;
+      b.addEventListener('click', () => { volField[move](); volField.dispatchEvent(new Event('input', { bubbles: true })); });
+      stepper.append(b);
+    });
+    volField.parentElement.classList.add('stepped');
+    volField.after(stepper);
+  }
+
   /* ---------- calculator: volume x 17 x account factor x share (the Cashback page only — the Results,
      Referral and About pages load this same script and have no form) ---------- */
   const vol = document.getElementById('volume');

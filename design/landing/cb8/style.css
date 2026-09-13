@@ -6,7 +6,7 @@
    feDisplacementMap (#liquid in index.html) in backdrop-filter, Chromium only; every other
    engine gets the same glass without the bend. The data stays opaque white — the founder's
    "white chart" — so figures never sit on a translucent ground. */
-@import url('base.css?v=e02974b6');
+@import url('base.css?v=c4071ef4');
 @import url('consent.css?v=07fd8694');
 
 /* ---------- structure behind the glass: a faint grid in every blue ground ---------- */
@@ -156,7 +156,12 @@ html.reduce .value-panel::after{animation:none}
    01–04 and the calculator made five blue blocks in a row. This one keeps the block and swaps
    its two grounds: the block is paper, carrying the white pages' soft field, and the form is the
    blue card. The inputs stay white — what you type is still read off white. */
-#calculator .block{background:var(--paper);color:var(--ink);--grad:var(--grad-blue);box-shadow:0 24px 48px -30px rgba(var(--rgb-shadow),.3)}
+#calculator .block{background:transparent;color:var(--ink);--grad:var(--grad-blue)}
+/* The paper block sat 20px inside the white screen with a drop shadow under it, and read as a card with
+   hard edges scrolling past (founder, 2026-09-13: "this section has sharp edges and you'll feel it"). Its
+   ground is now the screen's own white and the white pages' field (.screen-blue::before, masked before
+   both seams), so nothing marks where the block ends. */
+#calculator .block::before{content:none}
 #calculator{z-index:1}   /* its block's shadow runs past the screen's edge; the chapter below must not cut it */
 #calculator .block > .rayfield{display:none}                 /* that ground WAS the blue */
 #calculator .block .h2{color:var(--navy)}
@@ -521,6 +526,17 @@ html.reduce #calculator .live i{animation:none}
 .well-value .caret{width:12px;height:12px;flex:none;opacity:.7;transition:transform .25s var(--ease)}
 .well.open{z-index:6}
 .well.open .well-value .caret{transform:rotate(180deg)}
+/* the volume well's stepper (main.js): the picker's chevron, once up and once down, stacked on the well's
+   right edge where the pickers keep theirs (founder, 2026-09-13) */
+.well.stepped input{padding-right:30px}
+.stepper{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2px}
+.stepper button{display:grid;place-items:center;width:24px;height:18px;padding:0;border:0;border-radius:6px;background:none;
+  color:#fff;cursor:pointer;opacity:.72;transition:opacity .2s var(--ease),background-color .2s var(--ease)}
+.stepper button:hover{opacity:1;background:rgba(255,255,255,.12)}
+.stepper button:active{background:rgba(255,255,255,.22)}
+.stepper .caret{width:12px;height:12px}
+.stepper-up .caret{transform:rotate(180deg)}
+html.reduce .stepper button{transition:none}
 .picker{position:absolute;z-index:6;left:0;right:0;top:calc(100% + 7px);margin:0;padding:6px;list-style:none;border-radius:15px;
   display:flex;flex-direction:column;gap:3px;
   border:1px solid rgba(255,255,255,.22);
