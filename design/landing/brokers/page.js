@@ -1,22 +1,16 @@
 /* Partner Brokers — what this page adds beyond cb8/main.js.
-   The hero is a picker: three partner cards on one rail, the active one's name is the page's statement and
-   every record below is that broker's. One broker is published (GTCFX); the other two carry the same shape
+   The hero is a picker: three partner tiles on one rail, the active one is the page's subject and every
+   record below is that broker's. One broker is published (GTCFX); the other two carry the same shape
    with their figures pending, and the three sections that are pure broker data (regulation, rates, bonuses)
    say so rather than showing someone else's numbers.
 
    The broker lives in the URL (?broker=xm), so a card is a link and the back button works. */
 (() => {
   const PENDING = 'Data pending';
-  /* The fact strip carries the broker's own headline figures where there are any. A broker whose record is
-     still coming falls back to these four — what is true of every partner broker — rather than looping four
-     ways of saying "not yet" under its name. */
-  const SHARED_FACTS = ['Accounts opened through TrustForex', 'Cashback on every eligible lot',
-                        'Credited every week', 'Your plan sets your share'];
   const pending = (name) => ({
-    name, lede: 'Partner broker. The account, regulation and cashback record for this broker is in preparation.',
+    name,
     products: PENDING, accounts: PENDING, spread: PENDING, leverage: PENDING, cashback: PENDING,
     platforms: PENDING, connection: PENDING,
-    facts: SHARED_FACTS,
     stdDeposit: PENDING, stdLeverage: PENDING, stdSpread: PENDING, stdCommission: PENDING, stdPlatforms: PENDING,
     ecnDeposit: PENDING, ecnLeverage: PENDING, ecnSpread: PENDING, ecnCommission: PENDING, ecnPlatforms: PENDING,
   });
@@ -26,7 +20,6 @@
   const BROKERS = {
     gtcfx: {
       name: 'GTCFX',
-      lede: 'Forex and multi-asset CFDs, with cashback on every eligible lot you close.',
       products: 'Forex and multi-asset CFDs',
       accounts: 'Standard and ECN',
       spread: 'From 0.0 pips',
@@ -34,7 +27,6 @@
       cashback: 'Up to $2.40 / lot',
       platforms: 'MT4, MT5, and GTC Go',
       connection: 'New accounts through TrustForex only',
-      facts: ['Standard and ECN accounts', 'Spreads from 0.0 pips', 'Leverage up to 1:2000', 'Cashback up to $2.40 per lot'],
       stdDeposit: 'No minimum', stdLeverage: 'Up to 1:2000', stdSpread: 'Average 1.0 pips',
       stdCommission: '$0', stdPlatforms: 'MT4, MT5, GTC Go',
       ecnDeposit: 'From $3,000', ecnLeverage: 'Up to 1:2000', ecnSpread: 'From 0.0 pips',
@@ -57,35 +49,12 @@
   const cards = [...document.querySelectorAll('.broker-card')];
   const dots = [...document.querySelectorAll('.broker-dot')];
   const name = document.getElementById('h1');
-  const lede = document.getElementById('brokerLede');
-  /* the strip is the system's: a four-column row, one screen wide, three copies of it (cb8/style.css) */
-  const FACTS = 4;
-  const facts = [...document.querySelectorAll('.facts')];
   /* the published sections, kept as they ship so returning to GTCFX restores the real markup */
   const SECTIONS = { regGrid: 'Regulation', rateTables: 'Cashback rates', bonusGrid: 'Bonus offers' };
   const published = Object.fromEntries(Object.keys(SECTIONS).map((id) => [id, document.getElementById(id).innerHTML]));
   if (!cards.length) return;
 
-  /* main.js splits a .words heading into one <span class="w"><i>word</i></span> per word and the gradient is
-     clipped on those <i>; a heading rewritten here has to carry the same boxes or it loses its run. */
-  const words = (el, text) => {
-    el.innerHTML = text.trim().split(/\s+/).filter(Boolean)
-      .map((w, i) => `<span class="w" style="--i:${i}"><i>${w}</i></span>`).join(' ');
-  };
   let active = 0;
-
-  /* The rail answers the click on the frame it happens: the cards slide, the dot moves. Only the words
-     those cards name are held back — they fade down, change while nothing is legible, and come back
-     (page.css owns the fade; --swap-ms is how long half of it takes). Swapping the text under the
-     pointer instead, as the first build did, read as a flicker in the middle of a moving rail. */
-  const hero = document.getElementById('hero');
-  const REDUCE = document.documentElement.classList.contains('reduce');
-  const SWAP_MS = REDUCE ? 0 : parseFloat(getComputedStyle(hero).getPropertyValue('--swap-out')) || 0;
-  let swapTimer = 0;
-  let painted = null;   // the broker whose words are on the page right now, which is not always the active card
-  /* two brokers with no record of their own share the strip's four facts. Nothing changes there, so nothing
-     fades there: the strip is left alone and keeps scrolling through the swap. */
-  const sameFacts = (a, b) => !!a && !!b && BROKERS[a].facts.join(' ') === BROKERS[b].facts.join(' ');
 
   const rail = () => {
     cards.forEach((card, n) => {
@@ -100,11 +69,8 @@
   const paint = () => {
     const key = cards[active].dataset.broker;
     const data = BROKERS[key];
-    words(name, data.name);
-    lede.textContent = data.lede;
+    name.textContent = data.name;
     Object.entries(BIND).forEach(([id, field]) => { document.getElementById(id).textContent = data[field]; });
-    /* --i is the column: the four cells come back one after another, left to right */
-    if (!sameFacts(key, painted)) facts.forEach((list) => { list.innerHTML = data.facts.map((f, i) => `<li style="--i:${i}">${f}</li>`).join(''); });
 
     /* the three broker-data sections: the published markup, or one line saying whose record is still coming */
     Object.entries(SECTIONS).forEach(([id, what]) => {
@@ -112,7 +78,6 @@
         : `<div class="placeholder">${what} for ${data.name} will be published here.</div>`;
     });
     document.title = `${data.name} — Partner Broker — TrustForex`;
-    painted = key;
   };
 
   const render = (i, push = true) => {
@@ -123,14 +88,7 @@
       url.searchParams.set('broker', cards[active].dataset.broker);
       history.pushState({ broker: cards[active].dataset.broker }, '', url);
     }
-    if (!SWAP_MS || !hero.classList.contains('is-live')) { paint(); return; }   // first paint and reduced motion: at once
-    hero.classList.toggle('facts-change', !sameFacts(cards[active].dataset.broker, painted));
-    hero.classList.add('is-swapping');
-    clearTimeout(swapTimer);
-    swapTimer = setTimeout(() => {   // a second click before this fires simply moves the landing
-      paint();
-      hero.classList.remove('is-swapping');
-    }, SWAP_MS);
+    paint();
   };
 
   const indexOf = (key) => cards.findIndex((c) => c.dataset.broker === key);
@@ -150,11 +108,9 @@
     render(i >= 0 ? i : 0, false);
   });
 
-  /* the shipped broker: the URL first, otherwise the card the HTML marks active. This one paints at once
-     — .is-live is what tells every later change to fade instead. */
+  /* the shipped broker: the URL first, otherwise the card the HTML marks active */
   const start = indexOf(requested());
   render(start >= 0 ? start : 0, false);
-  hero.classList.add('is-live');
 
   /* ---------- self-check: ?check=1 ----------
      The rate tables are the page's one piece of arithmetic: every figure is the no-plan figure scaled by that
@@ -167,10 +123,8 @@
     Object.entries(BROKERS).forEach(([key, data]) => {
       if (indexOf(key) < 0) fails.push(`${key} is in the table with no card on the rail`);
       Object.values(BIND).forEach((field) => { if (data[field] == null) fails.push(`${key} has no ${field}`); });
-      if (data.facts.length !== FACTS) fails.push(`${key} has ${data.facts.length} facts, the strip is ${FACTS} columns wide`);
     });
     cards.forEach((c) => { if (!BROKERS[c.dataset.broker]) fails.push(`the rail has a card for ${c.dataset.broker}, the table does not`); });
-    if (facts.length !== 3) fails.push(`the strip carries ${facts.length} copies of its row, the loop needs 3`);
     if (dots.length !== cards.length) fails.push(`${dots.length} dots for ${cards.length} cards`);
     const lit = cards.filter((c) => c.classList.contains('is-active'));
     if (lit.length !== 1) fails.push(`${lit.length} cards are active, exactly 1 must be`);
@@ -210,8 +164,7 @@
     });
     if (tables.length) {
       const claimed = cents(document.getElementById('ovCashback').textContent);
-      if (claimed !== top) fails.push(`the overview claims ${claimed / 100} per lot, the tables top out at ${top / 100}`);
-    }
+      if (claimed !== top) fails.push(`the overview claims ${claimed / 100} per lot, the tables top out at ${top / 100}`);    }
 
     console.log(fails.length ? 'BROKERS CHECK FAIL\n' + fails.join('\n')
       : `BROKERS CHECK OK — ${cards.length} brokers, showing ${showing}, ${tables.length ? `${top / 100} per lot at the top of ${tables.length} tables` : 'its record pending'}`);

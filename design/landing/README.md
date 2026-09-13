@@ -366,10 +366,12 @@ node _qa/lines.mjs 'http://localhost:5311/_qa/wireframe-home-v24.html' 'http://l
 ## Partner Brokers page
 
 `brokers/` is the broker record: one page, one broker at a time, `?broker=<key>` in the URL. The
-hero is the picker — the three partner cards the Cashback page lists, on the mechanics' glass —
-and the active card's name is the page's statement. Under it a sticky strip of six anchors, then
-the records: overview, regulation, accounts, markets, cashback, bonuses, and the Cashback page's
-own four connection steps.
+hero is the picker — the three partner brokers the Cashback page lists, each as a large tile in
+its own colours (the founder's reference, 2026-09-13), and dots on a glass capsule. The display-size
+broker name and the fact marquee were cut. A carousel on a full screen of blue read empty; four
+glass figure tiles and a CTA under it were tried and cut the same day, and the hero band now
+shrinks to the rail instead of holding a screen. Then the records: overview, regulation,
+accounts, markets, cashback, bonuses, and the Cashback page's own four connection steps.
 
 The structure is the founder's Broker Profile skeleton, kept as drawn; the treatment is cb8's.
 Two departures, both commented in `page.css`: the records **flow** at their own height rather
