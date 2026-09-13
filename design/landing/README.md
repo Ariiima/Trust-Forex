@@ -483,11 +483,16 @@ Three places keep the design over the skeleton: each account card lists the rows
 the Markets pane has no "Market / Examples" column head, and the rail keeps GTCFX, XM and XS where
 the skeleton has placeholder brokers.
 
-`page.js` holds the broker table. GTCFX is published; a broker with no record yet keeps the same
-shape with its figures pending, and regulation, rates and bonuses say so rather than leaving the
-last broker's numbers on screen. `?check=1` proves the tables' arithmetic — every figure is the
-no-plan figure scaled by that plan's share (10, 15, 20, 30) and the overview's "Maximum cashback"
-is the largest figure printed — and, on a pending broker, that nothing published is left behind.
+`page.js` holds the broker table, and a broker shows only what it has. A field left out of its
+entry takes its row off the page; a broker with no licences, no rates or no bonus does not get
+that record at all, and Account types goes once neither card has a row. There is no "data
+pending" state: an empty record read as a broken page. The side glows re-alternate over the
+records that remain. GTCFX is published (its licences, rate tables and bonuses are lists in the
+table, drawn into the markup `index.html` ships); XM and XS carry only their names so far.
+`?check=1` proves that every row and record is on the page exactly when its data is, that GTCFX's
+drawn records match the shipped markup, and the tables' arithmetic — every figure is the no-plan
+figure scaled by that plan's share (10, 15, 20, 30) and the overview's "Maximum cashback" is the
+largest figure printed.
 
 ```sh
 node _qa/screens.mjs 'http://localhost:5311/brokers/?check=1' /tmp/brokers.png

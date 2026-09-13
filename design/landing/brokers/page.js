@@ -1,22 +1,14 @@
 /* Partner Brokers — what this page adds beyond cb8/main.js.
    The hero is a picker: three partner tiles on one rail, the active one is the page's subject and every
-   record below is that broker's. One broker is published (GTCFX); the other two carry the same shape
-   with their figures pending, and the three sections that are pure broker data (regulation, rates, bonuses)
-   say so rather than showing someone else's numbers.
+   record below is that broker's. A broker shows only what it has: a figure it has no value for takes its
+   row off the page, and a record it has nothing for (no licences, no rates, no bonus) is not shown at all.
+   One broker is published (GTCFX); the other two carry their name and nothing else yet.
 
    The broker lives in the URL (?broker=xm), so a card is a link and the back button works. */
 (() => {
-  const PENDING = 'Data pending';
-  const pending = (name) => ({
-    name,
-    products: 'Broker data pending', accounts: PENDING, spread: PENDING, leverage: PENDING, cashback: PENDING,
-    platforms: PENDING,
-    stdDeposit: PENDING, stdLeverage: PENDING, stdSpread: PENDING, stdCommission: PENDING, stdPlatforms: PENDING,
-    ecnDeposit: PENDING, ecnLeverage: PENDING, ecnSpread: PENDING, ecnCommission: PENDING, ecnPlatforms: PENDING,
-  });
-
-  /* The published record. GTCFX's figures are the ones the page ships in its HTML — the table is what the
-     other brokers are measured against, and what the self-check reads the shipped markup back against. */
+  /* The broker table. GTCFX's record is the one the page ships in its HTML — the table is what the other
+     brokers are measured against, and what the self-check reads the shipped markup back against. A field
+     left out is a field the broker does not have. */
   const BROKERS = {
     gtcfx: {
       name: 'GTCFX',
@@ -30,9 +22,47 @@
       stdCommission: '$0', stdPlatforms: 'MT4, MT5, GTC Go',
       ecnDeposit: 'From $3,000', ecnLeverage: 'Up to 1:2000', ecnSpread: 'From 0.0 pips',
       ecnCommission: '$5 / standard lot', ecnPlatforms: 'MT4, MT5, GTC Go',
+      regulation: [
+        { code: 'FSCA', country: 'South Africa', entity: 'GTC Global SA (Pty) Ltd', licence: 'FSP 51545' },
+        { code: 'VFSC', country: 'Vanuatu', entity: 'GTC Global Trade Capital Co. Limited', licence: '40354' },
+        { code: 'FCA', country: 'United Kingdom', entity: 'Global Markets Group Limited*', licence: 'FRN 744501' },
+        { code: 'ASIC', country: 'Australia', entity: 'GTC Global (Australia) Pty Ltd', licence: 'AFSL 496371' },
+        { code: 'FSC', country: 'Mauritius', entity: 'GTC Global Ltd', licence: 'GB22200292' },
+      ],
+      /* a row is a market and its four figures, No plan to Diamond */
+      rates: [
+        { account: 'Standard Account', rows: [
+          ['Gold - XAUUSD', '$0.80', '$1.20', '$1.60', '$2.40'],
+          ['Forex', '$0.60', '$0.90', '$1.20', '$1.80'],
+          ['Other markets', '$0.60', '$0.90', '$1.20', '$1.80'],
+        ] },
+        { account: 'ECN Account', rows: [
+          ['Gold - XAUUSD', '$0.20', '$0.30', '$0.40', '$0.60'],
+          ['Forex', '$0.10', '$0.15', '$0.20', '$0.30'],
+          ['Other markets', '$0.10', '$0.15', '$0.20', '$0.30'],
+        ] },
+      ],
+      bonuses: [
+        { figure: '100%', title: 'Deposit Bonus', lines: [
+          'Receive a 100% bonus on eligible deposits, up to the confirmed maximum.',
+          'The offer is available to eligible users in supported regions.',
+          'The bonus applies to the account types listed in the offer.',
+          'Only deposits within the confirmed range qualify for the bonus.',
+          'Activate the offer through the stated steps within its validity period.',
+          "Trading and withdrawal follow the broker's published bonus conditions.",
+        ] },
+        { figure: '20%', title: 'Deposit Bonus', lines: [
+          'Receive a 20% bonus on eligible deposits, up to the confirmed maximum.',
+          'The offer is available to eligible users in supported regions.',
+          'The bonus applies to the account types listed in the offer.',
+          'Only deposits within the confirmed range qualify for the bonus.',
+          'Activate the offer through the stated steps within its validity period.',
+          "Trading and withdrawal follow the broker's published bonus conditions.",
+        ] },
+      ],
     },
-    xm: pending('XM'),
-    xs: pending('XS'),
+    xm: { name: 'XM' },
+    xs: { name: 'XS' },
   };
 
   /* which element takes which field */
@@ -45,12 +75,29 @@
     ecnCommission: 'ecnCommission', ecnPlatforms: 'ecnPlatforms',
   };
 
+  /* the three records drawn from a list, in the markup index.html ships for GTCFX */
+  const rays = (k) => `<div class="rayfield k ${k}" aria-hidden="true"><i></i><i></i><i></i><i></i></div>`;
+  const PLANS = '<th scope="col">Symbol / Market</th><th scope="col">No Plan <b>10%</b></th><th scope="col">Silver <b>15%</b></th><th scope="col">Gold <b>20%</b></th><th scope="col">Diamond <b>30%</b></th>';
+  const RECORDS = [
+    { field: 'regulation', box: 'regGrid', draw: (list) =>
+      `<div class="value-panel reg-panel" aria-label="Licences held">${rays('k02')}${list.map((l) =>
+        `<article class="value-row reg-row"><span class="reg-code">${l.code}</span><div class="value-copy"><strong>${l.country}</strong><p>${l.entity}</p></div><span class="reg-lic">${l.licence}</span></article>`).join('')}</div>` },
+    { field: 'rates', box: 'rateTables', draw: (list) => list.map((pane) =>
+      `<div class="panel rate-pane"><div class="rate-head"><h3>${pane.account}</h3><span>Final cashback for 1 eligible standard lot</span></div>` +
+      `<div class="rate-scroll"><table class="rate-table"><thead><tr>${PLANS}</tr></thead><tbody>${pane.rows.map(([market, ...figures]) =>
+        `<tr><th scope="row">${market}</th>${figures.map((f) => `<td>${f}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`).join('') },
+    /* the two hues alternate, so a third offer takes the first one's */
+    { field: 'bonuses', box: 'bonusGrid', draw: (list) => list.map((b, n) =>
+      `<article class="value-panel bonus-card" data-bonus="${n % 2 ? 'b' : 'a'}">${rays(n % 2 ? 'k03' : 'k06')}` +
+      `<div class="bonus-head"><span class="bonus-figure">${b.figure}</span><h3>${b.title}</h3></div>${b.lines.map((line, i) =>
+        `<div class="value-row bonus-line"><span class="bonus-num">${i + 1}</span><p>${line}</p></div>`).join('')}</article>`).join('') },
+  ];
+
   const cards = [...document.querySelectorAll('.broker-card')];
   const dots = [...document.querySelectorAll('.broker-dot')];
   const name = document.getElementById('h1');
-  /* the published sections, kept as they ship so returning to GTCFX restores the real markup */
-  const SECTIONS = { regGrid: 'Regulation data', rateTables: 'Cashback rates', bonusGrid: 'Bonus data' };
-  const published = Object.fromEntries(Object.keys(SECTIONS).map((id) => [id, document.getElementById(id).innerHTML]));
+  /* the markup as it ships, which the self-check holds GTCFX's drawn records to */
+  const shipped = Object.fromEntries(RECORDS.map(({ box }) => [box, document.getElementById(box).innerHTML]));
   if (!cards.length) return;
 
   let active = 0;
@@ -69,13 +116,28 @@
     const key = cards[active].dataset.broker;
     const data = BROKERS[key];
     name.textContent = data.name;
-    Object.entries(BIND).forEach(([id, field]) => { document.getElementById(id).textContent = data[field]; });
 
-    /* the three broker-data sections: the published markup, or one line saying whose record is still coming */
-    Object.entries(SECTIONS).forEach(([id, what]) => {
-      document.getElementById(id).innerHTML = key === 'gtcfx' ? published[id]
-        : `<div class="placeholder">${what} for ${data.name} will appear here.</div>`;
+    /* a figure the broker does not have takes its row with it; an account card left with no rows goes, and
+       Account types goes once both have */
+    Object.entries(BIND).forEach(([id, field]) => {
+      const el = document.getElementById(id);
+      el.textContent = data[field] ?? '';
+      el.parentElement.hidden = data[field] == null;
     });
+    document.querySelectorAll('.account-pane').forEach((pane) => { pane.hidden = !pane.querySelector('.account-row:not([hidden])'); });
+    document.getElementById('accounts').hidden = !document.querySelector('.account-pane:not([hidden])');
+
+    /* a record the broker has nothing for is not shown at all */
+    RECORDS.forEach(({ field, box, draw }) => {
+      const list = data[field];
+      const el = document.getElementById(box);
+      el.innerHTML = list?.length ? draw(list) : '';
+      el.closest('section').hidden = !list?.length;
+    });
+
+    /* the side glows go left and right in turn over the records that are showing, not over all of them */
+    [...document.querySelectorAll('.records > .screen.data:not([hidden])')]
+      .forEach((s, n) => s.style.setProperty('--side', n % 2 ? '96%' : '4%'));
     document.title = `${data.name} Broker Details | TrustForex`;
   };
 
@@ -112,39 +174,43 @@
   render(start >= 0 ? start : 0, false);
 
   /* ---------- self-check: ?check=1 ----------
-     The rate tables are the page's one piece of arithmetic: every figure is the no-plan figure scaled by that
-     plan's share (10 → 15 → 20 → 30), and the overview's "Maximum cashback" is the largest figure printed.
-     Both are checked in cents, against the markup as it ships. */
+     Two things. What shows is what the broker has: every row and record is on the page exactly when its
+     data is, and GTCFX's records draw back the markup index.html ships. And the rate tables' arithmetic:
+     every figure is the no-plan figure scaled by that plan's share (10 → 15 → 20 → 30), and the overview's
+     "Maximum cashback" is the largest figure printed. Both in cents, against the page as it stands. */
   if (new URLSearchParams(location.search).get('check') === '1') {
     const fails = [];
     const cents = (s) => Math.round(parseFloat(String(s).replace(/[^0-9.]/g, '')) * 100);
+    const shown = (el) => el.getClientRects().length > 0;
 
-    Object.entries(BROKERS).forEach(([key, data]) => {
-      if (indexOf(key) < 0) fails.push(`${key} is in the table with no card on the rail`);
-      Object.values(BIND).forEach((field) => { if (data[field] == null) fails.push(`${key} has no ${field}`); });
-    });
+    Object.keys(BROKERS).forEach((key) => { if (indexOf(key) < 0) fails.push(`${key} is in the table with no card on the rail`); });
     cards.forEach((c) => { if (!BROKERS[c.dataset.broker]) fails.push(`the rail has a card for ${c.dataset.broker}, the table does not`); });
     if (dots.length !== cards.length) fails.push(`${dots.length} dots for ${cards.length} cards`);
     const lit = cards.filter((c) => c.classList.contains('is-active'));
     if (lit.length !== 1) fails.push(`${lit.length} cards are active, exactly 1 must be`);
 
-    /* the arithmetic below is the published record's. A broker whose record is still coming carries the
-       placeholder in all three data sections instead, and must not be left showing the last broker's figures. */
     const showing = cards[active].dataset.broker;
-    const tables = [...document.querySelectorAll('#rateTables .rate-table')];
-    if (showing !== 'gtcfx') {
-      Object.entries(SECTIONS).forEach(([id, what]) => {
-        if (!document.querySelector(`#${id} .placeholder`)) fails.push(`${showing} shows ${what} where its record is not published`);
-      });
-      if (document.getElementById('ovCashback').textContent.trim() !== BROKERS[showing].cashback)
-        fails.push(`${showing} overview reads "${document.getElementById('ovCashback').textContent.trim()}", the table says "${BROKERS[showing].cashback}"`);
-    } else if (!tables.length) {
-      fails.push('the published broker is showing no rate table');
-    }
+    const data = BROKERS[showing];
+    Object.entries(BIND).forEach(([id, field]) => {
+      const el = document.getElementById(id);
+      if (shown(el) !== (data[field] != null)) fails.push(`${showing} ${field}: ${data[field] == null ? 'has no value but its row shows' : 'has a value but its row is hidden'}`);
+      else if (data[field] != null && el.textContent.trim() !== data[field]) fails.push(`${showing} ${field} reads "${el.textContent.trim()}", the table says "${data[field]}"`);
+    });
+    RECORDS.forEach(({ field, box }) => {
+      const section = document.getElementById(box).closest('section');
+      if (shown(section) !== Boolean(data[field]?.length)) fails.push(`${showing} ${section.dataset.name}: ${data[field]?.length ? 'has data but the record is hidden' : 'has no data but the record shows'}`);
+      if (showing === 'gtcfx' && document.getElementById(box).innerHTML !== shipped[box].replace(/>\s+</g, '><').trim())
+        fails.push(`GTCFX ${section.dataset.name}: the table draws different markup from what index.html ships`);
+    });
+    const visible = [...document.querySelectorAll('.records > .screen.data')].filter(shown);
+    visible.forEach((s, n) => {
+      if (getComputedStyle(s).getPropertyValue('--side').trim() !== (n % 2 ? '96%' : '4%')) fails.push(`${s.dataset.name}'s glow is on the same side as the record above it`);
+    });
 
     /* a row is a market, a column is a plan. So the share arithmetic is read ACROSS a row — every plan pays
        its share of that market's no-plan figure — and each plan's share is read from its column head. The
        last column is the one page.css fills, so it has to be the top share. */
+    const tables = [...document.querySelectorAll('#rateTables .rate-table')];
     let top = 0;
     tables.forEach((table) => {
       const where = table.closest('.rate-pane').querySelector('.rate-head h3').textContent.trim();
@@ -161,11 +227,12 @@
         });
       });
     });
-    if (tables.length) {
-      const claimed = cents(document.getElementById('ovCashback').textContent);
-      if (claimed !== top) fails.push(`the overview claims ${claimed / 100} per lot, the tables top out at ${top / 100}`);    }
+    if (tables.length && data.cashback != null) {
+      const claimed = cents(data.cashback);
+      if (claimed !== top) fails.push(`the overview claims ${claimed / 100} per lot, the tables top out at ${top / 100}`);
+    }
 
     console.log(fails.length ? 'BROKERS CHECK FAIL\n' + fails.join('\n')
-      : `BROKERS CHECK OK — ${cards.length} brokers, showing ${showing}, ${tables.length ? `${top / 100} per lot at the top of ${tables.length} tables` : 'its record pending'}`);
+      : `BROKERS CHECK OK — ${cards.length} brokers, showing ${showing}: ${visible.map((s) => s.dataset.name).join(', ')}${tables.length ? `; ${top / 100} per lot at the top of ${tables.length} tables` : ''}`);
   }
 })();
