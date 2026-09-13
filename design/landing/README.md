@@ -318,6 +318,23 @@ badge, the name and the term on one line, a 60px price, then the monthly figure 
 and Referral share, each in its own glass pane. A rule follows, then the three things every plan
 includes.
 
+The card's words share one text style (founder, 2026-09-13: "same color, same weight, same size",
+then "smaller and more unified"). The term, the monthly line, the saving, the share's label and the
+list all inherit 14px at weight 500 in white at .82. Before, they ran 14 to 16px at four weights in
+four whites. The card has three sizes in all: those words at 14px, the name and the share at 24px,
+and the price at 52px (it was 28, 27 and 60). The saving keeps its green.
+
+Each pane is a tier plate (founder, 2026-09-13: "match the color of the plan more, and prettier"):
+the tier's metal at .8, a light shade falling to a deep one, under a rim and a top highlight in the
+tier's colour. The light end is kept a mid tone, so the white words on it still read. Gold's plate
+is quieter than the other two: less saturated, at .72 (founder, same day: "tone down gold a little,
+looks way too strong"). Three passes
+came first, the same day. The first was a right-edge fade that brightened on the picked card. The
+second was Referral's proof-row shading (`referral/page.css` `.proof-row`, a .18 wash to navy), where
+Gold read grey and Silver read as no colour. The third was tier glass, a .3 to .6 wash falling to each
+tier's deep shade. Diamond read well there, but Gold read khaki: amber over the blue mixes to grey at
+any strength that lets the blue show through.
+
 A card is picked, not just read. Each carries a native radio stretched over the whole card, so a
 click anywhere picks it and the arrow keys move between the three. The picked card lights its rim
 and its term in its tier ink, glows in that ink and brightens its halo, with no script. The cards not

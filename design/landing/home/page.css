@@ -512,29 +512,44 @@ html.reduce .glass .plan-col:has(.plan-pick){transition:none}
   border-radius:999px;font-size:var(--text-micro);font-weight:700;letter-spacing:.075em;text-transform:uppercase;
   white-space:nowrap;background:var(--label);color:var(--blue)}
 /* badge, name, and the term as an outlined pill at the far end — the reference's one line */
+/* One text style for everything in a card that is not a figure (founder, 2026-09-13: "same color,
+   same weight, same size", then "smaller and more unified"). The term, the monthly line, the saving,
+   the share's label and the list used to run 14 to 16px at four weights in four whites; they now all
+   inherit this one. The card has three sizes in all: these words at 14, the name and the share at 24
+   (--text-card-title), the price at 52 (--text-plan-price-compact). */
+.glass .plan-col{font-size:var(--text-ui);font-weight:var(--weight-label);color:rgba(255,255,255,.82)}
 .plan-head{display:flex;align-items:center;gap:14px}
-.plan-head h3{margin:0;font-size:var(--text-plan-name);letter-spacing:var(--tracking-card);color:var(--label,#fff)}
+.plan-head h3{margin:0;font-size:var(--text-card-title);letter-spacing:var(--tracking-card);color:var(--label,#fff)}
 /* Silver's own ink is a white, and a white name reads as no tier at all; the reference draws it ice blue */
 .plan-col[data-tier=silver] .plan-head h3{color:#B9E1FF}
 .duration{margin-left:auto;display:inline-flex;align-items:center;height:36px;padding:0 16px;
-  border:1px solid rgba(255,255,255,.45);border-radius:999px;font-size:var(--text-ui);white-space:nowrap;color:#fff}
+  border:1px solid rgba(255,255,255,.45);border-radius:999px;white-space:nowrap}
 .duration{transition:border-color .45s var(--ease)}
 .plan-col:has(.plan-pick:checked) .duration{border-color:var(--label)}
-.price{margin:18px 0 0;font-size:var(--text-plan-price);line-height:1;font-weight:750;letter-spacing:-.05em;color:#fff}
+.price{margin:18px 0 0;font-size:var(--text-plan-price-compact);line-height:1;font-weight:750;letter-spacing:-.05em;color:#fff}
 /* The lower half, after the founder's reference (2026-09-13): the monthly figure and the share
    each sit in their own small glass pane, then a rule, then what every plan includes. The panes
    are plain frosted boxes, not .tile — a tile's rim and sweep animate on the scroll, and six of
    them inside three tiles is six more layers on the one screen that already carries a rayfield. */
 .plan-pill{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;
-  border:1px solid rgba(255,255,255,.2);border-radius:14px;
-  background:linear-gradient(150deg,rgba(255,255,255,.1),rgba(255,255,255,.035));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
-.equiv{min-height:40px;margin-top:14px;font-size:var(--text-ui);font-weight:600;color:#fff}
-.equiv span+span{font-weight:500;color:rgba(255,255,255,.78)}
+  border:1px solid var(--pane-rim);border-radius:14px;
+  background:linear-gradient(150deg,var(--pane-hi),var(--pane-lo));
+  box-shadow:inset 0 1px 0 var(--pane-rim),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
+/* Tier plates (founder, 2026-09-13: "match the color of the plan more, and prettier"): each pane is
+   its tier's metal at .8, a light shade falling to a deep one, under a rim and a top highlight in the
+   tier's colour. At glass strength the blue showed through, and amber over blue mixes to grey: Gold
+   read khaki. At .8 the blue barely shows, so all three read true and stay one family. The light end
+   is kept a mid tone so the white words on it still read. Gold's plate is a little quieter than the
+   other two, less saturated and at .72 (founder, same day: "tone down gold a little, looks way too
+   strong"), since amber is the loudest of the three on this blue. */
+.plan-col[data-tier=silver]{--pane-hi:rgba(122,144,176,.8);--pane-lo:rgba(52,68,98,.8);--pane-rim:rgba(214,230,250,.7)}
+.plan-col[data-tier=gold]{--pane-hi:rgba(186,146,76,.72);--pane-lo:rgba(106,78,36,.72);--pane-rim:rgba(236,208,146,.6)}
+.plan-col[data-tier=diamond]{--pane-hi:rgba(146,110,236,.8);--pane-lo:rgba(66,38,146,.8);--pane-rim:rgba(196,166,255,.75)}
+.equiv{min-height:40px;margin-top:14px}
 /* what the longer term saves, in the record card's green — the page already reads green as a gain */
-.equiv .plan-save{color:#48D48A;font-weight:650}
-.plan-rate{min-height:54px;margin-top:10px;font-size:var(--text-ui);color:rgba(255,255,255,.82)}
-.plan-rate b{font-size:var(--text-plan-rate);line-height:1;letter-spacing:var(--tracking-stat);color:var(--label,#fff)}
+.equiv .plan-save{color:#48D48A}
+.plan-rate{min-height:54px;margin-top:10px}
+.plan-rate b{font-size:var(--text-card-title);line-height:1;letter-spacing:var(--tracking-stat);color:var(--label,#fff)}
 /* The share is what the pick changes, so it arrives again on every pick (founder, 2026-09-13: "load
    up smoothly from below"; a slide out of a clipped line was tried the same day and cut as not
    pretty). page.js gives each character its own cell with its place in --n, and they spring up 10px
@@ -548,9 +563,9 @@ html.reduce .glass .plan-col:has(.plan-pick){transition:none}
 @keyframes share-fade{from{opacity:0}}
 @keyframes pick-rise{from{opacity:0;transform:translateY(.5em)}}
 .plan-list{list-style:none;display:grid;gap:11px;margin:18px 0 0;padding:16px 4px 0;
-  border-top:1px solid rgba(255,255,255,.22);font-size:var(--text-body);color:rgba(255,255,255,.9)}
+  border-top:1px solid rgba(255,255,255,.22)}
 .plan-list li{display:flex;align-items:center;gap:12px}
-.plan-tick{width:18px;height:18px;flex:none;color:#fff}
+.plan-tick{width:18px;height:18px;flex:none}
 .plan-tick path{fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 /* the one action under the three cards: the app's checkout, on the picked plan. Its arrow sits at
    the far end, as the reference draws it, rather than beside the words. */
@@ -629,7 +644,6 @@ body{font-variant-numeric:normal}
   /* the badge is the card's biggest object, so it is the first thing that gives ground */
   .plan-badge{width:44px;height:44px}
   .plan-head{gap:10px}
-  .plan-head h3{font-size:var(--text-card-title)}
   .duration{height:32px;padding:0 12px}
   .glass .plan-col{padding:22px 18px 24px}
   /* the line takes the row's full width under the name, and the rates' label goes above the four */
