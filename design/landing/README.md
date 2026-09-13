@@ -161,6 +161,28 @@ the run — a halo is sized in percentages of its box, so one field over four sc
 single glare on the title band. And the record module's bars grow by `height`, not `scaleY`,
 because the figure above a bar is pinned to that bar's top edge and has to ride up with it.
 
+### Type
+
+Home was built at its wireframe's own sizes, which ran a size over the same element on every other
+page. On 2026-09-13 (founder: the hero's size "should be the same for other heros") it took the
+site's roles, and the Home-only roles were dropped from `shared/scale.css`. Phone sizes in brackets.
+
+| Element | Was | Now |
+|---|---|---|
+| Hero statement | 104px (52) | `--text-display`, 92 (48), as Cashback and Referral |
+| Chapters 1 and 2 | 92 (48) | `--text-chapter`, 76 (42) |
+| The four step words | 104 (78) | `--text-display`, 92 (54, the short chapter's phone size) |
+| Their sentences | 20 (18) | `--text-mech-copy`, 19 (16): the steps are Home's mechanics |
+| Benefits and Plans headings | 58 and 62 (44) | `--text-title`, 66 (40), every section heading's |
+| The Plans sentence | 14 | `--text-copy`, 18, every section paragraph's |
+| Closing statement | 88 (48) | `--text-display-close`, 88 (52), as Results and Referral |
+| Service tiles | 17px names, 12.5px lines | 15 and 13, the Referral evidence card they copy |
+| "How it works" capsule | 11.5 | `--text-small`, 12 |
+
+At 78px "Stay fixed" had been breaking onto two lines on a 390px phone. At 1440 the benefits
+heading now runs four lines, as the record's does. The held Plans screen still fits one window at
+1280×720 with the larger sentence (680px of 720).
+
 ### The record's bars
 
 The four bars are windows onto one green light behind the plot, not four green swatches. Each

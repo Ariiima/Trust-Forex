@@ -56,25 +56,20 @@
   /* roles added 2026-09-12 for the Home page (TrustForex-Home-v24.html, verbatim). Sizes the
      wireframe writes within half a pixel of a role we already have take that role instead of a
      near-duplicate: 15px bar figures are --text-panel-title, 19px questions --text-question,
-     13px notes --text-meta, 11px axis labels --text-label, 10px captions --text-micro. */
-  --text-display-home: clamp(52px, 8vw, 104px);     /* Home hero */
-  --text-display-ready: clamp(48px, 7vw, 88px);     /* Home final statement */
-  --text-chapter-home: clamp(48px, 7vw, 92px);      /* Home chapter breaks */
-  --text-step-title: clamp(64px, 8vw, 104px);       /* one protocol step: Prepare / Enter / Stay fixed / Measure */
-  --text-title-benefits: clamp(44px, 4.25vw, 58px); /* the benefits heading */
-  --text-title-plans: clamp(44px, 4.8vw, 62px);     /* "Choose your plan duration" */
+     13px notes --text-meta, 11px axis labels --text-label, 10px captions --text-micro.
+     Home's hero, chapters, step words, section headings, close, step sentence and tiles had roles of
+     their own too, each a size over the same element on the other pages; on 2026-09-13 they took
+     the site's roles, and those Home roles are gone. */
+  --text-title-plans: clamp(44px, 4.8vw, 62px);     /* "Choose your plan duration" in home/plans-lab.html */
   --text-plan-price: 60px;                          /* a plan's price (founder's reference, 2026-09-13) */
   --text-plan-price-compact: 52px;                  /* the price on Home's plan card, since "smaller and more unified" (2026-09-13) */
   --text-week-total: 28px;                          /* the week's signal count */
   --text-plan-rate: 27px;                           /* a plan's benefit rate */
   --text-plan-name: 28px;                           /* Silver / Gold / Diamond */
   --text-benefit-name: 21px;                        /* Cashback / Referral */
-  --text-step-copy: 20px;                           /* a protocol step's sentence */
   --text-week-period: 17px;                         /* the week the record covers */
-  --text-service-title: 17px;                       /* a service tile's name */
   --text-benefit-balance: clamp(64px, 7vw, 96px);   /* the Earning balance the benefits column counts in (2026-09-13) */
-  --text-service-copy: 12.5px;                      /* a service tile's line */
-  --text-guide: 11.5px;                             /* plan guide, benefit link */
+  --text-guide: 11.5px;                             /* plan guide in home/plans-lab.html */
   /* role added 2026-09-12 for the questions section: its heading stands alone above the rows,
      so it runs one step over --text-title instead of sharing a section heading's size. It is
      also the one heading ruled to hold one line (founder, 2026-09-12), so its size is measured

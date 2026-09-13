@@ -5,8 +5,10 @@
    The wireframe's neutral greys (#0d0f11 steps, a #111 rate bar, white plan cards) become the site's blue
    and its glass — the composition is the wireframe's, the palette is never the wireframe's. */
 
-/* ---------- 1 · the hero: the wireframe's own widths, and the one CTA back under the paragraph ---------- */
-#hero .display{font-size:var(--text-display-home);letter-spacing:-.065em;max-width:900px}
+/* ---------- 1 · the hero: the wireframe's own widths, and the one CTA back under the paragraph ----------
+   The statement is every hero's size and tracking (base.css .display). It was the wireframe's own 104px,
+   a size over the Cashback and Referral heroes' 92 (founder, 2026-09-13: "the same for other heros"). */
+#hero .display{max-width:900px}
 #hero .lede{max-width:760px;margin:0 auto}
 .hero-cta{margin-top:34px}
 
@@ -86,9 +88,12 @@ html.reduce .screen.in .weekly-bar{animation:none}
   font-size:var(--text-ui);font-weight:var(--weight-strong);color:#fff}
 .record-link:hover .ext{transform:rotate(0)}
 
-/* ---------- 3 · the chapters: the wireframe's one chapter size, on the light one too ---------- */
-.chapter .h2{font-size:var(--text-chapter-home);max-width:1000px}
-.chapter-2 .h2{font-size:var(--text-chapter-home)}
+/* ---------- 3 · the chapters: the site's one chapter size, on the light one too ----------
+   --text-chapter, as on Cashback, Results and Referral; the wireframe's 92px ran a size over them.
+   cb8 sets its short chapter 2 ("Ready to activate?") a step up; this one is two full lines, so it
+   keeps the chapter size, as Referral's does. */
+.chapter .h2{max-width:1000px}
+.chapter-2 .h2{font-size:var(--text-chapter)}
 
 /* ---------- 4–7 · the protocol: one blue corridor, four screens, nothing but type ----------
    Four screens, one ground. Each step carries its own rayfield rather than sharing one stretched
@@ -103,11 +108,13 @@ html.reduce .screen.in .weekly-bar{animation:none}
 #step-2 .rayfield.k,#step-4 .rayfield.k{transform:scaleX(-1)}
 #step-2::before,#step-4::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background:rgba(var(--rgb-abyss),.34)}
 .step>.wrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:28px}
+/* The word is the hero's size, so nothing on the page is set over its hero (it was 104px, over the
+   hero's 92), and the sentence is the mechanics paragraph's, since these four are Home's mechanics. */
 .step-title{position:relative;width:min(100%,1000px);margin:0;
-  font-size:var(--text-step-title);line-height:var(--leading-display);letter-spacing:-.065em;
+  font-size:var(--text-display);line-height:var(--leading-display);letter-spacing:-.065em;
   font-weight:var(--weight-display);color:#fff;text-wrap:balance}
 .step-copy{width:min(100%,700px);max-width:none;margin:0 auto;
-  font-size:var(--text-step-copy);line-height:var(--leading-step-copy);color:rgba(255,255,255,.76);text-wrap:balance}
+  font-size:var(--text-mech-copy);line-height:var(--leading-step-copy);color:rgba(255,255,255,.76);text-wrap:balance}
 
 /* ---------- the four are glass (founder, 2026-09-13) ----------
    Painted, not filtered. The corridor has already refused four ways of changing this ground on the
@@ -327,11 +334,13 @@ html:not(.js) .step .rv{opacity:1;transform:none}
 .access-visual .tile-icon{width:var(--icon-well);height:var(--icon-well);padding:calc((var(--icon-well) - var(--icon-size))/2 - 1px);display:grid;place-items:center;border-radius:var(--icon-well-radius);stroke:var(--acc-solid);
   border:1px solid rgba(var(--acc),.4);background:linear-gradient(150deg,rgba(var(--acc),.2),rgba(var(--rgb-deep),.3));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
-/* the line sits right under its name, as on the Referral card — no min-height pushing the two apart */
+/* the line sits right under its name, as on the Referral card — no min-height pushing the two apart.
+   The type is that card's too (referral/page.css .proof-row): the names ran 17px and the lines 12.5,
+   where every tile name on the site is 15 */
 .tile-copy{min-width:0}
-.tile-copy b{display:block;margin-bottom:4px;font-size:var(--text-service-title);line-height:1.2;letter-spacing:-.025em;color:#fff}
+.tile-copy b{display:block;margin-bottom:4px;font-size:var(--text-panel-title);line-height:1.2;letter-spacing:-.015em;color:#fff}
 .tile-copy span{display:block;max-width:400px;
-  font-size:var(--text-service-copy);line-height:1.42;color:rgba(255,255,255,.82)}
+  font-size:var(--text-meta);line-height:1.4;color:rgba(255,255,255,.82)}
 
 /* the benefits screen takes its ground from the body, so it was the one white screen on the page
    with neither the field nor the beam every other white screen carries (founder, 2026-09-12) */
@@ -355,7 +364,7 @@ html.reduce #benefits::after{animation:none}
    a benefit pays, and the Earning balance both of them land in. Under the balance, the two benefits
    and the four shared rates came back the same day as rows and one strip, not as cards. */
 .benefits-section>.wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(460px,548px);gap:68px;align-items:center}
-.benefits-intro .h2{max-width:520px;margin:0;font-size:var(--text-title-benefits)}
+.benefits-intro .h2{max-width:520px;margin:0}
 .benefits-intro .copy{max-width:460px;margin:24px 0 0;font-size:var(--text-copy)}
 .benefit-feed{width:100%;max-width:548px;justify-self:end;display:grid}
 /* each benefit keeps one colour of its own — Cashback the mint it uses everywhere, Referral the brand
@@ -417,7 +426,7 @@ html.reduce #benefits::after{animation:none}
 .rate-points b{display:block;margin-top:2px;font-size:var(--text-row-title);line-height:1.1;font-weight:700;letter-spacing:var(--tracking-stat);color:#fff}
 /* the way in to each benefit's own page */
 .benefit-link{flex:0 0 auto;min-height:32px;padding:7px 12px;display:inline-flex;align-items:center;gap:6px;
-  border:1px solid rgba(var(--acc),.45);border-radius:999px;line-height:1;font-size:var(--text-guide);font-weight:var(--weight-strong);color:var(--acc-ink);
+  border:1px solid rgba(var(--acc),.45);border-radius:999px;line-height:1;font-size:var(--text-small);font-weight:var(--weight-strong);color:var(--acc-ink);
   transition:background-color .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease)}
 .benefit-link:hover{background:var(--acc-ink);border-color:var(--acc-ink);color:#fff}
 .benefit-link .ext{width:13px;height:13px}
@@ -451,9 +460,12 @@ html.reduce .feed-slot,html.reduce .feed-bar i,html.reduce .odo-d,html.reduce .o
 html:not(.snap) #plans .block{min-height:auto}
 .plans-shell{display:grid}
 .plans-intro{margin-bottom:26px}
-.plans-intro .h2{max-width:780px;margin:0;font-size:var(--text-title-plans)}
-/* the sentence the two guide tiles used to be: what is the same, and what the term changes */
-.plans-lede{max-width:620px;margin:14px 0 0;font-size:var(--text-ui);line-height:1.5;color:rgba(255,255,255,.72)}
+/* the benefits and plans headings are section headings (--text-title, base.css .h2); they had sizes
+   of their own, 58 and 62px, under the 66 of every other section heading on the site */
+.plans-intro .h2{max-width:780px;margin:0}
+/* the sentence the two guide tiles used to be: what is the same, and what the term changes.
+   A section paragraph's size, as under every other section heading; it was 14px. */
+.plans-lede{max-width:620px;margin:14px 0 0;font-size:var(--text-copy);line-height:var(--leading-body);color:rgba(255,255,255,.76)}
 /* stretched: the three cards are one size (founder, 2026-09-13). No card stands taller; the
    picked one is the one lit. */
 .plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch}
@@ -608,7 +620,8 @@ html.reduce .glass .plan-col:has(.plan-pick:checked) .plan-rate b i,html.reduce 
 
 /* ---------- 12–13 · the questions and the close ---------- */
 .faq-wrap{max-width:880px}
-#final .display{font-size:var(--text-display-ready)}
+/* the close is Results' and Referral's size (it was its own clamp: the same 88px here, 48px on a phone) */
+#final .display{font-size:var(--text-display-close)}
 #final .lede{max-width:620px}
 
 /* cb8 sets tabular figures on the whole body, which widens Inter's letters by about 2% and not only
@@ -639,8 +652,10 @@ body{font-variant-numeric:normal}
   .weekly-grid div{left:38px}
   .weekly-bars{--bars-gap:10px}
   .access-visual .tile{padding:16px;gap:12px}
-  .step-title{font-size:clamp(58px,20vw,78px)}
-  .step-copy{font-size:var(--text-row-title);max-width:340px}
+  /* a step word is the short chapter's phone size (base.css .chapter-2 .h2); at 78px "Stay fixed"
+     broke onto two lines on a 390px phone, and the sentence is the mechanics paragraph's phone size */
+  .step-title{font-size:54px}
+  .step-copy{font-size:var(--text-body);max-width:340px}
   /* the badge is the card's biggest object, so it is the first thing that gives ground */
   .plan-badge{width:44px;height:44px}
   .plan-head{gap:10px}
@@ -651,6 +666,10 @@ body{font-variant-numeric:normal}
   .benefit-row .benefit-link{grid-row:1}
   .rate-strip{grid-template-columns:1fr;gap:8px;padding:10px 6px 6px}
   .rate-label{max-width:none;padding-left:8px}
+}
+/* a phone's close, as on Results and Referral: --text-display-close floors at 54 */
+@media (max-width:560px){
+  #final .display{font-size:52px}
 }
 
 /* the questions heading holds one line, so its size is measured off this page's own question:
