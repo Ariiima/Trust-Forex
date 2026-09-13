@@ -20,13 +20,6 @@
    nothing else: the reference strip that used to sit under it is gone, so 56px of the old 112px was
    clearing a bar that has left. */
 .records .screen.data{min-height:calc(100dvh + var(--nav-h));padding:calc(var(--nav-h) + 40px) 0 var(--section-space);justify-content:center}
-/* ---------- the final holds a screen, the footer starts under it ----------
-   cb8 sizes #final to one window with the footer inside it, so the closing words stood in what the
-   footer left, about half the fold, with the floor already rising under the button (founder,
-   2026-09-13). The words now take a window of their own below the section's head clearance, like
-   every screen before them, and the footer's floor begins past the fold. */
-.final-inner{min-height:calc(100dvh - var(--nav-h) - 28px)}
-html:not(.snap) .final-inner{min-height:calc(100svh - var(--section-space))}
 /* the light crosses a blue record as it crosses a paper one: cb8 names --ground on .screen-paper and drives the
    glass streaks from the stack's --m1…--m4, which this page has no stack to provide. Each record with glass panes in
    it names its own — including Cashback, whose block is white but whose panes are still blue. */

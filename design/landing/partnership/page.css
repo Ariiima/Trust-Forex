@@ -257,6 +257,9 @@ html.reduce .live i{animation:none}
    edge without a scrollport, so the copy sticks to the viewport the way About's story headings do. */
 #final{overflow:clip;padding-top:calc(var(--nav-h) + 60px)}
 .request-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,.8fr) minmax(520px,1.2fr);gap:88px;align-items:start;padding-bottom:110px}
+/* the form already runs past a laptop's fold; on a taller window the blue still holds the whole view
+   before the footer's floor (base.css .final-inner, the same rule for the other pages) */
+.request-grid{min-height:calc(100dvh - var(--nav-h) - 60px)}
 .request-copy{position:sticky;top:calc(var(--nav-h) + 28px)}   /* About's offset: the heading keeps its place while the form scrolls */
 .request-copy .h2{max-width:570px;color:#fff}
 .request-copy .copy{color:rgba(255,255,255,.78)}

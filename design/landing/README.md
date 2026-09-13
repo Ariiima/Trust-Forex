@@ -75,7 +75,9 @@ founder picked it on 2026-09-13 ("23 is the winner") out of rounds three and fou
 `cb8/footer-lab-3.html`. It replaced variant 02 of `cb8/footer-lab.html`, where the links sat on the
 closing screen's own blue with a hairline between, and the cropped wordmark ran under the small
 print and the socials. The links are 4 / 4 / 4: Home is the lockup, and Brokers was dropped because
-it was Partner brokers twice. The blog's floor rises out of paper unchanged. Legal's floor is black,
+it was Partner brokers twice. The closing screen above it holds a full window of blue on its own and
+the floor starts past the fold (founder, 2026-09-13): sized as one window with the footer inside, the
+closing words stood in about half the fold. The blog's floor rises out of paper unchanged. Legal's floor is black,
 so that page still has no hue.
 
 QA: `node _qa/screens.mjs <url> <out.png> [w h [frames]]` shoots every screen of a page into one
