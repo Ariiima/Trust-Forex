@@ -246,11 +246,12 @@ html:not(.js) .step .rv{opacity:1;transform:none}
 /* ---------- 8 · the service: the wireframe's columns, three tiles on one blue panel ---------- */
 /* The card turns blue (founder, 2026-09-12), the Referral evidence card's treatment: on paper the
    white pane read as another sheet of the page, so the three service elements now sit on the record
-   pages' own deep blue, each one a tile on it with a leading icon well. Live Signals takes the
-   brand's green — the one element the whole service is built on. */
+   pages' own deep blue, each one a tile on it with a leading icon well. Like that card, each tile
+   carries one faint colour of its own — sky, green, amber — at the same strength, all taken from
+   --acc, so a tile is recoloured in one line (founder, 2026-09-13). Live Signals keeps the green. */
 .service-section .grid2{grid-template-columns:minmax(0,.9fr) minmax(500px,1.1fr);gap:78px}
 .service-section .grid2>div:first-child{max-width:560px}
-.access-visual{--rgb-success:72,212,138;   /* the state green as a triplet, so the live row can tint with it */
+.access-visual{--rgb-sky:160,196,255;--sky:#A0C4FF;--rgb-success:72,212,138;--rgb-amber:240,168,104;--amber:#F0A868;
   min-height:356px;padding:14px;display:grid;grid-template-rows:repeat(3,minmax(100px,auto));gap:10px;border-radius:24px}
 /* the paper screen's frame paints its pane white behind the content (../cb8/style.css); this one is
    blue, and both pseudos follow the card's own 24px corner rather than the 28px card radius */
@@ -260,22 +261,22 @@ html:not(.js) .step .rv{opacity:1;transform:none}
 .screen-paper .access-visual::before{border-radius:38px}
 /* .tile has no plain form in base.css — on blue the glass rules own it, on paper each page draws
    its own. This is the evidence card's: a tinted tile, the icon in a lit well on its left. */
-.access-visual .tile{--tint:rgba(var(--rgb-600),.34);--tint2:rgba(var(--rgb-900),.26);--rim:rgba(160,196,255,.34);
+.access-visual .tile{--acc:var(--rgb-sky);--acc-solid:var(--sky);
   min-height:100px;padding:16px 18px;display:grid;grid-template-columns:var(--icon-well) minmax(0,1fr);gap:16px;align-items:center;
-  border:1px solid var(--rim);border-radius:16px;color:#fff;
-  background:linear-gradient(150deg,var(--tint),var(--tint2));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
-.access-visual .tile.live{--rim:rgba(var(--rgb-success),.4);background:linear-gradient(105deg,rgba(var(--rgb-success),.34),rgba(var(--rgb-900),.3) 72%)}
+  border:1px solid rgba(var(--acc),.34);border-radius:16px;color:#fff;
+  background:linear-gradient(150deg,rgba(var(--acc),.18),rgba(var(--rgb-deep),.32));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
+.access-visual .tile.live{--acc:var(--rgb-success);--acc-solid:var(--success)}
+.access-visual .tile:nth-child(3){--acc:var(--rgb-amber);--acc-solid:var(--amber)}
 /* the well is the .ico itself, and the player sizes its svg to 100% of the box — so the padding, not
    an svg rule, is what holds the glyph at --icon-size (half the well less the glyph, less the 1px rim) */
-.access-visual .tile-icon{width:var(--icon-well);height:var(--icon-well);padding:calc((var(--icon-well) - var(--icon-size))/2 - 1px);display:grid;place-items:center;border-radius:var(--icon-well-radius);stroke:#fff;
-  border:1px solid rgba(160,196,255,.42);background:linear-gradient(150deg,rgba(var(--rgb-500),.4),rgba(var(--rgb-900),.3));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
-.access-visual .tile.live .tile-icon{border-color:rgba(var(--rgb-success),.45);stroke:var(--success);
-  background:linear-gradient(150deg,rgba(var(--rgb-success),.32),rgba(var(--rgb-900),.3))}
+.access-visual .tile-icon{width:var(--icon-well);height:var(--icon-well);padding:calc((var(--icon-well) - var(--icon-size))/2 - 1px);display:grid;place-items:center;border-radius:var(--icon-well-radius);stroke:var(--acc-solid);
+  border:1px solid rgba(var(--acc),.4);background:linear-gradient(150deg,rgba(var(--acc),.2),rgba(var(--rgb-deep),.3));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+/* the line sits right under its name, as on the Referral card — no min-height pushing the two apart */
 .tile-copy{min-width:0}
-.tile-copy b{display:block;margin-bottom:5px;font-size:var(--text-service-title);line-height:1.2;letter-spacing:-.025em;color:#fff}
-.tile-copy span{min-height:38px;display:flex;align-items:center;max-width:400px;
+.tile-copy b{display:block;margin-bottom:4px;font-size:var(--text-service-title);line-height:1.2;letter-spacing:-.025em;color:#fff}
+.tile-copy span{display:block;max-width:400px;
   font-size:var(--text-service-copy);line-height:1.42;color:rgba(255,255,255,.82)}
 
 /* the benefits screen takes its ground from the body, so it was the one white screen on the page
