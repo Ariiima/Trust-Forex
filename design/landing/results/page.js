@@ -27,6 +27,8 @@
      for its Thursday — the day-4-of-7 majority rule the admin's weekOf uses — so a week
      straddling two months lands in whichever month owns most of its days. */
   const SHORT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const LONG_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const spelled = period => period.replace(/^[A-Z][a-z]{2}\b/, month => LONG_MONTHS[SHORT_MONTHS.indexOf(month)] || month);
   function weekLabel(date) {
     const [day, month, year] = date.split(' ');
     const thursday = new Date(Date.UTC(+year, SHORT_MONTHS.indexOf(month), +day));
@@ -40,16 +42,17 @@
     monthly: months.map((period, index) => ({ period, total: index === 8 ? 0 : 28 + (index % 19), seed: index + 4 })),
     yearly: ['Q4 2025', 'Q1 2026', 'Q2 2026'].map((period, index) => ({ period, total: 86 + index * 11, seed: index + 8 }))
   };
+  /* Scalp weeks are named the way the Signals weeks are, so one period reads the same on both charts */
   const scalpData = {
     weekly: [
-      { label: 'Week 31', period: '27–31 Jul 2026', levels: 6, bounce: 27, breach: 7 },
-      { label: 'Week 32', period: '3–7 Aug 2026', levels: 8, bounce: 38, breach: 11 },
-      { label: 'Week 33', period: '10–14 Aug 2026', levels: 5, bounce: 24, breach: 6 },
-      { label: 'Week 34', period: '17–21 Aug 2026', levels: 9, bounce: 42, breach: 14 }
+      { period: weekLabel('27 Jul 2026'), levels: 6, bounce: 27, breach: 7 },
+      { period: weekLabel('3 Aug 2026'), levels: 8, bounce: 38, breach: 11 },
+      { period: weekLabel('10 Aug 2026'), levels: 5, bounce: 24, breach: 6 },
+      { period: weekLabel('17 Aug 2026'), levels: 9, bounce: 42, breach: 14 }
     ],
     monthly: [
-      { label: 'Jul 2026', period: 'July 2026', levels: 6, bounce: 27, breach: 7 },
-      { label: 'Aug 2026', period: 'August 2026', levels: 22, bounce: 35, breach: 10 }
+      { period: 'Jul 2026', levels: 6, bounce: 27, breach: 7 },
+      { period: 'Aug 2026', levels: 22, bounce: 35, breach: 10 }
     ],
     yearly: []
   };
@@ -58,6 +61,17 @@
   let compareCursor = null, compareDots = null;   /* the dashed rule and the four dots that mark the hovered period while compare is on */
 
   const tipHead = (period, pill) => '<div class="tip-head"><strong>' + period + '</strong>' + (pill ? '<span class="tip-pill">' + pill + '</span>' : '') + '</div>';
+
+  /* A card spells its month out wherever it has the room: the short name sets the card's width, and the
+     long name is kept only if it fits inside that width. A name never widens the card — on a phone the
+     compare and Scalp heads already run as wide as the card, so those keep "Apr". */
+  function fillCard(card, period, pill, body) {
+    card.innerHTML = tipHead(period, pill) + body;
+    const long = spelled(period); if (long === period) return;
+    const width = card.getBoundingClientRect().width;
+    card.querySelector('.tip-head strong').textContent = long;
+    if (card.getBoundingClientRect().width > width + .5) card.querySelector('.tip-head strong').textContent = period;
+  }
 
   /* The card hangs off the mark it reads: a ring on the mark's top edge, a stem, then the card above it.
      `top` is the card's bottom edge, since the card is translated up by its own height. Where the mark runs
@@ -130,27 +144,20 @@
     const xAt = index => centers.length === count ? centers[index] : geometry.left + (count === 1 ? geometry.plotWidth / 2 : (index / (count - 1)) * geometry.plotWidth);
     compareChart.setAttribute('viewBox', '0 0 ' + geometry.width + ' ' + geometry.height);
     compareChart.innerHTML = '';
-    /* a period with no signals is not a zero — every line breaks there rather than ruling straight across a
-       period nothing was recorded in. The break is the whole mark: the slot is clenched to a sliver, so the
-       lines close up over it and nothing is drawn in the hole. A lone reading between two empty periods is a dot. */
+    /* a period with no signals is not a zero, so no line drops to the axis there: each line runs straight on
+       from the reading before the hole to the reading after it. The slot is clenched to a sliver, so the join
+       is short, and nothing is plotted in the hole itself. A lone reading on the whole chart is a dot. */
     compareCursor = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     compareCursor.setAttribute('class', 'compare-cursor');
     compareCursor.setAttribute('x1', '0'); compareCursor.setAttribute('x2', '0');   // the rule is drawn at zero and moved by transform, which is what lets it ease
     compareCursor.setAttribute('y1', String(geometry.top)); compareCursor.setAttribute('y2', String(geometry.top + geometry.plotHeight));
     compareChart.appendChild(compareCursor);   // first, so the four lines cross over the rule rather than under it
     targets.forEach(targetName => {
-      const current = rowsFor(targetName); let path = '', run = [];
-      const flush = () => {
-        if (run.length) path += ' M ' + run[0] + (run.length === 1 ? ' L ' + run[0] : run.slice(1).map(point => ' L ' + point).join(''));
-        run = [];
-      };
-      current.forEach((item, index) => {
-        if (item.rate === null) { flush(); return; }
-        run.push(xAt(index).toFixed(2) + ' ' + (geometry.top + (100 - item.rate) / 100 * geometry.plotHeight).toFixed(2));
-      });
-      flush();
+      const current = rowsFor(targetName);
+      const points = current.flatMap((item, index) => item.rate === null ? [] : [xAt(index).toFixed(2) + ' ' + (geometry.top + (100 - item.rate) / 100 * geometry.plotHeight).toFixed(2)]);
+      const path = !points.length ? '' : 'M ' + (points.length === 1 ? points[0] + ' L ' + points[0] : points.join(' L '));
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      line.setAttribute('d', path.trim()); line.setAttribute('class', 'compare-path ' + targetName); line.setAttribute('pathLength', '1'); compareChart.appendChild(line);
+      line.setAttribute('d', path); line.setAttribute('class', 'compare-path ' + targetName); line.setAttribute('pathLength', '1'); compareChart.appendChild(line);
       settle(line, () => { line.style.strokeDashoffset = '0'; });   // the line's own rule leaves it at 1, i.e. undrawn; the animation was holding it open
       if (count <= 6) {
         const color = getComputedStyle(document.documentElement).getPropertyValue('--' + targetName).trim();
@@ -210,18 +217,18 @@
     slots.forEach((slot, i) => slot.classList.toggle('active', i === index));
     const center = slotCenters()[index];   // reading TP1–TP4 the lit column is the marker; compare hides it, so the rule takes over
     if (item.rate === null) {
-      tooltip.innerHTML = tipHead(item.period) + '<div class="tip-empty">No Signals</div>';
-      live.textContent = item.period + ', No Signals.';
+      fillCard(tooltip, item.period, '', '<div class="tip-empty">No Signals</div>');
+      live.textContent = spelled(item.period) + ', No Signals.';
     } else if (compareMode) {
       const detail = targets.map(targetName => rowsFor(targetName)[index]);
-      tooltip.innerHTML = tipHead(item.period, item.total + ' Signals') + '<div class="tip-split quad">' + targets.map((targetName, i) =>
-        '<div class="tip-cell" style="--tp-ink:var(--' + targetName + '-ink)"><i>' + targetName.toUpperCase() + '</i><b>' + detail[i].rate + '%</b><em>' + detail[i].hits + '/' + detail[i].total + '</em></div>').join('') + '</div>';
-      live.textContent = item.period + ', ' + detail.map((row, i) => targets[i].toUpperCase() + ' ' + row.rate + ' percent').join(', ') + '.';
+      fillCard(tooltip, item.period, item.total + ' Signals', '<div class="tip-split quad">' + targets.map((targetName, i) =>
+        '<div class="tip-cell" style="--tp-ink:var(--' + targetName + '-ink)"><i>' + targetName.toUpperCase() + '</i><b>' + detail[i].rate + '%</b><em>' + detail[i].hits + '/' + detail[i].total + '</em></div>').join('') + '</div>');
+      live.textContent = spelled(item.period) + ', ' + detail.map((row, i) => targets[i].toUpperCase() + ' ' + row.rate + ' percent').join(', ') + '.';
     } else {
-      tooltip.innerHTML = tipHead(item.period) + '<div class="tip-split">'
+      fillCard(tooltip, item.period, '', '<div class="tip-split">'
         + '<div class="tip-cell"><b class="pos">' + item.rate + '%</b><i>Win Rate</i></div>'
-        + '<div class="tip-cell"><b>' + item.hits + ' of ' + item.total + '</b><i>Reached ' + target.toUpperCase() + '</i></div></div>';
-      live.textContent = item.period + ', ' + item.rate + ' percent Win Rate, ' + item.hits + ' of ' + item.total + ' reached ' + target.toUpperCase() + '.';
+        + '<div class="tip-cell"><b>' + item.hits + ' of ' + item.total + '</b><i>Reached ' + target.toUpperCase() + '</i></div></div>');
+      live.textContent = spelled(item.period) + ', ' + item.rate + ' percent Win Rate, ' + item.hits + ' of ' + item.total + ' reached ' + target.toUpperCase() + '.';
     }
     /* compare has four readings and so no single mark to hang off — the card sits at the top of the plot and
        the dashed rule carries the x. A period with no signals has no mark to hang off either, so its card
@@ -283,10 +290,10 @@
     const slots = [...scalpBars.children], item = rows[index], stageBounds = scalpStage.getBoundingClientRect(), slotBounds = slots[index].getBoundingClientRect(); scalpActiveIndex = index;
     slots.forEach((slot, i) => slot.classList.toggle('active', i === index));
     const center = slotBounds.left - stageBounds.left + slotBounds.width / 2;
-    scalpTooltip.innerHTML = tipHead(item.period, item.levels + ' Touched Levels') + '<div class="tip-split">'
+    fillCard(scalpTooltip, item.period, item.levels + ' Touched Levels', '<div class="tip-split">'
       + '<div class="tip-cell"><b class="pos">+' + item.bounce + ' pips</b><i>Average Bounce</i></div>'
-      + '<div class="tip-cell"><b class="neg">−' + item.breach + ' pips</b><i>Average First Breach</i></div></div>';
-    scalpLive.textContent = item.period + ', ' + item.levels + ' Touched Levels, Average Bounce ' + item.bounce + ' pips, Average First Breach minus ' + item.breach + ' pips.';
+      + '<div class="tip-cell"><b class="neg">−' + item.breach + ' pips</b><i>Average First Breach</i></div></div>');
+    scalpLive.textContent = spelled(item.period) + ', ' + item.levels + ' Touched Levels, Average Bounce ' + item.bounce + ' pips, Average First Breach minus ' + item.breach + ' pips.';
     /* the week's reading is the Bounce, so the ring sits on the Bounce block's top edge */
     place(scalpStage, scalpTooltip, () =>
       anchorCard(scalpTooltip, scalpAnchor, scalpStage, center, markTopOf(slots[index].firstElementChild, scalpStage), true, false));
@@ -332,7 +339,8 @@
     if (document.querySelectorAll('#bars .bar-slot').length !== 30) fails.push('bars not drawn');
     const runs = [...document.querySelectorAll('#compare-chart .compare-path')].map(path => (path.getAttribute('d').match(/M/g) || []).length);
     if (runs.length !== 4) fails.push(`compare lines ${runs.length} != 4`);
-    if (runs.some(n => n !== 2)) fails.push('a compare line rules across the No Signals week: ' + runs.join(','));
+    if (runs.some(n => n !== 1)) fails.push('a compare line breaks at the No Signals week: ' + runs.join(','));
+    if (scalpData.weekly.some(row => !/^[A-Z][a-z]{2} \d{4} · W[1-5]$/.test(row.period))) fails.push('a Scalp week is not named the way a Signals week is');
     if (document.querySelectorAll('#compare-chart .compare-gap').length) fails.push('the compare chart still rules a stub through the No Signals week');
     const slots = [...document.querySelectorAll('#bars .bar-slot')];
     const emptyWidth = () => document.querySelectorAll('#bars .bar-slot')[12].getBoundingClientRect().width;
@@ -360,6 +368,7 @@
     if (tooltip.closest('[style*=backdrop],.panel')) fails.push('the card is back inside the panel, where its own backdrop-filter goes inert');
     if (chartStage.classList.contains('no-ease')) fails.push('the stage was left without its easing');
     if (!tooltip.querySelector('.tip-head strong') || tooltip.querySelectorAll('.tip-cell').length !== 2) fails.push('the single-target card is not a header and two cells');
+    if (innerWidth > 560 && tooltip.querySelector('.tip-head strong').textContent !== 'March 2026 · W2') fails.push('the single-target card does not spell its month out: ' + tooltip.querySelector('.tip-head strong').textContent);
     /* a period with no signals has nothing to point at, so its card rests mid-plot and draws no ring */
     showIndex(12);
     if (tipAnchor.classList.contains('on')) fails.push('the No Signals card still draws a ring');
