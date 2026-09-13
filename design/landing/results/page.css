@@ -127,8 +127,9 @@
 .tip-head{position:relative;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:8px 12px 9px}
 .tip-head::after{content:'';position:absolute;left:12px;right:12px;bottom:0;border-bottom:var(--hair)}   /* the rule is inset, so it reads as a divider rather than a seam in the glass */
 .tip-head strong{font-size:var(--text-small);font-weight:var(--weight-strong);color:#fff;white-space:nowrap}
+.tip-head strong:only-child{margin-inline:auto}   /* alone, the period centres over the cells; beside a pill it keeps the left */
 .tip-pill{padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.16);font-size:var(--text-label);font-weight:var(--weight-strong);color:rgba(255,255,255,.9);white-space:nowrap}
-.tip-empty{padding:9px 12px;font-size:var(--text-label);color:rgba(255,255,255,.7)}
+.tip-empty{padding:9px 12px;text-align:center;font-size:var(--text-label);color:rgba(255,255,255,.7)}
 /* the readings sit side by side, one hairline between them — two cells for a single target or a Scalp week,
    four for compare. `quad` only centres them and tightens the gutter; the cell itself is the same cell. */
 .tip-split{display:grid;grid-auto-flow:column;grid-auto-columns:1fr}
