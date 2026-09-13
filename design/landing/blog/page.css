@@ -38,23 +38,21 @@
 .on-dark .card-meta{color:rgba(255,255,255,.72)}.on-dark .card-meta b{color:#fff}
 
 /* ---------- the grid: paper, frosted cards, three across ---------- */
-#posts,#related,#article{background:var(--paper);view-timeline-name:--ground}
+#posts,#article{background:var(--paper);view-timeline-name:--ground}
 #from-blog,#editor{view-timeline-name:--ground}
-#posts::before,#related::before,#article::before,#from-blog::before,#editor::before{content:'';position:absolute;inset:0;pointer-events:none;background:
+#posts::before,#article::before,#from-blog::before,#editor::before{content:'';position:absolute;inset:0;pointer-events:none;background:
   radial-gradient(46% 56% at 10% -4%,rgba(var(--rgb-300),.42),transparent 70%),
   radial-gradient(40% 52% at 94% 104%,rgba(var(--rgb-200),.5),transparent 70%),
   repeating-linear-gradient(0deg,rgba(var(--rgb-300),.10) 0 1px,transparent 1px 48px),
   repeating-linear-gradient(90deg,rgba(var(--rgb-300),.10) 0 1px,transparent 1px 48px);
   -webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent);mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent)}
-#posts::after,#related::after,#article::after,#from-blog::after,#editor::after{content:'';position:absolute;inset:0 auto 0 0;width:40%;z-index:0;pointer-events:none;
+#posts::after,#article::after,#from-blog::after,#editor::after{content:'';position:absolute;inset:0 auto 0 0;width:40%;z-index:0;pointer-events:none;
   background:linear-gradient(115deg,transparent 18%,rgba(var(--rgb-200),.5) 50%,transparent 82%);
   -webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent),linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);-webkit-mask-composite:source-in;
   mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent),linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);mask-composite:intersect;
   animation:paper-light linear both;animation-timeline:--ground;animation-range:entry 0% exit 100%}
-html.reduce #posts::after,html.reduce #related::after,html.reduce #article::after,html.reduce #from-blog::after,html.reduce #editor::after{animation:none}
-/* white between two paper screens: it turns to paper over the 120px at each seam, so neither draws a line (2026-09-13) */
-#related{background:linear-gradient(180deg,var(--paper),#fff 120px,#fff calc(100% - 120px),var(--paper))}
-html.snap #posts,html.snap #related,html.snap #from-blog{min-height:auto;padding:var(--section-space) 0;justify-content:flex-start}
+html.reduce #posts::after,html.reduce #article::after,html.reduce #from-blog::after,html.reduce #editor::after{animation:none}
+html.snap #posts,html.snap #from-blog{min-height:auto;padding:var(--section-space) 0;justify-content:flex-start}
 .posts-head{display:grid;gap:24px;margin-bottom:32px}
 .posts-head .h2{margin:0}
 .posts-tools{display:flex;flex-wrap:wrap;align-items:center;gap:14px 18px}
@@ -76,9 +74,11 @@ html.snap #posts,html.snap #related,html.snap #from-blog{min-height:auto;padding
 .sort-well .picker{left:auto;right:0;top:calc(100% + 8px);min-width:100%;white-space:nowrap}
 .sort-well:hover{border-color:rgba(var(--rgb-200),.7)}
 .sort-well:focus-within{border-color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 0 4px rgba(var(--rgb-900),.14),0 16px 32px -22px rgba(var(--rgb-shadow),.6)}
-/* the read time rides the cover, so a card says how long it is before it is opened */
-.cover .read{position:absolute;z-index:2;top:10px;right:10px;padding:6px 11px;border-radius:999px;
-  font:var(--weight-label) var(--text-label)/1 var(--sans);letter-spacing:.07em;text-transform:uppercase;color:#fff;
+/* the read time rides the cover, so a card says how long it is before it is opened; the Most popular
+   list wears the same pill under each title (.mini .read) */
+.cover .read,.mini .read{padding:6px 11px;border-radius:999px;
+  font:var(--weight-label) var(--text-label)/1 var(--sans);letter-spacing:.07em;text-transform:uppercase;color:#fff}
+.cover .read{position:absolute;z-index:2;top:10px;right:10px;
   border:1px solid rgba(255,255,255,.3);background:rgba(var(--rgb-shadow),.42);
   backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%)}
 .post-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
@@ -94,14 +94,15 @@ html.snap #posts,html.snap #related,html.snap #from-blog{min-height:auto;padding
 .card p{margin:0;font-size:var(--text-ui);line-height:var(--leading-body);color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .more{margin:32px auto 0;display:flex}
 
-/* ---------- "From the Blog": two large cards and the most-read list ---------- */
-#from-blog{background:linear-gradient(180deg,var(--paper),#fff 120px,#fff calc(100% - 120px),var(--paper))}   /* as #related: paper at both seams */
+/* ---------- "From the Blogs", at the foot of every post: two large cards and the most-read list ---------- */
+/* white between two paper screens: it turns to paper over the 120px at each seam, so neither draws a line (2026-09-13) */
+#from-blog{background:linear-gradient(180deg,var(--paper),#fff 120px,#fff calc(100% - 120px),var(--paper))}
 .fb-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(320px,.82fr);gap:24px;align-items:stretch}
 .fb-popular{display:flex;flex-direction:column;justify-content:space-between;border:1px solid var(--line);border-radius:24px;padding:8px 24px;background:#fff}
 .mini{display:flex;flex:1;gap:16px;align-items:center;justify-content:space-between;padding:14px 0;border-top:1px solid var(--line)}
 .mini:first-of-type{border-top:0}
 .mini b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:var(--text-panel-title);line-height:1.35;color:var(--navy);font-weight:var(--weight-strong)}
-.mini b+span{display:block;margin-top:5px;font-size:var(--text-small);color:var(--muted)}
+.mini .read{display:inline-block;margin-top:8px;color:var(--p-900);background:var(--p-50);border:1px solid var(--p-100)}   /* pale tint on the white panel (founder, 2026-09-14: softer than navy) */
 .mini:hover b{color:var(--accent)}
 
 /* ---------- the post: a typographic page, the contents pinned beside it ---------- */

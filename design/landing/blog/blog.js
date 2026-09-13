@@ -9,6 +9,7 @@
     const chips = [...document.querySelectorAll('.chip[data-cat]')];
     const sort = document.getElementById('sort');
     const more = document.getElementById('more');
+    const onIndex = chips.some(c => c.dataset.cat === 'all' && c.getAttribute('aria-current') === 'true');   // read before apply() moves it
     let cat = (location.hash.match(/#c=([\w-]+)/) || [])[1] || chips.find(c => c.getAttribute('aria-current') === 'true')?.dataset.cat || 'all';
     let shown = PAGE;
     const apply = () => {
@@ -21,7 +22,7 @@
       chips.forEach(c => c.setAttribute('aria-current', c.dataset.cat === cat ? 'true' : 'false'));
     };
     chips.forEach(c => c.addEventListener('click', e => {
-      if (!chips.some(x => x.dataset.cat === 'all' && x.getAttribute('aria-current') === 'true') && c.dataset.cat !== 'all' && !document.getElementById('from-blog')) return;   // a category page: follow the link
+      if (!onIndex) return;   // a category page: follow the link
       e.preventDefault(); cat = c.dataset.cat; shown = PAGE;
       history.replaceState(null, '', cat === 'all' ? location.pathname : `#c=${cat}`);
       apply();

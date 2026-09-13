@@ -27,8 +27,7 @@ Live at https://trustforex.net/v/landing/blog/ — the editor at `/blog/editor/`
 ## Where a post appears
 
 - **The grid** — every post, three across, filtered by the category chips and sorted (newest / oldest / most read); nine at a time, then *Show more*.
-- **From the Blog** — at the foot of every listing: the two `featured: true` posts as large cards, and *Most popular* — the four highest `reads`.
-- **More in <category>** — three related posts under every post.
+- **From the Blogs** — at the foot of every post: the two `featured: true` posts as large cards, and *Most popular* — the four highest `reads`. The post being read is left out of both.
 - `posts.json` — slug, title, category, date, author, excerpt, minutes, reads, featured, url — for anything else that wants the list.
 
 The categories are placeholders until the founder names the real five; change `categories.json`
@@ -48,7 +47,7 @@ date: 2026-09-01           # YYYY-MM-DD; newest first everywhere
 author: TrustForex
 excerpt: One sentence for the card.       # optional — the first paragraph otherwise
 cover: https://…/image.webp   # optional — the category's placeholder photograph otherwise
-featured: true             # optional — one of the two large cards in From the Blog
+featured: true             # optional — one of the two large cards in From the Blogs
 reads: 412                 # optional — ranks Most popular (until real analytics exist)
 draft: true                # optional — skipped by the build
 ---

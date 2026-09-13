@@ -53,7 +53,7 @@ const url = (p, rel) => `${rel}blog/p/${p.slug}/`;
 
 const card = (p, rel, big = false) => `<article class="card${big ? ' card-big' : ''}" data-cat="${p.cat.id}" data-date="${p.date}" data-reads="${p.reads}">
   <a class="card-link" href="${url(p, rel)}">${cover(p, rel)}<div class="card-body"><span class="card-meta"><b>${esc(p.cat.name)}</b> · ${fmtDate(p.date)}</span><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></div></a></article>`;
-const mini = (p, rel) => `<a class="mini" href="${url(p, rel)}"><div><b>${esc(p.title)}</b><span>${p.minutes} min read</span></div>${cover(p, rel, 'cover-sm')}</a>`;
+const mini = (p, rel) => `<a class="mini" href="${url(p, rel)}"><div><b>${esc(p.title)}</b><span class="read">${p.minutes} min read</span></div>${cover(p, rel, 'cover-sm')}</a>`;
 
 /* ---- the shell every page shares ---- */
 const FAVICON = /<link rel="icon"[^>]*>/.exec(cb8)[0];
@@ -124,30 +124,32 @@ ${scripts}
 </html>
 `;
 
-/* ---- the listing page: the chips, the grid, "From the Blog" ---- */
+/* ---- the listing page: the chips and the grid ---- */
 const chips = (rel, current) => `<div class="chips" role="list"><a class="chip" role="listitem" href="${rel}blog/" data-cat="all"${current === 'all' ? ' aria-current="true"' : ''}>All</a>${cats.map(c => `<a class="chip" role="listitem" href="${rel}blog/c/${c.id}/" data-cat="${c.id}"${current === c.id ? ' aria-current="true"' : ''}>${esc(c.name)}</a>`).join('')}</div>`;
-const fromBlog = rel => {
-  const featured = posts.filter(p => p.featured).slice(0, 2); while (featured.length < 2 && posts[featured.length]) if (!featured.includes(posts[featured.length])) featured.push(posts[featured.length]); else break;
-  const popular = [...posts].sort((a, b) => b.reads - a.reads).slice(0, 4);
-  if (!posts.length) return '';
-  return `<section class="screen" id="from-blog" data-name="From the Blog" aria-labelledby="fb-h"><div class="wrap">
-  <h2 class="h2 words" id="fb-h">From the Blog</h2>
-  <div class="fb-grid rv" style="--i:1">${featured.map(p => card(p, rel, true)).join('')}<aside class="fb-popular" aria-label="Most popular">${popular.map(p => mini(p, rel)).join('')}</aside></div>
-</div></section>`;
-};
 const listing = ({ rel, list, current, heading, blurb, title, desc }) => {
   const grid = `<section class="screen" id="posts" data-name="Posts" aria-labelledby="posts-h"><div class="wrap">
   <div class="posts-head"><h1 class="h2 words" id="posts-h">${esc(heading)}</h1>
     <div class="posts-tools rv" style="--i:1">${chips(rel, current)}<div class="field well sort-well"><label for="sort">Sort</label><select id="sort"><option value="new">Newest</option><option value="old">Oldest</option><option value="reads">Most read</option></select></div></div></div>
   ${list.length ? `<div class="post-grid rv" id="grid" style="--i:2">${list.map(p => card(p, rel)).join('')}</div><button class="btn more" id="more" type="button" hidden>Show more</button>` : `<p class="copy rv" style="--i:2">No posts in this category yet.</p>`}
 </div></section>`;
-  return shell({ rel, title, desc, top: 'posts', body: grid + fromBlog(rel) + final(rel), scripts: `<script src="${rel}blog/blog.js?v=${V.blog}"></script>` });
+  return shell({ rel, title, desc, top: 'posts', body: grid + final(rel), scripts: `<script src="${rel}blog/blog.js?v=${V.blog}"></script>` });
 };
 
-/* ---- the post page ---- */
+/* ---- the post page, closing on "From the Blogs" (founder, 2026-09-14: it moved here from the listings,
+   in place of "More in <category>"); the post being read is left out of both halves ---- */
+const fromBlog = (rel, skip) => {
+  const pool = posts.filter(o => o !== skip);
+  if (!pool.length) return '';
+  const featured = pool.filter(o => o.featured).slice(0, 2);
+  for (const o of pool) if (featured.length < 2 && !featured.includes(o)) featured.push(o);
+  const popular = [...pool].sort((a, b) => b.reads - a.reads).slice(0, 4);
+  return `<section class="screen" id="from-blog" data-name="From the Blogs" aria-labelledby="fb-h"><div class="wrap">
+  <h2 class="h2 words" id="fb-h">From the Blogs</h2>
+  <div class="fb-grid rv" style="--i:1">${featured.map(o => card(o, rel, true)).join('')}<aside class="fb-popular" aria-label="Most popular">${popular.map(o => mini(o, rel)).join('')}</aside></div>
+</div></section>`;
+};
 const postPage = p => {
   const rel = '../../../';
-  const related = posts.filter(o => o !== p && o.cat === p.cat).concat(posts.filter(o => o !== p && o.cat !== p.cat)).slice(0, 3);
   const body = `<section class="screen screen-dark on-dark" id="hero" data-name="Post" aria-labelledby="h1">${ray(p.cat.ground)}
   <div class="wrap post-hero"><a class="chip rv" href="${rel}blog/c/${p.cat.id}/">${esc(p.cat.name)}</a>
     <h1 class="display words" id="h1">${esc(p.title)}</h1>
@@ -157,7 +159,7 @@ const postPage = p => {
     <button class="btn copy-link" type="button" data-url="https://trustforex.net/v/landing/blog/p/${p.slug}/">Copy link</button></aside>
   <article class="article rv" style="--i:1">${p.html}</article>
 </div></section>
-${related.length ? `<section class="screen" id="related" data-name="More" aria-labelledby="rel-h"><div class="wrap"><h2 class="h2 words" id="rel-h">${related[0].cat === p.cat ? `More in ${esc(p.cat.name)}` : 'More from the Blog'}</h2><div class="post-grid rv" style="--i:1">${related.map(o => card(o, rel)).join('')}</div></div></section>` : ''}
+${fromBlog(rel, p)}
 ${final(rel)}`;
   return shell({ rel, title: `${p.title} — TrustForex Blog`, desc: p.excerpt, body, scripts: `<script src="${rel}blog/blog.js?v=${V.blog}"></script>` });
 };
@@ -175,7 +177,7 @@ const editorPage = () => {
       <div class="ed-row"><div class="field"><label for="date">Date</label><input id="date" type="date"></div><div class="field"><label for="author">Author</label><input id="author" type="text" value="TrustForex"></div></div>
       <div class="field"><label for="excerpt">Excerpt (the card and the page description)</label><input id="excerpt" type="text" placeholder="One sentence that says what the post is."></div>
       <div class="ed-row"><div class="field"><label for="cover">Cover image URL (optional — the category ground otherwise)</label><input id="cover" type="url" placeholder="https://…/cover.webp"></div><div class="field"><label for="reads">Reads (ranks Most popular)</label><input id="reads" type="number" min="0" value="0"></div></div>
-      <label class="ed-check"><input id="featured" type="checkbox"> Featured — one of the two large cards in “From the Blog”</label>
+      <label class="ed-check"><input id="featured" type="checkbox"> Featured — one of the two large cards in “From the Blogs”</label>
       <div class="field"><label for="body">Body</label>
         <div class="ed-toolbar" aria-label="Insert a block">
           <button type="button" data-snip="h2">Heading</button><button type="button" data-snip="h2blue">Blue heading</button><button type="button" data-snip="bold">Bold</button><button type="button" data-snip="link">Link</button><button type="button" data-snip="image">Image</button><button type="button" data-snip="list">List</button>
@@ -196,7 +198,7 @@ const editorPage = () => {
 
 /* ---- write everything ---- */
 for (const d of ['c', 'p']) if (existsSync(join(BLOG, d))) rmSync(join(BLOG, d), { recursive: true });
-writeFileSync(join(BLOG, 'index.html'), listing({ rel: '../', list: posts, current: 'all', heading: 'Blog', blurb: 'Notes on how the record is kept: signals, results, Cashback, Referral and the decisions behind them.', title: 'TrustForex Blog', desc: 'Notes on how the TrustForex record is kept — signals, results, Cashback, Referral and the decisions behind them.' }));
+writeFileSync(join(BLOG, 'index.html'), listing({ rel: '../', list: posts, current: 'all', heading: 'Blogs', blurb: 'Notes on how the record is kept: signals, results, Cashback, Referral and the decisions behind them.', title: 'TrustForex Blogs', desc: 'Notes on how the TrustForex record is kept — signals, results, Cashback, Referral and the decisions behind them.' }));
 for (const c of cats) {
   mkdirSync(join(BLOG, 'c', c.id), { recursive: true });
   writeFileSync(join(BLOG, 'c', c.id, 'index.html'), listing({ rel: '../../../', list: posts.filter(p => p.cat === c), current: c.id, heading: c.name, blurb: c.blurb, title: `${c.name} — TrustForex Blog`, desc: c.blurb }));
