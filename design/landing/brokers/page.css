@@ -121,6 +121,11 @@ html.reduce .broker-card,html.reduce .broker-dot{transition:none}
    above it, and without the upward shadow, which on paper is a grey haze rather than depth. */
 .footer-only{background:var(--paper);color:var(--muted)}
 .footer-only .fsig{margin-top:0;box-shadow:none}
+/* Connect's one section space left its card 88px over the floor, half the 176px between two cards, so the
+   last record read as crowded onto the footer (founder, 2026-09-13). It takes the second section space
+   itself: its ground, grid and glow run on to the floor, where a band in .footer-only would stop them.
+   Then a little more air both ways (founder, 2026-09-14): 2rem over the heading and 2rem under the card. */
+.records #connect{padding:calc(var(--section-space) + 2rem) 0 calc(2 * var(--section-space) + 2rem)}
 
 /* ---------- one corner per pane ----------
    A paper pane is three boxes: the element carries the border, ::after carries the white fill and
