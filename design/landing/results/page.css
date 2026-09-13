@@ -239,14 +239,17 @@
 .target-ladder{padding:24px 22px 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}
 .glass .target-step{--head:rgba(72,212,138,.5);--mid:rgba(28,150,140,.34);--deep:rgba(10,64,110,.46);
   --rim:rgba(142,232,196,.5);--streak:.2;
-  height:var(--step);min-height:108px;padding:14px 12px;display:flex;flex-direction:column;justify-content:space-between;border-radius:14px 14px 6px 6px;
+  height:var(--step);min-height:108px;padding:14px 12px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;border-radius:14px 14px 6px 6px;
   background:linear-gradient(180deg,var(--head) 0,var(--mid) 88px,var(--deep) 100%);
   box-shadow:inset 0 1px 0 rgba(214,255,238,.42),inset 0 -1px 0 rgba(var(--rgb-shadow),.24),0 16px 32px -22px rgba(24,140,112,.85)}
 .glass .target-step:nth-child(1){--head:rgba(72,212,138,.44)}
 .glass .target-step:nth-child(2){--head:rgba(78,218,144,.54);--mid:rgba(32,162,146,.38);--deep:rgba(12,86,116,.46)}
 .glass .target-step:nth-child(3){--head:rgba(84,224,152,.62);--mid:rgba(36,174,150,.44);--deep:rgba(16,110,126,.48);--rim:rgba(158,238,202,.56)}
 .glass .target-step strong{font-size:var(--text-row-title);letter-spacing:-.02em;text-shadow:0 1px 1px rgba(4,32,72,.22)}.glass .target-step span{color:rgba(255,255,255,.7);font-size:var(--text-micro)}
-.glass .target-step b{font-size:var(--text-small);font-weight:var(--weight-strong);color:rgba(206,244,226,.86);font-variant-numeric:tabular-nums}
+/* the R:R reads as a caption, so it takes the head's capsule at micro size rather than a line of copy */
+.glass .target-step b{min-height:20px;padding:0 8px;display:inline-flex;align-items:center;white-space:nowrap;
+  border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(255,255,255,.08);
+  font-size:var(--text-micro);font-weight:var(--weight-strong);color:rgba(206,244,226,.86);font-variant-numeric:tabular-nums}
 .glass .target-step:last-child{--head:rgba(96,236,168,.72);--mid:rgba(40,186,158,.5);--deep:rgba(18,132,132,.52);--rim:rgba(178,244,208,.66)}
 .glass .target-step:last-child b{color:rgba(232,255,242,.94)}
 
@@ -460,7 +463,7 @@ html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
   .mech-copy .page-number{min-width:138px}
   .glass .dark-rows{margin:10px 12px 14px}
   .glass .dark-row{grid-template-columns:58px 1fr auto;gap:10px;padding-inline:10px}.dark-row small{font-size:var(--text-micro);white-space:nowrap}.dark-state{min-width:auto;padding-inline:8px}
-  .target-ladder{padding-inline:12px;gap:7px}.glass .target-step{padding:11px 8px}.glass .target-step b{font-size:var(--text-micro)}
+  .target-ladder{padding-inline:12px;gap:7px}.glass .target-step{padding:11px 6px}.glass .target-step b{min-height:18px;padding:0 5px}
   .winrate-body{padding:12px}.winrate-compare{gap:8px}.glass .winrate-case{min-height:218px;padding:12px 10px 12px;gap:8px}.winrate-case-head{gap:6px}.glass .winrate-case-head strong{padding:2px 6px}
   .winrate-ring{width:128px;height:128px}.glass .winrate-ring strong{font-size:32px}
   .timer-body{padding:18px 14px 20px;gap:14px}.timer-readout{width:164px;height:164px}.window-dot.touch{top:16px}
