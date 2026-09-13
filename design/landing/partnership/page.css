@@ -339,8 +339,9 @@ html.reduce .live i{animation:none}
 .form-card .send{width:100%;min-height:50px;margin-top:22px}
 .form-card .btn-solid{background:#fff;color:var(--navy);border-color:#fff;backdrop-filter:none;-webkit-backdrop-filter:none;
   box-shadow:0 1px 0 rgba(255,255,255,.9),0 14px 28px -14px rgba(var(--rgb-shadow),.75);
-  transition:box-shadow .3s var(--ease),transform .25s var(--ease)}
-.form-card .btn-solid:hover{background:#fff;color:var(--navy);border-color:#fff;transform:translateY(-1px);
+  transition:box-shadow .3s var(--ease)}
+/* no lift on hover: the arrow levelling is the one motion every CTA makes (cb8/base.css) */
+.form-card .btn-solid:hover{background:#fff;color:var(--navy);border-color:#fff;
   box-shadow:0 0 0 4px rgba(255,255,255,.14),0 18px 32px -14px rgba(var(--rgb-shadow),.85)}
 .form-card .btn-solid:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
 .form-card .btn-solid[disabled]{opacity:.6;pointer-events:none}
@@ -355,7 +356,7 @@ html.reduce .live i{animation:none}
 .form-success h3{margin:0 0 9px;font-size:var(--text-received);line-height:1.2;letter-spacing:-.04em;font-weight:var(--weight-strong);color:#fff}
 .form-success p{max-width:390px;margin:0 auto;font-size:var(--text-ui);color:rgba(255,255,255,.78)}
 html.reduce .goal .tile,html.reduce .goal i,html.reduce .goal i svg,html.reduce .contact-toggle span,html.reduce .form-card .btn-solid{transition:none}
-html.reduce .goal:hover input:not(:checked)+.tile,html.reduce .form-card .btn-solid:hover{transform:none}
+html.reduce .goal:hover input:not(:checked)+.tile{transform:none}
 
 /* ---------- laptops and phones ---------- */
 @media (max-width:1023px){

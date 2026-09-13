@@ -420,11 +420,12 @@ html.reduce .bonus-line::before,html.reduce .bonus-num{transition:none}
 /* the one white thing on the pane, as the partnership form's send is on its card */
 .connect-foot .btn-solid{background:#fff;color:var(--navy);border-color:#fff;
   box-shadow:0 1px 0 rgba(255,255,255,.9),0 14px 28px -14px rgba(var(--rgb-shadow),.75);
-  transition:box-shadow .3s var(--ease),transform .25s var(--ease)}
-.connect-foot .btn-solid:hover{background:#fff;color:var(--navy);border-color:#fff;transform:translateY(-1px);
+  transition:box-shadow .3s var(--ease)}
+/* no lift on hover: the arrow levelling is the one motion every CTA makes (cb8/base.css) */
+.connect-foot .btn-solid:hover{background:#fff;color:var(--navy);border-color:#fff;
   box-shadow:0 0 0 4px rgba(255,255,255,.14),0 18px 32px -14px rgba(var(--rgb-shadow),.85)}
 .connect-foot .btn-solid:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
-html.reduce .connect-foot .btn-solid,html.reduce .connect-foot .btn-solid:hover{transition:none;transform:none}
+html.reduce .connect-foot .btn-solid{transition:none}
 
 /* ---------- what a broker does not have is not on the page ----------
    page.js sets [hidden] on a row, an account card or a whole record the broker has no data for. The rows and

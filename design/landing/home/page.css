@@ -86,7 +86,6 @@ html.reduce .screen.in .weekly-bar{animation:none}
 .record-foot{margin:20px -16px 0;padding:18px 24px 20px;border-top:1px solid rgba(255,255,255,.14)}
 .record-link{display:inline-flex;align-items:center;gap:8px;
   font-size:var(--text-ui);font-weight:var(--weight-strong);color:#fff}
-.record-link:hover .ext{transform:rotate(0)}
 
 /* ---------- 3 · the chapters: the site's one chapter size, on the light one too ----------
    --text-chapter, as on Cashback, Results and Referral; the wireframe's 92px ran a size over them.

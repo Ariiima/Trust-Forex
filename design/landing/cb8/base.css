@@ -603,12 +603,9 @@ html.reduce .fsig.signed .fsig-sign svg{transform:none;opacity:1;transition:none
   .final-inner .btn,.record-copy .btn{width:100%}
 }
 
-/* ---------- CTAs that leave the page carry a 45° arrow; it levels on hover (founder, 2026-09-07) ---------- */
+/* ---------- CTAs that leave the page carry a 45° arrow; it levels on hover (founder, 2026-09-07) ----------
+   One rule for every arrow, whatever carries it (button, nav pill, text link, benefit capsule), and
+   the arrow is the only thing that moves: no CTA with an arrow lifts or nudges on hover (founder, 2026-09-14). */
 .pill{gap:7px}
 .ext{width:1em;height:1em;flex:none;transform:rotate(-45deg);transition:transform .3s var(--ease)}
-.btn:hover .ext,.pill:hover .ext{transform:rotate(0)}
-
-/* ---------- CTAs that leave the page carry a 45° arrow; it levels on hover (founder, 2026-09-07) ---------- */
-.pill{gap:7px}
-.ext{width:1em;height:1em;flex:none;transform:rotate(-45deg);transition:transform .3s var(--ease)}
-.btn:hover .ext,.pill:hover .ext{transform:rotate(0)}
+:hover>.ext{transform:rotate(0)}

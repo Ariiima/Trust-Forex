@@ -6,7 +6,7 @@
    feDisplacementMap (#liquid in index.html) in backdrop-filter, Chromium only; every other
    engine gets the same glass without the bend. The data stays opaque white — the founder's
    "white chart" — so figures never sit on a translucent ground. */
-@import url('base.css?v=1c0eb50d');
+@import url('base.css?v=4d326e9b');
 @import url('consent.css?v=07fd8694');
 
 /* ---------- structure behind the glass: a faint grid in every blue ground ---------- */
@@ -515,8 +515,7 @@ html.snap .mech.white .block::after{animation-name:stack-back-paper}
 #calculator .broker-rules{display:flex;margin:12px 2px 0 auto;min-height:20px;padding:0;border:0;background:none;
   color:rgba(255,255,255,.58);transition:color .3s var(--ease)}
 #calculator .broker-rules .ext{width:11px;height:11px}
-#calculator .broker-rules:hover{color:#fff}
-#calculator .broker-rules:hover .ext{transform:rotate(0)}   /* the same sloped arrow as every other CTA, straightening on hover (founder, 2026-09-08) */
+#calculator .broker-rules:hover{color:#fff}   /* its arrow levels on hover through base.css's one .ext rule, as every other CTA's does */
 html.reduce #calculator .live i{animation:none}
 /* one stop down on every edge (founder, 2026-09-10: "the shadowing and lighting is a bit harsh").
    The recipe is the mechanics' — it has to be, they are the same tiles — but on paper, under a
