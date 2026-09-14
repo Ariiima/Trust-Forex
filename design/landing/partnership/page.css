@@ -4,10 +4,15 @@
    on the blue, glass questions, and the request form on the closing ground with the footer inside it. The form posts to
    app.trustforex.net/api/partnership (page.js). The page is for brokers, not traders: no App CTA anywhere but the nav. */
 
-/* ---------- 1 · the hero: the wireframe's sizes, centred, the one CTA ---------- */
-#hero .display{font-size:var(--text-display-pitch);line-height:.91;letter-spacing:-.072em;max-width:1040px;margin-bottom:30px}
-#hero .lede{font-size:var(--text-lede-pitch);max-width:760px;margin-bottom:36px}
-.h2{font-size:var(--text-title-mech);line-height:.99;letter-spacing:-.058em;margin-bottom:22px}
+/* Type is the site's own roles, as Cashback and Results set them (2026-09-14): the hero's 92px display over its 23px
+   lede, a section heading's 66px, a chapter's 76px, a held card's 68px title over 19px copy, the questions' 15px
+   answers and the request form's calculator type. The page carried a size of its own for most of them (96, 68, 68,
+   a looser card title), so the same kind of heading read a size apart from one page to the next. The five cards —
+   the use cases, 01–03 and the pilot — keep their own colours and type (founder, 2026-09-14). */
+
+/* ---------- 1 · the hero: centred, the one CTA ---------- */
+#hero .display{max-width:1040px;margin-bottom:30px}
+#hero .lede{max-width:760px;margin-bottom:36px}
 .copy{max-width:610px}
 
 
@@ -46,7 +51,10 @@
 
 /* ---------- 3 and 9 · the two chapters: the wireframe's one chapter size for both (it draws both dark; the closing one is the
      light hand-off into the blue request page, as cb8's "Ready to activate?") ---------- */
-.chapter .h2,.chapter-2 .h2{font-size:var(--text-title-mech);line-height:.98;letter-spacing:-.062em;max-width:1064px}   /* the wireframe's 980 was drawn in the system font; Inter needs ~8% more for the same breaks (README) */
+/* both at the chapter role Cashback and Results use; the closing one is a sentence here, not Cashback's two-word
+   "Ready to activate?", so it takes the chapter size rather than the compact one (base.css). The width: the
+   wireframe's 980 was drawn in the system font; Inter needs ~8% more for the same breaks (README) */
+.chapter .h2,.chapter-2 .h2{font-size:var(--text-chapter);max-width:1064px}
 /* light screens meet on one colour (founder, 2026-09-13). cb8 runs chapter 2 from white; here it follows the
    paper questions, so it starts on paper. The pilot follows the white mechanics, so its paper starts white
    and turns to paper over its first 120px. */
@@ -55,9 +63,7 @@
 
 /* ---------- 4–6 · how it works (01–03): the wireframe's 1.08fr / .92fr (visual never under 430), 78 apart ---------- */
 .glass .mech-grid{grid-template-columns:minmax(0,1.08fr) minmax(430px,.92fr);column-gap:78px}
-.mech-copy h3{font-size:var(--text-title-mech);line-height:1;letter-spacing:-.045em;max-width:560px;margin-bottom:22px}
 .mech-copy p{max-width:600px}
-.mech-copy .page-number{margin-bottom:26px;font-size:var(--text-small);letter-spacing:.12em}   /* the wireframe's story number */
 .glass .panel{width:100%;max-width:520px;justify-self:end;padding:14px;border-radius:24px}
 .bmark{width:48px;height:48px;flex:none;display:grid;place-items:center;border:1px solid rgba(255,255,255,.45);border-radius:14px;background:rgba(255,255,255,.1);color:#fff}
 .bmark svg{width:23px;height:23px}
@@ -130,20 +136,24 @@
 .access-switch .tile[aria-pressed=true]:hover{background:#fff;transform:translateY(-1px)}
 .access-switch .tile:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:2px}
 
-/* the request form's Telegram / WhatsApp choice wears the Blog's chips instead of the track (2026-09-14):
-   two pills, each half the row at the fields' 46px. Not chosen is the Blog's on-dark chip, white glass
-   under a white rim; chosen is the Sort control's dark blue glass pill. The dark pill alone read as the
-   quieter of the two beside the lighter glass, so chosen also takes a white rim and a soft white halo. */
-.contact-toggle{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.contact-toggle label{position:relative;cursor:pointer}
+/* the request form's Telegram / WhatsApp choice wears the Blog's chips instead of the track (2026-09-14).
+   The Sort control's dark glass pill (tried the same day) went muddy against this page's own blue —
+   two dark blues stacked read as a hole, not a pick. Chosen now takes the goal tiles' own move instead
+   (founder, 2026-09-14): a lit tint plus a white rim, one accent each — Telegram's blue, WhatsApp's green. */
+.contact-toggle{--rgb-tg:100,181,246;--rgb-wa:110,224,158;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.contact-toggle label{--acc:var(--rgb-tg);position:relative;cursor:pointer}
+.contact-toggle label:nth-child(2){--acc:var(--rgb-wa)}
 .contact-toggle input{position:absolute;opacity:0;pointer-events:none}
-.contact-toggle span{display:grid;place-items:center;min-height:46px;border-radius:999px;border:1px solid rgba(255,255,255,.4);
+.contact-toggle span{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;border-radius:999px;border:1px solid rgba(255,255,255,.4);
   background:rgba(255,255,255,.14);color:#fff;font-size:var(--text-panel-title);font-weight:var(--weight-strong);
-  transition:background-color .25s var(--ease),border-color .25s var(--ease),box-shadow .25s var(--ease)}
+  transition:background-color .25s var(--ease),border-color .25s var(--ease),box-shadow .25s var(--ease),transform .25s var(--ease)}
+.contact-toggle span::before{content:'';width:8px;height:8px;flex:none;border-radius:50%;background:rgba(255,255,255,.3);
+  transition:background-color .25s var(--ease),transform .25s var(--ease)}
 .contact-toggle label:hover span{border-color:rgba(255,255,255,.62);background:rgba(255,255,255,.2)}
-.contact-toggle input:checked+span{border-color:#fff;
-  background:linear-gradient(150deg,rgba(var(--rgb-900),.96),var(--blue));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.26),0 0 0 4px rgba(255,255,255,.18),0 16px 32px -22px rgba(var(--rgb-shadow),.6)}
+.contact-toggle input:checked+span{border-color:#fff;transform:translateY(-1px);
+  background:linear-gradient(150deg,rgba(var(--acc),.72),rgba(var(--acc),.34));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 10px 22px -12px rgba(var(--acc),.65)}
+.contact-toggle input:checked+span::before{background:#fff;transform:scale(1.15)}
 .contact-toggle input:focus-visible+span{outline:2px solid rgba(255,255,255,.85);outline-offset:4px}
 
 /* the path: three tiles, gapped, one colour each, the rule stated once below them in plain text */
@@ -169,31 +179,22 @@
 .swap{animation:xf .28s var(--ease)}   /* cb8's estimate cross-fade */
 html.reduce .swap,html.reduce .access-switch .tile:hover{animation:none;transform:none}
 
-/* ---------- 03 · the path to action, reworked (founder, 2026-09-14: match the reference card — a
-     numbered list, each row a hairline apart, closing on one bold statement) ----------
-   The Mini App phone-screen mockup gave way to the same numbered-badge language 02's access-steps
-   already carries, run as a vertical list instead of a three-up grid: badge, hairline, badge, hairline,
-   badge, then the rule the three steps resolve to, lifted onto its own band the way the switch's chosen
-   pill lifts off its track. One --acc a row — violet, gold, the TP mint — same family as 02. */
-.glass .action-path{--rgb-violet:185,167,255;--violet:#B9A7FF;--rgb-gold:245,200,107;--gold:#F5C86B;--rgb-mint:72,212,138;--mint:var(--success);
-  display:flex;flex-direction:column}
-.path-rows{list-style:none;margin:0;padding:6px 4px 0}
-.path-row{--acc:var(--rgb-violet);--acc-solid:var(--violet);
-  display:flex;align-items:center;gap:16px;padding:16px 2px;border-bottom:1px solid rgba(255,255,255,.16)}
-.path-row:first-child{padding-top:4px}
-.path-row:last-child{padding-bottom:20px;border-bottom:none}
-.path-row:nth-child(2){--acc:var(--rgb-gold);--acc-solid:var(--gold)}
-.path-row:nth-child(3){--acc:var(--rgb-mint);--acc-solid:var(--mint)}
-.path-row i{width:46px;height:34px;flex:none;display:grid;place-items:center;border-radius:11px;border:1.5px solid rgba(var(--acc),.75);
-  background:rgba(var(--acc),.2);box-shadow:0 0 0 4px rgba(var(--acc),.12),inset 0 1px 0 rgba(255,255,255,.3);
-  font:var(--weight-strong) var(--text-small)/1 var(--sans);font-style:normal;font-variant-numeric:tabular-nums;color:var(--acc-solid)}
-.path-row span{font-size:var(--text-panel-title);font-weight:var(--weight-strong);line-height:1.3;color:#fff}
-/* the band: the three rows' rule, lifted a shade lighter than the panel behind it as its own tile,
-   centred and bold — the one line the reader leaves with */
-.path-band{margin:0;padding:20px 18px;text-align:center;border-radius:16px;
-  background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.05));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.24);
-  font-size:var(--text-panel-title);font-weight:var(--weight-strong);letter-spacing:-.01em;color:#fff}
+/* ---------- 03 · the path to action, on the value-row format 09's record and 11's start already
+     carry (founder, 2026-09-14: match that format, tightened) ----------
+   One plain accent circle a row, a hairline between rows, closing on one bold statement lifted onto
+   its own band — the violet/gold/mint badge tiles are gone; this is the same numbered list as every
+   other numbered box on the site, not a one-off. */
+.glass .panel.action-path{padding:0;display:flex;flex-direction:column}
+.action-path .value-row{padding:16px 18px;grid-template-columns:32px minmax(0,1fr);gap:14px;border-bottom-color:rgba(255,255,255,.16)}
+.action-path .value-index{width:32px;height:32px;font-size:var(--text-nano)}
+.action-path .value-copy strong{font-size:var(--text-panel-title);font-weight:var(--weight-strong);line-height:1.3;letter-spacing:-.01em}
+/* the band: closes the rows the way 11's shared-destination closes the routes — flush to the panel's
+   own edge and corners, a hairline above it, no separate tile or lift of its own */
+.path-band{margin:0;padding:26px 18px;text-align:center;border-radius:0 0 24px 24px;
+  border-top:1px solid rgba(255,255,255,.3);
+  background:linear-gradient(150deg,rgba(var(--rgb-800),.7),rgba(var(--rgb-900),.6));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3);
+  font-size:var(--text-destination);line-height:1;font-weight:var(--weight-strong);letter-spacing:-.04em;color:#fff}
 
 /* ---------- 7 · the pilot: .screen-paper (cb8/style.css); the card on the blue with its own light ---------- */
 .pilot-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,.92fr);gap:90px;align-items:center}
@@ -205,6 +206,8 @@ html.reduce .swap,html.reduce .access-switch .tile:hover{animation:none;transfor
   border:1px solid rgba(160,196,255,.55);
   box-shadow:0 0 34px rgba(96,156,255,.3),0 24px 48px -30px rgba(var(--rgb-shadow),.5)}
 .pilot-card>.rayfield{border-radius:inherit}
+.pilot-card .rayfield.k::before{content:none}   /* no grid: the card's own glass carries the light, not the ground's lines */
+.pilot-card .rayfield.k i:nth-child(3),.pilot-card .rayfield.k i:nth-child(4){display:none}   /* no blurred arc either: the card's own streak (::after) is the only light it wears */
 .pilot-card>:not(.rayfield){position:relative;z-index:1}
 .pilot-card::after{content:'';position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;
   background:linear-gradient(160deg,rgba(var(--rgb-900),.14),rgba(var(--rgb-abyss),.22)) no-repeat 0 0/100% 100%,
@@ -256,19 +259,20 @@ html.reduce .live i{animation:none}
 .glass .pilot-fee{--tint:rgba(54,198,148,.46);--tint2:rgba(10,64,54,.56);--rim:rgba(150,230,190,.56);
   --bloom:rgba(164,250,214,.5);--sink:rgba(4,42,40,.62)}   /* no fee: the TP green */
 
-/* ---------- 8 · the questions: the wireframe's column and answer size ---------- */
+/* ---------- 8 · the questions: the wireframe's column; the answers at the site's 15px ---------- */
 .faq-wrap{max-width:920px}
-.faq-a p{font-size:var(--text-body)}
 
 /* ---------- 10 · the request: the wireframe's .8fr / 1.2fr grid, 88 apart, the copy pinned beside the form ---------- */
 /* base.css clips #final with overflow:hidden, which makes it a scroll container — a sticky child then
    pins to that box, never scrolls, and only sits its own top offset lower. overflow:clip cuts the same
    edge without a scrollport, so the copy sticks to the viewport the way About's story headings do. */
-#final{overflow:clip;padding-top:calc(var(--nav-h) + 60px)}
-.request-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,.8fr) minmax(520px,1.2fr);gap:88px;align-items:start;padding-bottom:110px}
+/* The screen opens at every section's own space and the form ends on the footer's own 76px gap: an extra
+   28px above and 110px below it left a band of empty blue between the form and the footer (2026-09-14). */
+#final{overflow:clip}
+.request-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,.8fr) minmax(520px,1.2fr);gap:88px;align-items:start}
 /* the form already runs past a laptop's fold; on a taller window the blue still holds the whole view
    before the footer's floor (base.css .final-inner, the same rule for the other pages) */
-.request-grid{min-height:calc(100dvh - var(--nav-h) - 60px)}
+.request-grid{min-height:calc(100svh - var(--section-space))}
 .request-copy{position:sticky;top:calc(var(--nav-h) + 28px)}   /* About's offset: the heading keeps its place while the form scrolls */
 .request-copy .h2{max-width:570px;color:#fff}
 .request-copy .copy{color:rgba(255,255,255,.78)}
@@ -283,12 +287,12 @@ html.reduce .live i{animation:none}
 .glass .panel.form-card{max-width:none;padding:24px 26px 26px;border-radius:24px;transform:none}
 #final .glass .panel::after,#final .glass .tile::after{animation-timeline:--ground}   /* the streaks travel with the screen, as the calculator's do */
 .form-card .step+.step{margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.16)}
-.form-card .step-cap{display:block;width:100%;margin:0 0 13px;padding:0;font:var(--weight-support) var(--text-panel-title)/1.2 var(--sans);letter-spacing:-.015em;color:#fff}
+.form-card .step-cap{display:block;width:100%;margin:0 0 13px;padding:0;font:var(--weight-semi) var(--text-panel-title)/1.2 var(--sans);letter-spacing:-.015em;color:#fff}   /* the calculator's step heading */
 .fset{min-width:0;margin:0;padding:0;border:0}
 .well-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .well-grid .wide{grid-column:1/-1}
-/* the wells: the shared control (cb8/style.css) at the calculator's padding and label. Typed text is
-   16px, not the calculator's 18px figures, and never under 16px: iOS zooms into a smaller field. */
+/* the wells: the shared control (cb8/style.css) at the calculator's padding, label and value type — typed
+   text at its 18px, weight 500 (2026-09-14; it was 16px). Never under 16px: iOS zooms into a smaller field. */
 /* No pointer light on this pane (founder, 2026-09-13: "there's a glow when you hover, remove it"): the
    specular under the cursor, the tile rims it lights, and the well's white hover wash all go. The
    wells and goals also sit on a deeper ground under a quieter streak than the held cards' tiles — the
@@ -302,41 +306,39 @@ html.reduce .live i{animation:none}
 .form-card .well{padding:12px 16px 13px}
 .form-card .well>label{font:var(--weight-body) var(--text-small)/var(--leading-ui) var(--sans);letter-spacing:0;text-transform:none;color:rgba(255,255,255,.78)}
 .form-card .well :is(input,textarea){display:block;width:100%;margin:0;padding:0;border:0;border-radius:0;outline:0;background:transparent;box-shadow:none;
-  color:#fff;caret-color:#fff;color-scheme:dark;font:var(--weight-label) var(--text-body)/1.45 var(--sans);letter-spacing:-.01em}
+  color:#fff;caret-color:#fff;color-scheme:dark;font:var(--weight-label) var(--text-copy)/1.4 var(--sans);letter-spacing:-.015em}
 .form-card .well textarea{min-height:84px;resize:vertical}
 .form-card .well :is(input,textarea)::placeholder{color:rgba(255,255,255,.5)}
 .form-card .well input:-webkit-autofill{-webkit-text-fill-color:#fff;transition:background-color 100000s 0s}   /* the browser's autofill slab never lands on the glass */
 .fset+.well{margin-top:12px}
-/* the goals: a tile each, in one hue each. Picked, a goal carries more of its hue inside the white rim
-   and halo a picked rate cell wears, and its disc fills with the hue under a navy tick. */
-.goal-grid{--rgb-peri:157,180,255;--peri:#9DB4FF;--rgb-teal:95,210,194;--teal:#5FD2C2;--rgb-gold:245,200,107;--gold:#F5C86B;
-  --rgb-violet:185,167,255;--violet:#B9A7FF;--rgb-coral:255,158,122;--coral:#FF9E7A;--rgb-lime:183,227,107;--lime:#B7E36B;
-  display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.goal{--acc:var(--rgb-peri);--acc-solid:var(--peri);position:relative;display:flex;cursor:pointer}
-.goal:nth-child(2){--acc:var(--rgb-teal);--acc-solid:var(--teal)}
-.goal:nth-child(3){--acc:var(--rgb-gold);--acc-solid:var(--gold)}
-.goal:nth-child(4){--acc:var(--rgb-violet);--acc-solid:var(--violet)}
-.goal:nth-child(5){--acc:var(--rgb-coral);--acc-solid:var(--coral)}
-.goal:nth-child(6){--acc:var(--rgb-lime);--acc-solid:var(--lime)}
+/* the goals: a tile each. Picked, a goal takes a lit blue and a soft white
+   rim — the doubled inset-plus-ring a picked rate cell wears was too bright a border here (founder,
+   2026-09-14) — and its disc fills white under a navy tick. The form's goals are one blue, not the six
+   hues each carried earlier on 09-14; the label is the calculator's option type, 15px. */
+.goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.goal{position:relative;display:flex;cursor:pointer}
 .goal input{position:absolute;opacity:0;pointer-events:none}
-/* the hue is a wash over a dark plate, not the plate itself, so the label always reads on navy */
-.glass .goal .tile{--streak:.06;--tint:rgba(var(--acc),.2);--tint2:rgba(var(--acc),.05);--rim:rgba(var(--acc),.42);
+/* the tint is a wash over a dark plate, not the plate itself, so the label always reads on navy */
+.glass .goal .tile{--streak:.06;--tint:rgba(255,255,255,.08);--tint2:rgba(255,255,255,.02);--rim:rgba(160,196,255,.36);
   background:linear-gradient(150deg,var(--tint),var(--tint2)),rgba(var(--rgb-abyss),.5);
-  flex:1;min-height:54px;padding:12px 14px;display:flex;align-items:center;gap:11px;border-radius:14px;
-  font:var(--weight-label) var(--text-ui)/1.3 var(--sans);color:#fff;
-  transition:border-color .3s var(--ease),box-shadow .3s var(--ease),transform .3s var(--ease),color .3s var(--ease)}
-.goal i{width:18px;height:18px;flex:none;display:grid;place-items:center;border:1px solid rgba(var(--acc),.7);border-radius:50%;background:rgba(var(--acc),.14);color:var(--navy);
+  flex:1;min-height:54px;padding:12px 14px;display:flex;align-items:center;gap:11px;border-radius:16px;
+  font:var(--weight-label) var(--text-panel-title)/1.3 var(--sans);color:#fff;
+  transition:border-color .3s var(--ease),box-shadow .3s var(--ease),transform .3s var(--ease),color .3s var(--ease),opacity .3s var(--ease)}
+/* unpicked reads a shade quieter (founder, 2026-09-14: "mute the unselected options, tiny bit"), so a
+   picked tile's own hue is what draws the eye across six otherwise-equal options */
+.glass .goal input:not(:checked)+.tile{opacity:.82}
+.goal i{width:18px;height:18px;flex:none;display:grid;place-items:center;border:1px solid rgba(255,255,255,.5);border-radius:50%;background:rgba(255,255,255,.08);color:var(--navy);
   transition:background-color .2s var(--ease),border-color .2s var(--ease)}
 .goal i svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:opacity .2s var(--ease)}
 .goal:hover input:not(:checked)+.tile{transform:translateY(-2px);border-color:rgba(255,255,255,.62);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(var(--rgb-shadow),.22),0 18px 32px -20px rgba(var(--rgb-shadow),.8)}
-.glass .goal input:checked+.tile{--streak:.12;--tint:rgba(var(--acc),.42);--tint2:rgba(var(--acc),.16);border-color:#fff;color:#fff;
-  box-shadow:inset 0 0 0 1px #fff,inset 0 1px 0 rgba(255,255,255,.5),0 0 0 4px rgba(255,255,255,.12),0 18px 34px -18px rgba(var(--acc),.55)}
-.goal input:checked+.tile i{background:var(--acc-solid);border-color:var(--acc-solid)}
+.glass .goal input:checked+.tile{--streak:.12;--tint:rgba(var(--rgb-600),.62);--tint2:rgba(var(--rgb-800),.4);border-color:rgba(255,255,255,.7);color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 18px 34px -18px rgba(var(--rgb-shadow),.55)}
+.goal input:checked+.tile i{background:#fff;border-color:#fff}
 .goal input:checked+.tile i svg{opacity:1}
 .goal input:focus-visible+.tile{outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
-/* the send: the one white thing on the pane, as 03's action is on its screen */
-.form-card .send{width:100%;min-height:50px;margin-top:22px}
+/* the send: the one white thing on the pane, at the site's control height like every other button */
+.form-card .send{width:100%;margin-top:22px}
 .form-card .btn-solid{background:#fff;color:var(--navy);border-color:#fff;backdrop-filter:none;-webkit-backdrop-filter:none;
   box-shadow:0 1px 0 rgba(255,255,255,.9),0 14px 28px -14px rgba(var(--rgb-shadow),.75);
   transition:box-shadow .3s var(--ease)}
@@ -366,9 +368,10 @@ html.reduce .goal:hover input:not(:checked)+.tile{transform:none}
   .request-copy{position:static}
 }
 @media (max-width:560px){
-  #hero .display{font-size:52px}#hero .lede{font-size:16px}.h2{font-size:48px}.copy{font-size:16px}
-  .chapter .h2,.chapter-2 .h2{font-size:48px}
-  .mech-copy h3{font-size:48px}.mech-copy p{font-size:16px}
+  /* sizes: base.css's phone roles, as Cashback and Results take them (hero 48, chapter and card title 42, card copy 16).
+     The chapter role floors at base's 42px; base sets the compact chapter to 54px, which this page does not use. */
+  .chapter .h2,.chapter-2 .h2{font-size:var(--text-chapter)}
+  #hero .display br{display:none}   /* the forced break stranded "value" and "have" on lines of their own */
   .glass .how-point{padding:14px;grid-template-columns:var(--icon-well) minmax(0,1fr);gap:12px;align-items:start}
   .glass .how-point .point-icon{margin-top:-1px}   /* the row is tall here, so the icon holds the title's line rather than floating at its middle */
   .how-point b{grid-column:2;justify-self:start;margin-top:11px;padding:7px 10px}   /* the badge drops under the text: the wireframe has no icon column to share the width with */
@@ -387,8 +390,7 @@ html.reduce .goal:hover input:not(:checked)+.tile{transform:none}
   .case-row{grid-template-columns:var(--icon-well) minmax(0,1fr);row-gap:12px;padding:16px}.marker{grid-column:2}
   .case-row h3{white-space:normal}
   .pilot-card{padding:24px}.pilot-head{grid-template-columns:40px 1fr}.pilot-head>.live{grid-column:2;width:max-content}.pilot-offer{grid-template-columns:1fr}
-  .faq-q{font-size:17px}.faq-a p{font-size:15px;padding-right:10px}
-  .well-grid,.goal-grid{grid-template-columns:1fr}.glass .panel.form-card{padding:18px;border-radius:18px}.form-card .send{min-height:52px}
+  .well-grid,.goal-grid{grid-template-columns:1fr}.glass .panel.form-card{padding:18px;border-radius:18px}
   .hero-center .btn,.pilot-copy .btn{width:100%}
 }
 

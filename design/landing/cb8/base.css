@@ -492,86 +492,107 @@ html:not(.snap) .final-inner{min-height:calc(100svh - var(--section-space))}
 .social a{width:32px;height:32px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--navy-line);transition:background-color .3s var(--ease)}
 .social a:hover{background:rgba(255,255,255,.12)}
 .social svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.6;fill:none}
-/* ---------- the footer, every page (footer-lab-3.html variant 23, the founder's pick on
-   2026-09-13 out of rounds three and four: "23 is the winner") ----------
-   The footer stands on a floor of its own, two steps below the blue and rounded at the shoulders,
-   so the closing screen keeps its ground and the page visibly ends. It replaces variant 02, where
-   the links sat on the closing screen's own blue and the cropped wordmark ran under the small print.
-   The links are 4 / 4 / 4. Brokers went because it was Partner brokers twice, and Partner brokers
-   went because it was Partner broker rules twice; Home came back and Blog moved under Company to
-   keep the columns even (founder, 2026-09-13). The Telegram channel is a pill under the tagline —
-   the one thing to do here that is not
-   "open the app". .footer above still gives the position and the width.
-   The blog closes on paper and Legal on white; both keep this floor, and legal/page.css turns it
-   black. */
-.fsig{margin-top:76px;padding:58px 0 0;border-top:0;background:var(--p-abyss);border-radius:32px 32px 0 0;
-  box-shadow:0 -30px 60px -30px rgba(var(--rgb-shadow),.7)}
-.fsig>.wrap{position:relative;z-index:3}
-.fsig-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.75fr);gap:34px 56px;
-  align-items:start}
-.fsig-brand{display:flex;flex-direction:column;align-items:flex-start;gap:16px}
+/* ---------- the footer, every page ----------
+   Glass, not a solid floor (founder brief 2026-09-14, matched 1:1 to the reference): a blurred
+   blue tint, a bright rim and an inner light along the top edge. Three ruled rows inside it: the lockup with
+   the CTA (the one thing to do here that is not scroll further), the 4/4/4 link columns, the
+   copyright and the socials. Telegram moved into the social row — the CTA now does the one-click
+   job the old channel pill did. Type stays at the site's own sizes throughout; only the frame and
+   the row layout change. */
+/* The site's own glass (founder, 2026-09-14, after two heavier washes missed): 02/04's pane
+   (style.css .glass .panel) carried down to the floor — the rim, the glow around it, the inner light
+   — and the same light: one streak travelling on the footer's own view timeline, a faint specular
+   under the pointer (main.js writes --mx/--my and .lit; style.css registers --lit). The CTA and the
+   socials are its tiles: their rims light as the cursor nears. The pane does not lean like 02/04's:
+   it is the page's floor, and a tilted floor lifts off the bottom edge. The inner light is on ::after
+   so the paper pages' box-shadow:none drops only the outer glow.
+   Pure blue, not navy (founder, same day, measured against the reference): the reference's pane was
+   no lighter than 02/04's thin tint left ours, but it carried no red — rgb(0,38,136) at saturation 98
+   against our 68 — and its rim was blue light where ours was white. So the tint is near-opaque pure
+   blue, lit at the top and deep at the foot, and every light on the pane is a saturated blue. */
+.fsig{position:relative;overflow:hidden;margin-top:76px;padding:0;
+  border:1px solid rgba(90,150,255,.7);border-bottom:0;border-radius:32px 32px 0 0;
+  background:radial-gradient(60% 90% at 22% 0%,rgba(40,110,255,.22),transparent 70%),
+    linear-gradient(165deg,rgba(var(--rgb-950),.86) 0%,rgba(var(--rgb-pressed),.9) 45%,rgba(0,30,112,.94) 100%);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:0 0 34px rgba(30,100,255,.45);view-timeline:--fsig}
+/* a paper floor would show white through the thin tint: the pane stands on the closing ground instead,
+   as the two-records panel does on its paper screen */
+.footer-only .fsig{background-color:var(--blue)}
+.fsig::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  transition:--lit .45s var(--ease);animation:glass-light linear both;animation-timeline:--fsig;animation-range:entry 0% exit 100%;background:
+  radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,var(--lit)),transparent 70%) no-repeat 0 0/auto,
+  linear-gradient(115deg,transparent 32%,rgba(120,170,255,.2) 46%,rgba(120,170,255,.06) 52%,transparent 62%) no-repeat 100% 0/220% 100%}
+.fsig.lit{--lit:.08}
+.fsig::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:inherit;
+  box-shadow:inset 0 1px 0 rgba(150,195,255,.6),inset 0 0 0 1px rgba(70,130,255,.25),
+    inset 0 18px 40px -20px rgba(60,125,255,.45),inset 0 0 64px rgba(40,110,255,.2)}
+.fsig>.wrap{position:relative;z-index:3;padding-top:34px}
+.fsig-top{display:flex;flex-wrap:wrap;align-items:center;gap:20px 28px;padding-bottom:26px}
+/* The link columns start under the tagline and sit tight toward the middle, as the reference sets
+   them (founder, 2026-09-14, measured at 1280: the tagline and the first column at one x, the
+   columns 255 and 268px apart, 29px from link to link). The gap either side of the lockup's rule is
+   what puts the tagline there, so the columns take their indent from the same number. */
+.fsig{--lock-gap:52px}
+.fsig-lock{display:flex;flex-wrap:wrap;align-items:center;gap:20px var(--lock-gap)}
 .fsig-mark{display:inline-flex;flex-direction:column;gap:5px;color:#fff}
 .fsig-mark svg{fill:currentColor}
 .fsig-mark .brand-word{width:132px;height:auto}
 .fsig-mark .brand-sub{width:125px;height:auto}
+.fsig-rule-v{width:1px;align-self:stretch;min-height:34px;background:rgba(255,255,255,.18)}
 .fsig-say{margin:0;font-size:var(--text-body);line-height:1.45;color:rgba(255,255,255,.82)}
-.fsig-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px 30px}
-.fsig-cols h3{margin:0 0 14px;font:var(--weight-label) var(--text-label)/1 var(--sans);
+/* The CTA is the site's glass capsule (style.css .on-dark .btn-solid — the closing "Activate
+   Cashback"), one step brighter so it still reads as the thing to do on the pane (founder,
+   2026-09-14): a white tint and rim over the same blur, the lit top edge, the soft drop. */
+.fsig-cta{display:inline-flex;align-items:center;gap:9px;min-height:var(--control-height);
+  margin-left:auto;padding:8px 20px;border-radius:999px;white-space:nowrap;
+  border:1px solid rgba(255,255,255,.46);background:rgba(255,255,255,.21);color:#fff;
+  backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);
+  box-shadow:0 12px 30px -12px rgba(var(--rgb-shadow),.6),inset 0 1px 0 rgba(255,255,255,.66),inset 0 -1px 0 rgba(var(--rgb-shadow),.12);
+  font-size:var(--text-panel-title);font-weight:var(--weight-strong);
+  transition:background-color .3s var(--ease),border-color .3s var(--ease)}
+.fsig-cta:hover{background:rgba(255,255,255,.34);border-color:rgba(255,255,255,.66)}
+.fsig-cta .ext{width:15px;height:15px}
+.fsig-rule{height:1px;background:rgba(255,255,255,.14)}
+/* 133px is the mark (132) and the rule (1); the tracks shrink to their text before they would overflow */
+.fsig-cols{display:grid;grid-template-columns:minmax(max-content,231px) minmax(max-content,244px) max-content;
+  gap:26px 24px;padding:30px 0 26px calc(133px + 2 * var(--lock-gap))}
+.fsig-cols h3{margin:0 0 12px;font:var(--weight-label) var(--text-label)/1 var(--sans);
   letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.5)}
-.fsig-cols ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.fsig-cols ul{margin:0;padding:0;list-style:none;display:grid;gap:5px}
 .fsig-cols a{font-size:var(--text-ui);color:rgba(255,255,255,.8);transition:color .3s var(--ease)}
 .fsig-cols a:hover{color:#fff}
-.fsig-chan{display:inline-flex;align-items:center;gap:9px;min-height:40px;margin-top:4px;padding:0 16px 0 13px;
-  border-radius:999px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.07);
-  font-size:var(--text-ui);font-weight:var(--weight-strong);color:#fff;white-space:nowrap;
-  transition:background-color .3s var(--ease),border-color .3s var(--ease)}
-.fsig-chan:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.5)}
-.fsig-chan svg:first-child{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
 .fsig-base{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 26px;
-  margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,.1)}
+  padding:22px 0 26px}
 .fsig-legal{margin:0;font-size:var(--text-small);line-height:1.6;color:rgba(255,255,255,.56)}
-.fsig .social{gap:8px}
-.fsig .social a{width:36px;height:36px;border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.85)}
+.fsig .social{gap:10px}
+.fsig .social a{width:38px;height:38px;border-radius:12px;border-color:rgba(255,255,255,.2);
+  color:rgba(255,255,255,.85);background:rgba(255,255,255,.05)}
+.fsig .social a:hover{background:rgba(255,255,255,.14)}
 .fsig .social svg{width:16px;height:16px}
+/* the tiles' rim light (style.css .glass .tile::before): the radial minus its own 1px inset, by mask */
+.fsig-cta,.fsig .social a{position:relative}
+.fsig-cta::before,.fsig .social a::before{content:"";position:absolute;inset:-1px;padding:1px;border-radius:inherit;pointer-events:none;
+  opacity:0;transition:opacity .45s var(--ease);
+  background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.55),transparent 70%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
+.fsig.lit .fsig-cta::before,.fsig.lit .social a::before{opacity:1}
+html.reduce .fsig::before,html.reduce .fsig-cta::before,html.reduce .fsig .social a::before{animation:none;transition:none}
+@media (prefers-reduced-transparency:reduce){.fsig{backdrop-filter:none;-webkit-backdrop-filter:none;background-color:var(--blue)}}
 
-/* The signature, in flow under everything, so nothing can land on the letters. At 1180px the
-   mark stands about 258px tall; the band shows 196px of it and the mask fades the lower part into
-   the floor, so it reads as the name and dissolves instead of being cut into shapes by the edge. */
-.fsig-sign{position:relative;height:196px;margin-top:36px;overflow:hidden;pointer-events:none;
-  display:flex;align-items:flex-start;justify-content:center;
-  -webkit-mask-image:linear-gradient(180deg,#000 25%,transparent);mask-image:linear-gradient(180deg,#000 25%,transparent)}
-.fsig-sign svg{width:min(1180px,94%);height:auto;fill:rgba(var(--rgb-800),.6)}
-
-/* The arrival, driven by cb8/main.js. Transform and opacity only, so the rise costs no layout: the mark starts a third
-   of its own height below the band and eases up into the crop as the page ends. --ease is the
-   site's own curve, so the signature settles the way every panel and button on it does.
-   The from-state is gated on html.js, and the rest state is the finished one — so no JavaScript,
-   an unsupported browser or html.reduce all leave the mark exactly where it belongs (the design
-   shoot runs reducedMotion:'reduce', and this must not drift the crop). */
-html.js .fsig-sign svg{transform:translateY(34%);opacity:0;
-  transition:transform 1.05s var(--ease),opacity .7s ease-out}
-html.js .fsig.signed .fsig-sign svg{transform:none;opacity:1}
-html.reduce .fsig-sign svg,
-html.reduce .fsig.signed .fsig-sign svg{transform:none;opacity:1;transition:none}
-@media (prefers-reduced-motion:reduce){
-  html.js .fsig-sign svg{transform:none;opacity:1;transition:none}
-}
-
-@media (max-width:1023px){
-  .fsig-grid{grid-template-columns:1fr;gap:34px}
-  .fsig-cols{grid-template-columns:repeat(3,minmax(0,1fr))}
-}
 @media (max-width:680px){
-  .fsig{margin-top:52px;padding-top:44px;border-radius:22px 22px 0 0}
-  .fsig-cols{grid-template-columns:1fr 1fr;gap:26px 24px}
+  .fsig{margin-top:52px;border-radius:22px 22px 0 0}
+  .fsig>.wrap{padding-top:26px}
+  .fsig-lock{flex-direction:column;align-items:flex-start;gap:10px}
+  .fsig-rule-v{display:none}
+  .fsig-cta{margin-left:0;width:100%;justify-content:center}
+  .fsig-cols{grid-template-columns:1fr 1fr;gap:26px 24px;padding:22px 0}
+  .fsig-cols ul{gap:10px}   /* a thumb needs the room the desktop's tight rows give up */
   /* Legal runs the full width as one wrapping row instead of a third column stacked under two */
   .fsig-cols>div:last-child{grid-column:1/-1}
   .fsig-cols>div:last-child ul{display:flex;flex-wrap:wrap;gap:10px 20px}
-  .fsig-base{flex-direction:column;align-items:flex-start}
-  /* a wordmark that fits inside a phone is small, so it runs wider than the page in a shorter band
-     (max-width lifts the page-wide svg cap, which would otherwise hold it to 100%) */
-  .fsig-sign{height:120px;margin-top:28px}
-  .fsig-sign svg{width:140%;max-width:none;flex:none}
+  .fsig-base{flex-direction:column;align-items:flex-start;padding:18px 0 22px}
 }
 
 /* ---------- mobile / no-lock: an ordinary scrolling page ---------- */

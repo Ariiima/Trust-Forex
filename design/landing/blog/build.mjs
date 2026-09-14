@@ -60,38 +60,41 @@ const FAVICON = /<link rel="icon"[^>]*>/.exec(cb8)[0];
 const LIQUID = /<svg id="liquid-svg"[\s\S]*?<\/svg>/.exec(cb8)[0];
 /* the site footer (base.css .fsig). The blog closes on paper rather than on the blue,
    and the footer's floor rises out of it unchanged; the markup is the other pages'. */
-const footer = rel => `<!-- the footer, every page: its own navy floor under the closing screen, rounded at the
-     shoulders, and under the links the wordmark, tall enough to read and fading into the floor.
+const footer = rel => `<!-- the footer, every page: glass, its lockup+CTA/columns/base rows ruled off, rounded at
+     the shoulders, and under the links the wordmark, tall enough to read and fading into the floor.
      One markup for all eight pages (blog/build.mjs writes its own copy of it); base.css owns
      the treatment and cb8/main.js the arrival. -->
 <footer class="footer fsig">
   <div class="wrap">
-    <div class="fsig-grid">
-      <div class="fsig-brand">
+    <div class="fsig-top">
+      <div class="fsig-lock">
         <a class="fsig-mark" href="${rel}home/" aria-label="TrustForex home">
           <svg class="brand-word" viewBox="0 0 119 26" aria-hidden="true"><use href="#tf-word"/></svg>
           <svg class="brand-sub" viewBox="0 0 113 11" aria-hidden="true"><use href="#tf-sub"/></svg>
         </a>
+        <span class="fsig-rule-v" aria-hidden="true"></span>
         <p class="fsig-say">Built on rules. Measured by results.</p>
-        <a class="fsig-chan" href="#" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3 11l5 2 2 6 3-4 5 4 3-15Z"/></svg>Weekly results on Telegram</a>
       </div>
-      <nav class="fsig-cols" aria-label="Footer">
-        <div><h3>The site</h3><ul><li><a href="${rel}home/">Home</a></li><li><a href="${rel}results/">Results</a></li><li><a href="${rel}cb8/">Cashback</a></li><li><a href="${rel}referral/">Referral</a></li></ul></div>
-        <div><h3>Company</h3><ul><li><a href="${rel}partnership/">Broker partnership</a></li><li><a href="${rel}brokers/">Partner broker rules</a></li><li><a href="${rel}about/">About us</a></li><li><a href="${rel}blog/">Blog</a></li></ul></div>
-        <div><h3>Legal</h3><ul><li><a href="${rel}legal/?document=terms">Terms of service</a></li><li><a href="${rel}legal/?document=risk">Risk disclosure</a></li><li><a href="${rel}legal/?document=privacy">Privacy policy</a></li><li><a href="${rel}legal/?document=cookies">Cookie settings</a></li></ul></div>
-      </nav>
+      <a class="fsig-cta" href="https://app.trustforex.net" rel="noopener">Access the full TrustForex experience <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     </div>
+    <div class="fsig-rule" aria-hidden="true"></div>
+    <nav class="fsig-cols" aria-label="Footer">
+      <div><h3>Explore</h3><ul><li><a href="${rel}home/">Home</a></li><li><a href="${rel}results/">Results</a></li><li><a href="${rel}about/">About Us</a></li><li><a href="${rel}blog/">Blog</a></li></ul></div>
+      <div><h3>Programs</h3><ul><li><a href="${rel}cb8/">Cashback</a></li><li><a href="${rel}referral/">Referral</a></li><li><a href="${rel}partnership/">Broker Partnership</a></li><li><a href="${rel}brokers/">Cashback Eligibility</a></li></ul></div>
+      <div><h3>Legal</h3><ul><li><a href="${rel}legal/?document=terms">Terms of Service</a></li><li><a href="${rel}legal/?document=privacy">Privacy Policy</a></li><li><a href="${rel}legal/?document=risk">Risk Disclosure</a></li><li><a href="${rel}legal/?document=cookies">Cookie Settings</a></li></ul></div>
+    </nav>
+    <div class="fsig-rule" aria-hidden="true"></div>
     <div class="fsig-base">
       <p class="fsig-legal">© 2026 TrustForex. Trading carries risk. Credits follow each partner broker's own terms.</p>
       <div class="social">
-        <a href="#" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
         <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r=".9"/></svg></a>
+        <a href="#" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M21 4 3 11l5 2 2 6 3-4 5 4 3-15Z"/></svg></a>
         <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><path d="M8.2 10.6v6M8.2 7.7v.1M12.2 16.6v-3.5a2.1 2.1 0 0 1 4.2 0v3.5"/></svg></a>
         <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="4"/><path d="M10.4 9.6 15.4 12l-5 2.4z" fill="currentColor" stroke="none"/></svg></a>
       </div>
     </div>
   </div>
-  <div class="fsig-sign" aria-hidden="true"><svg viewBox="0 0 119 26"><use href="#tf-word"/></svg></div>
 </footer>`;
 const final = rel => `<section class="screen footer-only" id="final" data-name="Footer">${footer(rel)}</section>`;
 const shell = ({ rel, title, desc, body, extraHead = '', scripts = '', top = 'hero' }) => `<!doctype html>

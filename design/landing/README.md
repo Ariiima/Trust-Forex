@@ -89,17 +89,32 @@ both one-click answers, the choice across pages, the dialog, Escape, a stale ver
 the gate. Fresh browsers in the other `_qa` scripts now see the banner too.
 
 The footer is one markup on every page (`blog/build.mjs` writes its own copy), and `cb8/base.css`
-`.fsig` owns it. It stands on its own navy floor (`--p-abyss`) under the closing screen, rounded at
-the shoulders, with the wordmark under the links tall enough to read and masked into the floor. The
-founder picked it on 2026-09-13 ("23 is the winner") out of rounds three and four in
-`cb8/footer-lab-3.html`. It replaced variant 02 of `cb8/footer-lab.html`, where the links sat on the
-closing screen's own blue with a hairline between, and the cropped wordmark ran under the small
-print and the socials. The links are 4 / 4 / 4. Brokers was dropped because it was Partner brokers
-twice, then Partner brokers because it was Partner broker rules twice (one page); Home came back to The
-site and Blog moved under Company to keep the columns even (founder, 2026-09-13). The closing screen above it holds a full window of blue on its own and
-the floor starts past the fold (founder, 2026-09-13): sized as one window with the footer inside, the
-closing words stood in about half the fold. The blog's floor rises out of paper unchanged. Legal's floor is black,
-so that page still has no hue.
+`.fsig` owns it. It stood on its own navy floor (`--p-abyss`) under the closing screen from
+2026-09-13 ("23 is the winner" out of rounds three and four in `cb8/footer-lab-3.html`) until
+2026-09-14, when the founder sent a glass reference and asked for a 1:1 match in the site's own
+material: the nav's own recipe (`saturate(180%) blur(20px)`, a tint, a hairline rim, an inset
+highlight) carried down instead of a solid card, three rows ruled apart — the lockup and a new
+glass CTA ("Access the full TrustForex experience" → `app.trustforex.net`), the 4/4/4 columns,
+the copyright and the socials — and the cropped wordmark signature dropped (`.fsig-sign`, and its
+`cb8/main.js` IntersectionObserver, both removed). Telegram, previously its own pill under the
+tagline, folded into the social row as a fifth square glass icon instead. The links are still
+4 / 4 / 4: Brokers was dropped because it was Partner brokers twice, then Partner brokers because
+it was Partner broker rules twice (one page); Home came back to The site and Blog moved under
+Company to keep the columns even (founder, 2026-09-13). The blog's floor rises out of paper
+unchanged. Legal's floor is black, so that page still has no hue and keeps a solid `.fsig`
+(`legal/page.css`), not glass.
+
+First pass at the tint was too thin (`rgba(shadow,.4)`): a `backdrop-filter` reads whatever sits
+behind it, and on the blue screens that blended to navy but on the blog's paper (2026-09-09: no
+closing statement there, so the floor rises straight out of white) the same tint blended to flat
+grey — the same pane looked like two different materials depending on the page under it. Tried
+fixing it by not depending on the backdrop at all (tint to .82–.86, a faint grid baked in from
+style.css's own "structure behind the glass" recipe, saturate/blur up to 200%/24px) — founder
+called it back (2026-09-14: drop the grid, keep it the blue it was). So `.fsig` and `.fsig-cta`
+are back to the original thin blue tint (`rgba(shadow,.4)` / `rgba(rgb-900,.55)`,
+`saturate(180%) blur(20px)`), and the blog reading grey where the tint has only paper behind it is
+a known, accepted gap, not solved. Legal's solid override still lands after all of this and wins,
+so that page is unaffected either way.
 
 Every nav and footer link lands at the top of its page (founder, 2026-09-14: "touching a footer or
 header link should bring you to the top of that page, not somewhere random in the middle"). So

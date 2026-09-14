@@ -89,31 +89,6 @@
   }, { threshold: .25 });
   screens.forEach(s => io.observe(s));
 
-  /* ---------- the footer's signature rises when the page ends ----------
-     The wordmark under the footer is the last thing on any page, so it arrives on arrival: the
-     band it is cropped by sits at the document's own bottom edge, which means it can only come
-     into view when the reader is at the end. Threshold .45 of that band is the moment the end is
-     reached on any viewport, rather than a pixel figure that would be right on one.
-
-     It signs every time, not once: the class goes off again on the way out, so coming back to the
-     end plays the arrival again. Two thresholds rather than one, because a single .45 line would
-     let a hand resting at that exact scroll position flicker the mark on and off with every
-     tremor of the wheel — it goes on at .45 and only comes off below .2, and between the two the
-     state simply holds. page.css owns both states and hangs the from-state off html.js, so
-     without this file (or without JavaScript) the mark is simply there, and html.reduce parks it
-     there too. */
-  const sign = document.querySelector('.fsig-sign');
-  if (sign) {
-    new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        const foot = e.target.closest('.fsig');
-        if (e.intersectionRatio >= .45) foot.classList.add('signed');
-        else if (e.intersectionRatio <= .2) foot.classList.remove('signed');
-      });
-    }, { threshold: [.2, .45] }).observe(sign);
-  }
-
-
   const scroller = () => getComputedStyle(deck).overflowY === 'visible' ? window : deck;
   const position = () => scroller() === window ? scrollY : deck.scrollTop;
   const viewport = () => scroller() === window ? innerHeight : deck.clientHeight;
@@ -182,7 +157,7 @@
     node.replaceChildren(frag);
   });
 
-  /* ---------- glass panes (02, 04) and the two-records panel: the light follows the pointer ----------
+  /* ---------- glass panes (02, 04), the two-records panel and the footer: the light follows the pointer ----------
      --mx/--my in px on the pane and on each tile, relative to its own box, so every radial in
      style.css centres under the cursor; .lit while the pointer is over the pane.
      clientX/Y are viewport-relative, so a real move always changes them — but content sliding under
@@ -190,8 +165,8 @@
      fires pointermove, with the same clientX/Y as last time. Skip those, or the pane tilts toward
      wherever the mouse happens to be sitting the moment the page settles, reading as an unbidden jump. */
   let lastPointerX = -1, lastPointerY = -1;
-  document.querySelectorAll('.glass .panel, .split-panel, .weekly-record, #calculator .panel').forEach(pane => {
-    const lit = [pane, ...pane.querySelectorAll('.tile')];
+  document.querySelectorAll('.glass .panel, .split-panel, .weekly-record, #calculator .panel, .fsig').forEach(pane => {
+    const lit = [pane, ...pane.querySelectorAll('.tile, .fsig-cta, .social a')];
     pane.addEventListener('pointermove', e => {
       if (e.clientX === lastPointerX && e.clientY === lastPointerY) return;
       lastPointerX = e.clientX; lastPointerY = e.clientY;

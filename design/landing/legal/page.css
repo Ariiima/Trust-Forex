@@ -72,13 +72,12 @@ body{background:#fff;color:var(--body);font-variant-numeric:normal}
    Class only, and the section carries no id: base.css paints #final blue and a full screen
    tall for the closing statement every other page ends on, and out-specifying an id from here
    is a fight this page can simply not have.
-   The house footer stands on a navy floor of its own (base.css .fsig). Here that floor is black
-   and the wordmark white at a seventh, so the page keeps no hue from the nav to the last line.
-   Its type is already white on that floor; only the focus ring, black on this page, turns white. */
+   The house footer stands on a navy floor of its own (base.css .fsig). Here that floor is black,
+   so the page keeps no hue from the nav to the last line. Its type is already white on that
+   floor; only the focus ring, black on this page, turns white. */
 .footer-only{background:#fff;color:var(--muted)}
 .footer-only .fsig{background:#000;box-shadow:none}
 .footer-only .fsig :focus-visible{outline-color:#fff}
-.footer-only .fsig-sign svg{fill:rgba(255,255,255,.14)}
 
 @media (max-width:560px){
   .legal-top{padding-top:calc(var(--nav-h) + 36px)}
