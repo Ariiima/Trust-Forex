@@ -9,7 +9,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-2 -2 29 30%27%3E%3Cg fill=%27%23144CCD%27%3E%3Cpath d=%27M9.447 21.464l-.039-6.979c-.002-1.612-1.409-2.918-3.143-2.918H.259c.24 1.032.52 2.69.875 3.702 1.594 4.322 4.496 7.606 8.313 10.024z%27/%3E%3Cpath d=%27M18.037 11.567c-1.568 0-2.84 1.18-2.842 2.638v11.068c3.797-2.414 6.686-5.689 8.276-10.003.362-1.012.649-2.671.889-3.703z%27/%3E%3Cpath d=%27M24.615 5.29V3.216C20.628 1.712 16.646.61 12.424 0 8.128.602 4.013 1.717 0 3.263V5.29z%27/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="../cb8/grounds.css?v=348acab3">
 <link rel="stylesheet" href="../cb8/style.css?v=1c8374a0">
-<link rel="stylesheet" href="page.css?v=d12819b5">
+<link rel="stylesheet" href="page.css?v=0bca5e87">
 </head>
 <body>
 <svg id="liquid-svg" width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="liquid" x="-4%" y="-8%" width="108%" height="116%" color-interpolation-filters="sRGB">
@@ -112,9 +112,9 @@
       <p class="rv" style="--i:1">Keep every sponsored client inside an experience where your broker is the only broker they see and the relationship you have already built stays protected.</p>
     </div>
     <div class="panel protected rv" style="--i:2" aria-label="Protected broker experience">
-      <div class="tile sponsor"><span class="bmark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4.5 17 9.6 7h4L8.5 17h-4Zm8.2 0 4.1-8h3.2l-4.1 8h-3.2Z" fill="currentColor"/></svg></span><div><small>Sponsored by</small><strong>Your Broker</strong></div></div>
       <article class="tile how-point"><span class="tile point-icon"><span class="ico" data-lottie="../cb8/ico/activity.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15.5 8.5 10l3.5 3.5L20 6"/><path d="M15 6h5v5"/></svg></span></span><div><strong>More reasons to stay active</strong><span>Creates more reasons to fund, return and stay active.</span></div><b>Client activity</b></article>
       <article class="tile how-point"><span class="tile point-icon"><span class="ico ico-success" data-lottie="../cb8/ico/shield-done.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 19 5v5.7c0 4.8-2.8 8.7-7 10.8-4.2-2.1-7-6-7-10.8V5l7-2.5Z"/><path d="m9 12 2.2 2.2L15 10"/></svg></span></span><div><strong>A protected broker relationship</strong><span>Keeps every sponsored touchpoint focused on your broker.</span></div><b>Your broker only</b></article>
+      <p class="tile protected-tie">A benefit tied to your broker</p>
     </div>
   </div>
   </div></div>
@@ -132,16 +132,19 @@
       <p class="rv" style="--i:1">Offer sponsored access immediately or unlock it after selected clients link and fund their broker account, tying the benefit to the action you want to encourage.</p>
     </div>
     <div class="panel access rv" style="--i:2" aria-label="Broker-selected access condition">
-      <div class="access-switch" role="group" aria-label="Access condition selector">
-        <button class="tile" type="button" data-access="immediate" aria-pressed="false">Immediate Access</button>
-        <button class="tile" type="button" data-access="funded" aria-pressed="true">Funded Account</button>
+      <div class="access-head">
+        <span class="access-eyebrow"><span class="ico" data-lottie="../cb8/ico/key.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="15.5" r="4"/><path d="M11.5 12.5 19 5m0 0h-4m4 0v4"/></svg></span>Access rule</span>
+        <div class="access-switch" role="group" aria-label="Access condition selector">
+          <button class="tile" type="button" data-access="immediate" aria-pressed="false">Immediate Access</button>
+          <button class="tile" type="button" data-access="funded" aria-pressed="true">Funded Account</button>
+        </div>
       </div>
-      <div class="access-summary"><span class="access-eyebrow">Access rule</span><strong id="access-title">Unlock after funding confirmation</strong></div>
       <ol class="access-steps">
-        <li class="access-step"><i>1</i><span>Account linked</span></li>
-        <li class="access-step"><i>2</i><span>Funding confirmed</span></li>
-        <li class="access-step done"><i><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 8.5 3 3 6-6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></i><span>Access unlocked</span></li>
+        <li class="access-step"><i>01</i><span>Account linked</span></li>
+        <li class="access-step"><i>02</i><span>Funding confirmed</span></li>
+        <li class="access-step done"><i>03</i><span>Access unlocked</span></li>
       </ol>
+      <p class="access-caption" id="access-title">Unlock after funding confirmation</p>
     </div>
   </div>
   </div></div>
@@ -158,14 +161,13 @@
       <h3 class="words" id="m3-h">Guide selected clients toward the next broker action</h3>
       <p class="rv" style="--i:1">Turn your campaign into a clear next step inside the Telegram mini app, helping selected clients move from attention to action with your broker.</p>
     </div>
-    <div class="panel app-shell rv" style="--i:2" aria-label="Broker campaign shown inside the TrustForex Mini App">
-      <div class="tile app-broker"><span class="bmark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4.5 17 9.6 7h4L8.5 17h-4Zm8.2 0 4.1-8h3.2l-4.1 8h-3.2Z" fill="currentColor"/></svg></span><div><strong>Your Broker</strong><span>Sponsored client experience</span></div></div>
-      <div class="tile app-campaign">
-        <span class="campaign-icon"><span class="ico" data-lottie="../cb8/ico/send.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21 4-7.5 16-3.8-6.1L4 10.7 21 4Z"/><path d="m9.7 13.9 4.2-3.8"/></svg></span></span>
-        <h4>Complete your account funding</h4>
-        <p>Unlock the TrustForex access sponsored by your broker.</p>
-        <div class="app-action"><strong>Continue with Your Broker</strong><span class="app-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-      </div>
+    <div class="panel action-path rv" style="--i:2" aria-label="How selected clients move from attention to action">
+      <ol class="path-rows">
+        <li class="path-row"><i>01</i><span>Focus on the clients that matter now</span></li>
+        <li class="path-row"><i>02</i><span>Turn interest into one clear next step</span></li>
+        <li class="path-row"><i>03</i><span>Keep the journey focused on your broker</span></li>
+      </ol>
+      <p class="path-band">From attention to action</p>
     </div>
   </div>
   </div></div>
@@ -183,16 +185,15 @@
     </div>
     <div class="pilot-card glass rv" style="--i:2" aria-label="Example partnership pilot setup">
       <div class="rayfield k k06" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-      <div class="pilot-head"><span class="bmark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4.5 17 9.6 7h4L8.5 17h-4Zm8.2 0 4.1-8h3.2l-4.1 8h-3.2Z" fill="currentColor"/></svg></span><div><strong>Your Broker</strong><span>Focused pilot</span></div><span class="live" aria-hidden="true"><i></i>Ready to configure</span></div>
-      <h3>One client group, one access rule, one clear test</h3>
-      <ol class="pilot-path">
-        <li class="pilot-step"><i class="tile"><span class="ico" data-lottie="../cb8/ico/user.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20c.5-3.6 3.6-6 7.5-6s7 2.4 7.5 6"/></svg></span></i><span>Audience</span><strong>Choose the clients that matter now</strong></li>
-        <li class="pilot-step"><i class="tile"><span class="ico" data-lottie="../cb8/ico/target.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".8"/></svg></span></i><span>Trigger</span><strong>Set immediate or funded access</strong></li>
-        <li class="pilot-step"><i class="tile"><span class="ico" data-lottie="../cb8/ico/analytics.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18V6m0 12h16M7 15l4-4 3 2 5-6"/></svg></span></i><span>Decision</span><strong>Review the outcome in your broker systems</strong></li>
-      </ol>
+      <div class="pilot-head"><span class="tile bmark" aria-hidden="true"><span class="ico" data-lottie="../cb8/ico/preferences.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h14M5 12h14M5 18h14"/><circle cx="9" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="17" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg></span></span><div><strong>Pilot setup</strong></div><span class="live" aria-hidden="true"><i></i>Ready to configure</span></div>
+      <ul class="pilot-rows">
+        <li class="pilot-row"><span>Audience</span><strong>One selected client group</strong></li>
+        <li class="pilot-row"><span>Activation</span><strong>Immediate or after funding</strong></li>
+        <li class="pilot-row"><span>Expansion</span><strong>Scale only after clear value</strong></li>
+      </ul>
       <div class="pilot-offer">
-        <div class="tile pilot-benefit"><b>30 days of Silver access</b><small>Sponsored by your broker</small></div>
-        <div class="tile pilot-fee"><b>No platform fee</b><small>For the initial pilot</small></div>
+        <div class="tile pilot-benefit"><span class="ico" data-lottie="../cb8/ico/clock-close.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l2.5 1.5"/></svg></span><b>30 days</b><small>Silver access</small></div>
+        <div class="tile pilot-fee"><span class="ico" data-lottie="../cb8/ico/dollar-receive.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 6.5v11M14.8 9.2c0-1.1-1.2-1.9-2.8-1.9s-2.8.8-2.8 1.9c0 2.7 5.6 1 5.6 3.8 0 1.2-1.3 2-2.8 2s-2.8-.8-2.8-2"/></svg></span><b>$0</b><small>Platform fee</small></div>
       </div>
     </div>
   </div>
@@ -313,7 +314,7 @@
 <button class="to-top" id="toTop" type="button" aria-label="Back to top"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 
 <script src="../cb8/ico/lottie_light.min.js"></script>
-<script src="../cb8/main.js?v=4cf81ae1"></script>
+<script src="../cb8/main.js?v=0e9fa8ed"></script>
 <script src="page.js?v=2aa7d628"></script>
 <script>if (document.documentElement.classList.contains('reduce')) document.getElementById('liquid-svg').pauseAnimations();</script>
 <script src="../cb8/consent.js?v=5d3e2c28"></script>
