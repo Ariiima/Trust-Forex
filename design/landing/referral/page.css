@@ -7,8 +7,10 @@
 .grid2,.mech-grid{grid-template-columns:minmax(0,1.08fr) minmax(440px,.92fr);gap:80px}
 .grid2>div:first-child,.mech-copy{max-width:590px}
 .grid2 .copy,.mech-copy .copy{max-width:520px;min-height:54px}
-.mech-copy .copy{font-size:var(--text-copy)}
-.mech-copy .h2{max-width:none}
+/* the four held cards take the held-card type Cashback and Results use: the mechanics title over its copy, 68px over 19px
+   (2026-09-15; they were a section heading's 66px over 18px) */
+.mech-copy .copy{font-size:var(--text-mech-copy)}
+.mech-copy .h2{max-width:none;font-size:var(--text-title-mech);line-height:var(--leading-mech);letter-spacing:var(--tracking-mech);margin-bottom:24px}
 #hero .display{max-width:940px}
 #hero .lede{max-width:680px;margin-bottom:0}
 
@@ -90,7 +92,8 @@ html.reduce #m2 .block{animation:none}
 
 /* ---------- 6 · lasting value: three tiles and the summary on white ---------- */
 .glass .lifetime-story{width:100%;min-height:420px;overflow:hidden;padding:14px;display:grid;grid-template-rows:repeat(3,minmax(92px,auto)) 82px;gap:10px;border-radius:24px}
-.glass .lifetime-point{min-height:92px;padding:15px 16px;display:grid;grid-template-columns:var(--icon-well) minmax(0,1fr);gap:14px;align-items:center;border-radius:14px}
+/* every tile on the page takes the glass tile's own 16px corner (2026-09-15; these ran 14, 15 and 18) */
+.glass .lifetime-point{min-height:92px;padding:15px 16px;display:grid;grid-template-columns:var(--icon-well) minmax(0,1fr);gap:14px;align-items:center;border-radius:16px}
 /* each point carries its icon on a small glass tile and a faint colour of its own: blue for the connection,
    the TP green for rewards arriving, plain for the rule that never expires (founder, 2026-09-09: "can be improved") */
 .glass .lifetime-icon{width:var(--icon-well);height:var(--icon-well);border-radius:var(--icon-well-radius);display:grid;place-items:center;padding:0;--streak:.16}
@@ -109,7 +112,7 @@ html.reduce #m2 .block{animation:none}
    material. A solid white slab here outshone the headline beside it and broke the pane's glass
    (founder, 2026-09-12: "the two white boxes look out of place"); the same tile, tinted up, with
    the second line in the page's light blue, keeps the close loud and the page one surface. */
-.glass .lifetime-summary{min-height:82px;padding:18px 20px;border-radius:14px;display:flex;align-items:center;justify-content:center;text-align:center;
+.glass .lifetime-summary{min-height:82px;padding:18px 20px;border-radius:16px;display:flex;align-items:center;justify-content:center;text-align:center;
   --tint:rgba(150,188,255,.34);--tint2:rgba(48,102,214,.26);--rim:rgba(176,208,255,.7);--streak:.32}
 .glass .lifetime-summary strong{display:block;max-width:430px;font-size:var(--text-summary);line-height:1.08;letter-spacing:-.04em;color:#fff}
 .glass .lifetime-summary strong span{display:block}   /* both lines plain white (founder, 2026-09-13: "simple and white") */
@@ -120,7 +123,7 @@ html.reduce #m2 .block{animation:none}
    calculator picks a level with the very same cell, at its own size. */
 .example-part b.swap{animation:xf .28s var(--ease)}   /* cb8's estimate cross-fade */
 html.reduce .example-part b.swap{animation:none}
-.rate-example{margin-top:14px;padding:22px 20px;border-radius:18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+.rate-example{margin-top:14px;padding:22px 20px;border-radius:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
 .example-flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:10px}
 .example-part{min-width:0;text-align:center;color:#fff}
 .example-part small{display:block;font-size:var(--text-small);color:rgba(255,255,255,.7);margin-bottom:4px}
@@ -134,14 +137,14 @@ html.reduce .example-part b.swap{animation:none}
 /* ---------- 8 · the App: the overview, one notification, the balance on the blue tile ---------- */
 .glass .app-preview{position:relative;width:100%;height:420px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:44px 90px minmax(0,1fr) 72px;gap:12px;border-radius:24px}
 .app-top{grid-column:1;grid-row:1;display:flex;align-items:center;padding:0 4px;color:#fff}
-.app-top strong{font-size:var(--text-step)}
+.app-top strong{font-size:var(--text-panel-title)}   /* a panel title, 15px, as Cashback's dashboard titles (it was 17px) */
 /* the reward notification wears the Active status pill's green — money that landed, said once in one colour */
 .toast{grid-column:2;grid-row:1;align-self:center;max-width:220px;min-height:34px;padding:8px 11px;border:1px solid rgba(84,226,160,.55);border-radius:999px;background:rgba(46,196,127,.22);
   display:flex;align-items:center;font-size:var(--text-label);white-space:nowrap;color:#c9f7e0;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 0 0 3px rgba(46,196,127,.12),0 6px 18px rgba(24,150,96,.34)}
 .toast strong{font-size:var(--text-small);color:inherit}
 .summary-grid{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.glass .summary-card{min-height:0;padding:14px;border-radius:14px;display:flex;flex-direction:column;justify-content:center}
+.glass .summary-card{min-height:0;padding:14px;border-radius:16px;display:flex;flex-direction:column;justify-content:center}
 .glass .summary-card small{font-size:var(--text-small);color:rgba(255,255,255,.78)}
 .glass .summary-card strong{display:flex;align-items:center;gap:7px;margin-top:9px;font-size:var(--text-summary-stat);line-height:1;letter-spacing:-.04em;white-space:nowrap}
 /* the plan the rate comes from: no pill inside the card — the whole card wears that tier's metal
@@ -157,13 +160,13 @@ html.reduce .example-part b.swap{animation:none}
 .referral-row{min-height:0;padding:10px 14px;border-top:1px solid rgba(255,255,255,.14)}
 .referral-list-head+.referral-row{border-top:0}
 .referral-row>strong{font-size:var(--text-ui)}
-.user-status{justify-self:start;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.14);font-size:var(--text-small);color:#fff}
+.user-status{justify-self:start;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.14);font-size:var(--text-small);font-weight:var(--weight-strong);color:#fff}   /* bold, as the card's other pills */
 .user-status.is-active{background:rgba(46,196,127,.22);border:1px solid rgba(84,226,160,.55);color:#c9f7e0;
   box-shadow:0 0 0 3px rgba(46,196,127,.12),0 6px 18px rgba(24,150,96,.34)}
 .user-status.is-pending{background:rgba(240,186,60,.2);border:1px solid rgba(247,206,102,.5);color:#ffe6ab;
   box-shadow:0 0 0 3px rgba(240,186,60,.1),0 6px 18px rgba(176,124,20,.3)}
 .user-earning{text-align:right;font-size:var(--text-ui)}
-.glass .balance-bar{grid-column:1/-1;grid-row:4;min-height:0;padding:12px 16px;border-radius:15px;display:flex;align-items:center;justify-content:space-between;gap:20px;
+.glass .balance-bar{grid-column:1/-1;grid-row:4;min-height:0;padding:12px 16px;border-radius:16px;display:flex;align-items:center;justify-content:space-between;gap:20px;
   --tint:rgba(38,104,224,.5);--tint2:rgba(20,70,190,.36);--rim:rgba(130,178,255,.6)}
 .glass .balance-bar small{display:block;font-size:var(--text-small);color:rgba(255,255,255,.78)}
 .glass .balance-bar strong{display:block;margin-top:3px;font-size:var(--text-balance)}
@@ -219,18 +222,23 @@ html.reduce .example-part b.swap{animation:none}
   .proof-row h3{white-space:normal}
   #hero .display{font-size:48px}#hero .lede{font-size:18px}
   .chapter-2 .h2{font-size:42px}
+  .mech-copy .h2{font-size:42px}.mech-copy .copy{font-size:16px}   /* base.css's phone mechanics sizes, as Cashback's held cards take them */
   .glass .route-panel{min-height:0;grid-template-rows:repeat(2,minmax(118px,auto)) 76px}
   .route-row{min-height:118px;padding:16px;column-gap:12px}.route-row h3{white-space:normal}
   .shared-destination strong{font-size:30px}
   #start .value-row{padding:16px;column-gap:12px;grid-template-columns:40px minmax(0,1fr)}#start .value-index{width:40px;height:40px}
   .glass .lifetime-story{grid-template-rows:none}.glass .lifetime-point{min-height:96px;padding:15px;gap:12px}
   .lifetime-summary{padding:20px 16px}.lifetime-summary strong{font-size:23px}
-  .glass .rates-panel{padding:14px}.rate-rail{grid-template-columns:1fr}.glass .rate-cell{min-height:96px}
+  .glass .rates-panel{padding:14px}.glass .rate-cell{min-height:96px}   /* the plans stay 2 across, as Cashback's calculator rail does on a phone */
   .rate-example{padding:17px}.example-flow{grid-template-columns:1fr}.example-arrow{transform:rotate(90deg);justify-self:center}.example-part.result{width:100%}
-  .glass .app-preview{height:auto;display:block}
-  .toast{width:max-content;max-width:100%;margin:0 0 12px auto}.summary-grid{margin-top:0}.referral-list{margin-top:12px}
+  /* the card keeps its grid on a phone, rows at their content's height: as a plain block the pill, which comes first in
+     the markup, stood over the title (2026-09-15). Beside it the title had 128px and broke in two, so here the title
+     takes the first row and the pill the second, at its start. The grid's 12px gap spaces the rows. */
+  .glass .app-preview{height:auto;grid-template-columns:minmax(0,1fr);grid-template-rows:repeat(5,auto)}
+  .app-top{grid-column:1;grid-row:1}.toast{grid-column:1;grid-row:2;justify-self:start}
+  .summary-grid{grid-row:3}.referral-list{grid-row:4}.glass .balance-bar{grid-row:5}
   .referral-list-head,.referral-row{grid-template-columns:1fr auto auto;gap:10px}
-  .glass .balance-bar{margin-top:12px;align-items:flex-start;flex-direction:column}
+  .glass .balance-bar{align-items:flex-start;flex-direction:column}
   #final .display{font-size:52px}
 }
 
