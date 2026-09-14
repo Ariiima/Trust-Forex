@@ -59,7 +59,7 @@
      reveal's stagger, and once more each time the pointer enters the card they sit on ---------- */
   // A slot may carry an inline stand-in glyph (svg.fb) that shows until the Iconly file is pulled;
   // the player appends its own svg after it and base.css hides a stand-in that is no longer last.
-  const icons = [...document.querySelectorAll('.ico[data-lottie]')].map(el => {
+  const icons = [...document.querySelectorAll('.ico[data-lottie]:not(.ico-social)')].map(el => {
     const anim = lottie.loadAnimation({ container: el, renderer: 'svg', loop: false, autoplay: false, path: el.dataset.lottie });
     // the rest frame is the last one — the complete glyph — unless the file ends on a transient state
     // (a blinking eye ends shut): data-rest="<frame>" names the frame to rest on, after every play too
@@ -69,6 +69,16 @@
     const play = () => { if (!REDUCE && anim.isLoaded) anim.goToAndPlay(0, true); };
     (el.closest('.tile,.value-row,.pstep,button,.route-row,.card,.md-callout') || el).addEventListener('pointerenter', play);
     return { el, play, anim };
+  });
+
+  /* ---------- footer social icons (.ico-social, ico/*.json): the one .ico exception that skips
+     the reveal — they sit below the fold on load, so a hover is the only cue that they animate ---------- */
+  if (typeof lottie !== 'undefined') document.querySelectorAll('.ico-social[data-lottie]').forEach(el => {
+    const anim = lottie.loadAnimation({ container: el, renderer: 'svg', loop: false, autoplay: false, path: el.dataset.lottie });
+    const rest = () => anim.goToAndStop(anim.totalFrames - 1, true);
+    anim.addEventListener('DOMLoaded', rest);
+    anim.addEventListener('complete', rest);
+    (el.closest('a') || el).addEventListener('pointerenter', () => { if (!REDUCE && anim.isLoaded) anim.goToAndPlay(0, true); });
   });
 
   /* The reveal wants crossing semantics, which is exactly what IntersectionObserver gives. */
@@ -183,6 +193,27 @@
     pane.addEventListener('pointerenter', () => pane.classList.add('lit'));
     pane.addEventListener('pointerleave', () => { pane.classList.remove('lit'); pane.style.setProperty('--tx', 0); pane.style.setProperty('--ty', 0); });
   });
+
+  /* ---------- the footer starts on a whole pixel ----------
+     Everything above it ends on a fraction of a pixel, a different one on every page, so the same
+     footer began at y=512.75 on one page and 513.45 on the next, and its text and rim landed on
+     different pixel rows (founder, 2026-09-14: "micro level changes between tabs"). A nudge of under
+     a pixel puts its top edge on a whole one: margin above it in the flow, or padding inside it where
+     a full-height closing screen pins it to the bottom and absorbs a margin. Re-measured whenever the
+     page above it changes size. legal/page.js carries the same lines, since that page has no main.js. */
+  const foot = document.querySelector('.fsig');
+  if (foot && 'ResizeObserver' in window) {
+    const top = () => foot.getBoundingClientRect().top + scrollY;
+    new ResizeObserver(() => {
+      foot.style.marginTop = foot.style.paddingBottom = '';
+      const y = top(), frac = y - Math.floor(y);
+      if (frac < .01 || frac > .99) return;
+      foot.style.marginTop = `calc(${getComputedStyle(foot).marginTop} + ${(1 - frac).toFixed(4)}px)`;
+      if (Math.abs(top() - Math.ceil(y)) < .01) return;
+      foot.style.marginTop = '';
+      foot.style.paddingBottom = `${frac.toFixed(4)}px`;
+    }).observe(document.querySelector('main') || document.body);
+  }
 
   /* ---------- FAQ ----------
      The row's height is a real layout animation, so every frame of it resizes the section and

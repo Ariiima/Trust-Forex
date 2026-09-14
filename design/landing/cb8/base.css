@@ -157,7 +157,7 @@ html.dark-now .dot[aria-current=true]{background:#fff}
    the player writes its own stroke/fill attributes, so the paths are told to take the .ico's. */
 .ico{display:block;width:var(--icon-size);height:var(--icon-size);flex:none;stroke:var(--accent);fill:none}
 .ico svg [stroke]{stroke:inherit}
-.ico svg.fb:not(:last-child){display:none}   /* the inline stand-in steps aside once the player has appended the Iconly file */
+.ico svg.fb:not(:last-child),.social svg.fb:not(:last-child){display:none}   /* the inline stand-in steps aside once the player has appended the file */
 html.reduce .rv,html.reduce .words .w i{opacity:1;transform:none;transition:none}
 
 /* ---------- 1 · HERO: the ray field, glass, and the log that never moves ---------- */
@@ -477,7 +477,10 @@ html.reduce .estimate strong.swap{animation:none}
 .faq-a p{margin:0 0 23px;padding-right:48px;font-size:var(--text-panel-title);line-height:var(--leading-body);color:var(--muted);max-width:770px}
 
 /* ---------- 13 · FINAL — dark screen two of two, footer inside it ---------- */
-#final{background:var(--blue);color:#fff;--grad:var(--grad-light);overflow:hidden;justify-content:space-between;padding-bottom:0}
+/* overflow:clip, not hidden: hidden makes #final a scroll container, and the footer's view timeline
+   (.fsig, below) then reads #final — which never scrolls — so its light froze at a different spot on
+   every page. clip cuts the same edge without becoming a scroller (2026-09-14). */
+#final{background:var(--blue);color:#fff;--grad:var(--grad-light);overflow:clip;justify-content:space-between;padding-bottom:0}
 #final .rayfield.k{transform:scaleX(-1)}   /* the hero's halo, mirrored: the page opens and closes on the same ground */
 .final-inner{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center;align-items:center}
 /* The closing words hold a window of their own below the head clearance, and the footer's floor starts
@@ -489,9 +492,11 @@ html:not(.snap) .final-inner{min-height:calc(100svh - var(--section-space))}
 #final .lede{color:rgba(255,255,255,.78);text-align:center;max-width:760px;margin:0 auto 30px}
 .footer{position:relative;z-index:1;border-top:1px solid var(--navy-line);padding:36px 0 48px;width:100%}
 .social{display:flex;gap:10px}
-.social a{width:32px;height:32px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--navy-line);transition:background-color .3s var(--ease)}
+.social a{width:var(--icon-well);height:var(--icon-well);display:grid;place-items:center;border-radius:50%;border:1px solid var(--navy-line);transition:background-color .3s var(--ease)}
 .social a:hover{background:rgba(255,255,255,.12)}
-.social svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.6;fill:none}
+/* Instagram/X/Telegram/LinkedIn/YouTube: one size, one colour — --icon-size, white, same as every other .ico
+   (founder request: unify the five, no longer the text-glyph exception the README carves out for socials). */
+.ico-social{stroke:#fff;color:#fff;stroke-width:1.6}
 /* ---------- the footer, every page ----------
    Glass, not a solid floor (founder brief 2026-09-14, matched 1:1 to the reference): a blurred
    blue tint, a bright rim and an inner light along the top edge. Three ruled rows inside it: the lockup with
@@ -516,9 +521,16 @@ html:not(.snap) .final-inner{min-height:calc(100svh - var(--section-space))}
     linear-gradient(165deg,rgba(var(--rgb-950),.86) 0%,rgba(var(--rgb-pressed),.9) 45%,rgba(0,30,112,.94) 100%);
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   box-shadow:0 0 34px rgba(30,100,255,.45);view-timeline:--fsig}
-/* a paper floor would show white through the thin tint: the pane stands on the closing ground instead,
-   as the two-records panel does on its paper screen */
-.footer-only .fsig{background-color:var(--blue)}
+/* One footer, pixel for pixel, on every page (founder, 2026-09-14: "the exact same thing 1-on-1").
+   Nothing the page under it sets may reach it:
+   · the pane stands on the closing ground's blue on every page, not only on paper — through the
+     tint's 6-14% the blue pages showed their own rayfield and the paper pages a flat blue;
+   · its own ink and figures: Cashback's body keeps tabular figures, which widened every footer
+     line by a pixel there, and a paper page's grey was the inherited colour;
+   · its column: About narrows the site's wrap to 1180px and its phone gutter to 20px, which moved the
+     whole footer 10px in on that page. The footer keeps scale.css's own 1200px and 28px.
+   Where it starts is main.js's (and legal/page.js's): its top edge is nudged onto a whole pixel. */
+.fsig{background-color:var(--blue);color:#fff;font-variant-numeric:normal;--wrap:1200px;--content-gutter:28px}
 .fsig::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
   transition:--lit .45s var(--ease);animation:glass-light linear both;animation-timeline:--fsig;animation-range:entry 0% exit 100%;background:
   radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,var(--lit)),transparent 70%) no-repeat 0 0/auto,
@@ -566,10 +578,9 @@ html:not(.snap) .final-inner{min-height:calc(100svh - var(--section-space))}
   padding:22px 0 26px}
 .fsig-legal{margin:0;font-size:var(--text-small);line-height:1.6;color:rgba(255,255,255,.56)}
 .fsig .social{gap:10px}
-.fsig .social a{width:38px;height:38px;border-radius:12px;border-color:rgba(255,255,255,.2);
+.fsig .social a{width:var(--icon-well);height:var(--icon-well);border-radius:var(--icon-well-radius);border-color:rgba(255,255,255,.2);
   color:rgba(255,255,255,.85);background:rgba(255,255,255,.05)}
 .fsig .social a:hover{background:rgba(255,255,255,.14)}
-.fsig .social svg{width:16px;height:16px}
 /* the tiles' rim light (style.css .glass .tile::before): the radial minus its own 1px inset, by mask */
 .fsig-cta,.fsig .social a{position:relative}
 .fsig-cta::before,.fsig .social a::before{content:"";position:absolute;inset:-1px;padding:1px;border-radius:inherit;pointer-events:none;

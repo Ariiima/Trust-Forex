@@ -38,4 +38,45 @@
   }));
   addEventListener('popstate', () => show(requested(), false));
   show(requested(), false);
+
+  // The house footer's pointer light, as cb8/main.js gives it on every other page (this page does not
+  // load that file): --mx/--my on the pane, the CTA and each social icon, .lit while the pointer is over it.
+  const foot = document.querySelector('.fsig');
+  if (foot) {
+    const lit = [foot, ...foot.querySelectorAll('.fsig-cta, .social a')];
+    foot.addEventListener('pointermove', e => {
+      for (const el of lit) {
+        const r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', `${e.clientX - r.left}px`);
+        el.style.setProperty('--my', `${e.clientY - r.top}px`);
+      }
+    }, { passive: true });
+    foot.addEventListener('pointerenter', () => foot.classList.add('lit'));
+    foot.addEventListener('pointerleave', () => foot.classList.remove('lit'));
+    // and its top edge on a whole pixel, as cb8/main.js puts it on every other page (see the note there)
+    const top = () => foot.getBoundingClientRect().top + scrollY;
+    if ('ResizeObserver' in window) new ResizeObserver(() => {
+      foot.style.marginTop = foot.style.paddingBottom = '';
+      const y = top(), frac = y - Math.floor(y);
+      if (frac < .01 || frac > .99) return;
+      foot.style.marginTop = `calc(${getComputedStyle(foot).marginTop} + ${(1 - frac).toFixed(4)}px)`;
+      if (Math.abs(top() - Math.ceil(y)) < .01) return;
+      foot.style.marginTop = '';
+      foot.style.paddingBottom = `${frac.toFixed(4)}px`;
+    }).observe(document.querySelector('main') || document.body);
+  }
+})();
+
+/* ---------- footer social icons (.ico-social, cb8/ico/*.json): hover-only, no reveal
+   play. This page has no main.js, so it plays them itself, same rest/hover logic. ---------- */
+(() => {
+  if (typeof lottie === 'undefined') return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.ico-social[data-lottie]').forEach(el => {
+    const anim = lottie.loadAnimation({ container: el, renderer: 'svg', loop: false, autoplay: false, path: el.dataset.lottie });
+    const rest = () => anim.goToAndStop(anim.totalFrames - 1, true);
+    anim.addEventListener('DOMLoaded', rest);
+    anim.addEventListener('complete', rest);
+    (el.closest('a') || el).addEventListener('pointerenter', () => { if (!reduce && anim.isLoaded) anim.goToAndPlay(0, true); });
+  });
 })();
