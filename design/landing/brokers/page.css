@@ -147,10 +147,9 @@ html.reduce .broker-stage.rv > *{animation:none}
 /* ---------- every record opens the same way: heading, one line ----------
    The number above each heading went (founder, 2026-09-13): the records open on their heading. The
    connection steps keep their numbers, which are the steps' order and not the record's. */
+/* every record opens top-left: Cashback's head was centred over its panes, the one record set that way (2026-09-14) */
 .data-head{max-width:700px;margin-bottom:var(--block-space)}
-.data-head.centred{max-width:780px;margin-inline:auto;text-align:center}
 .data-head .copy{max-width:640px}
-.data-head.centred .copy{margin-inline:auto}
 .data-head .h2{max-width:none}
 .data-note{margin:18px 0 0;font:var(--weight-body) var(--text-label)/var(--leading-ui) var(--sans);color:var(--muted)}
 
@@ -159,8 +158,9 @@ html.reduce .broker-stage.rv > *{animation:none}
 .key-row{--streak:.12;min-height:60px;padding:14px 18px;display:grid;grid-template-columns:minmax(0,.76fr) minmax(0,1.24fr);gap:16px;align-items:center}
 .key-row span{font-size:var(--text-small);color:rgba(255,255,255,.76)}
 /* a key value is a line of prose, not a dashboard figure: style.css sizes .glass .tile strong at 30px,
-   which wrapped "New accounts through TrustForex only" over three lines. The skeleton's 15px reads in one. */
-.glass .key-row strong{font-size:var(--text-panel-title);font-weight:var(--weight-strong);letter-spacing:-.01em;text-align:right}
+   which wrapped "New accounts through TrustForex only" over three lines. It takes the value size of every
+   label/value row on the site — Accounts' rows, Cashback's dashboard rows: 14px (2026-09-14; it was 15px). */
+.glass .key-row strong{font-size:var(--text-ui);font-weight:var(--weight-strong);letter-spacing:-.01em;text-align:right}
 
 /* ---------- 3 · regulation: the copy on paper, the licences on one blue pane ----------
    Five cards in a row was the wrong shape twice over. It left the record standing in 391px of a 956px
@@ -181,21 +181,29 @@ html.reduce .broker-stage.rv > *{animation:none}
    one that keeps the two panes the same object and not the one its own content needs. */
 @media (min-width:1024px){#regulation .record-grid,#markets .record-grid{grid-template-columns:minmax(0,.95fr) minmax(520px,1.05fr)}}
 .reg-stack{height:100%}
-.reg-panel{min-height:min(560px,60vh)}
+/* the pane is its rows' height, as Markets' is (2026-09-14): held to 560px, each licence row stood 108px
+   against a market row's 77px, and the two panes the notes above call one object read as two */
+.reg-panel{height:auto;min-height:0;grid-auto-rows:auto}
 /* the blue cards drop the ground's 48px grid (style.css .rayfield.k::before); the section grounds keep it, and so
    does Connect's pane (record 8) */
 .value-panel .rayfield.k::before{content:none}
 .record-copy .data-head{margin-bottom:0}
+/* the heading stands level with the middle of the pane beside it (base.css .record-copy centres it; founder, 2026-09-14).
+   With nothing under it, .h2's 21px bottom margin was centred too and held it 10.5px high. */
+.record-copy .data-head>.h2:last-child{margin-bottom:0}
 /* the footnote is an aside to the record, not a second paragraph of it: it sits off the copy on its
    own and stops well short of the column, so the eye reads the line above it as the sentence. */
 .record-copy .data-note{max-width:460px;margin-top:30px}
-.reg-row{grid-template-columns:74px minmax(0,1fr) auto;gap:18px;padding:20px 24px}
-.reg-code{font-size:var(--text-card-title);line-height:1;font-weight:var(--weight-heavy);letter-spacing:var(--tracking-card);color:#fff}
-/* the entity is the row's second fact, not its caption — one step up from .value-copy's default */
-.reg-row .value-copy p{margin-top:4px;font-size:var(--text-meta);color:rgba(255,255,255,.78)}
-.reg-lic{align-self:center;padding:6px 11px;border-radius:999px;white-space:nowrap;
+.reg-row{grid-template-columns:74px minmax(0,1fr) auto;gap:18px;padding:18px 24px}   /* a market row's padding */
+.reg-code{font-size:var(--text-card-title);line-height:1;font-weight:var(--weight-strong);letter-spacing:var(--tracking-card);color:#fff}
+/* a row's title and the line under it, at the value-row sizes Cashback's activation and Results' record use:
+   15px over 12px (2026-09-14; the title was 16px here and 14px in Markets, the line 13px in both) */
+.reg-row .value-copy strong,.market-row .value-copy strong{font-size:var(--text-panel-title);letter-spacing:-.015em}
+.reg-row .value-copy p{margin-top:4px;font-size:var(--text-small);color:rgba(255,255,255,.78)}
+/* the page's one pill, shared with Accounts' eligibility pill: 10px bold, one pad (it was 11px extra bold here) */
+.reg-lic{align-self:center;padding:6px 10px;border-radius:999px;white-space:nowrap;
   border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);
-  font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.06em;color:#fff}
+  font:var(--weight-strong) var(--text-micro)/1 var(--sans);letter-spacing:.06em;color:#fff}
 
 /* ---------- 4 · accounts: the two types side by side, both eligible ----------
    This record has to be read without scrolling (founder, 2026-09-12: the ECN pane's last rows were
@@ -221,9 +229,9 @@ html.reduce .broker-stage.rv > *{animation:none}
 .account-pane[data-acc=violet]{--acc:#C4ADF7;--acc-tint:rgba(138,96,224,.3);--acc-tint2:rgba(76,48,150,.24);--acc-rim:rgba(196,166,250,.5)}
 .glass .account-pane{border-color:var(--acc-rim)}   /* the pane's rim is the type's metal, not the system's blue */
 .account-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 2px 10px;margin-bottom:2px;border-bottom:1px solid var(--acc-rim)}
-.account-head h3{margin:0;font-size:var(--text-row-title);line-height:var(--leading-card);letter-spacing:-.025em;font-weight:var(--weight-strong);color:var(--acc)}
+.account-head h3{margin:0;font-size:var(--text-row-title);line-height:1.2;letter-spacing:-.02em;font-weight:var(--weight-strong);color:var(--acc)}   /* every pane head on the page: 18px, 1.2, -.02em */
 /* the one green thing on the page: the account is eligible (referral's active pill, style.css's success) */
-.eligible{padding:5px 9px;border-radius:999px;white-space:nowrap;font:var(--weight-strong) var(--text-micro)/1 var(--sans);letter-spacing:.05em;
+.eligible{padding:6px 10px;border-radius:999px;white-space:nowrap;font:var(--weight-strong) var(--text-micro)/1 var(--sans);letter-spacing:.06em;
   color:#c9f7e0;background:rgba(46,196,127,.22);border:1px solid rgba(84,226,160,.55)}
 .account-row{--streak:.12;min-height:44px;padding:9px 14px;border-radius:13px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center}
 .account-row span{font-size:var(--text-small);color:rgba(255,255,255,.76)}
@@ -264,8 +272,7 @@ html.reduce .broker-stage.rv > *{animation:none}
    three — a market is one short word and a sentence, and holding them apart in a wide table left a
    third of the pane empty between them. The pane's own divider comes with .value-row. */
 .market-row{position:relative;z-index:1;padding:18px 24px;grid-template-columns:var(--icon-well) minmax(0,1fr);gap:18px}
-.market-row .value-copy strong{font-size:var(--text-ui);letter-spacing:-.01em}
-.market-row .value-copy p{margin-top:4px;font-size:var(--text-meta);line-height:1.45;color:rgba(255,255,255,.78)}
+.market-row .value-copy p{margin-top:4px;font-size:var(--text-small);line-height:1.45;color:rgba(255,255,255,.78)}   /* its title: the shared rule in record 3 */
 /* the wash: the hue enters at the row's leading edge and is gone by its middle, so the colour names the
    row without tinting the words in it. It is half-lit at rest and full under the pointer — the row the
    eye is on is the row that is lit — and the chip lifts a shade with it. */
@@ -296,8 +303,8 @@ html.reduce .market-row::before,html.reduce .market-row::after,html.reduce .mark
 
 /* ---------- 6 · cashback: a white record, the table on its side, one account over the other ----------
    The record is `.mech.white` now, like Broker overview: no blue block behind it, the heading navy, the copy ink,
-   and the panes the one blue thing on it. Its head is `.centred`, so the number, the heading and the sentence
-   stand over the middle of the two panes rather than off their left edge (founder, 2026-09-12).
+   and the panes the one blue thing on it. Its head stood centred over the two panes (founder, 2026-09-12) and
+   opens top-left since 2026-09-14, as every other record's head does.
 
    The table was a plan per row and a market per column, each figure its own tile rimmed in its plan's
    metal. It read, but it grew the wrong way: every market added was a column, and the phone had four
@@ -314,7 +321,7 @@ html.reduce .market-row::before,html.reduce .market-row::after,html.reduce .mark
    column run to the pane's own edge and foot, and on a phone those 56px are a fifth of the table's width */
 #cashback .rate-pane{padding:0;overflow:hidden;border-radius:22px}
 .rate-head{padding:18px 22px;display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:4px 20px}
-.rate-head h3{margin:0;font-size:var(--text-row-title);font-weight:var(--weight-strong);letter-spacing:-.02em;color:#fff}
+.rate-head h3{margin:0;font-size:var(--text-row-title);line-height:1.2;font-weight:var(--weight-strong);letter-spacing:-.02em;color:#fff}
 .rate-head span{font-size:var(--text-small);color:rgba(255,255,255,.72)}
 .rate-scroll{overflow-x:auto}
 /* fixed layout: the market column is one measure and the four plans split the rest evenly, so the two
@@ -341,12 +348,16 @@ html.reduce .market-row::before,html.reduce .market-row::after,html.reduce .mark
 /* ---------- the numbered rules: the cashback notes, on glass ---------- */
 .note-panel{--r:22px;--tray:14px;padding:0;overflow:hidden;border-radius:var(--r)}
 .glass .note-panel{margin-top:1.125rem}
-.note-panel h3{margin:0;padding:17px 20px;border-bottom:1px solid var(--line);font-size:var(--text-row-title);font-weight:var(--weight-strong);letter-spacing:-.02em;color:var(--navy)}
-.note-line{min-height:54px;padding:13px 20px;display:grid;grid-template-columns:26px minmax(0,1fr);gap:14px;align-items:center;border-top:1px solid var(--line)}
+/* the head and the rows take the rate panes' own inset (22px), so the notes line up with the tables above them;
+   a little more height than the tables' rows, since these are sentences (founder, 2026-09-14: "a little breathing room") */
+.note-panel h3{margin:0;padding:20px 22px;border-bottom:1px solid var(--line);font-size:var(--text-row-title);line-height:1.2;font-weight:var(--weight-strong);letter-spacing:-.02em;color:var(--navy)}
+.note-line{min-height:60px;padding:16px 22px;display:grid;grid-template-columns:26px minmax(0,1fr);gap:14px;align-items:center;border-top:1px solid var(--line)}
 .note-panel h3+.note-line{border-top:0}
 .note-line>span:last-child{font-size:var(--text-meta);line-height:1.45;color:var(--body)}
-.note-num{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--p-200);background:var(--accent-soft);
-  font:var(--weight-heavy) var(--text-micro)/1 var(--sans);color:var(--accent)}
+/* one numbered bead on the page, notes and bonus rules alike: 26px, 11px bold — the number size Cashback's and
+   Results' steps set (it was 24px at 10px extra bold here) */
+.note-num{width:26px;height:26px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--p-200);background:var(--accent-soft);
+  font:var(--weight-strong) var(--text-label)/1 var(--sans);color:var(--accent)}
 .glass .note-panel h3{color:#fff;border-bottom-color:rgba(255,255,255,.18)}
 .glass .note-line{border-top-color:rgba(255,255,255,.14)}
 .glass .note-line>span:last-child{color:rgba(255,255,255,.84)}
@@ -355,7 +366,9 @@ html.reduce .market-row::before,html.reduce .market-row::after,html.reduce .mark
    it. Two columns instead, and the pairs fall out as they were already written: 1 and 2 what the rates
    are, 3 and 4 what the account and the trade must do, and 5 — the one rule that says what is NOT paid —
    takes the full width under them, in rose. Reading order is unchanged: 1 to 5, left to right. */
-#cashback .note-panel{display:grid;grid-template-columns:1fr 1fr;align-content:start}
+/* the glass recipe pads every pane 28px and outranks .note-panel's own 0, as it did the rate panes: the notes stood
+   26px inside the tables' edge and on a phone each rule broke over five lines. The id takes it back (2026-09-14). */
+#cashback .note-panel{padding:0;display:grid;grid-template-columns:1fr 1fr;align-content:start}
 #cashback .note-panel h3,#cashback .note-line.is-not{grid-column:1/-1}
 #cashback .note-panel h3+.note-line+.note-line{border-top:0}                       /* note 2 shares note 1's first row */
 #cashback .note-line:nth-child(odd){border-left:1px solid rgba(255,255,255,.14)}   /* the right column: notes 2 and 4 */
@@ -383,12 +396,12 @@ html.reduce .market-row::before,html.reduce .market-row::after,html.reduce .mark
   background:linear-gradient(180deg,rgba(var(--bn),.22),rgba(var(--bn-2),.1) 46%,transparent 78%)}
 .bonus-head{position:relative;z-index:1;display:flex;align-items:center;gap:15px;padding:20px 22px;
   border-bottom:1px solid rgba(255,255,255,.22)}
-.bonus-head h3{margin:0;font-size:var(--text-row-title);line-height:var(--leading-card);letter-spacing:-.02em;
+.bonus-head h3{margin:0;font-size:var(--text-row-title);line-height:1.2;letter-spacing:-.02em;
   font-weight:var(--weight-strong);color:#fff}
 /* the figure is the offer. It takes the market chip's recipe at the size the number needs — the hue's
    deep end under it, its light end on the rim, and a glow, so it reads as the pane's one lit object. */
-.bonus-figure{padding:9px 15px;border-radius:15px;white-space:nowrap;
-  font-size:var(--text-card-title);line-height:1;letter-spacing:var(--tracking-card);font-weight:var(--weight-heavy);color:#fff;
+.bonus-figure{padding:9px 15px;border-radius:16px;white-space:nowrap;   /* a tile's 16px corner; the figure bold, as the site's figures are */
+  font-size:var(--text-card-title);line-height:1;letter-spacing:var(--tracking-card);font-weight:var(--weight-strong);color:#fff;
   border:1px solid rgba(var(--bn),.62);background:linear-gradient(150deg,rgba(var(--bn),.42),rgba(var(--bn-2),.82));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 8px 18px -10px rgba(var(--bn-2),1),0 0 16px -6px rgba(var(--bn),.55)}
 .bonus-line{position:relative;z-index:1;min-height:56px;padding:13px 22px;
@@ -401,7 +414,7 @@ html.reduce .market-row::before,html.reduce .market-row::after,html.reduce .mark
 .bonus-line:hover::before{opacity:1}
 .bonus-line:hover .bonus-num{border-color:rgba(var(--bn),.9);box-shadow:0 0 14px -3px rgba(var(--bn),.7)}
 .bonus-num{width:26px;height:26px;display:grid;place-items:center;border-radius:50%;
-  font:var(--weight-heavy) var(--text-micro)/1 var(--sans);color:rgb(var(--bn));
+  font:var(--weight-strong) var(--text-label)/1 var(--sans);color:rgb(var(--bn));
   border:1px solid rgba(var(--bn),.48);background:rgba(var(--bn-2),.5);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.26);
   transition:border-color .35s var(--ease),box-shadow .35s var(--ease)}
@@ -424,10 +437,11 @@ html.reduce .bonus-line::before,html.reduce .bonus-num{transition:none}
 .connect-panel .rayfield.k::before{content:''}
 .connect-steps{position:relative;z-index:1;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
 .connect-step{padding:20px 18px 22px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
-.connect-step .value-index{flex:none}
+.connect-step .value-index{flex:none;font-size:var(--text-label)}   /* 11px, as Cashback's activation numbers these same four steps */
 /* the pane's rule turned upright: a light edge with a dark one beside it, as .value-row draws it across */
 .connect-step+.connect-step{border-left:1px solid rgba(255,255,255,.26);box-shadow:inset 1px 0 0 rgba(var(--rgb-shadow),.22)}
-.connect-step strong{max-width:230px;font-size:var(--text-row-title);line-height:var(--leading-step);font-weight:var(--weight-strong);letter-spacing:-.02em;
+/* the four steps are Cashback's activation steps, so they take its step type: 15px bold, 1.2, -.015em (it was 18px) */
+.connect-step strong{max-width:230px;font-size:var(--text-panel-title);line-height:1.2;font-weight:var(--weight-strong);letter-spacing:-.015em;
   text-wrap:balance;text-shadow:0 1px 2px rgba(var(--rgb-shadow),.45)}
 /* the foot is a darker strip of the same glass, and the button fills it with the pane's corner run inward */
 .connect-foot{position:relative;z-index:1;padding:10px;border-top:1px solid rgba(255,255,255,.26);background:rgba(var(--rgb-shadow),.24)}
@@ -464,10 +478,6 @@ body{font-variant-numeric:normal}
   #cashback .note-panel{grid-template-columns:1fr}
   #cashback .note-panel h3+.note-line+.note-line{border-top:1px solid rgba(255,255,255,.14)}
   #cashback .note-line:nth-child(odd){border-left:0}
-  /* under a tablet the two note columns become one, so every rule takes the hairline above it again */
-  #cashback .note-panel{grid-template-columns:1fr}
-  #cashback .note-panel h3+.note-line+.note-line{border-top:1px solid rgba(255,255,255,.14)}
-  #cashback .note-line:nth-child(odd){border-left:0}
   /* four steps across a tablet break every line three times: two rows of two, the rule between the rows */
   .connect-steps{grid-template-columns:1fr 1fr}
   .connect-step:nth-child(odd){border-left:0;box-shadow:none}
@@ -478,7 +488,7 @@ body{font-variant-numeric:normal}
   .broker-dots{margin-top:18px}
   #deck #hero{padding:calc(var(--nav-h) + 44px) 0 52px}
   /* the licence number drops under the entity rather than squeezing a third column onto 390px */
-  .reg-row{grid-template-columns:58px minmax(0,1fr);gap:8px 14px;padding:16px 18px;align-items:start}
+  .reg-row{grid-template-columns:58px minmax(0,1fr);gap:8px 14px;padding:15px 18px;align-items:start}   /* a market row's phone padding */
   .reg-code{font-size:var(--text-row-title)}
   .reg-lic{grid-column:2;justify-self:start}
   .key-row,.account-row{grid-template-columns:1fr;gap:5px;padding:14px 16px}
@@ -491,13 +501,14 @@ body{font-variant-numeric:normal}
   .rate-table :is(th,td){padding:12px 4px}
   .rate-table tr>:first-child{width:27%;padding-left:14px}
   .rate-table tr>:last-child{padding-right:8px}
-  .rate-table thead th{font-size:9px}
+  .rate-table thead th{font-size:var(--text-nano)}
   .rate-table thead b{display:block}
   .rate-table :is(tbody th,td){font-size:var(--text-small)}
-  .note-line{padding:13px 16px}
+  .note-line{padding:15px 16px}
+  .note-panel h3{padding:17px 16px}   /* the rate panes' phone inset, a little more height */
   /* on a phone the steps are the list they were: one per row, the number beside its line */
   .connect-steps{grid-template-columns:1fr}
   .connect-step{padding:14px 16px;flex-direction:row;gap:14px;text-align:left}
   .connect-step+.connect-step{border-left:0;box-shadow:none;border-top:1px solid rgba(255,255,255,.26)}
-  .connect-step strong{max-width:none;font-size:var(--text-body)}
+  .connect-step strong{max-width:none}
 }
