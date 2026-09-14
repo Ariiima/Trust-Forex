@@ -386,7 +386,12 @@
   if (vol) [vol, acct].forEach(el => el.addEventListener('input', price));
 
   /* ---------- self-check: the estimate the page ships with must be the one it computes ---------- */
-  if (q.get('check') === '1') {
+  // The check waits for the icon files (or 5s): run at once, it counted every slot still loading as empty.
+  const iconsLoaded = Promise.race([
+    Promise.all(icons.map(({ anim }) => anim.isLoaded || new Promise(r => { anim.addEventListener('DOMLoaded', r); anim.addEventListener('data_failed', r); }))),
+    new Promise(r => setTimeout(r, 5000))
+  ]);
+  if (q.get('check') === '1') iconsLoaded.then(() => {
     const fails = [];
     const est = (v, f, r) => Math.round(v * 17 * f * r / 100);
     if (vol && est(50, 1, 10) !== 85) fails.push(`default estimate ${est(50, 1, 10)} != 85`);
@@ -409,7 +414,7 @@
     const bare = [...document.querySelectorAll('.ico')].filter(el => !el.querySelector('svg')).length;
     if (bare) fails.push(`${bare} icon slots are empty`);
     console.log(fails.length ? 'CHECK FAIL\n' + fails.join('\n') : `CHECK OK — ${SNAP ? 'hold' : 'plain'} mode, ${screens.length} screens, none overflowing`);
-  }
+  });
 
   mark(current());
 })();

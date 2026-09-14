@@ -283,11 +283,20 @@ html.reduce .glass .panel{transform:none;transition:none}
 .glass .dash-card strong{margin:.625rem 0 .375rem}
 .glass .dash-card p{opacity:.84}
 .glass .dash-cards,.glass .ladder{gap:1.125rem}
-.glass .dash-cards{margin-bottom:1.375rem}
+/* 04's cards and rows sit at the pane's own padding, as 02's tiles and 03's do: base.css's white card padded them
+   18px more, which the glass pane never took off (2026-09-15) */
+.glass .dash-cards{margin-bottom:1.375rem;padding:0}
+.glass .dash-rows{padding:0}
+/* and 02's tiles at the same 28px: base.css's `#m2 .panel{padding:20px}` held them 8px nearer the edge than 01, 03
+   and 04. Scoped to the pane that holds the ladder, since other pages reuse #m2 for panes of their own. */
+#m2 .panel:has(> .ladder){padding:1.75rem}
 .glass .rate{padding:1.25rem 1rem 1.125rem}
 .glass .rate small{margin-bottom:.5rem}
-.glass .p-note{color:rgba(255,255,255,.72);letter-spacing:0;font-weight:var(--weight-body)}
-.glass .dash-row{font-weight:var(--weight-body);color:#fff;border-top-color:rgba(255,255,255,.18)}
+/* the note under 02's tiles reads at the tiles' own copy size, 12px; a row's label at its value's 14px, since a label
+   larger than its figure read the row backwards (2026-09-15; they were 11px and 16px) */
+/* -.01em holds the note to one line in the pane's 468px (founder, 2026-09-15); at 0 it needed 475 */
+.glass .p-note{color:rgba(255,255,255,.72);letter-spacing:-.01em;font-weight:var(--weight-body);font-size:var(--text-small)}
+.glass .dash-row{font-weight:var(--weight-body);font-size:var(--text-ui);color:#fff;border-top-color:rgba(255,255,255,.18)}
 .glass .dash-row b{color:#fff;font-weight:var(--weight-strong)}
 /* 04 · the withdrawable figure carries its own tile — the balance card's glass in green, sized to the
    row, so the amount you can take out reads as the one live number in the list (founder, 2026-09-10) */
@@ -337,7 +346,7 @@ html.reduce .glass .panel::after,html.reduce .glass .tile::after,html.reduce .gl
 .glass .p-broker{gap:1.5rem}
 .glass .p-broker>div{padding:0}
 .glass .p-broker>div+div{border-left-color:rgba(255,255,255,.18);padding-left:1.5rem}
-.glass .broker-option,.glass .route-option{border-radius:12px;color:#fff}
+.glass .broker-option,.glass .route-option{border-radius:16px;color:#fff}   /* a tile's 16px corner (2026-09-15; it was 12px) */
 .glass .factors{padding:0;gap:1.125rem}
 .glass .factor h4{color:#fff}
 .glass .factor p{color:rgba(255,255,255,.78)}
@@ -365,7 +374,7 @@ html.reduce .glass .panel::after,html.reduce .glass .tile::after,html.reduce .gl
 .glass .broker-option,.glass .route-option{--streak:.12;font-size:var(--text-small);font-weight:var(--weight-body)}
 .glass .factor{--streak:.12}
 .glass .factor p,.glass .p-note{color:rgba(255,255,255,.84)}
-.glass .p-title{font-size:var(--text-ui);color:rgba(255,255,255,.9)}
+.glass .p-title{font-size:var(--text-panel-title);color:rgba(255,255,255,.9)}   /* 15px, as the page's other panel titles (2026-09-15; it was 14px) */
 
 /* ---------- 02 · the tiers in their own metals (founder ref 2026-09-07) ----------
    Bronze for Standard, silver, gold, and Diamond in violet — each tile's glass, rim and label carry
@@ -378,11 +387,18 @@ html.reduce .glass .panel::after,html.reduce .glass .tile::after,html.reduce .gl
 /* 01: room for "Partner broker" on one line at base size */
 .glass .p-broker{grid-template-columns:1fr 1.15fr}
 .glass .broker-option{white-space:nowrap}
+/* ...and one column below a laptop. The line above outranks base.css's one-column .p-broker, so on a 390px phone
+   the two columns held the card at 487px and the page scrolled sideways (2026-09-15). It has to come after it. */
+@media (max-width:1023px){.glass .p-broker{grid-template-columns:1fr}}
+/* "One eligible trade" is a title, so it takes the titles' bold, not base.css's extra bold (2026-09-15) */
+.split-panel .split-source{font-weight:var(--weight-strong)}
 
 /* ---------- 03 · the icon sits left of its title; each factor a breath of colour (founder, 2026-09-08) ----------
    Warm for the account, green for volume (its icon's own success green), as 04's cards carry blue and
    violet — but "very, very light": a quarter of the tier tints, fading into the same deep blue. */
-.glass .factor{display:grid;grid-template-columns:auto 1fr;column-gap:.75rem;align-items:center;align-content:start}
+/* the tiles size to their text: base.css's 156px floor left a band of dead blue under each, the one the Two records
+   tiles already gave up (2026-09-15) */
+.glass .factor{display:grid;grid-template-columns:auto 1fr;column-gap:.75rem;align-items:center;align-content:start;min-height:0}
 .glass .factor h4{margin:0}
 .glass .factor p{grid-column:1/-1}
 .glass .factor:nth-child(1){--tint:rgba(214,140,80,.24);--rim:rgba(240,196,150,.42)}
@@ -469,13 +485,13 @@ html.snap .mech.white .block::after{animation-name:stack-back-paper}
    comes first. Chosen from calc-lab.html, which still holds this panel on its own for review. */
 #calculator .step + .step{margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.16)}
 #calculator .step-cap{margin:0 0 13px}
-#calculator .panel{padding:24px 26px 26px}
+#calculator .panel{padding:24px 26px 26px;border-radius:22px}   /* a pane's 22px corner, as 01–04 (2026-09-15; it was 20px) */
 #calculator .fields{gap:14px}
 #calculator .well{padding:12px 16px 13px}
 #calculator .level-row{--cell-h:88px;--cell-figure:var(--text-summary-stat);gap:13px}   /* 9 left the pick's 4px white halo 1px off its neighbour's edge, so the row read as one band */
 /* the plate reads as one line (founder, 2026-09-13: "tighten the estimate box"): caption, figure and unit on
    one baseline, "/ month" against its figure rather than 10px off it, and 12px less height */
-#calculator .estimate{margin-top:22px;padding:14px 20px 14px 22px;align-items:baseline}
+#calculator .estimate{margin-top:22px;padding:14px 20px 14px 22px;align-items:baseline;border-radius:16px}   /* a tile's corner (it was 13px) */
 #calculator .estimate small{margin-bottom:0}
 #calculator .estimate strong em{margin-left:-5px}   /* main.js writes a space before it at the figure's 44px; this takes most of it back */
 /* The type, and only the type. Nine bold things ran at once, so none of them led: four captions at
