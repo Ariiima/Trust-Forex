@@ -52,8 +52,8 @@ reads: 412                 # optional — ranks Most popular (until real analyti
 draft: true                # optional — skipped by the build
 ---
 
-## A heading            → h2, listed in "On this page"
-## A heading {.blue}    → the brand-blue gradient title (also {.accent}, {.muted})
+## A heading            → h2 in the site's heading run (light run on a blue block), listed in "On this page"
+## A heading {.accent}  → a flat title instead ({.muted} too); {.blue} puts the run on an h3
 ### A smaller heading
 Paragraphs, **bold**, *italic*, `code`, [links](https://…), ![images](src "caption")
 - lists   1. numbered lists   > quotes   --- rules   ``` code ```
@@ -67,7 +67,8 @@ Paragraphs, **bold**, *italic*, `code`, [links](https://…), ![images](src "cap
 :::glass                    frosted white card on the paper page
 :::blue                     the blue block (halo ground, white text); headings inside may be {.blue}
 :::pane                     a blue block with the deep-blue glass pane inside it
-:::callout info Title       a callout in a state colour: info · success · warning · danger (title optional)
+:::callout info Title       a callout: info (the brand's pale blue — use it for notes) · success · warning · danger,
+                            the state colours for a real success, pending or risk only (title optional)
 :::quote                    a pull quote; a last line starting with "— " is the attribution
 :::stats                    the dashboard tiles: one `Label | Value | Note` per line
 :::steps                    the activation path: one step per line, the last on blue

@@ -25,6 +25,6 @@ A period without signals stays in sequence, marked *No Signals*. It is not a 0% 
 
 Switch on **Compare TPs** and the four targets are drawn as lines across the same periods. The lines never cross in the wrong direction: TP1 is always reached at least as often as TP2, because a signal that reached TP2 reached TP1 first.
 
-:::callout success What to look for
+:::callout info What to look for
 Consistency across periods says more than any single peak. A record that keeps its weak weeks is the one you can read.
 :::

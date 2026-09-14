@@ -21,7 +21,7 @@ Diamond | 30% | Signal plan
 
 Each percentage is your share of the eligible rebate received from the partner broker for your activity. It is **not** a percentage of your deposit, your trading volume, your profit or your loss. Your account type and trading volume shape the rebate; your level shapes your share of it.
 
-:::pane
+:::blue
 **One eligible trade, two records.** The market record is the trade’s profit or loss, shaped by price, costs and execution. The Cashback record is the additional value from the same eligible activity. They are kept apart on purpose.
 :::
 

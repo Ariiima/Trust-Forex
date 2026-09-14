@@ -19,7 +19,7 @@ Bounce records the strongest move from the Level within the window
 
 Both figures are measured from the **published Level**, because that is the price the user saw. A 10-pip recovery from the deepest point is not a Bounce; the reference never moves.
 
-:::callout warning If price never reaches +10 pips
+:::callout info If price never reaches +10 pips
 First Breach stays open and the deepest breach reached during the full 15-minute window is recorded.
 :::
 

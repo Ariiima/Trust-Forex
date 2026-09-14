@@ -1,7 +1,7 @@
 /* The writer's editor: fields + Markdown + the theme's blocks as buttons, previewed with the same renderer the
    build uses. Nothing is sent anywhere — the draft lives in this browser (localStorage) until it is downloaded
    as a .md and dropped into design/landing/blog/posts/. */
-import { render, parseFrontMatter, serializeFrontMatter, slugify } from '../render.js';
+import { render, parseFrontMatter, serializeFrontMatter, slugify } from './render.js';   // a module resolves against this file (blog/), not the page
 
 const $ = id => document.getElementById(id);
 const FIELDS = ['title', 'slug', 'category', 'date', 'author', 'excerpt', 'cover', 'reads', 'featured'];

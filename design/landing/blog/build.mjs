@@ -150,7 +150,7 @@ const fromBlog = (rel, skip) => {
 };
 const postPage = p => {
   const rel = '../../../';
-  const body = `<section class="screen screen-dark on-dark" id="hero" data-name="Post" aria-labelledby="h1">${ray(p.cat.ground)}
+  const body = `<section class="screen screen-dark on-dark post-top" id="hero" data-name="Post" aria-labelledby="h1">${ray(p.cat.ground)}
   <div class="wrap post-hero"><a class="chip rv" href="${rel}blog/c/${p.cat.id}/">${esc(p.cat.name)}</a>
     <h1 class="display words" id="h1">${esc(p.title)}</h1>
     <p class="post-meta rv" style="--i:1"><span>${fmtDate(p.date)}</span><span>${esc(p.author)}</span><span>${p.minutes} min read</span></p></div></section>
