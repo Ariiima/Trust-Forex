@@ -57,7 +57,8 @@ Disclosure, Privacy Policy, Cookie Settings) on one page and one URL space,
 `?document=terms|risk|privacy|cookies`, so an acceptance record can point at a stable address.
 It loads the nav, the footer and the tokens and nothing else — no grounds, no glass, no reveal,
 no `cb8/main.js`, and so no scroll holds. It is also the one page with no colour: black, greys
-and white from the nav to the footer, with the hierarchy every other policy page uses — a 28px
+and white from the nav to the last line of text (the footer below it is the house footer, blue
+glass, as on every page — founder, 2026-09-14), with the hierarchy every other policy page uses — a 28px
 page title, 24px document title, 18px section headings, 16px subheadings, no numbering (founder,
 2026-09-12: "completely black and white and simple, like every other privacy policy"). Titles are
 medium weight, not bold, and the page lede is gone (same day: "edit the boldness of titles, make
@@ -101,8 +102,12 @@ tagline, folded into the social row as a fifth square glass icon instead. The li
 4 / 4 / 4: Brokers was dropped because it was Partner brokers twice, then Partner brokers because
 it was Partner broker rules twice (one page); Home came back to The site and Blog moved under
 Company to keep the columns even (founder, 2026-09-13). The blog's floor rises out of paper
-unchanged. Legal's floor is black, so that page still has no hue and keeps a solid `.fsig`
-(`legal/page.css`), not glass.
+unchanged, and so does Legal's out of white: that page had kept a black floor, and carries the house
+footer unmodified since 2026-09-14 (founder: "the exact same thing, nothing modified"), with no gap
+above it. The footer is also pixel-identical on every page since that day ("1-on-1"): the glow, the
+blue base under the tint, its own ink, figures and 1200px column no longer vary with the page, the
+streak reads the page's scroll (`#final` is `overflow:clip`), and main.js / legal/page.js snap its
+top edge to a whole pixel.
 
 First pass at the tint was too thin (`rgba(shadow,.4)`): a `backdrop-filter` reads whatever sits
 behind it, and on the blue screens that blended to navy but on the blog's paper (2026-09-09: no
@@ -113,8 +118,7 @@ style.css's own "structure behind the glass" recipe, saturate/blur up to 200%/24
 called it back (2026-09-14: drop the grid, keep it the blue it was). So `.fsig` and `.fsig-cta`
 are back to the original thin blue tint (`rgba(shadow,.4)` / `rgba(rgb-900,.55)`,
 `saturate(180%) blur(20px)`), and the blog reading grey where the tint has only paper behind it is
-a known, accepted gap, not solved. Legal's solid override still lands after all of this and wins,
-so that page is unaffected either way.
+a known, accepted gap, not solved. Legal's black override lands after all of this and wins.
 
 Every nav and footer link lands at the top of its page (founder, 2026-09-14: "touching a footer or
 header link should bring you to the top of that page, not somewhere random in the middle"). So

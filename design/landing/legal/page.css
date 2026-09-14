@@ -1,4 +1,4 @@
-/* Legal Center — the plainest page on the site, and the one page with no colour in it.
+/* Legal Center — the plainest page on the site, and the one page with no colour in it above the footer.
    It carries the house nav and the house footer and nothing else: no grounds, no glass, no
    reveal, no scroll holds. A legal document is read, printed and quoted, so the only job here
    is one measured column of text.
@@ -16,7 +16,9 @@
    and nothing else. 720px at 16px is about 80 characters. */
 :root{--copy:720px;
   --ink:#000;--body:#222;--muted:#6b6b6b;--line:#e5e5e5;--line-strong:#bdbdbd;
-  --navy:#000;--accent:#000;--accent-deep:#000;--accent-soft:#f2f2f2;--paper:#fff}
+  --navy:#000;--accent:#000;--accent-deep:#000;--accent-soft:#f2f2f2;--paper:#fff;
+  /* the solid button's blue run (the cookie dialog's "Save choices") goes the same way */
+  --grad-fill:linear-gradient(#000,#000);--grad-fill-hover:linear-gradient(#333,#333)}
 /* tabular-nums widens Inter's letters too, not only its digits (README, 2026-09-09) */
 body{background:#fff;color:var(--body);font-variant-numeric:normal}
 
@@ -68,16 +70,17 @@ body{background:#fff;color:var(--body);font-variant-numeric:normal}
 /* the Cookie Settings tab ends on the visitor's saved choice and the button that changes it */
 .consent-actions{margin-top:16px}
 
-/* ---------- the footer, on a black floor ----------
+/* ---------- the footer: the house footer, as the blog and Brokers carry it ----------
    Class only, and the section carries no id: base.css paints #final blue and a full screen
    tall for the closing statement every other page ends on, and out-specifying an id from here
    is a fight this page can simply not have.
-   The house footer stands on a navy floor of its own (base.css .fsig). Here that floor is black,
-   so the page keeps no hue from the nav to the last line. Its type is already white on that
-   floor; only the focus ring, black on this page, turns white. */
+   The footer is base.css .fsig untouched — the blue glass every page ends on (founder, 2026-09-14:
+   "the exact same thing, nothing modified"; it had been a black floor here), glow included. It rises
+   out of the page's white the way the blog's and Brokers' rise out of paper, with no gap above it.
+   The focus ring takes the site's accent back, which the black-and-white palette above had turned
+   black on the blue. */
 .footer-only{background:#fff;color:var(--muted)}
-.footer-only .fsig{background:#000;box-shadow:none}
-.footer-only .fsig :focus-visible{outline-color:#fff}
+.footer-only .fsig{--accent:var(--p-900);margin-top:0}
 
 @media (max-width:560px){
   .legal-top{padding-top:calc(var(--nav-h) + 36px)}

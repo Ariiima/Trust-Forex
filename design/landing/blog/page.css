@@ -245,10 +245,8 @@ html:not(.snap) #final.footer-only{min-height:auto}
    it was written and its grey ink sat on it. Compounding the id with the class fixes the ruling
    this file records (founder, 2026-09-09: the blog ends on the footer, on paper). */
 #final.footer-only{background:var(--paper);color:var(--muted)}
-/* The blog carries the site footer (base.css .fsig) as it is: its navy floor rises out of the
-   paper the way it rises out of the blue everywhere else, so nothing here re-inks it. Only the
-   upward shadow goes, which on paper is a grey haze above the floor rather than depth. */
-.footer-only .fsig{box-shadow:none}
+/* The blog carries the site footer (base.css .fsig) exactly as every page does, its glow included
+   (founder, 2026-09-14: the same footer 1-on-1 on every page); nothing here re-inks it. */
 /* Nothing sits between the last section and the floor here, so base.css's 76px gap above the floor
    was an empty grey band of #final's paper (founder, 2026-09-13). The floor meets the section above. */
 .footer-only .fsig{margin-top:0}

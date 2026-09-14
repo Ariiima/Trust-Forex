@@ -50,15 +50,16 @@ const head = await pg.evaluate(() => ({
 }));
 assert.deepEqual(head, { h2: 1, extra: 0 }, 'document head still shown: ' + JSON.stringify(head));
 
-// 4 — black and white: no computed colour on the page has a hue
+// 4 — black and white: no computed colour above the footer has a hue — text, grounds, rims,
+// gradients and shadows, pseudo-elements included. The footer is the house footer, blue glass as on
+// every page (founder, 2026-09-14), so it is left out.
 const hued = await pg.evaluate(() => {
-  const props = ['color', 'backgroundColor', 'borderTopColor', 'borderBottomColor', 'fill', 'stroke'];
+  const props = ['color', 'backgroundColor', 'borderTopColor', 'borderBottomColor', 'fill', 'stroke', 'backgroundImage', 'boxShadow'];
   const out = new Set();
-  for (const el of document.querySelectorAll('body *')) for (const pseudo of [null, '::after']) {
+  for (const el of document.querySelectorAll('body *')) if (!el.closest('.footer-only')) for (const pseudo of [null, '::before', '::after']) {
     const s = getComputedStyle(el, pseudo);
-    for (const k of props) {
-      const m = s[k].match(/rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)/);
-      if (m && !(m[1] === m[2] && m[2] === m[3])) out.add(`${el.localName}.${el.getAttribute('class')}${pseudo || ''} ${k} ${s[k]}`);
+    for (const k of props) for (const m of s[k].matchAll(/rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)/g)) {
+      if (!(m[1] === m[2] && m[2] === m[3])) { out.add(`${el.localName}.${el.getAttribute('class')}${pseudo || ''} ${k} ${s[k].slice(0, 90)}`); break; }
     }
   }
   return [...out];

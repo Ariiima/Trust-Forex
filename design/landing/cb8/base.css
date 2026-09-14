@@ -531,6 +531,10 @@ html:not(.snap) .final-inner{min-height:calc(100svh - var(--section-space))}
      whole footer 10px in on that page. The footer keeps scale.css's own 1200px and 28px.
    Where it starts is main.js's (and legal/page.js's): its top edge is nudged onto a whole pixel. */
 .fsig{background-color:var(--blue);color:#fff;font-variant-numeric:normal;--wrap:1200px;--content-gutter:28px}
+/* A footer section with no .screen is a plain block (Brokers, Legal), so the footer's top margin — the
+   sub-pixel nudge above included — collapsed through it and opened a gap between two sections, where the
+   page's own blue showed as a hairline over the footer. flow-root keeps the margin inside the section. */
+.footer-only:not(.screen){display:flow-root}
 .fsig::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
   transition:--lit .45s var(--ease);animation:glass-light linear both;animation-timeline:--fsig;animation-range:entry 0% exit 100%;background:
   radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,var(--lit)),transparent 70%) no-repeat 0 0/auto,

@@ -126,9 +126,9 @@ html.reduce .broker-stage.rv > *{animation:none}
    The closing screen went (founder, 2026-09-13): a full screen of blue holding only the button Connect's
    pane already ends on. The section carries no id, as Legal's does not, so base.css's #final blue and
    full height never apply. The floor meets Connect's own bottom space, with no 76px band of paper
-   above it, and without the upward shadow, which on paper is a grey haze rather than depth. */
+   above it. Its glow stays, as on every page (founder, 2026-09-14: the same footer 1-on-1 everywhere). */
 .footer-only{background:var(--paper);color:var(--muted)}
-.footer-only .fsig{margin-top:0;box-shadow:none}
+.footer-only .fsig{margin-top:0}
 /* Connect's one section space left its card 88px over the floor, half the 176px between two cards, so the
    last record read as crowded onto the footer (founder, 2026-09-13). It takes the second section space
    itself: its ground, grid and glow run on to the floor, where a band in .footer-only would stop them.

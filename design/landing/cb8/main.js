@@ -208,10 +208,11 @@
       foot.style.marginTop = foot.style.paddingBottom = '';
       const y = top(), frac = y - Math.floor(y);
       if (frac < .01 || frac > .99) return;
-      foot.style.marginTop = `calc(${getComputedStyle(foot).marginTop} + ${(1 - frac).toFixed(4)}px)`;
+      // the exact remainder: layout counts in 1/64px and truncates, so a rounded 0.0781 fell a 64th short
+      foot.style.marginTop = `calc(${getComputedStyle(foot).marginTop} + ${Math.ceil(y) - y}px)`;
       if (Math.abs(top() - Math.ceil(y)) < .01) return;
       foot.style.marginTop = '';
-      foot.style.paddingBottom = `${frac.toFixed(4)}px`;
+      foot.style.paddingBottom = `${frac}px`;
     }).observe(document.querySelector('main') || document.body);
   }
 
