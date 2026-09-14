@@ -184,10 +184,17 @@
 
   /* ---------- glass panes (02, 04) and the two-records panel: the light follows the pointer ----------
      --mx/--my in px on the pane and on each tile, relative to its own box, so every radial in
-     style.css centres under the cursor; .lit while the pointer is over the pane. */
+     style.css centres under the cursor; .lit while the pointer is over the pane.
+     clientX/Y are viewport-relative, so a real move always changes them — but content sliding under
+     a still cursor (a scroll-restored refresh landing mid-page, or the deck's own scroll-jack) also
+     fires pointermove, with the same clientX/Y as last time. Skip those, or the pane tilts toward
+     wherever the mouse happens to be sitting the moment the page settles, reading as an unbidden jump. */
+  let lastPointerX = -1, lastPointerY = -1;
   document.querySelectorAll('.glass .panel, .split-panel, .weekly-record, #calculator .panel').forEach(pane => {
     const lit = [pane, ...pane.querySelectorAll('.tile')];
     pane.addEventListener('pointermove', e => {
+      if (e.clientX === lastPointerX && e.clientY === lastPointerY) return;
+      lastPointerX = e.clientX; lastPointerY = e.clientY;
       for (const el of lit) {
         const r = el.getBoundingClientRect();
         el.style.setProperty('--mx', `${e.clientX - r.left}px`);

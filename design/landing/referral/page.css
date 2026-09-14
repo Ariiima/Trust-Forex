@@ -78,8 +78,8 @@ html.reduce #chapter-routes::after{animation:none}
    lifted, over a hairline — one material down the whole pane (founder, 2026-09-12). */
 .shared-destination{min-height:76px;padding:16px 18px;display:grid;place-items:center;text-align:center;color:#fff;
   border-top:1px solid rgba(255,255,255,.3);
-  background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.08));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
+  background:linear-gradient(150deg,rgba(var(--rgb-900),.96),var(--blue));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
 .shared-destination strong{font-size:var(--text-destination);line-height:1;letter-spacing:-.04em}
 
 /* m1 holds alone after the light chapter; m2 opens the stack after the dark one and dissolves in as cb8's 01 does */

@@ -30,10 +30,8 @@
 .screen-paper .case-list::before{border-radius:38px}
 .case-row{--acc:var(--rgb-peri);--acc-solid:var(--peri);
   min-height:100px;padding:16px 18px;display:grid;grid-template-columns:var(--icon-well) minmax(0,1fr) 92px;gap:16px;align-items:center;
-  border:1px solid rgba(var(--acc),.28);border-radius:16px;color:#fff;
-  background:
-    radial-gradient(70% 150% at 2% 0%,rgba(var(--acc),.2),transparent 56%),
-    linear-gradient(150deg,rgba(var(--rgb-600),.4),rgba(var(--rgb-deep),.42));
+  border:1px solid rgba(var(--acc),.34);border-radius:16px;color:#fff;
+  background:linear-gradient(150deg,rgba(var(--acc),.18),rgba(var(--rgb-deep),.32));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
 .case-row:nth-child(2){--acc:var(--rgb-teal);--acc-solid:var(--teal)}
 .case-row.valued{--acc:var(--rgb-gold);--acc-solid:var(--gold)}
@@ -83,12 +81,9 @@
    carried by the rim, the tint, the icon tile and the icon stroke. */
 .glass .protected{--rgb-violet:185,167,255;--violet:#B9A7FF;--rgb-coral:255,158,122;--coral:#FF9E7A}
 .glass .how-point{--acc:var(--rgb-violet);--acc-solid:var(--violet);
-  --tint:rgba(var(--acc),.5);--tint2:rgba(var(--rgb-abyss),.4);--rim:rgba(var(--acc),.55);
-  background:
-    radial-gradient(120% 130% at 6% -12%,rgba(var(--acc),.32),transparent 58%),
-    linear-gradient(150deg,var(--tint),var(--tint2))}
+  --tint:rgba(var(--acc),.18);--tint2:rgba(var(--rgb-deep),.32);--rim:rgba(var(--acc),.34)}
 .glass .how-point:nth-of-type(2){--acc:var(--rgb-coral);--acc-solid:var(--coral)}
-.glass .how-point .point-icon{--tint:rgba(var(--acc),.4);--tint2:rgba(var(--rgb-abyss),.32);--rim:rgba(var(--acc),.55)}
+.glass .how-point .point-icon{--tint:rgba(var(--acc),.2);--tint2:rgba(var(--rgb-deep),.3);--rim:rgba(var(--acc),.4)}
 .glass .how-point .point-icon .ico{stroke:var(--acc-solid)}
 /* the close: the two points resolve to one line, on the same solid blue the pilot card takes elsewhere,
    so the panel ends on the broker's own colour rather than another glass tint */
