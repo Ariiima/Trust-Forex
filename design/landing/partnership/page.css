@@ -7,7 +7,7 @@
 /* ---------- 1 · the hero: the wireframe's sizes, centred, the one CTA ---------- */
 #hero .display{font-size:var(--text-display-pitch);line-height:.91;letter-spacing:-.072em;max-width:1040px;margin-bottom:30px}
 #hero .lede{font-size:var(--text-lede-pitch);max-width:760px;margin-bottom:36px}
-.h2{font-size:var(--text-title-pitch);line-height:.99;letter-spacing:-.058em;margin-bottom:22px}
+.h2{font-size:var(--text-title-mech);line-height:.99;letter-spacing:-.058em;margin-bottom:22px}
 .copy{max-width:610px}
 
 
@@ -46,7 +46,7 @@
 
 /* ---------- 3 and 9 · the two chapters: the wireframe's one chapter size for both (it draws both dark; the closing one is the
      light hand-off into the blue request page, as cb8's "Ready to activate?") ---------- */
-.chapter .h2,.chapter-2 .h2{font-size:var(--text-chapter-pitch);line-height:.98;letter-spacing:-.062em;max-width:1064px}   /* the wireframe's 980 was drawn in the system font; Inter needs ~8% more for the same breaks (README) */
+.chapter .h2,.chapter-2 .h2{font-size:var(--text-title-mech);line-height:.98;letter-spacing:-.062em;max-width:1064px}   /* the wireframe's 980 was drawn in the system font; Inter needs ~8% more for the same breaks (README) */
 /* light screens meet on one colour (founder, 2026-09-13). cb8 runs chapter 2 from white; here it follows the
    paper questions, so it starts on paper. The pilot follows the white mechanics, so its paper starts white
    and turns to paper over its first 120px. */
@@ -55,7 +55,7 @@
 
 /* ---------- 4–6 · how it works (01–03): the wireframe's 1.08fr / .92fr (visual never under 430), 78 apart ---------- */
 .glass .mech-grid{grid-template-columns:minmax(0,1.08fr) minmax(430px,.92fr);column-gap:78px}
-.mech-copy h3{font-size:var(--text-title-how);line-height:1;letter-spacing:-.045em;max-width:560px;margin-bottom:22px}
+.mech-copy h3{font-size:var(--text-title-mech);line-height:1;letter-spacing:-.045em;max-width:560px;margin-bottom:22px}
 .mech-copy p{max-width:600px}
 .mech-copy .page-number{margin-bottom:26px;font-size:var(--text-small);letter-spacing:.12em}   /* the wireframe's story number */
 .glass .panel{width:100%;max-width:520px;justify-self:end;padding:14px;border-radius:24px}
@@ -107,12 +107,18 @@
    the same frame. */
 #m2 .panel.access{padding:14px}
 
+/* the head: the eyebrow (a lens mark + "Access rule") and the switch share one row, so the rule
+   and the control that sets it read as one line, not a control stacked over a caption. */
+.access-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px}
+.access-eyebrow{display:flex;align-items:center;gap:9px;font:var(--weight-strong) var(--text-panel-title)/1 var(--sans);letter-spacing:-.01em;color:#fff}
+.access-eyebrow .ico{width:18px;height:18px;stroke:rgba(255,255,255,.6)}
+
 /* the switch: one sunk track, two pills inside it. The inactive pill carries no tile ground of its own,
    so the track is the only frame and the white pill is the only lit thing in it. */
-.access-switch{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px;padding:5px;border-radius:19px;
+.access-switch{display:inline-grid;grid-auto-flow:column;gap:5px;padding:5px;border-radius:19px;flex:none;
   border:1px solid rgba(255,255,255,.14);background:rgba(var(--rgb-abyss),.42);
   box-shadow:inset 0 2px 6px rgba(var(--rgb-shadow),.45),inset 0 -1px 0 rgba(255,255,255,.06)}
-.access-switch .tile{min-height:46px;border-radius:15px;font-size:var(--text-panel-title);font-weight:var(--weight-strong);
+.access-switch .tile{min-height:40px;padding:0 16px;border-radius:15px;font-size:var(--text-small);font-weight:var(--weight-strong);
   color:rgba(255,255,255,.72);border-color:transparent;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;
   transition:background-color .3s var(--ease),color .3s var(--ease),box-shadow .3s var(--ease),transform .25s var(--ease)}
 .access-switch .tile::after,.access-switch .tile::before{display:none}   /* no streak, no specular: this is a control */
@@ -138,39 +144,19 @@
   box-shadow:inset 0 1px 0 rgba(255,255,255,.26),0 0 0 4px rgba(255,255,255,.18),0 16px 32px -22px rgba(var(--rgb-shadow),.6)}
 .contact-toggle input:focus-visible+span{outline:2px solid rgba(255,255,255,.85);outline-offset:4px}
 
-/* the rule: its own card, the statement on a violet bloom with a lit pip beside the eyebrow */
-.access-summary{padding:20px 22px 22px;border:1px solid rgba(var(--rgb-violet),.34);border-radius:17px;
-  background:
-    radial-gradient(86% 210% at -4% 0%,rgba(var(--rgb-violet),.62),transparent 66%),
-    radial-gradient(86% 180% at 104% 104%,rgba(var(--rgb-abyss),.62),transparent 64%),
-    linear-gradient(150deg,rgba(var(--rgb-violet),.16),rgba(var(--rgb-abyss),.46));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 0 26px -12px rgba(var(--rgb-violet),.7),0 14px 30px -20px rgba(var(--rgb-shadow),.7)}
-.access-eyebrow{display:flex;align-items:center;gap:7px;margin-bottom:9px;font:var(--weight-heavy) var(--text-label)/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--violet)}
-.access-eyebrow::before{content:'';width:6px;height:6px;flex:none;border-radius:50%;background:var(--violet);box-shadow:0 0 0 3px rgba(var(--rgb-violet),.22)}
-/* the rule is this pane's one statement, at the size 01 gives its sponsor name, so the two read as a pair */
-.access-summary strong{display:block;font-size:var(--text-row-title);line-height:1.25;letter-spacing:-.02em;color:#fff}
-
-/* the path: three tiles, gapped, one colour each */
-.access-steps{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+/* the path: three tiles, gapped, one colour each, the rule stated once below them in plain text */
+.access-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .access-step{--acc:var(--rgb-violet);--acc-solid:var(--violet);
-  position:relative;isolation:isolate;overflow:hidden;min-height:100px;padding:19px 15px 16px;border-radius:15px;
-  display:flex;flex-direction:column;justify-content:flex-end;
-  border:1px solid rgba(var(--acc),.4);
-  background:
-    radial-gradient(118% 104% at 4% -10%,rgba(var(--acc),.42),transparent 60%),
-    radial-gradient(104% 124% at 106% 116%,rgba(var(--rgb-abyss),.44),transparent 62%),
-    linear-gradient(150deg,rgba(var(--acc),.24),rgba(var(--rgb-abyss),.3));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 0 24px -12px rgba(var(--acc),.75),0 12px 26px -18px rgba(var(--rgb-shadow),.7)}
+  position:relative;isolation:isolate;overflow:hidden;min-height:100px;padding:20px 12px 18px;border-radius:15px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;
+  border:1px solid rgba(var(--acc),.4);background:rgba(var(--acc),.16)}
 .access-step:nth-child(2){--acc:var(--rgb-gold);--acc-solid:var(--gold)}
 .access-step.done{--acc:var(--rgb-mint);--acc-solid:var(--mint)}
-/* the rail: one 2px bar a step, the three together reading left to right under the rule */
-.access-step::before{content:'';position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,rgba(var(--acc),.28),var(--acc-solid))}
-.access-step i{width:28px;height:28px;flex:none;display:grid;place-items:center;margin-bottom:auto;border:1px solid rgba(var(--acc),.6);border-radius:50%;
-  background:rgba(var(--acc),.18);box-shadow:0 0 0 4px rgba(var(--acc),.1);
-  font:var(--weight-strong) var(--text-label)/1 var(--sans);font-style:normal;color:var(--acc-solid)}
-.access-step.done i{border-color:var(--success);background:rgba(72,212,138,.2);color:var(--success)}
-.access-step i svg{width:13px;height:13px}
-.access-step span{display:block;margin-top:12px;font-size:var(--text-small);line-height:1.35;font-weight:var(--weight-strong);color:#fff}
+.access-step i{width:34px;height:34px;flex:none;display:grid;place-items:center;border:1.5px solid rgba(var(--acc),.7);border-radius:50%;
+  font:var(--weight-strong) var(--text-small)/1 var(--sans);font-style:normal;font-variant-numeric:tabular-nums;color:var(--acc-solid)}
+.access-step span{display:block;font-size:var(--text-small);line-height:1.35;font-weight:var(--weight-strong);color:#fff}
+/* the rule: the one statement the steps above resolve to, centred under them, not its own card */
+.access-caption{margin:14px 0 0;font-size:var(--text-small);text-align:center;color:rgba(255,255,255,.72)}
 .swap{animation:xf .28s var(--ease)}   /* cb8's estimate cross-fade */
 html.reduce .swap,html.reduce .access-switch .tile:hover{animation:none;transform:none}
 
@@ -378,20 +364,18 @@ html.reduce .goal:hover input:not(:checked)+.tile{transform:none}
   .request-copy{position:static}
 }
 @media (max-width:560px){
-  #hero .display{font-size:52px}#hero .lede{font-size:16px}.h2{font-size:41px}.copy{font-size:16px}
-  .chapter .h2,.chapter-2 .h2{font-size:43px}
-  .mech-copy h3{font-size:43px}.mech-copy p{font-size:16px}
+  #hero .display{font-size:52px}#hero .lede{font-size:16px}.h2{font-size:48px}.copy{font-size:16px}
+  .chapter .h2,.chapter-2 .h2{font-size:48px}
+  .mech-copy h3{font-size:48px}.mech-copy p{font-size:16px}
   .glass .how-point{padding:14px;grid-template-columns:var(--icon-well) minmax(0,1fr);gap:12px;align-items:start}
   .glass .how-point .point-icon{margin-top:-1px}   /* the row is tall here, so the icon holds the title's line rather than floating at its middle */
   .how-point b{grid-column:2;justify-self:start;margin-top:11px;padding:7px 10px}   /* the badge drops under the text: the wireframe has no icon column to share the width with */
-  .access-switch,.access-steps{grid-template-columns:1fr}
-  /* the three step tiles go one under another and each becomes a row: the pip beside its label, and the
-     rail turns to run down the left edge so the column still reads as a path */
+  .access-head{flex-direction:column;align-items:stretch}
+  .access-switch{grid-auto-flow:row;grid-template-columns:1fr}
+  .access-steps{grid-template-columns:1fr}
+  /* the three step tiles go one under another and each becomes a row: the numbered pip beside its label */
   .access-step{min-height:66px;padding:14px 16px;
-    display:flex;flex-direction:row;justify-content:flex-start;align-items:center;gap:13px}
-  .access-step i{margin:0;flex:0 0 auto}
-  .access-step span{margin-top:0}
-  .access-step::before{inset:0 auto 0 0;width:2px;height:auto;background:linear-gradient(180deg,rgba(var(--acc),.28),var(--acc-solid))}
+    flex-direction:row;justify-content:flex-start;align-items:center;text-align:left;gap:13px}
   .glass .app-campaign{padding:27px 18px 18px}
   /* the action row is only 250px wide here, so the label and its chip both come down a step
      rather than letting "Continue with Your Broker" break across two lines */
