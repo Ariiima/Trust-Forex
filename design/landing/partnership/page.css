@@ -22,10 +22,13 @@
    each row a tile on it with a leading icon and a marker. Each row then carries one faint colour of its own
    — periwinkle, teal, gold — at the same strength, so the three read as one family. Every part of a row
    (rim, tint, icon, marker) takes that colour from --acc, so a row is recoloured in one line. */
+/* Sized and spaced as Referral's evidence card (founder, 2026-09-15): its row spacing, and the 489px its column
+   gives it on a desktop (was 590), right edge still on the content edge. Referral's column split is not taken:
+   it would reflow the heading and copy beside the card. */
 #cases .grid2{grid-template-columns:minmax(0,.9fr) minmax(500px,1.1fr);gap:76px}
 #cases .grid2>div:first-child{max-width:520px}
 .case-list{--rgb-peri:157,180,255;--peri:#9DB4FF;--rgb-teal:95,210,194;--teal:#5FD2C2;--rgb-gold:245,200,107;--gold:#F5C86B;
-  width:100%;max-width:590px;justify-self:end;
+  width:100%;max-width:489px;justify-self:end;
   min-height:356px;padding:14px;display:grid;grid-template-rows:repeat(3,minmax(100px,auto));gap:10px;border-radius:24px}
 /* the paper screen's frame paints its pane white behind the content (style.css); this one is blue,
    and both pseudos follow the card's own 24px corner rather than the 28px card radius */
@@ -91,22 +94,26 @@
 .glass .how-point:nth-of-type(2){--acc:var(--rgb-coral);--acc-solid:var(--coral)}
 .glass .how-point .point-icon{--tint:rgba(var(--acc),.2);--tint2:rgba(var(--rgb-deep),.3);--rim:rgba(var(--acc),.4)}
 .glass .how-point .point-icon .ico{stroke:var(--acc-solid)}
-/* the close: the two points resolve to one line, on the same solid blue the pilot card takes elsewhere,
-   so the panel ends on the broker's own colour rather than another glass tint */
-.glass .protected-tie{min-height:64px;margin:0;padding:0 20px;display:flex;align-items:center;justify-content:center;
-  border-radius:16px;background:var(--blue);border-color:rgba(160,196,255,.4);
-  font:var(--weight-strong) var(--text-row-title)/1.3 var(--sans);letter-spacing:-.02em;text-align:center;color:#fff}
+/* the close: the two points resolve to one line, set as the panel's own foot — a pale band flush to its sides and
+   bottom (the pane's 14px padding and 23px inner corner) under a hairline. It was a third box on solid blue, 18px and
+   centred, which read as an empty row or a disabled button (founder, 2026-09-15, B of four). The line takes Referral's
+   summary size (26px, 21px on a phone) so it fills the band, one line at every width (founder, same day, B of three). */
+.glass .protected-tie{min-height:72px;margin:3px -14px -14px;padding:0 20px;display:flex;align-items:center;justify-content:center;
+  border:0;border-top:1px solid rgba(160,196,255,.3);border-radius:0 0 23px 23px;background:rgba(160,196,255,.1);box-shadow:none;
+  font:var(--weight-strong) var(--text-summary)/1.3 var(--sans);letter-spacing:-.025em;text-align:center;color:#fff}
+.glass .protected-tie::before,.glass .protected-tie::after{display:none}   /* no streak, no hover rim: a foot, not a tile */
 
 /* ---------- 02 · the access rule, reworked (founder, 2026-09-12: "nothing visibly changed here, no
      rearrangement, no effect") ----------
    The pane was three flat bands sharing one clipped box, so the mode, the rule and the path all read at
    the same depth. Now it is three layers:
      the switch   a recessed track holding two pills, the chosen one white and lifted — a control, not two tiles
-     the rule     one card, the chosen condition stated on a violet bloom
-     the path     the steps leave that card and become three tiles of their own, gapped, each on its own
-                  colour with the pilot pair's bloom-and-sink shading, the rail across every top reading
-                  left to right as a segmented progress bar
-   One --acc a step carries all of it: rim, ground, rail, pip and glow. Violet, gold, the TP green.
+     the path     the three steps as three rounded tiles, each on its own colour with the pilot pair's
+                  bloom-and-sink shading, reading left to right
+     the rule     the one statement the steps resolve to, on the panel's own foot band, as 01's closing line
+   The steps were three gapped tiles with a ringed pip each, which read as three cards to pick from rather than
+   one path, over the rule in 12px grey (founder, 2026-09-15: R3 of three, then V5 of five, the head kept).
+   One --acc a step carries its ground, divider, glow and number. Violet, gold, the TP green.
    The two mode buttons stay uncoloured: the colour belongs to the steps the switch writes. */
 .glass .access{--rgb-violet:185,167,255;--violet:#B9A7FF;--rgb-gold:245,200,107;--gold:#F5C86B;--rgb-mint:72,212,138;--mint:var(--success)}
 /* Cashback writes `#m2 .panel{padding:20px}` at id strength (cb8/base.css) and this page reuses the id,
