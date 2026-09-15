@@ -35,6 +35,11 @@
 #overview .block{background:transparent}
 #overview .block::before{content:none}
 #accounts,#cashback{background:var(--glow),linear-gradient(180deg,var(--paper),#fff 120px,#fff calc(100% - 120px),var(--paper))}
+/* Cashback is .mech.white too, and its rate tables + notes panel fill the block the same way
+   Overview's key-panel does — same ghost card, same fix (founder, 2026-09-15). #accounts is not
+   .white (its block stays the system blue behind two blue panes), so it needs nothing here. */
+#cashback .block{background:transparent}
+#cashback .block::before{content:none}
 /* ---------- the side glows: a soft light beside each record's card, left and right in turn ----------
    At their own height the records still stood on flat ground (founder, 2026-09-13: "naked"). Each carries one
    glow in the field's own recipe (style.css: --rgb-300 at .42, fading out), centred just inside the window's
@@ -466,18 +471,11 @@ html.reduce .bonus-line::before,html.reduce .bonus-num{transition:none}
 /* the four steps are Cashback's activation steps, so they take its step type: 15px bold, 1.2, -.015em (it was 18px) */
 .connect-step strong{max-width:230px;font-size:var(--text-panel-title);line-height:1.2;font-weight:var(--weight-strong);letter-spacing:-.015em;
   text-wrap:balance;text-shadow:0 1px 2px rgba(var(--rgb-shadow),.45)}
-/* the foot is a darker strip of the same glass, and the button fills it with the pane's corner run inward */
-.connect-foot{position:relative;z-index:1;padding:10px;border-top:1px solid rgba(255,255,255,.26);background:rgba(var(--rgb-shadow),.24)}
-.connect-foot .btn{width:100%;min-height:48px;border-radius:14px}
-/* the one white thing on the pane, as the partnership form's send is on its card */
-.connect-foot .btn-solid{background:#fff;color:var(--navy);border-color:#fff;
-  box-shadow:0 1px 0 rgba(255,255,255,.9),0 14px 28px -14px rgba(var(--rgb-shadow),.75);
-  transition:box-shadow .3s var(--ease)}
-/* no lift on hover: the arrow levelling is the one motion every CTA makes (cb8/base.css) */
-.connect-foot .btn-solid:hover{background:#fff;color:var(--navy);border-color:#fff;
-  box-shadow:0 0 0 4px rgba(255,255,255,.14),0 18px 32px -14px rgba(var(--rgb-shadow),.85)}
+/* the foot is the pane's own glass under a rule, and the button is the site's glass capsule on blue (.on-dark
+   in the markup), sized to its label. It was a white bar filling a darker strip of the glass, which read as a
+   field docked under the card rather than a button (founder, 2026-09-15: "the button looks dumb") */
+.connect-foot{position:relative;z-index:1;display:flex;justify-content:center;padding:14px;border-top:1px solid rgba(255,255,255,.26)}
 .connect-foot .btn-solid:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
-html.reduce .connect-foot .btn-solid{transition:none}
 
 /* ---------- what a broker does not have is not on the page ----------
    page.js sets [hidden] on a row, an account card or a whole record the broker has no data for. The rows and
@@ -534,4 +532,5 @@ body{font-variant-numeric:normal}
   .connect-step{padding:14px 16px;flex-direction:row;gap:14px;text-align:left}
   .connect-step+.connect-step{border-left:0;box-shadow:none;border-top:1px solid rgba(255,255,255,.26)}
   .connect-step strong{max-width:none}
+  .connect-foot .btn{width:100%}   /* a phone's buttons take the column's width, as .record-copy's do (cb8/base.css) */
 }
