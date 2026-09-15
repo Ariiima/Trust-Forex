@@ -337,14 +337,19 @@ html.reduce .live i{animation:none}
 .goal input:checked+.tile i{background:#fff;border-color:#fff}
 .goal input:checked+.tile i svg{opacity:1}
 .goal input:focus-visible+.tile{outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
-/* the send: the one white thing on the pane, at the site's control height like every other button */
-.form-card .send{width:100%;margin-top:22px}
-.form-card .btn-solid{background:#fff;color:var(--navy);border-color:#fff;backdrop-filter:none;-webkit-backdrop-filter:none;
-  box-shadow:0 1px 0 rgba(255,255,255,.9),0 14px 28px -14px rgba(var(--rgb-shadow),.75);
-  transition:box-shadow .3s var(--ease)}
-/* no lift on hover: the arrow levelling is the one motion every CTA makes (cb8/base.css) */
-.form-card .btn-solid:hover{background:#fff;color:var(--navy);border-color:#fff;
-  box-shadow:0 0 0 4px rgba(255,255,255,.14),0 18px 32px -14px rgba(var(--rgb-shadow),.85)}
+/* the send: a glass capsule sized to its label and centred under the last field, with no arrow, since it sends the form
+   rather than leaving the page. It was a white bar across the card's foot, which read as a field rather than a button
+   (founder, 2026-09-15, as Brokers' Connect button did); a turn under the card sat outside the form it sends, and it
+   came back in the same day. The site's white glass on blue (style.css .on-dark .btn-solid) read grey on this pane's
+   dark ground, so it takes a picked goal's lit blue (below) under a sheen, and the pane's pale blue rim (founder,
+   2026-09-15: "a little more blue and glassy", B of three). border-box origin, or the run repeats under the rim. */
+.form-card .send{display:flex;width:fit-content;margin:22px auto 0}
+.form-card .btn-solid{background:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,.04) 55%),
+    linear-gradient(150deg,rgba(var(--rgb-600),.62),rgba(var(--rgb-800),.4));background-origin:border-box;border-color:rgba(160,196,255,.62);
+  backdrop-filter:blur(10px) saturate(180%);-webkit-backdrop-filter:blur(10px) saturate(180%);
+  box-shadow:0 14px 30px -14px rgba(var(--rgb-shadow),.7),inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(var(--rgb-shadow),.18)}
+.form-card .btn-solid:hover{background:linear-gradient(180deg,rgba(255,255,255,.3),rgba(255,255,255,.08) 55%),
+    linear-gradient(150deg,rgba(var(--rgb-600),.76),rgba(var(--rgb-800),.54));background-origin:border-box;border-color:rgba(200,220,255,.8)}
 .form-card .btn-solid:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
 .form-card .btn-solid[disabled]{opacity:.6;pointer-events:none}
 /* the error: the page's red is for white paper, so on glass it is a tinted plate with light text */
@@ -357,7 +362,7 @@ html.reduce .live i{animation:none}
   background:linear-gradient(150deg,rgba(72,212,138,.3),rgba(16,92,70,.3));box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 0 7px rgba(72,212,138,.12)}
 .form-success h3{margin:0 0 9px;font-size:var(--text-received);line-height:1.2;letter-spacing:-.04em;font-weight:var(--weight-strong);color:#fff}
 .form-success p{max-width:390px;margin:0 auto;font-size:var(--text-ui);color:rgba(255,255,255,.78)}
-html.reduce .goal .tile,html.reduce .goal i,html.reduce .goal i svg,html.reduce .contact-toggle span,html.reduce .form-card .btn-solid{transition:none}
+html.reduce .goal .tile,html.reduce .goal i,html.reduce .goal i svg,html.reduce .contact-toggle span{transition:none}
 html.reduce .goal:hover input:not(:checked)+.tile{transform:none}
 
 /* ---------- laptops and phones ---------- */
@@ -391,7 +396,7 @@ html.reduce .goal:hover input:not(:checked)+.tile{transform:none}
   .case-row h3{white-space:normal}
   .pilot-card{padding:24px}.pilot-head{grid-template-columns:40px 1fr}.pilot-head>.live{grid-column:2;width:max-content}.pilot-offer{grid-template-columns:1fr}
   .well-grid,.goal-grid{grid-template-columns:1fr}.glass .panel.form-card{padding:18px;border-radius:18px}
-  .hero-center .btn,.pilot-copy .btn{width:100%}
+  .hero-center .btn,.pilot-copy .btn,.form-card .send{width:100%}
 }
 
 /* tabular figures widen Inter's letters ~2% (cb8's body rule); off for the page, kept where numbers line up */
