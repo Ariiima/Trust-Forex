@@ -301,6 +301,19 @@ html.reduce .market-row::before,html.reduce .market-row::after,html.reduce .mark
   transition:border-color .35s var(--ease),box-shadow .35s var(--ease)}
 .market-chip svg{width:var(--icon-size);height:var(--icon-size);fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 
+/* ---------- 5b · markets, centred: the heading above the pane, two markets to a row ----------
+   Founder, 2026-09-15: centre the heading over the table and the table on the page, and pair the
+   seven markets two to a row — the cashback notes' own grid (record 6), one row short of even. */
+#markets .record-grid{grid-template-columns:1fr;justify-items:center}
+#markets .record-copy{padding-right:0;width:100%;text-align:center;align-items:center}
+#markets .data-head{margin-bottom:28px}
+#markets .market-panel{width:100%;max-width:760px;margin-left:0;grid-template-columns:1fr 1fr}
+#markets .market-row:nth-child(odd){border-left:1px solid rgba(255,255,255,.16)}
+@media (max-width:640px){
+  #markets .market-panel{grid-template-columns:1fr}
+  #markets .market-row:nth-child(odd){border-left:0}
+}
+
 /* ---------- 6 · cashback: a white record, the table on its side, one account over the other ----------
    The record is `.mech.white` now, like Broker overview: no blue block behind it, the heading navy, the copy ink,
    and the panes the one blue thing on it. Its head stood centred over the two panes (founder, 2026-09-12) and
