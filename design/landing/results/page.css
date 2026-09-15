@@ -208,7 +208,9 @@
 .page-number i{font-style:normal;color:#fff;font-size:var(--text-label);letter-spacing:.08em}
 .mech.white .page-number i{color:var(--accent)}   /* name and number read as one line, in the run's blue */
 /* the data visual: the wireframe's 420px card with a 70px head, on the pane's glass */
-.glass .panel.data-visual{width:100%;height:420px;padding:0;display:grid;grid-template-rows:70px minmax(0,1fr);border-radius:22px;overflow:hidden}
+/* one column that can shrink: an implicit auto column grew to the Win Rate rings' fixed width, pushing the head
+   and the second case past the card's edge on a phone and below ~1180px (2026-09-15) */
+.glass .panel.data-visual{width:100%;height:420px;padding:0;display:grid;grid-template-rows:70px minmax(0,1fr);grid-template-columns:minmax(0,1fr);border-radius:22px;overflow:hidden}
 /* the Cashback page's `#m2 .panel{padding:20px}` (cb8/base.css) is written at id strength and this page
    reuses the same section ids, so Signals 02 alone was inheriting 20px of panel padding — 40px stolen
    from its body track, which is why that one card's rows stopped short of the card's foot. Restated
@@ -218,15 +220,16 @@
    ruling a hairline across it, the icon takes a chip, and the meta on the right takes the
    same capsule the scalp timer already wore. The colour is the ground's — glass, not a new hue. */
 .visual-head{margin:7px 8px 0;min-height:56px;padding:0 10px 0 8px;display:flex;align-items:center;justify-content:space-between;gap:20px;
-  border:1px solid rgba(255,255,255,.22);border-radius:15px;background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.22);border-radius:16px;background:rgba(255,255,255,.1);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.22);color:#fff;font-size:var(--text-meta)}
-.visual-head strong{display:inline-flex;align-items:center;gap:12px;font-weight:var(--weight-strong)}
+/* the card's title is a panel title, 15px, as on Cashback, Brokers and Referral (2026-09-15; it was 13px) */
+.visual-head strong{display:inline-flex;align-items:center;gap:12px;font-size:var(--text-panel-title);font-weight:var(--weight-strong)}
 .visual-head .ico{width:var(--icon-well);height:var(--icon-well);padding:calc((var(--icon-well) - var(--icon-size))/2 - 1px);border:1px solid rgba(255,255,255,.24);border-radius:var(--icon-well-radius);background:rgba(255,255,255,.12)}
 .visual-head>span{color:rgba(255,255,255,.7);font-size:var(--text-label)}
 /* the timer is already a capsule and keeps its own white; every other meta borrows the shape */
 .visual-head>span:not(.mini-timer){min-height:30px;padding:0 12px;display:inline-flex;align-items:center;
   border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(255,255,255,.08)}
-.glass .tile{border-radius:14px}
+.glass .tile{border-radius:16px}   /* the site's tile corner (2026-09-15; it was 14px) */
 
 /* 01 · the target ladder — the columns carry the TP green (founder, 2026-09-10). A flat green slab
    fought the royal ground: the two sat at the same value, so the edges vibrated. The green is spent
@@ -239,7 +242,7 @@
 .target-ladder{padding:24px 22px 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}
 .glass .target-step{--head:rgba(72,212,138,.5);--mid:rgba(28,150,140,.34);--deep:rgba(10,64,110,.46);
   --rim:rgba(142,232,196,.5);--streak:.2;
-  height:var(--step);min-height:108px;padding:14px 12px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;border-radius:14px 14px 6px 6px;
+  height:var(--step);min-height:108px;padding:14px 12px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;border-radius:16px 16px 6px 6px;
   background:linear-gradient(180deg,var(--head) 0,var(--mid) 88px,var(--deep) 100%);
   box-shadow:inset 0 1px 0 rgba(214,255,238,.42),inset 0 -1px 0 rgba(var(--rgb-shadow),.24),0 16px 32px -22px rgba(24,140,112,.85)}
 .glass .target-step:nth-child(1){--head:rgba(72,212,138,.44)}
@@ -249,7 +252,7 @@
 /* the R:R reads as a caption, so it takes the head's capsule at micro size rather than a line of copy */
 .glass .target-step b{min-height:20px;padding:0 8px;display:inline-flex;align-items:center;white-space:nowrap;
   border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(255,255,255,.08);
-  font-size:var(--text-micro);font-weight:var(--weight-strong);color:rgba(206,244,226,.86);font-variant-numeric:tabular-nums}
+  font-size:var(--text-label);font-weight:var(--weight-strong);color:rgba(206,244,226,.86);font-variant-numeric:tabular-nums}   /* 11px, as every other R:R on the page */
 .glass .target-step:last-child{--head:rgba(96,236,168,.72);--mid:rgba(40,186,158,.5);--deep:rgba(18,132,132,.52);--rim:rgba(178,244,208,.66)}
 .glass .target-step:last-child b{color:rgba(232,255,242,.94)}
 
@@ -262,7 +265,7 @@
 .glass .dark-row strong{font-size:var(--text-row-title);letter-spacing:-.02em}
 .dark-row small{justify-self:start;color:rgba(255,255,255,.7);font-size:var(--text-label)}.dark-row b{min-width:96px;text-align:right;font-size:var(--text-meta)}
 .dark-state{justify-self:end;min-width:108px;min-height:30px;padding:0 10px;display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.28);border-radius:999px;
-  color:rgba(255,255,255,.7);font-size:var(--text-small);background:rgba(255,255,255,.06)}
+  color:rgba(255,255,255,.7);font-size:var(--text-small);font-weight:var(--weight-strong);background:rgba(255,255,255,.06)}   /* bold, as the page's other pills */
 .dark-state::before{content:'';width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35)}
 .dark-state.reached{color:#fff;border-color:rgba(72,212,138,.7);background:rgba(72,212,138,.14)}
 .dark-state.reached::before{background:var(--success);box-shadow:0 0 0 3px rgba(72,212,138,.25)}
@@ -275,10 +278,10 @@
    above and below it. Equation drops to a small pinned chip so the case reads as one composed card
    top-to-bottom instead of three centred rows with air between each. */
 @property --sweep{syntax:'<percentage>';inherits:false;initial-value:0%}
-.winrate-body{min-height:0;padding:20px;display:grid}
-.winrate-compare{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.winrate-body{min-height:0;padding:20px;display:grid;grid-template-columns:minmax(0,1fr)}
+.winrate-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .glass .winrate-case{--tint:rgba(72,212,138,.14);--tint2:rgba(72,212,138,.05);--rim:rgba(150,230,190,.3);--streak:.12;
-  min-height:0;padding:14px 16px 16px;display:flex;flex-direction:column;align-items:center;gap:12px;border-radius:16px}
+  min-width:0;min-height:0;padding:14px 16px 16px;display:flex;flex-direction:column;align-items:center;gap:12px;border-radius:16px}
 .winrate-case-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px}
 /* smaller than any type token carries — the one deliberate literal size on the page, for a chip that
    is an accent next to the ring's number, not a reading. `.glass` prefixed in so this actually beats
@@ -290,7 +293,8 @@
 /* the case's own row is capped at 364px by the panel's fixed 420px height (grid-template-rows:56px
    minmax(0,1fr), overflow hidden) — 208px overran that budget once head, gaps and equation were added
    back in. 172px is sized against that same budget with margin, not against the case's flex box alone. */
-.winrate-ring{position:relative;width:172px;height:172px;border-radius:50%;display:grid;place-content:center;text-align:center}
+/* never wider than its case: at a fixed 172px the ring held the case open past the card below ~1180px (2026-09-15) */
+.winrate-ring{position:relative;width:min(172px,100%);height:auto;aspect-ratio:1;border-radius:50%;display:grid;place-content:center;text-align:center}
 /* a faint bloom of the ring's own colour behind it, low enough to read as depth, not a second light source */
 .winrate-ring::after{content:'';position:absolute;inset:-8px;z-index:-1;border-radius:50%;background:radial-gradient(circle,rgba(72,212,138,.1),transparent 65%)}
 .winrate-ring::before{content:'';position:absolute;inset:0;border-radius:50%;--sweep:0%;
@@ -356,7 +360,7 @@
 .screen.in .journey-recovery{stroke-dashoffset:0;transition-delay:1.5s}
 .screen.in .journey-positive{stroke-dashoffset:0;transition-delay:2.1s}
 .breach-values{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.glass .breach-value{min-height:76px;padding:15px;display:flex;flex-direction:column;justify-content:center;border-radius:12px}
+.glass .breach-value{min-height:76px;padding:15px;display:flex;flex-direction:column;justify-content:center;border-radius:16px}
 .glass .breach-value small{display:block;color:rgba(255,255,255,.7);font-size:var(--text-micro);letter-spacing:.04em}
 .glass .breach-value b{display:block;margin-top:6px;font-size:var(--text-figure);font-weight:var(--weight-strong)}
 .glass .breach-value:first-child b{color:var(--breach)}.glass .breach-value:last-child b{color:var(--bounce)}
@@ -365,7 +369,7 @@
 
 /* 06 · the week's averages */
 .average-body{min-height:0;padding:16px;display:grid;grid-template-columns:minmax(0,43%) minmax(0,1fr);gap:16px;align-items:stretch}
-.average-chart{position:relative;min-width:0;min-height:0;border:1px solid rgba(255,255,255,.2);border-radius:14px;overflow:hidden;background:rgba(6,23,62,.25)}
+.average-chart{position:relative;min-width:0;min-height:0;border:1px solid rgba(255,255,255,.2);border-radius:16px;overflow:hidden;background:rgba(6,23,62,.25)}
 .avg-gridline{position:absolute;left:0;right:0;height:1px;border-top:1px solid rgba(255,255,255,.14)}
 .avg-gridline span{position:absolute;left:8px;top:0;transform:translateY(-50%);color:rgba(255,255,255,.6);font-size:var(--text-nano)}
 .avg-bars{position:absolute;left:38px;right:12px;top:0;bottom:0}
@@ -375,8 +379,8 @@
 .avg-bar b{position:absolute;left:50%;transform:translateX(-50%);font-size:var(--text-micro);white-space:nowrap}
 .avg-bar.bounce b{top:-18px;color:var(--bounce)}.avg-bar.breach b{bottom:-18px;color:var(--breach)}
 .average-metrics{min-width:0;display:grid;grid-template-rows:repeat(2,1fr);gap:12px}
-.glass .average-formula{min-width:0;min-height:0;padding:16px 17px;display:flex;flex-direction:column;justify-content:center;border-radius:14px}
-.glass .average-formula>small{margin-bottom:12px;color:rgba(255,255,255,.7);font-size:var(--text-nano);font-weight:var(--weight-strong);letter-spacing:.04em}
+.glass .average-formula{min-width:0;min-height:0;padding:16px 17px;display:flex;flex-direction:column;justify-content:center;border-radius:16px}
+.glass .average-formula>small{margin-bottom:12px;color:rgba(255,255,255,.7);font-size:var(--text-micro);   /* 10px, as 05's value labels */font-weight:var(--weight-strong);letter-spacing:.04em}
 .average-calc{min-width:0;display:grid;grid-template-columns:auto 14px auto;justify-content:center;gap:6px;align-items:center}
 .average-fraction{min-width:0;display:grid;text-align:center}
 .average-fraction span{min-width:0;min-height:27px;padding:6px 3px;display:grid;place-items:center;color:#fff;font-size:var(--text-label);line-height:1}
@@ -438,7 +442,7 @@ html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
 @keyframes record-light{from{background-position:100% 0}to{background-position:0 0}}
 #record .value-row{padding:16px 18px;grid-template-columns:44px minmax(0,1fr);gap:14px;border-bottom-color:rgba(255,255,255,.18);box-shadow:none}
 #record .value-copy strong{font-size:var(--text-panel-title);font-weight:var(--weight-strong);letter-spacing:-.015em;text-shadow:none}
-#record .value-copy p{margin-top:4px}
+#record .value-copy p{margin-top:4px;font-size:var(--text-small)}   /* the line under a row title, 12px, as Cashback's and Brokers' (it was 11px) */
 #record .value-index{width:44px;height:44px;border-radius:13px;font-size:var(--text-label);color:#fff;
   border-color:rgba(160,196,255,.42);
   background:linear-gradient(115deg,rgba(255,255,255,.2),rgba(255,255,255,.04) 50%,transparent 70%),linear-gradient(150deg,rgba(var(--rgb-900),.34),rgba(var(--rgb-abyss),.34));
@@ -479,11 +483,14 @@ html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
   .tip-split.quad .tip-cell:nth-child(n+3){border-top:var(--hair)}
   .tip-split.quad .tip-cell b{font-size:var(--text-meta)}
   .mech-copy .page-number{min-width:138px}
+  /* a card's title steps back to 13px on a phone: at 15px it took the room its meta pill needs, and the pill broke
+     over two lines in a head that is a fixed 70px (2026-09-15) */
+  .visual-head strong{font-size:var(--text-meta)}
   .glass .dark-rows{margin:10px 12px 14px}
   .glass .dark-row{grid-template-columns:58px 1fr auto;gap:10px;padding-inline:10px}.dark-row small{font-size:var(--text-micro);white-space:nowrap}.dark-state{min-width:auto;padding-inline:8px}
-  .target-ladder{padding-inline:12px;gap:7px}.glass .target-step{padding:11px 6px}.glass .target-step b{min-height:18px;padding:0 5px}
+  .target-ladder{padding-inline:12px;gap:7px}.glass .target-step{padding:11px 6px}.glass .target-step b{min-height:18px;padding:0 5px;font-size:var(--text-micro)}   /* 10px: 11 overruns a 68px column */
   .winrate-body{padding:12px}.winrate-compare{gap:8px}.glass .winrate-case{min-height:218px;padding:12px 10px 12px;gap:8px}.winrate-case-head{gap:6px}.glass .winrate-case-head strong{padding:2px 6px}
-  .winrate-ring{width:128px;height:128px}.glass .winrate-ring strong{font-size:32px}
+  .winrate-ring{width:min(128px,100%)}.glass .winrate-ring strong{font-size:32px}
   .timer-body{padding:18px 14px 20px;gap:14px}.timer-readout{width:164px;height:164px}.window-dot.touch{top:16px}
   .timer-readout strong{font-size:32px}.timer-note{font-size:var(--text-micro)}
   .breach-body{padding-inline:12px}.breach-values{gap:8px}.glass .breach-value{padding:12px}.glass .breach-value b{font-size:17px}
@@ -492,7 +499,7 @@ html.reduce #chapter-scalp .rayfield.k i:nth-child(4){animation:none}
   .average-calc{grid-template-columns:minmax(0,1fr) 12px auto;gap:4px}.average-fraction span{min-height:24px;padding:4px 2px;font-size:var(--text-nano)}
   .average-answer{gap:4px}.glass .average-answer b{font-size:18px}.glass .average-answer em{font-size:14px}
   #record .value-row{padding:16px;column-gap:12px;grid-template-columns:40px minmax(0,1fr)}#record .value-index{width:40px;height:40px}
-  .value-copy p{font-size:var(--text-micro)}
+  #record .value-copy p{font-size:var(--text-label)}
   #final .display{font-size:52px}
 }
 
