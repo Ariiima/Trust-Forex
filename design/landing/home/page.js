@@ -74,19 +74,34 @@
      its data-tier, which cb8's tier system turns into the ink page.css draws its rim in. The
      markup ships the app's own plan picker as the href and "Choose Your Plan in the App" as the
      words, which is where a reader without JavaScript should land rather than on a plan they did
-     not pick. A pick (not the first sync) restarts .swap: the words lift in, a ring leaves the rim.
-     The radios carry autocomplete="off": without it a reload brings back the last card picked
-     instead of Gold. */
+     not pick. A pick (not the first sync) eases the words to their new width, carrying the arrow,
+     and restarts .swap, which swells one soft ring out of the rim. The radios carry
+     autocomplete="off": without it a reload brings back the last card picked instead of Gold. */
   const planCta = document.getElementById('plan-cta');
   const planLabel = planCta && planCta.querySelector('.plan-cta-label');
   const planHref = (plan) => `https://app.trustforex.net/checkout?plan=${plan}`;
   const planWords = (plan) => `Continue with ${document.getElementById(`plan-${plan}`).textContent.trim()}`;
+  /* The words change width from pick to pick and the button centres them, so the arrow jumped sideways
+     by up to 16px while the new words blinked in from nothing (founder, 2026-09-15: "a bit less jumpy
+     and smoother"). Now the words' box eases from its old width to its new one over .5s and carries
+     the arrow and the capsule's two ends with it, while the new words rise 3px out of a soft .35.
+     page.css clips the box across, so longer words are uncovered as it opens and never run under
+     the arrow. A pick in mid-change measures the width the box has reached and starts from there. */
+  const glide = (fromW) => {
+    planLabel.getAnimations().forEach((a) => a.cancel());
+    const toW = planLabel.getBoundingClientRect().width;
+    planLabel.animate([{ width: `${fromW}px`, translate: '0 3px', opacity: 0.35 }, { width: `${toW}px`, translate: '0 0', opacity: 1 }],
+      { duration: 500, easing: 'cubic-bezier(.22,1,.36,1)' });
+  };
   const syncPlan = (e) => {
     const picked = document.querySelector('.plan-pick:checked');
     if (!planCta || !picked) return;
+    const moving = e && planLabel && !document.documentElement.classList.contains('reduce');
+    const fromW = moving && planLabel.getBoundingClientRect().width;
     planCta.href = planHref(picked.value);
     planCta.dataset.tier = picked.value;
     if (planLabel) planLabel.textContent = planWords(picked.value);
+    if (moving) glide(fromW);
     if (e) { planCta.classList.remove('swap'); void planCta.offsetWidth; planCta.classList.add('swap'); countSave(picked.closest('.plan-col')); }
   };
   /* The saving counts up from $0 to its figure each time its card is picked (founder, 2026-09-13).

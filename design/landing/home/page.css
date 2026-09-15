@@ -450,6 +450,10 @@ html:not(.js) .step .rv{opacity:1;transform:none}
 #plans::before{content:none}
 #plans .wrap{max-width:none;padding:0}
 #plans .block{min-height:100dvh;border-radius:0;padding-top:calc(var(--nav-h) + var(--block-space))}
+/* clip, not base.css's hidden, as #final does: hidden makes the block a scroll container, and each
+   plate's view() below took the block as its scroller and never moved (on a phone, where no pin
+   hands the plates --ground). The block is square here, so the clip is the same box. */
+#plans .block{overflow:clip}
 html:not(.snap) #plans .block{min-height:auto}
 .plans-shell{display:grid}
 .plans-intro{margin-bottom:26px}
@@ -534,22 +538,59 @@ html.reduce .glass .plan-col:has(.plan-pick){transition:none}
 .price{margin:18px 0 0;font-size:var(--text-plan-price-compact);line-height:1;font-weight:var(--weight-strong);letter-spacing:-.05em;color:#fff}   /* bold, as the site's figures (it was 750) */
 /* The lower half, after the founder's reference (2026-09-13): the monthly figure and the share
    each sit in their own small glass pane, then a rule, then what every plan includes. The panes
-   are plain frosted boxes, not .tile — a tile's rim and sweep animate on the scroll, and six of
-   them inside three tiles is six more layers on the one screen that already carries a rayfield. */
+   are plain frosted boxes, not .tile, whose rim and specular would be six more layers on the one
+   screen that already carries a rayfield. Each plate carries the tiles' streak (cb8/style.css
+   .glass .tile::after), stronger, .38 against the tiles' .24, since on a solid plate the tiles'
+   strength barely showed (founder, 2026-09-15: "make the light streak stronger, like the glass effect
+   we use everywhere"). It travels on the scroll as theirs does (founder, same day: "make the light
+   strike move on scroll"): the same 260% image swept from 100% to 0% over entry 30% to exit 70%, its
+   stops drawn 2.6 times tighter so the band keeps the width it had held still. On a held screen the
+   hold's --ground drives it, so the light crosses the plates while the plans stand pinned; a phone has
+   no pin, so each plate follows its own view() and the light crosses it as it passes up the screen.
+   Without scroll timelines, or with reduced motion, it rests at 54%, where it sat before. --pane-sheen
+   is a light layer a tier can lay between the streak and its metal. */
 .plan-pill{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;
   border:1px solid var(--pane-rim);border-radius:16px;   /* a tile's corner (it was 14px) */
-  background:linear-gradient(150deg,var(--pane-hi),var(--pane-lo));
+  background:linear-gradient(115deg,transparent 43%,rgba(255,255,255,.38) 50%,rgba(255,255,255,.1) 52.7%,transparent 57.7%) 54% 0/260% 100% no-repeat,
+    var(--pane-sheen,none),linear-gradient(150deg,var(--pane-hi),var(--pane-lo));
   box-shadow:inset 0 1px 0 var(--pane-rim),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
+@supports (animation-timeline:view()){
+  .plan-pill{animation:plate-light linear both;animation-timeline:view();animation-range:entry 30% exit 70%}
+  html.snap .plan-pill{animation-timeline:--ground}
+}
+@keyframes plate-light{from{background-position:100% 0,0 0,0 0}to{background-position:0% 0,0 0,0 0}}
+html.reduce .plan-pill{animation:none}
 /* Tier plates (founder, 2026-09-13: "match the color of the plan more, and prettier"): each pane is
    its tier's metal at .8, a light shade falling to a deep one, under a rim and a top highlight in the
    tier's colour. At glass strength the blue showed through, and amber over blue mixes to grey: Gold
    read khaki. At .8 the blue barely shows, so all three read true and stay one family. The light end
-   is kept a mid tone so the white words on it still read. Gold's plate is a little quieter than the
-   other two, less saturated and at .72 (founder, same day: "tone down gold a little, looks way too
-   strong"), since amber is the loudest of the three on this blue. */
-.plan-col[data-tier=silver]{--pane-hi:rgba(122,144,176,.8);--pane-lo:rgba(52,68,98,.8);--pane-rim:rgba(214,230,250,.7)}
-.plan-col[data-tier=gold]{--pane-hi:rgba(186,146,76,.72);--pane-lo:rgba(106,78,36,.72);--pane-rim:rgba(236,208,146,.6)}
-.plan-col[data-tier=diamond]{--pane-hi:rgba(146,110,236,.8);--pane-lo:rgba(66,38,146,.8);--pane-rim:rgba(196,166,255,.75)}
+   is kept a mid tone so the white words on it still read. */
+.plan-col[data-tier=silver]{--pane-hi:rgba(122,144,176,.8);--pane-lo:rgba(52,68,98,.8);--pane-rim:rgba(214,230,250,.7);--pane-mute:.42}
+.plan-col[data-tier=diamond]{--pane-hi:rgba(146,110,236,.8);--pane-lo:rgba(66,38,146,.8);--pane-rim:rgba(196,166,255,.75);--pane-mute:.34}
+/* Gold is a foil of its own (founder, 2026-09-15: "more gold/yellow-ish and some more shine only for
+   this"). It was quieter at .72 (2026-09-13: "tone down gold a little"), but at .72 the blue came back
+   through and it read grey-brown. It is now a yellow at .95 under a cream top sheen, with a bright rim,
+   a cream top edge and a dark bottom edge. The share's figure takes the pale ink the calculator's
+   picked Gold cell uses, since the gold ink sank into the plate. */
+.plan-col[data-tier=gold]{--pane-hi:rgba(214,168,58,.95);--pane-lo:rgba(128,88,16,.95);--pane-rim:rgba(255,226,150,.85);
+  --pane-sheen:linear-gradient(180deg,rgba(255,244,210,.22),transparent 50%);--pane-mute:.24}
+.plan-col[data-tier=gold] .plan-pill{
+  box-shadow:inset 0 1px 0 rgba(255,244,206,.9),inset 0 -1px 0 rgba(70,46,6,.45),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
+.plan-col[data-tier=gold] .plan-rate b{color:#FFF6DF}
+/* The plates of a card not picked sink back (founder, 2026-09-15: "mute the unselected plan a bit …
+   silver selected and unselected are almost the same thing, diamond unselected should be muted a
+   bit"). The card's own .8 dims its words, but on this blue it barely dims a blue-grey plate, and
+   Diamond's violet kept its full strength. A wash of the page's deep blue lies over each plate, rim
+   included and under its words, at the tier's --pane-mute, and clears over .45s on the pick. Gold had
+   none at first (founder: "gold is okay"); once its plate became the brighter foil it stood out when
+   not picked (founder, same day: "mute the unselected version of gold a little"). It takes the same
+   blue at .24, lighter than the other two. A wash of its own deep bronze at .3 was rendered beside it
+   and lost (founder: "this one wins"). */
+.plan-pill{position:relative;isolation:isolate}
+.plan-pill::before{content:'';position:absolute;inset:-1px;z-index:-1;border-radius:inherit;pointer-events:none;
+  background:rgba(var(--rgb-blue),var(--pane-mute,0));transition:opacity .45s var(--ease)}
+.plan-col:has(.plan-pick:checked) .plan-pill::before{opacity:0}
+html.reduce .plan-pill::before{transition:none}
 .equiv{min-height:40px;margin-top:14px}
 /* what the longer term saves, in the record card's green — the page already reads green as a gain */
 .equiv .plan-save{color:#48D48A}
@@ -566,27 +607,39 @@ html.reduce .glass .plan-col:has(.plan-pick){transition:none}
   animation-delay:calc(.06s + var(--n,0) * 60ms),calc(.06s + var(--n,0) * 60ms)}
 @keyframes share-spring{from{transform:translateY(10px)}}
 @keyframes share-fade{from{opacity:0}}
-@keyframes pick-rise{from{opacity:0;transform:translateY(.5em)}}
 .plan-list{list-style:none;display:grid;gap:11px;margin:18px 0 0;padding:16px 4px 0;
   border-top:1px solid rgba(255,255,255,.22)}
 .plan-list li{display:flex;align-items:center;gap:12px}
 .plan-tick{width:18px;height:18px;flex:none}
 .plan-tick path{fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-/* the one action under the three cards: the app's checkout, on the picked plan. Its arrow sits at
-   the far end, as the reference draws it, rather than beside the words. */
-.plans-shell .plan-cta{position:relative;width:100%;min-height:46px;margin-top:14px;padding:8px 52px;
-  border-color:rgba(255,255,255,.55);background:linear-gradient(150deg,rgba(255,255,255,.12),rgba(255,255,255,.04));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
-.plans-shell .plan-cta .ext{position:absolute;top:50%;right:22px;margin-top:-.5em}
+/* the one action under the three cards: the app's checkout, on the picked plan. It is the site's glass
+   capsule (cb8/style.css .on-dark .btn-solid), sized to its words and centred, with its arrow beside
+   them (founder, 2026-09-15, picked from six arms). It was a full-width outline bar with the arrow at
+   the far end, after the reference, and read as a field or a rule rather than the thing to press. It
+   hugs its words at the site's own button padding and eases to each pick's width with them (founder,
+   same day: "make the button tighter, and make it resize with plan selection, the pill should have a
+   clean size"); it held a 280px floor at 28px padding, and the shorter names floated in it. */
+.plans-shell .plan-cta{justify-self:center;margin-top:24px;
+  position:relative;z-index:2}   /* over the picked card's glow, which reaches 100px below it (its z-index 1) and washed Gold's words grey */
+/* the words' own box, which page.js eases to each pick's width: clipped across only, so longer words
+   are uncovered as it opens and the letters' tops and tails are never cut */
+.plan-cta-label{display:inline-block;white-space:nowrap;overflow-x:clip}
 /* the button names the pick (page.js): "Continue with Gold", its rim in that tier's ink. page.js
-   hands it the card's data-tier, which cb8's tier system turns into --label; each new pick lifts the
-   words in again and sends one ring of the ink out from the rim. */
-.plans-shell .plan-cta[data-tier]{border-color:color-mix(in srgb,var(--label) 70%,transparent)}
-.plan-cta.swap{animation:cta-flash .9s var(--ease)}
-.plan-cta.swap .plan-cta-label{animation:pick-rise .45s var(--ease)}
-@keyframes cta-flash{from{box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 0 0 5px color-mix(in srgb,var(--label) 30%,transparent),
-  0 0 40px -6px color-mix(in srgb,var(--label) 70%,transparent)}}
-html.reduce .glass .plan-col:has(.plan-pick:checked) .plan-rate b i,html.reduce .plan-cta.swap,html.reduce .plan-cta.swap .plan-cta-label{animation:none}
+   hands it the card's data-tier, which cb8's tier system turns into --label, and eases the words to
+   their new width, carrying the arrow. The pick is quieter than it was (founder, 2026-09-15: "a bit less
+   jumpy and smoother"): the rim eases to the new ink over the cards' .45s, and one soft ring of it
+   swells out of the rim and fades over 1s. The ring used to start at its full 5px and 70% glow. */
+.plans-shell .plan-cta[data-tier]{border-color:color-mix(in srgb,var(--label) 70%,transparent);
+  transition:border-color .45s var(--ease),background-color .3s var(--ease),color .3s var(--ease)}
+.plan-cta.swap{animation:cta-flash 1s var(--ease)}
+@keyframes cta-flash{
+  0%{box-shadow:0 12px 30px -12px rgba(var(--rgb-shadow),.6),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(var(--rgb-shadow),.12),
+    0 0 0 0 color-mix(in srgb,var(--label) 0%,transparent),0 0 36px -6px color-mix(in srgb,var(--label) 0%,transparent)}
+  30%{box-shadow:0 12px 30px -12px rgba(var(--rgb-shadow),.6),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(var(--rgb-shadow),.12),
+    0 0 0 4px color-mix(in srgb,var(--label) 24%,transparent),0 0 36px -6px color-mix(in srgb,var(--label) 45%,transparent)}
+  100%{box-shadow:0 12px 30px -12px rgba(var(--rgb-shadow),.6),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(var(--rgb-shadow),.12),
+    0 0 0 9px color-mix(in srgb,var(--label) 0%,transparent),0 0 36px -6px color-mix(in srgb,var(--label) 0%,transparent)}}
+html.reduce .glass .plan-col:has(.plan-pick:checked) .plan-rate b i,html.reduce .plan-cta.swap{animation:none}
 /* The header gives the plans its room (founder, 2026-09-13: "only when seeing plans, the header
    scrolls away for more space"). The strip rises up and out over 56px of the screen's arrival that
    end 8px short of the top, so it leaves just ahead of the screen's top edge instead of riding it
@@ -635,6 +688,7 @@ body{font-variant-numeric:normal}
 }
 @media (max-width:680px){
   .weekly-record{min-height:400px;padding:12px 12px 0}
+  .plans-shell .plan-cta{justify-self:stretch}   /* full width under the stacked cards, as the site's buttons on a phone (base.css) */
   /* the pill drops under the week: beside it, the title and the date each broke onto two lines */
   .weekly-head{min-height:78px;padding:14px;grid-template-columns:var(--icon-well) minmax(0,1fr);gap:10px 12px}
   .weekly-icon{grid-row:1/3}

@@ -411,13 +411,41 @@ and the price at 52px (it was 28, 27 and 60). The saving keeps its green.
 Each pane is a tier plate (founder, 2026-09-13: "match the color of the plan more, and prettier"):
 the tier's metal at .8, a light shade falling to a deep one, under a rim and a top highlight in the
 tier's colour. The light end is kept a mid tone, so the white words on it still read. Gold's plate
-is quieter than the other two: less saturated, at .72 (founder, same day: "tone down gold a little,
-looks way too strong"). Three passes
-came first, the same day. The first was a right-edge fade that brightened on the picked card. The
-second was Referral's proof-row shading (`referral/page.css` `.proof-row`, a .18 wash to navy), where
-Gold read grey and Silver read as no colour. The third was tier glass, a .3 to .6 wash falling to each
-tier's deep shade. Diamond read well there, but Gold read khaki: amber over the blue mixes to grey at
-any strength that lets the blue show through.
+was quieter at first: less saturated, at .72 (founder, same day: "tone down gold a little,
+looks way too strong"). Three passes came first, the same day. The first was a right-edge fade that
+brightened on the picked card. The second was Referral's proof-row shading (`referral/page.css`
+`.proof-row`, a .18 wash to navy), where Gold read grey and Silver read as no colour. The third was
+tier glass, a .3 to .6 wash falling to each tier's deep shade. Diamond read well there, but Gold read
+khaki: amber over the blue mixes to grey at any strength that lets the blue show through.
+
+At .72 the blue showed through again and Gold read grey-brown. On 2026-09-15 (founder: "more
+gold/yellow-ish and some more shine only for this") it became a foil of its own: a brighter yellow at
+.95 under a cream top sheen and one diagonal streak of light, with a bright rim and the share's figure
+in pale ink. Five arms were rendered side by side: the .72 plate, a richer amber at .94, that amber
+with a polished top sheen, that amber with the streak, and the brighter yellow foil. The founder asked
+for the last two mixed. The trade is legibility: the white words and the green saving read a little
+weaker on the brighter yellow. The same day the streak went onto all three tiers' plates, in the
+tiles' own glass shape (`cb8/style.css` `.glass .tile::after`: 115deg, a sharp rise and a faint tail)
+and stronger, .38 white against the tiles' .24 (founder: "make the light streak stronger, like the
+glass effect we use everywhere … add the light streak to the other two plan pills"). The plates stay
+plain boxes rather than tiles. Later that day the streak was set travelling on the scroll, as the
+tiles' does (founder: "make the light strike move on scroll, like the glass effect we have
+everywhere"): the tiles' 260% image swept over entry 30% to exit 70%, with the stops drawn 2.6 times
+tighter so the band keeps its width. On a held screen the hold's `--ground` drives it, so the light
+crosses the plates during the pin; on a phone, with no pin, each plate follows its own `view()`. That
+needed the plans block to clip with `overflow:clip` rather than base.css's `hidden`, as `#final` does:
+with `hidden` the block is a scroll container, the plates' `view()` took it as their scroller, and on
+a phone the streak never moved. The plan cards themselves name no timeline on this page
+(`animation-timeline` is `auto`), so their own streak sits still; brokers and partnership opt their
+tiles into `--ground`.
+
+The plates of a card not picked are muted (founder, 2026-09-15: "silver selected and unselected are
+almost the same thing, diamond unselected should be muted a bit"; "gold is okay"). The card's .8
+opacity dims its words but barely dims a blue-grey plate on the blue, and left Diamond's violet at
+full strength. A wash of the page's deep blue lies over the plate and its rim, under the words: .42 on
+Silver, .34 on Diamond, .24 on Gold (none at first; the founder asked the same day to "mute the
+unselected version of gold a little"). A wash of Gold's own deep bronze at .3 was rendered beside the
+blue and lost (founder: "this one wins"). It clears over .45s when the card is picked.
 
 A card is picked, not just read. Each carries a native radio stretched over the whole card, so a
 click anywhere picks it and the arrow keys move between the three. The picked card lights its rim
@@ -438,8 +466,22 @@ of jumping. The Cashback and Referral share springs up on each pick, one charact
 60ms apart, each 10px on the card's overshooting curve. A slide out of a clipped line at the
 figure's foot was tried first (same day) and cut as not pretty. Stacked cards grow 1.5%
 and do not lift, so the flag does not ride up into the card above. The button names the pick,
-"Continue with Gold", with its rim in the tier's ink and one ring of that ink on each change;
-without JavaScript it keeps "Choose Your Plan in the App". The saving ("Save $701") counts up from
+"Continue with Gold", with its rim in the tier's ink and one ring of that ink on each change (made
+quieter on 2026-09-15, founder: "a bit less jumpy and smoother": the ring swells in and out instead of
+starting at full strength, the rim eases to the new ink over .45s, and the words' box eases to its new
+width over .5s, carrying the arrow, the new words rising out of .35 opacity, where the arrow jumped up
+to 16px sideways and the words blinked in from nothing. Gliding the words and the arrow separately was
+tried first, the same day: longer words started at the old place and ran under the arrow for 100ms);
+without JavaScript it keeps "Choose Your Plan in the App". It is the site's glass capsule, sized to
+its words and centred under the cards, with the arrow beside them, and full width on a phone
+(founder, 2026-09-15, picked from six arms). It was a full-width outline bar with the arrow at the
+far end, after the reference; beside the three lit cards it read as a field or a rule, not the one
+action on the screen. It first held a 280px floor at 28px padding, so its width stayed still between
+picks and the shorter names floated in it. The same day it went to the site's own button padding and
+eases to each pick's width with its words (founder: "make the button tighter, and make it resize with
+plan selection, the pill should have a clean size"). It sits above the cards (`z-index:2`): the picked
+card's glow reaches 100px below it and, at the card's `z-index:1`, painted over the button and washed
+Gold's words grey. The saving ("Save $701") counts up from
 $0 to its figure over 900ms on each pick, easing out; a card left mid-count snaps to its figure, and
 the markup keeps the finished figure for a reader without JavaScript, reduced motion and Gold's
 opening pick. The calculator's estimate still never counts (cb8/base.css): it changes as you type,
