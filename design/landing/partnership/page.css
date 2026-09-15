@@ -190,11 +190,11 @@ html.reduce .swap,html.reduce .access-switch .tile:hover{animation:none;transfor
 .action-path .value-copy strong{font-size:var(--text-panel-title);font-weight:var(--weight-strong);line-height:1.3;letter-spacing:-.01em}
 /* the band: closes the rows the way 11's shared-destination closes the routes — flush to the panel's
    own edge and corners, a hairline above it, no separate tile or lift of its own */
-.path-band{margin:0;padding:26px 18px;text-align:center;border-radius:0 0 24px 24px;
+.path-band{margin:0;padding:16px 18px;text-align:center;border-radius:0 0 24px 24px;
   border-top:1px solid rgba(255,255,255,.3);
-  background:linear-gradient(150deg,rgba(var(--rgb-800),.7),rgba(var(--rgb-900),.6));
+  background:linear-gradient(150deg,rgba(var(--rgb-800),.55),rgba(var(--rgb-900),.45));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.3);
-  font-size:var(--text-destination);line-height:1;font-weight:var(--weight-strong);letter-spacing:-.04em;color:#fff}
+  font:var(--weight-strong) var(--text-summary)/1.3 var(--sans);letter-spacing:-.025em;color:#fff}
 
 /* ---------- 7 · the pilot: .screen-paper (cb8/style.css); the card on the blue with its own light ---------- */
 .pilot-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,.92fr);gap:90px;align-items:center}
@@ -202,7 +202,7 @@ html.reduce .swap,html.reduce .access-switch .tile:hover{animation:none;transfor
 .pilot-copy .copy{margin-bottom:32px}
 /* the card wears the glass frame its own tiles wear — the calculator's treatment, a blue pane on paper:
    the rim and glow on the box, the tint and the travelling streak on a layer above the rayfield's blue */
-.pilot-card{position:relative;overflow:hidden;padding:26px;border-radius:var(--radius-card);background:var(--blue);color:#fff;
+.pilot-card{position:relative;overflow:hidden;padding:22px;border-radius:var(--radius-card);background:var(--blue);color:#fff;
   border:1px solid rgba(160,196,255,.55);
   box-shadow:0 0 34px rgba(96,156,255,.3),0 24px 48px -30px rgba(var(--rgb-shadow),.5)}
 .pilot-card>.rayfield{border-radius:inherit}
@@ -216,15 +216,15 @@ html.reduce .swap,html.reduce .access-switch .tile:hover{animation:none;transfor
   animation:glass-light linear both;animation-range:entry 0% exit 100%}
 .pilot-card .rayfield.k i,.pilot-card .tile::after,.pilot-card::after{animation-timeline:--ground}   /* the arcs, the pane streak and the tile streaks travel with the page */
 html.reduce .pilot-card::after{animation:none}
-.pilot-head{min-height:58px;margin:-2px 0 22px;padding-bottom:16px;display:grid;grid-template-columns:42px 1fr auto;gap:13px;align-items:center;border-bottom:1px solid rgba(255,255,255,.22)}
+.pilot-head{min-height:48px;margin:-2px 0 16px;padding-bottom:12px;display:grid;grid-template-columns:42px 1fr auto;gap:13px;align-items:center;border-bottom:1px solid rgba(255,255,255,.22)}
 .pilot-head .bmark{width:42px;height:42px;border-radius:12px}
 .pilot-head .bmark svg{width:20px;height:20px}
 .pilot-head>div strong{display:block;font-size:var(--text-ui)}
 .pilot-head>div span{display:block;margin-top:3px;font-size:var(--text-label);color:rgba(255,255,255,.7)}
 /* label / value rows — audience, activation, expansion — replacing the icon-led steps with a plain
    two-column read, each row a hairline apart, the way the target card ("Pilot setup") lays them out */
-.pilot-rows{list-style:none;margin:0 0 22px;padding:0}
-.pilot-row{display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.16)}
+.pilot-rows{list-style:none;margin:0 0 16px;padding:0}
+.pilot-row{display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.16)}
 .pilot-row:first-child{padding-top:0}
 .pilot-row:last-child{padding-bottom:0;border-bottom:none}
 .pilot-row>span{font-size:var(--text-micro);letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.6)}
@@ -235,11 +235,11 @@ html.reduce .pilot-card::after{animation:none}
   font:var(--weight-strong) var(--text-micro)/1 var(--sans);color:#fff;white-space:nowrap}
 .live i{width:8px;height:8px;border-radius:50%;background:var(--success);animation:live-pulse 1.8s var(--ease) infinite}
 html.reduce .live i{animation:none}
-.pilot-offer{margin-top:23px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.pilot-offer .tile{min-height:100px;padding:16px;display:flex;flex-direction:column;justify-content:center;border-radius:16px}
-.pilot-offer .ico{width:30px;height:30px;margin-bottom:10px;stroke:#fff}
+.pilot-offer{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pilot-offer .tile{min-height:84px;padding:14px;display:flex;flex-direction:column;justify-content:center;border-radius:16px}
+.pilot-offer .ico{width:26px;height:26px;margin-bottom:7px;stroke:#fff}
 .pilot-offer b{display:block;font-size:var(--text-panel-title);line-height:1.2;font-weight:var(--weight-strong);color:#fff}
-.pilot-offer small{display:block;margin-top:4px;font-size:var(--text-micro);letter-spacing:.06em;text-transform:uppercase;line-height:1.4;color:var(--label,rgba(255,255,255,.72))}
+.pilot-offer small{display:block;margin-top:3px;font-size:var(--text-micro);letter-spacing:.06em;text-transform:uppercase;line-height:1.4;color:var(--label,rgba(255,255,255,.72))}
 /* The offer pair is the card's last line, and a flat fill made it read as a placeholder (founder,
    2026-09-12: "these two boxes look simple, add some color shading to them"). Each tile keeps its own
    hue — silver for the access it grants, the TP green for the waived fee — and gains the depth the
