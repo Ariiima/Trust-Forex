@@ -7,32 +7,44 @@
 <!-- A preview sheet only. It loads the real cb8 stylesheets and changes nothing in them.
      index.html, base.css, style.css and grounds.css are untouched.
 
-     This panel now ships. index.html and style.css carry it as of 2026-09-12; the sheet stays as the
-     place to look at it on its own, without scrolling the whole page to reach it.
+     Round three (founder, 2026-09-15): the owner does not like the shipped panel. The read is
+     hierarchy and crowding — the answer comes last, under nine boxes: three wells, four metal tiles
+     and its own plate. Of four directions (answer first, a light form, a volume slider, the same
+     layout without glass) the founder picked the answer first, then asked for more arms, each with
+     one idea of its own. The sheet shows the shipped panel first and every arm after it. All of them
+     keep every word; what changes is order, boxes and controls.
+     A's level bar then won the lower half outright (founder, 2026-09-15), so every arm carries it now
+     and they differ only above it: the answer and the three fields. The shipped card keeps its tiles
+     as the reference.
 
-     Where this stands (founder, 2026-09-12): the panel is settled. The arrangement is v3 of the
-     first round — two steps with a rule between them — and the type is t4 of the second, where the
-     steps read as small white headings and everything under them is sentence case and quiet. The
-     step numbers are gone as well; two captions read top to bottom already say which comes first.
+     Round four (founder, 2026-09-15): G goes further, and its answer card should be prettier. The
+     sheet opens on six takes on that card, each one idea, all through the page's own materials — its
+     blue heading run, its palest blue, the levels' metals, its type — and no ornament. The round
+     three arms follow, unchanged.
 
-     The selection is already on the real page: all four metals lit, the pick inside a white rim.
-     .vsel below is only what the sheet needs to draw the same thing outside #calculator, and it is
-     not part of what moves to the site.
+     Round five (founder, 2026-09-15): C's upper half goes forward, not G's card. Broker and account
+     type fold back into lists, since both will grow past what a row of chips can hold, and the volume
+     tightens into something that reads as a number field. Two arms, differing only in the volume's
+     stepper, now open the sheet.
 
-     Two rules, kept apart on purpose. .v3 is the arrangement — padding, gaps, the rule between the
-     steps. .t4 is type and nothing else: no box, no spacing, no ground. Moving this to the site is
-     those two blocks with .calcv rewritten back to #calculator, and nothing else changes. The
-     self-check at the foot fails if a .t4 rule ever sets a property that is not type.
+     Round six (founder, 2026-09-15): C1 goes forward, rearranged. Broker and account type spread
+     across one strip, D's two-well strip, and the volume takes a row of its own, centred under it.
+     Two arms: the volume box in the strip's own material with its label inside, or C1's number
+     field with its label above. Neither worked (founder), and C1 as it stood shipped to index.html
+     and style.css the same day.
 
-     The panel's treatment lives under #calculator in style.css, and this sheet is not that page. So
-     it fetches style.css at load, rewrites #calculator to .calcv, and injects the result — the card
-     is styled by the shipped rules themselves and can never go stale.
+     Rounds one and two (2026-09-12/13) settled what ships now: two steps with a rule between them,
+     small white step headings, sentence case, the Referral rail's selection. Those rules live under
+     #calculator in style.css, and this sheet is not that page. So it fetches style.css at load,
+     rewrites #calculator to .calcv, and injects the result — the shipped card is styled by the
+     shipped rules themselves and can never go stale. The arms are written as .calcv.<arm> on top of
+     them, so moving one to the site is that selector rewritten back to #calculator, plus markup.
 
-     The three fields keep the browser's own select. main.js swaps those for the page's picker on the
-     real page; the picker is not what this sheet is deciding, and loading main.js here would start
-     the whole page's machinery.
+     The page's picker and the volume stepper are main.js's, copied below as they are: loading
+     main.js here would start the whole page's machinery, and a native select's OS list is not
+     something any arm should be judged with (founder, 2026-09-15).
 
-     Serve it: python3 _qa/serve.py 5311 then open localhost:5311/cb8/calc-lab.html -->
+     Serve it: python3 _qa/serve.py 5311 then open localhost:5311/cb8/calc-lab.html (?check=1) -->
 <link rel="stylesheet" href="grounds.css">
 <link rel="stylesheet" href="style.css">
 <style id="ship"></style>
@@ -50,18 +62,17 @@ body{background:#E9EEF8;color:var(--navy);font:400 15px/1.5 var(--sans);padding:
   background:#fff;color:var(--navy);font:600 13px/1 var(--sans);cursor:pointer}
 .lab-head button[aria-pressed=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
 
-/* one column, and the window stays wide: the rail halves and the fields stack under 1024px, and a
-   card narrower than the window must not be shown the phone's layout */
-.grid{display:grid;grid-template-columns:1fr;gap:26px;padding:24px 26px;max-width:700px;margin:0 auto}
+/* two columns where the window has room for two 526px panels, one where it does not. The window stays
+   wide either way: the rail halves and the fields stack under 1024px, and a card narrower than the
+   window must not be shown the phone's layout */
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:26px;padding:24px 26px;max-width:1240px;margin:0 auto}
+@media (max-width:1260px){.grid{grid-template-columns:1fr;max-width:700px}}
 .case{background:#fff;border-radius:22px;border:1px solid rgba(var(--rgb-shadow),.1);overflow:hidden;
   box-shadow:0 18px 44px -32px rgba(var(--rgb-shadow),.6)}
 .case > header{padding:16px 20px 13px;border-bottom:1px solid rgba(var(--rgb-shadow),.08)}
 .case > header h2{margin:0 0 3px;font-size:15px;font-weight:700;letter-spacing:-.01em}
 .case > header p{margin:0;font-size:13px;line-height:1.5;color:var(--body);max-width:62ch}
-.case > header dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:9px 0 0;
-  font-size:12px;line-height:1.45;color:var(--muted)}
-.case > header dt{font-weight:600;color:var(--body);white-space:nowrap}
-.case > header dd{margin:0}
+.grid > .group{grid-column:1/-1;margin:14px 0 -10px;font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
 /* the panel wants the paper the calculator's block gives it, and the pill straddles that edge */
 .stage{padding:34px 26px 30px;background:var(--paper)}
 /* the panel is judged at the width the page actually gives it: half of the 1200 wrap less the
@@ -69,52 +80,250 @@ body{background:#E9EEF8;color:var(--navy);font:400 15px/1.5 var(--sans);padding:
 .calcv{display:block;width:526px;margin:0 auto}
 .calcv .block{padding:0;background:none;box-shadow:none;border-radius:0;min-height:0;display:block;overflow:visible}
 
-/* ================= the selection, from the Referral rail =================
-   Already shipped in style.css under #calculator. Restated here because the sheet draws the panel
-   as .calcv, and .calcv .tile would otherwise outrank the shared .rate-cell block. Values are
-   style.css's own — nothing new is being proposed on this line. */
-.vsel .rate-cell[aria-pressed=false][data-tier=standard]{--tint:rgba(227,125,39,.68);--tint2:rgba(147,70,4,.68);--rim:rgba(236,176,136,.46)}
-.vsel .rate-cell[aria-pressed=false][data-tier=silver]{--tint:rgba(204,218,238,.24);--tint2:rgba(118,144,184,.21);--rim:rgba(228,238,250,.46)}
-.vsel .rate-cell[aria-pressed=false][data-tier=gold]{--tint:rgba(218,157,38,.72);--tint2:rgba(140,90,0,.72);--rim:rgba(240,208,130,.5)}
-.vsel .rate-cell[aria-pressed=false][data-tier=diamond]{--tint:rgba(138,96,224,.32);--tint2:rgba(76,48,150,.29);--rim:rgba(196,166,250,.46)}
-.vsel .rate-cell[aria-pressed=false]{--streak:.32}
-.vsel .rate-cell[aria-pressed=false]:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.62);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(var(--rgb-shadow),.22),0 18px 32px -20px rgba(var(--rgb-shadow),.8)}
-.vsel .rate-cell[aria-pressed=true]{--streak:.42;transform:none;border-color:#fff;
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  box-shadow:inset 0 0 0 1px #fff,inset 0 1px 0 rgba(255,255,255,.5),0 0 0 4px rgba(255,255,255,.12),0 18px 34px -18px var(--rim)}
-.vsel .rate-cell[aria-pressed=true][data-tier=standard]{--tint:rgba(222,134,67,.8);--tint2:rgba(150,79,29,.8);--rim:rgba(236,176,136,.5);--label:#FFF1E6}
-.vsel .rate-cell[aria-pressed=true][data-tier=silver]{--tint:rgba(204,218,238,.36);--tint2:rgba(118,144,184,.32);--rim:rgba(228,238,250,.55)}
-.vsel .rate-cell[aria-pressed=true][data-tier=gold]{--tint:rgba(224,172,69,.84);--tint2:rgba(152,108,24,.84);--rim:rgba(240,208,130,.55);--label:#FFF6DF}
-.vsel .rate-cell[aria-pressed=true][data-tier=diamond]{--tint:rgba(138,96,224,.5);--tint2:rgba(76,48,150,.46);--rim:rgba(196,166,250,.55)}
+.calcv .level:focus-visible,.calcv .chip:focus-visible,.calcv .range:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:2px}
 
-/* ================= .v3 — the arrangement, identical on all four cards =================
-   Two steps with a rule between them: how you trade, then what your level is, then the answer on
-   its own plate. Sizes and gaps only — every word's weight, size and case belongs to a .tN below. */
-.v3 .panel{padding:24px 26px 26px}
-.v3 .step + .step{margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.16)}
-.v3 .step-cap{margin:0 0 13px}
-.v3 .fields{gap:14px}
-.v3 .well{padding:12px 16px 13px}
-.v3 .level-row{--cell-h:88px;gap:13px}
-.v3 .estimate{margin-top:22px;padding:14px 20px 14px 22px;align-items:baseline;background:rgba(var(--rgb-abyss),.3)}
-.v3 .estimate small{margin-bottom:0}
-.v3 .estimate strong em{margin-left:-5px}
+/* ================= A — the answer first =================
+   The figure a visitor came for opens the pane, on the pane itself with no plate around it, and one
+   rule under it closes the answer off from the questions. The two questions follow with space
+   between them rather than a second rule. The wells come down a size (86px to 62px tall, their
+   values 18px to 16px), and the four metal tiles fold into one sunk bar where only the picked level
+   carries its metal — the metals the shipped rail's pick already wears. Every other arm builds on A,
+   and all of them keep this bar. */
+.calcv.a{--estimate-lead:56px}   /* a role for shared/scale.css if this ships: 44px was sized to sit in a plate, not to lead a pane */
+.calcv.a .panel{padding:26px 26px 22px}
+.calcv.a .estimate{flex-direction:column;align-items:flex-start;gap:8px;margin:0 0 22px;padding:0 0 22px;
+  border:0;border-bottom:1px solid rgba(255,255,255,.16);border-radius:0;background:none;box-shadow:none;
+  backdrop-filter:none;-webkit-backdrop-filter:none}
+.calcv.a .estimate strong{font-size:var(--estimate-lead)}
+.calcv.a .estimate strong.long{font-size:var(--text-estimate)}
+.calcv.a .estimate strong em{margin-left:-6px}
+.calcv.a .step + .step{margin-top:22px;padding-top:0;border-top:0}
+.calcv.a .step-cap{margin:0 0 10px}
+.calcv.a .fields{gap:10px}
+.calcv.a .well{padding:9px 14px 10px}
+.calcv.a .well select,.calcv.a .well input,.calcv.a .well-value{font-size:var(--text-body)}
+.calcv.a .level[data-tier=standard]{--tint:rgba(222,134,67,.8);--tint2:rgba(150,79,29,.8);--label:#FFF1E6}
+.calcv.a .level[data-tier=silver]{--tint:rgba(204,218,238,.36);--tint2:rgba(118,144,184,.32);--label:#fff}
+.calcv.a .level[data-tier=gold]{--tint:rgba(224,172,69,.84);--tint2:rgba(152,108,24,.84);--label:#FFF6DF}
+.calcv.a .level[data-tier=diamond]{--tint:rgba(138,96,224,.5);--tint2:rgba(76,48,150,.46);--label:#fff}
+.calcv.a .tier-bar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;border-radius:16px;
+  background:rgba(var(--rgb-abyss),.3);border:1px solid rgba(255,255,255,.14)}
+.calcv.a .seg{appearance:none;-webkit-appearance:none;margin:0;font:inherit;color:#fff;cursor:pointer;user-select:none;-webkit-user-select:none;
+  display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 6px 11px;border-radius:12px;
+  border:1px solid transparent;background:transparent;
+  transition:background-color .25s var(--ease),border-color .25s var(--ease)}
+.calcv.a .seg small{font:var(--weight-label) var(--text-small)/1.25 var(--sans);white-space:nowrap;color:rgba(255,255,255,.6)}
+.calcv.a .seg strong{font:var(--weight-semi) var(--text-figure)/1 var(--sans);letter-spacing:-.03em;color:rgba(255,255,255,.9)}
+.calcv.a .seg[aria-pressed=false]:hover{background-color:rgba(255,255,255,.07)}
+.calcv.a .seg[aria-pressed=true]{background:linear-gradient(150deg,var(--tint),var(--tint2));border-color:rgba(255,255,255,.72);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 20px -14px rgba(var(--rgb-shadow),.8)}
+.calcv.a .seg[aria-pressed=true] small{color:var(--label)}
+.calcv.a .seg[aria-pressed=true] strong{color:#fff}
+html.reduce .calcv.a .seg{transition:none}
+.calcv.a .broker-rules{margin-top:16px}
 
-/* ================= .t4 — the type =================
-   If the panel is two questions, the two questions should look like questions. The step captions
-   leave the caption tier entirely and become small white headings at 15px; everything under them
-   goes sentence case and quiet, so each step reads as a heading with its answer beneath. No uppercase
-   anywhere except the metals' own shares, which are figures. */
-.t4 .step-cap{font:var(--weight-semi) var(--text-panel-title)/1.2 var(--sans);letter-spacing:-.015em;text-transform:none;color:#fff}
-.t4 .well>label{font:var(--weight-body) var(--text-small)/var(--leading-ui) var(--sans);letter-spacing:0;text-transform:none;color:rgba(255,255,255,.58)}
-.t4 .well select,.t4 .well input,.t4 .well-value{font-weight:var(--weight-label)}
-.t4 .rate-cell small{font-weight:var(--weight-label)}
-.t4 .rate-cell strong,.t4 .estimate strong{font-weight:var(--weight-semi)}
-.t4 .estimate strong em{font-weight:var(--weight-body)}
-.t4 .estimate small{font:var(--weight-body) var(--text-meta)/var(--leading-ui) var(--sans);letter-spacing:0;text-transform:none;color:rgba(255,255,255,.6)}
+/* ================= A2 — A, and the three wells in one strip =================
+   One change over A: the wells give up their own panes and share one, split by hairlines drawn as
+   borders, so under the answer the pane holds two boxes instead of four. */
+.calcv.a2 .fields{gap:0;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16)}
+.calcv.a2 .well{position:relative;padding:10px 14px 11px;border-radius:0}
+.calcv.a2 .well + .well{border-left:1px solid rgba(255,255,255,.14)}
+.calcv.a2 .well:first-child{border-radius:15px 0 0 15px}
+.calcv.a2 .well:last-child{border-radius:0 15px 15px 0}
 
-@media (max-width:1100px){.grid{max-width:none}}
+/* ================= B — the form as a settings list =================
+   The questions stop being boxes you fill and become rows you read: label on the left, answer on
+   the right, a hairline between rows, the way a phone's settings page lists what is set. The
+   picker drops from the value, under the right edge. */
+.calcv.b .fields{display:block;border-radius:16px;background:rgba(var(--rgb-abyss),.3);border:1px solid rgba(255,255,255,.14)}
+.calcv.b .well{position:relative;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:50px;padding:0 16px;border-radius:0}
+.calcv.b .well + .well{border-top:1px solid rgba(255,255,255,.12)}
+.calcv.b .well:first-child{border-radius:15px 15px 0 0}
+.calcv.b .well:last-child{border-radius:0 0 15px 15px}
+/* a row is not a pane: the wells' white double ring squared off the list's corners, so focus lights the row instead */
+.calcv.b .well:focus-within{outline:0;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
+.calcv.b .well>label{flex:none;margin:0;font-size:var(--text-ui);color:rgba(255,255,255,.72)}
+.calcv.b .well-value{width:auto;gap:8px}
+.calcv.b .well input{width:120px;text-align:right}
+.calcv.b .picker{left:auto;right:8px;width:210px}
+
+/* ================= C — no dropdowns at all =================
+   Nothing hides its options. The three brokers are chips, the two account types a toggle, the
+   volume a big minus and plus around its figure: every choice is one tap and already on screen. */
+.calcv.c .c-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.calcv.c .c-label{display:block;margin:0 0 8px;font:var(--weight-body) var(--text-small)/var(--leading-ui) var(--sans);color:rgba(255,255,255,.58)}
+.calcv.c .chips{display:flex;gap:6px}
+.calcv.c .chip{appearance:none;-webkit-appearance:none;margin:0;height:36px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,.22);
+  background:transparent;color:rgba(255,255,255,.84);font:var(--weight-label) var(--text-ui)/1 var(--sans);cursor:pointer;white-space:nowrap;
+  transition:background-color .25s var(--ease),border-color .25s var(--ease),color .25s var(--ease)}
+.calcv.c .chip[aria-pressed=false]:hover{background-color:rgba(255,255,255,.08)}
+.calcv.c .chip[aria-pressed=true]{background:#fff;border-color:#fff;color:var(--navy)}
+.calcv.c .toggle{display:inline-flex;gap:2px;padding:3px;border-radius:999px;background:rgba(var(--rgb-abyss),.3);border:1px solid rgba(255,255,255,.14)}
+.calcv.c .toggle .chip{height:30px;border-color:transparent}
+.calcv.c .c-vol{margin-top:16px}
+.calcv.c .c-step{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;height:50px;padding:0 5px;border-radius:14px;
+  background:rgba(var(--rgb-abyss),.3);border:1px solid rgba(255,255,255,.14);transition:border-color .25s var(--ease)}
+.calcv.c .c-step:focus-within{border-color:rgba(255,255,255,.7)}
+.calcv.c .c-step button{display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;border-radius:10px;background:none;color:#fff;cursor:pointer;opacity:.78;
+  transition:opacity .2s var(--ease),background-color .2s var(--ease)}
+.calcv.c .c-step button:hover{opacity:1;background:rgba(255,255,255,.1)}
+.calcv.c .c-step svg{width:24px;height:24px}
+.calcv.c .c-step input{width:100%;min-width:0;padding:0;border:0;background:none;color:#fff;text-align:center;
+  font:var(--weight-semi) var(--text-figure)/1 var(--sans);letter-spacing:-.02em;-moz-appearance:textfield;appearance:textfield}
+.calcv.c .c-step input::-webkit-inner-spin-button,.calcv.c .c-step input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.calcv.c .c-step input:focus{outline:0}
+html.reduce .calcv.c .chip,html.reduce .calcv.c .c-step,html.reduce .calcv.c .c-step button{transition:none}
+
+/* ================= D — two dials =================
+   Volume is the one number people play with, so it gets a slider under its figure (logarithmic:
+   1 to 10,000 lots across the track, anything larger typed into the figure). Broker and account
+   type share a two-well strip above it. */
+.calcv.d .fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+.calcv.d .d-vol{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:18px 0 0}
+.calcv.d .d-vol span{padding-bottom:3px;font:var(--weight-body) var(--text-ui)/1.2 var(--sans);color:rgba(255,255,255,.72)}
+.calcv.d .d-vol input{width:130px;padding:0 0 3px;border:0;border-bottom:1px solid rgba(255,255,255,.28);background:none;color:#fff;text-align:right;
+  font:var(--weight-semi) var(--text-figure)/1.2 var(--sans);letter-spacing:-.02em;-moz-appearance:textfield;appearance:textfield}
+.calcv.d .d-vol input::-webkit-inner-spin-button,.calcv.d .d-vol input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.calcv.d .d-vol input:focus{outline:0;border-bottom-color:#fff}
+.calcv.d .range{-webkit-appearance:none;appearance:none;display:block;width:100%;height:26px;margin:10px 0 0;background:transparent;cursor:pointer}
+.calcv.d .range::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(90deg,#fff var(--fill,40%),rgba(255,255,255,.18) var(--fill,40%))}
+.calcv.d .range::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-8px;border:0;border-radius:50%;background:#fff;
+  box-shadow:0 0 0 5px rgba(255,255,255,.16),0 6px 14px -6px rgba(var(--rgb-shadow),.9)}
+.calcv.d .range::-moz-range-track{height:6px;border-radius:3px;background:rgba(255,255,255,.18)}
+.calcv.d .range::-moz-range-progress{height:6px;border-radius:3px;background:#fff}
+.calcv.d .range::-moz-range-thumb{width:22px;height:22px;border:0;border-radius:50%;background:#fff;box-shadow:0 0 0 5px rgba(255,255,255,.16)}
+/* ================= E — centred, the fields as capsules =================
+   The answer stands centred over the form, the way a total heads a receipt, and the three wells round
+   to their ends: capsules, a lighter shape than a pane's corners. Everything under the answer stays
+   left-aligned, where it is read — centred in its capsule, the volume's stepper ran into its label. */
+.calcv.e .estimate{align-items:center;text-align:center}
+.calcv.e .fields{gap:8px}
+.calcv.e .well{padding:9px 18px 10px;border-radius:999px}
+.calcv.e .stepper{right:12px}
+
+/* ================= F — the fields as type =================
+   No pane above the level bar. The answer runs larger, and each field is a label and a value over
+   one hairline, the way a printed form asks — the bar is the only box inside the pane. */
+.calcv.f{--estimate-lead:64px}
+.calcv.f .fields{gap:20px}
+.calcv.f .well{position:relative;padding:0 0 8px;border-radius:0;border-bottom:1px solid rgba(255,255,255,.3);transition:border-color .25s var(--ease)}
+.calcv.f .well>label{margin-bottom:4px}
+.calcv.f .well select,.calcv.f .well input,.calcv.f .well-value{font-size:var(--text-figure)}
+.calcv.f .well:focus-within{outline:0;box-shadow:0 1px 0 #fff;border-bottom-color:#fff}
+.calcv.f .stepper{right:-4px;top:auto;bottom:4px;transform:none}   /* on the value's line, not centred on label and value together */
+
+/* ================= G — the answer on paper =================
+   A, with the answer lifted out of the blue onto a white card: navy figure, the page's own paper,
+   the one light surface on the pane. Everything you set is blue; the result you get is not. */
+.calcv.g .estimate{flex-direction:row;align-items:baseline;justify-content:space-between;gap:16px;margin:0 0 24px;padding:18px 22px 18px 22px;
+  border-radius:16px;background:#fff;box-shadow:0 18px 34px -22px rgba(var(--rgb-shadow),.9)}
+.calcv.g .estimate small{color:var(--body)}
+.calcv.g .estimate strong{font-size:var(--text-estimate);color:var(--navy)}
+.calcv.g .estimate strong.long{font-size:var(--text-number)}
+.calcv.g .estimate strong em{margin-left:-2px;color:var(--muted)}   /* A's -6px is for 56px; at 44px it put "/" against the figure */
+
+/* ================= round four: G's answer card =================
+   Six takes on the white card, each built from something the page already has — its heading run,
+   its palest blue, the levels' metals, its type — and none of them an ornament. Only the card
+   changes; the rest of every arm is G. */
+/* G1 · caption over figure, and the figure in the blue run the page's headings wear (--grad-blue) */
+.calcv.g1 .estimate{flex-direction:column;align-items:flex-start;gap:4px;padding:18px 24px 16px}
+.calcv.g1 .estimate strong{font-size:var(--estimate-lead);line-height:1.08;padding-right:.05em;
+  background:var(--grad-blue);-webkit-background-clip:text;background-clip:text;color:transparent}
+.calcv.g1 .estimate strong.long{font-size:var(--text-estimate)}
+.calcv.g1 .estimate strong em{margin-left:-6px}
+/* G2 · a head and a total: the caption on a band of the page's palest blue, the figure on white under it */
+.calcv.g2 .estimate{flex-direction:column;align-items:stretch;gap:0;padding:0;overflow:hidden}
+.calcv.g2 .estimate small{padding:10px 24px 9px;background:var(--p-50);border-bottom:1px solid var(--p-100);font-weight:var(--weight-label);color:var(--p-pressed)}
+.calcv.g2 .estimate strong{padding:16px 24px 18px;font-size:var(--estimate-lead)}
+.calcv.g2 .estimate strong.long{font-size:var(--text-estimate)}
+.calcv.g2 .estimate strong em{margin-left:-6px}
+/* G3 · the paper takes the picked level's metal at its far corner, caption and unit in the metal's ink.
+   background-color carries the wash so it fades between picks; the white run laid over it stays put. */
+.calcv.g3 .estimate{background:linear-gradient(120deg,#fff 30%,rgba(255,255,255,0)) var(--wash,#fff);
+  box-shadow:inset 0 0 0 1px var(--wash-rim,transparent),0 18px 34px -22px rgba(var(--rgb-shadow),.9);
+  transition:background-color .45s var(--ease),box-shadow .45s var(--ease)}
+.calcv.g3 .estimate small,.calcv.g3 .estimate strong em{color:var(--wash-ink,var(--body));transition:color .45s var(--ease)}
+.calcv.g3 .panel:has(.seg[data-tier=standard][aria-pressed=true]) .estimate{--wash:#F9E3D2;--wash-rim:rgba(224,138,74,.28);--wash-ink:#9A4F1C}
+.calcv.g3 .panel:has(.seg[data-tier=silver][aria-pressed=true]) .estimate{--wash:#E3EAF4;--wash-rim:rgba(118,144,184,.28);--wash-ink:#4E6285}
+.calcv.g3 .panel:has(.seg[data-tier=gold][aria-pressed=true]) .estimate{--wash:#F8EACB;--wash-rim:rgba(226,176,76,.32);--wash-ink:#86590A}
+.calcv.g3 .panel:has(.seg[data-tier=diamond][aria-pressed=true]) .estimate{--wash:#ECE3FB;--wash-rim:rgba(156,120,238,.28);--wash-ink:#5B3DB5}
+html.reduce .calcv.g3 .estimate,html.reduce .calcv.g3 .estimate small,html.reduce .calcv.g3 .estimate strong em{transition:none}
+/* G4 · a ledger line: the caption runs out to its amount on a dotted leader, drawn as a border */
+.calcv.g4 .estimate small{display:flex;align-items:baseline;gap:14px;white-space:nowrap}
+.calcv.g4 .estimate small::after{content:'';flex:1 1 auto;min-width:24px;border-bottom:2px dotted var(--line-strong);transform:translateY(-4px)}
+/* G5 · centred at 56px, the paper fading to the page's palest blue at its foot */
+.calcv.g5 .estimate{flex-direction:column;align-items:center;gap:4px;padding:20px 24px;text-align:center;background:linear-gradient(180deg,#fff 35%,var(--p-50))}
+.calcv.g5 .estimate strong{font-size:var(--estimate-lead)}
+.calcv.g5 .estimate strong.long{font-size:var(--text-estimate)}
+.calcv.g5 .estimate strong em{margin-left:-6px}
+/* G6 · G's layout, the figure in a deep run of the picked level's metal */
+.calcv.g6 .estimate strong{line-height:1.08;padding-right:.05em;background:linear-gradient(180deg,var(--m1,var(--p-900)),var(--m2,var(--p-deep)));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.calcv.g6 .panel:has(.seg[data-tier=standard][aria-pressed=true]) .estimate{--m1:#C97535;--m2:#7F3F12}
+.calcv.g6 .panel:has(.seg[data-tier=silver][aria-pressed=true]) .estimate{--m1:#71859F;--m2:#35465F}
+.calcv.g6 .panel:has(.seg[data-tier=gold][aria-pressed=true]) .estimate{--m1:#C9941F;--m2:#7E5505}
+.calcv.g6 .panel:has(.seg[data-tier=diamond][aria-pressed=true]) .estimate{--m1:#7F58E2;--m2:#462998}
+
+/* ================= round five: C, its choices folded into lists =================
+   The three questions stand in one row as one family of field: the label over a sunk box, the value
+   inside it, and at the box's right edge either the list's caret or the volume's stepper. The boxes
+   are C's volume bar, 6px shorter and a column wide. The list is the page's picker, so it holds any
+   number of brokers; a name too long for the box ends in an ellipsis rather than pushing the row. */
+.calcv.cx .cx-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.calcv.cx .well{position:relative;padding:0;border:0;border-radius:0;background:none}
+.calcv.cx .well:focus-within{outline:0;box-shadow:none}   /* focus lights the box, not the label above it */
+.calcv.cx .well>label{margin:0 0 7px}
+.calcv.cx .well-value,.calcv.cx .numbox{box-sizing:border-box;height:44px;border-radius:12px;background-color:rgba(var(--rgb-abyss),.3);
+  border:1px solid rgba(255,255,255,.16);transition:border-color .2s var(--ease),background-color .2s var(--ease)}
+.calcv.cx .well-value{padding:0 12px 0 14px;font-size:var(--text-panel-title)}
+.calcv.cx .well-value span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.calcv.cx .well-value:hover,.calcv.cx .numbox:hover{border-color:rgba(255,255,255,.32)}
+.calcv.cx .well-value:focus-visible,.calcv.cx .well.open .well-value,.calcv.cx .numbox:focus-within{outline:0;border-color:rgba(255,255,255,.75);background-color:rgba(var(--rgb-abyss),.42)}
+.calcv.cx .numbox{display:flex;align-items:stretch;overflow:hidden;cursor:text}
+.calcv.cx .numbox input{flex:1 1 auto;width:auto;min-width:0;padding:0 0 0 14px;text-align:left;
+  font:var(--weight-label) var(--text-panel-title)/1 var(--sans);letter-spacing:0;font-variant-numeric:tabular-nums}
+html.reduce .calcv.cx .well-value,html.reduce .calcv.cx .numbox{transition:none}
+/* C1 · the stepper a number field has: up and down stacked at the right edge, in the page's own chevron
+   and at the page's own stepper size (style.css .stepper). Written for any .numbox, since C4 takes it too. */
+.calcv .spin{flex:none;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:0 7px 0 4px}
+.calcv .spin button{display:grid;place-items:center;width:24px;height:18px;padding:0;border:0;border-radius:6px;background:none;color:#fff;cursor:pointer;opacity:.72;
+  transition:opacity .2s var(--ease),background-color .2s var(--ease)}
+.calcv .spin button:hover{opacity:1;background:rgba(255,255,255,.12)}
+.calcv .spin button:active{background:rgba(255,255,255,.22)}
+.calcv .spin .caret{width:12px;height:12px}
+.calcv .spin .up .caret{transform:rotate(180deg)}
+/* C2 · minus and plus set into the field's right end, each in a 40px well behind a hairline (the site's
+   icon rule: a 24px glyph in a 40px well) */
+.calcv.c2 .numbox button{flex:none;display:grid;place-items:center;width:40px;padding:0;border:0;border-left:1px solid rgba(255,255,255,.12);
+  background:none;color:#fff;cursor:pointer;opacity:.8;transition:opacity .2s var(--ease),background-color .2s var(--ease)}
+.calcv.c2 .numbox button:hover{opacity:1;background:rgba(255,255,255,.08)}
+.calcv.c2 .numbox button:active{background:rgba(255,255,255,.16)}
+.calcv.c2 .numbox svg{width:24px;height:24px}
+html.reduce .calcv .spin button,html.reduce .calcv.c2 .numbox button{transition:none}
+
+/* ================= round six: C1 rearranged =================
+   Broker and account type share A2's strip, spread two-wide as D had it; the volume leaves the row and
+   stands centred under the strip on its own, half the strip's width, so its box straddles the strip's
+   hairline. C3 and C4 differ only in that box. */
+.calcv.cv .fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+.calcv.cv .cv-vol{margin-top:10px}
+/* C3 · the volume in the strip's own material, its label inside, label and figure centred in the box.
+   The page's stepper keeps its place at the right edge; the figure takes 30px on its left to match. */
+.calcv.c3 .cv-vol .well{width:50%;margin:0 auto;padding:10px 14px 11px;border-radius:16px;text-align:center;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16)}
+.calcv.c3 .cv-vol .well.stepped input{padding-left:30px;text-align:center}
+/* C4 · C1's number field, centred, its label centred above it */
+.calcv.c4 .cv-vol .well{display:flex;flex-direction:column;align-items:center;padding:0;border:0;border-radius:0;background:none}
+.calcv.c4 .cv-vol .well:focus-within{outline:0;box-shadow:none}
+.calcv.c4 .cv-vol .well>label{margin:0 0 7px}
+.calcv.c4 .numbox{box-sizing:border-box;display:flex;align-items:stretch;width:50%;height:44px;overflow:hidden;cursor:text;border-radius:12px;
+  background-color:rgba(var(--rgb-abyss),.3);border:1px solid rgba(255,255,255,.16);transition:border-color .2s var(--ease),background-color .2s var(--ease)}
+.calcv.c4 .numbox:hover{border-color:rgba(255,255,255,.32)}
+.calcv.c4 .numbox:focus-within{border-color:rgba(255,255,255,.75);background-color:rgba(var(--rgb-abyss),.42)}
+.calcv.c4 .numbox input{flex:1 1 auto;width:auto;min-width:0;padding:0 0 0 35px;text-align:center;   /* 35px = the stepper's width, so the figure centres in the box */
+  font:var(--weight-label) var(--text-body)/1 var(--sans);letter-spacing:0;font-variant-numeric:tabular-nums}
+html.reduce .calcv.c4 .numbox{transition:none}
 </style>
 </head>
 <body>
@@ -132,104 +341,327 @@ body{background:#E9EEF8;color:var(--navy);font:400 15px/1.5 var(--sans);padding:
 <div class="grid" id="grid"></div>
 
 <script type="module">
-/* ---------- the shipped panel rules, rescoped so four of them can stand on one page ---------- */
+/* ---------- the shipped panel rules, rescoped so several of them can stand on one page ---------- */
 const sheet = await fetch('style.css').then(r => r.text());
 document.getElementById('ship').textContent = sheet.replace(/#calculator\b/g, '.calcv');
 document.documentElement.classList.remove('pending');
 
+const PICK = 'standard';   // what the page ships with, and what the owner saw
 const TIERS = [['standard', 'Standard', 10], ['silver', 'Silver', 15], ['gold', 'Gold', 20], ['diamond', 'Diamond', 30]];
 const EXT = `<svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const GLYPH = d => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
 const LIVE = `<span class="live" aria-hidden="true"><i></i>Live estimate</span>`;
-const RAIL = TIERS.map(([t, n, r]) => `<button class="tile rate-cell level" type="button" aria-pressed="${t === 'gold'}" data-rate="${r}" data-tier="${t}"><small>${n}</small><strong>${r}%</strong></button>`).join('');
-const WELLS = `<div class="field tile well"><label>Partner broker</label><select><option>GTCFX</option><option>XM</option><option>XS</option></select></div>
-  <div class="field tile well"><label>Account type</label><select class="acct"><option value="1">Standard</option><option value="0.35">ECN</option></select></div>
-  <div class="field tile well"><label>XAUUSD volume</label><input class="vol" type="number" min="0" max="10000000" step="1" inputmode="decimal" value="50"></div>`;
-const ESTIMATE = `<div class="estimate" role="status" aria-live="polite"><small>Estimated Cashback</small><strong class="out">$170 <em>/ month</em></strong></div>`;
+const ESTIMATE = `<div class="estimate" role="status" aria-live="polite"><small>Estimated Cashback</small><strong class="out">$85 <em>/ month</em></strong></div>`;
 const RULES = `<a class="broker-rules" href="#">View rules for each broker ${EXT}</a>`;
 
-/* v3's arrangement — two steps, a rule between them, the answer on its own plate */
-const PANEL = `${LIVE}
-  <div class="step"><p class="step-cap">How you trade</p><div class="fields">${WELLS}</div></div>
-  <div class="step"><p class="step-cap" id="level-cap">Your Cashback level</p><div class="rate-rail level-row" role="group" aria-labelledby="level-cap">${RAIL}</div></div>
-  ${ESTIMATE}${RULES}`;
+const OPTS = {
+  broker: `<select class="broker"><option>GTCFX</option><option>XM</option><option>XS</option></select>`,
+  acct: `<select class="acct"><option value="1">Standard</option><option value="0.35">ECN</option></select>`,
+  vol: `<input class="vol" type="number" min="0" max="10000000" step="1" inputmode="decimal" value="50" aria-label="XAUUSD volume">`,
+};
+const FIELDS = [['Partner broker', 'broker'], ['Account type', 'acct'], ['XAUUSD volume', 'vol']];
+const WELLS = (pane, n = 3) => `<div class="fields">${FIELDS.slice(0, n).map(([label, k]) =>
+  `<div class="field ${pane ? 'tile ' : ''}well"><label>${label}</label>${OPTS[k]}</div>`).join('')}</div>`;
+const LEVELS = cls => TIERS.map(([t, n, r]) =>
+  `<button class="${cls} level" type="button" aria-pressed="${t === PICK}" data-rate="${r}" data-tier="${t}"><small>${n}</small><strong>${r}%</strong></button>`).join('');
+const TRADE = inner => `<div class="step"><p class="step-cap">How you trade</p>${inner}</div>`;
+const LEVEL = (id, cls, buttons) => `<div class="step"><p class="step-cap" id="${id}">Your Cashback level</p><div class="${cls}" role="group" aria-labelledby="${id}">${buttons}</div></div>`;
+const BAR = id => LEVEL(id, 'tier-bar', LEVELS('seg'));   // the lower half every arm shares (founder, 2026-09-15)
+const CHIPS = (drive, cls, labels) => `<div class="${cls}" role="group" data-drive="${drive}">${labels.map((l, i) =>
+  `<button class="chip" type="button" aria-pressed="${i === 0}">${l}</button>`).join('')}</div>${OPTS[drive].replace('<select', '<select hidden')}`;
+/* round five's row: two lists (the picker port below finds their selects) and a number field whose stepper
+   is written here, since the port's stepper only looks for a volume sitting straight in its well */
+const CHEV = '<svg class="caret" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6.5 8 10.5 12 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const STEP = (move, verb, glyph, cls = '') => `<button${cls ? ` class="${cls}"` : ''} type="button" tabindex="-1" data-step="${move}" aria-label="${verb} XAUUSD volume">${glyph}</button>`;
+const SPIN = `<span class="spin">${STEP('stepUp', 'Increase', CHEV, 'up')}${STEP('stepDown', 'Decrease', CHEV)}</span>`;
+const PLUSMINUS = `${STEP('stepDown', 'Decrease', GLYPH('M6 12h12'))}${STEP('stepUp', 'Increase', GLYPH('M6 12h12M12 6v12'))}`;
+const CV = vol => `${WELLS(false, 2)}<div class="cv-vol"><div class="field well"><label>XAUUSD volume</label>${vol}</div></div>`;
+const CX = stepper => `<div class="cx-row">
+  <div class="field well"><label>Partner broker</label>${OPTS.broker}</div>
+  <div class="field well"><label>Account type</label>${OPTS.acct}</div>
+  <div class="field well"><label>XAUUSD volume</label><div class="numbox">${OPTS.vol}${stepper}</div></div>
+</div>`;
 
-const SPEC = [
-  ['Step caption', '15px · 600 · sentence · white'],
-  ['Field label', '12px · 400 · sentence · 58% white'],
-  ['Field value', '18px · 500'],
-  ['Level name', '12px · 500'],
-  ['Level share', '27px · 600'],
-  ['Estimate caption', '13px · 400 · sentence · 60% white'],
-  ['Estimate figure', '44px · 600, "/ month" 400'],
+const CASES = [
+  { group: 'Round six · C1, the volume on its own row', cls: 'a a2 cv c3', title: 'C3 · the volume in the strip’s material',
+    note: 'Broker and account type spread across one strip. The volume sits centred under it, half its width, label and figure centred inside, the stepper at its right edge.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(CV(OPTS.vol))}${BAR(id)}${RULES}` },
+  { cls: 'a a2 cv c4', title: 'C4 · C1’s number field, centred',
+    note: 'The same strip. The volume keeps C1’s sunk number field, centred at half the strip’s width, its label centred above it.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(CV(`<div class="numbox">${OPTS.vol}${SPIN}</div>`))}${BAR(id)}${RULES}` },
+  { group: 'Round five · C, its choices folded into lists', cls: 'a cx c1', title: 'C1 · a number field’s stepper',
+    note: 'Broker and account type are lists again, with room for as many as come. Volume is a number field one column wide: the figure on the left, up and down at its right edge.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(CX(SPIN))}${BAR(id)}${RULES}` },
+  { cls: 'a cx c2', title: 'C2 · minus and plus at the end',
+    note: 'The same row, with C’s minus and plus set into the volume field’s right end, each behind a hairline.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(CX(PLUSMINUS))}${BAR(id)}${RULES}` },
+  { group: 'Round four · G’s answer card', cls: '', title: 'Shipped',
+    note: 'The panel on the page today, drawn by style.css itself. Two steps, then the answer on its own plate.',
+    panel: id => `${LIVE}${TRADE(WELLS(true))}${LEVEL(id, 'rate-rail level-row', LEVELS('tile rate-cell'))}${ESTIMATE}${RULES}` },
+  { cls: 'a g', title: 'G · the answer on paper',
+    note: 'A, with the answer lifted onto a white card: the one light surface on the pane. Everything you set is blue; the result is not.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(WELLS(true))}${BAR(id)}${RULES}` },
+  { cls: 'a g g1', title: 'G1 · the figure in the site’s blue run',
+    note: 'Caption over figure, the figure at 56px in the gradient the page’s blue headings wear: light at its top, deep at its foot.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(WELLS(true))}${BAR(id)}${RULES}` },
+  { cls: 'a g g2', title: 'G2 · a head and a total',
+    note: 'The caption on its own band in the page’s palest blue, the figure on white under it, the way a statement heads its total.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(WELLS(true))}${BAR(id)}${RULES}` },
+  { cls: 'a g g3', title: 'G3 · paper in the level’s metal',
+    note: 'The paper warms to the picked level at its far corner (copper, silver, gold, violet), caption and unit in the metal’s ink. Pick a level to watch it fade.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(WELLS(true))}${BAR(id)}${RULES}` },
+  { cls: 'a g g4', title: 'G4 · a ledger line',
+    note: 'G’s layout, the caption run out to its amount on a dotted leader, as a statement sets a label against its figure.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(WELLS(true))}${BAR(id)}${RULES}` },
+  { cls: 'a g g5', title: 'G5 · centred, white to pale blue',
+    note: 'The answer centred at 56px, the card fading from white to the page’s palest blue at its foot.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(WELLS(true))}${BAR(id)}${RULES}` },
+  { cls: 'a g g6', title: 'G6 · the figure in the level’s metal',
+    note: 'G’s layout, the figure in a deep run of the picked level’s metal: copper, steel, ochre or violet.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(WELLS(true))}${BAR(id)}${RULES}` },
+  { group: 'Round three · the upper halves', cls: 'a', title: 'A · the answer first',
+    note: 'The figure opens the pane at 56px with one rule under it. Wells a size lighter; the four tiles become one bar where only the pick wears its metal.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(WELLS(true))}${BAR(id)}${RULES}` },
+  { cls: 'a a2', title: 'A2 · A, the wells in one strip',
+    note: 'One change over A: the three wells share one pane, split by hairlines. Two boxes under the answer instead of four.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(WELLS(false))}${BAR(id)}${RULES}` },
+  { cls: 'a b', title: 'B · a settings list',
+    note: 'The questions read as rows: label left, answer right, a hairline between, the way a phone lists what is set. The picker drops from the value.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(WELLS(false))}${BAR(id)}${RULES}` },
+  { cls: 'a c', title: 'C · no dropdowns',
+    note: 'Nothing hides its options: brokers as chips, account type a toggle, volume a big minus and plus around its figure. Every choice is one tap.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(`<div class="c-grid">
+        <div class="c-field"><span class="c-label">Partner broker</span>${CHIPS('broker', 'chips', ['GTCFX', 'XM', 'XS'])}</div>
+        <div class="c-field"><span class="c-label">Account type</span>${CHIPS('acct', 'toggle', ['Standard', 'ECN'])}</div>
+      </div>
+      <div class="c-field c-vol"><span class="c-label">XAUUSD volume</span><div class="c-step">
+        <button type="button" data-step="stepDown" aria-label="Decrease XAUUSD volume">${GLYPH('M6 12h12')}</button>${OPTS.vol}<button type="button" data-step="stepUp" aria-label="Increase XAUUSD volume">${GLYPH('M6 12h12M12 6v12')}</button>
+      </div></div>`)}${BAR(id)}${RULES}` },
+  { cls: 'a a2 d', title: 'D · two dials',
+    note: 'Volume gets a slider under its figure, logarithmic from 1 to 10,000 lots; broker and account type share one strip above it.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(`${WELLS(false, 2)}<label class="d-vol"><span>XAUUSD volume</span>${OPTS.vol}</label>
+      <input class="range" type="range" min="0" max="1000" step="1" aria-label="XAUUSD volume">`)}${BAR(id)}${RULES}` },
+  { cls: 'a e', title: 'E · centred, fields as capsules',
+    note: 'The answer stands centred over the form like a total, and the three fields become capsules: rounded to their ends, lighter than a pane.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(WELLS(true))}${BAR(id)}${RULES}` },
+  { cls: 'a f', title: 'F · the fields as type',
+    note: 'No pane above the bar: a 64px answer, and each field a label and a value over one hairline, the way a printed form asks.',
+    panel: id => `${LIVE}${ESTIMATE}${TRADE(WELLS(false))}${BAR(id)}${RULES}` },
 ];
 
-document.getElementById('grid').innerHTML = `<section class="case">
-  <header>
-    <h2>v3 arrangement, t4 type</h2>
-    <p>Two steps with a rule between them, the answer on its own plate. The step captions are small
-       white headings and their numbers are gone. Nothing else on the panel is uppercase, and the
-       only two things left at 700 are the level's share and the monthly figure.</p>
-    <dl>${SPEC.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>
-  </header>
-  <div class="stage"><div class="calcv vsel v3 t4"><div class="block">
-    <form class="panel lit" novalidate>${PANEL}</form>
+let round = 0;   // each group heading opens a round; its cards carry the number, so a probe can shoot one round
+document.getElementById('grid').innerHTML = CASES.map((c, i) => `${c.group ? `<h2 class="group">${c.group}</h2>` : ''}<section class="case" data-round="${c.group ? ++round : round}">
+  <header><h2>${c.title}</h2><p>${c.note}</p></header>
+  <div class="stage"><div class="calcv ${c.cls}"><div class="block">
+    <form class="panel lit" novalidate>${c.panel(`level-cap-${i}`)}</form>
   </div></div></div>
-</section>`;
+</section>`).join('');
 
-/* ---------- the calculator: volume x 17 x account factor x share ---------- */
+/* ---------- main.js's picker and volume stepper, as they are on the page ---------- */
+const CARET = '<svg class="caret" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6.5 8 10.5 12 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const TICK = '<svg class="tick" viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 8.5 3 3 6-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+let shut = null;
+document.querySelectorAll('.well > select').forEach((sel, n) => {
+  const well = sel.parentElement;
+  const id = `well-${n}`;
+  const label = well.querySelector('label');
+  if (label && !label.id) label.id = `${id}-label`;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'well-value';
+  btn.id = `${id}-value`;
+  btn.setAttribute('role', 'combobox');
+  btn.setAttribute('aria-haspopup', 'listbox');
+  btn.setAttribute('aria-expanded', 'false');
+  btn.setAttribute('aria-controls', `${id}-list`);
+  if (label) btn.setAttribute('aria-labelledby', `${label.id} ${btn.id}`);
+  const list = document.createElement('ul');
+  list.className = 'picker';
+  list.id = `${id}-list`;
+  list.hidden = true;
+  list.setAttribute('role', 'listbox');
+  if (label) list.setAttribute('aria-labelledby', label.id);
+  list.addEventListener('mousedown', e => e.preventDefault());
+  const opts = [...sel.options].map((o, i) => {
+    const li = document.createElement('li');
+    li.id = `${id}-o${i}`;
+    li.setAttribute('role', 'option');
+    li.innerHTML = `<span>${o.text}</span>${TICK}`;
+    li.addEventListener('click', () => pick(i));
+    list.append(li);
+    return li;
+  });
+  well.append(btn, list);
+  well.classList.add('picked');
+  let active = sel.selectedIndex;
+  const paint = () => {
+    btn.innerHTML = `<span>${sel.options[sel.selectedIndex].text}</span>${CARET}`;
+    opts.forEach((li, i) => {
+      li.setAttribute('aria-selected', String(i === sel.selectedIndex));
+      li.classList.toggle('on', !list.hidden && i === active);
+    });
+    if (list.hidden) btn.removeAttribute('aria-activedescendant');
+    else btn.setAttribute('aria-activedescendant', opts[active].id);
+  };
+  const close = () => {
+    if (list.hidden) return;
+    list.hidden = true;
+    well.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+    if (shut === close) shut = null;
+    paint();
+  };
+  const open = () => {
+    if (shut) shut();
+    active = sel.selectedIndex;
+    list.hidden = false;
+    well.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+    shut = close;
+    paint();
+  };
+  const pick = i => {
+    sel.selectedIndex = i;
+    active = i;
+    close();
+    sel.dispatchEvent(new Event('input', { bubbles: true }));
+    sel.dispatchEvent(new Event('change', { bubbles: true }));
+    btn.focus();
+  };
+  btn.addEventListener('click', () => (list.hidden ? open() : close()));
+  btn.addEventListener('keydown', e => {
+    const last = opts.length - 1;
+    if (e.key === 'Escape') { if (!list.hidden) { e.preventDefault(); close(); } return; }
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); return list.hidden ? open() : pick(active); }
+    if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) return;
+    e.preventDefault();
+    if (list.hidden) return open();
+    active = e.key === 'Home' ? 0 : e.key === 'End' ? last
+      : Math.min(last, Math.max(0, active + (e.key === 'ArrowDown' ? 1 : -1)));
+    paint();
+  });
+  btn.addEventListener('blur', () => close());
+  sel.addEventListener('change', paint);
+  paint();
+});
+addEventListener('pointerdown', e => { if (shut && !e.target.closest('.well.open')) shut(); }, true);
+document.querySelectorAll('.well > .vol').forEach(volField => {
+  const stepper = document.createElement('span');
+  stepper.className = 'stepper';
+  [['up', 'Increase', 'stepUp'], ['down', 'Decrease', 'stepDown']].forEach(([dir, verb, move]) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.tabIndex = -1;
+    b.className = `stepper-${dir}`;
+    b.setAttribute('aria-label', `${verb} XAUUSD volume`);
+    b.innerHTML = CARET;
+    b.addEventListener('click', () => { volField[move](); volField.dispatchEvent(new Event('input', { bubbles: true })); });
+    stepper.append(b);
+  });
+  volField.parentElement.classList.add('stepped');
+  volField.after(stepper);
+});
+
+/* ---------- the calculator: volume x 17 x account factor x share, one per card ----------
+   Each arm's own controls end in the same three values: chips and toggles set a hidden select, the
+   dial and the big steppers write the number field, and the level buttons carry their share. */
+const est = (v, f, r) => Math.round(v * 17 * f * r / 100);
 const compact = new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 });
-const card = document.querySelector('.calcv');
-const vol = card.querySelector('.vol'), acct = card.querySelector('.acct'), out = card.querySelector('.out');
-const cells = [...card.querySelectorAll('.rate-cell')];
-let rate = +cells.find(c => c.getAttribute('aria-pressed') === 'true').dataset.rate;
-const price = () => {
-  let v = Math.max(0, parseFloat(vol.value) || 0);
-  const max = +vol.max;
-  if (v > max) { v = max; vol.value = String(max); }
-  const n = Math.round(v * 17 * parseFloat(acct.value) * rate / 100);
-  const figure = `$${n < 1e7 ? n.toLocaleString('en-US') : compact.format(n)}`;
-  out.innerHTML = `${figure} <em>/ month</em>`;
-  out.classList.toggle('long', figure.length > 7);
-  out.classList.remove('swap'); void out.offsetWidth; out.classList.add('swap');
-};
-cells.forEach(b => b.addEventListener('click', () => {
-  cells.forEach(o => o.setAttribute('aria-pressed', String(o === b)));
-  rate = +b.dataset.rate;
+const money = n => `$${n < 1e7 ? n.toLocaleString('en-US') : compact.format(n)}`;
+const toPos = v => v <= 0 ? 0 : Math.min(1000, Math.round(250 * Math.log10(v)));   // 1 lot at 0, 10,000 at the end
+const toVol = p => p <= 0 ? 0 : Math.round(10 ** (p / 250));
+const cards = [...document.querySelectorAll('.calcv')].map(card => {
+  const vol = card.querySelector('.vol'), acct = card.querySelector('.acct'), out = card.querySelector('.out');
+  const range = card.querySelector('.range');
+  const levels = [...card.querySelectorAll('.level')];
+  const price = () => {
+    let v = Math.max(0, parseFloat(vol.value) || 0);
+    const max = +vol.max;
+    if (v > max) { v = max; vol.value = String(max); }
+    const f = parseFloat(acct.value);
+    const picked = levels.find(o => o.getAttribute('aria-pressed') === 'true');
+    const figure = money(est(v, f, +picked.dataset.rate));
+    out.innerHTML = `${figure} <em>/ month</em>`;
+    out.classList.toggle('long', figure.length > 7);
+    out.classList.remove('swap'); void out.offsetWidth; out.classList.add('swap');
+    if (range) {
+      if (document.activeElement !== range) range.value = toPos(v);
+      range.style.setProperty('--fill', `${range.value / 10}%`);
+    }
+  };
+  levels.forEach(b => b.addEventListener('click', () => {
+    levels.forEach(o => o.setAttribute('aria-pressed', String(o === b)));
+    price();
+  }));
+  card.querySelectorAll('[data-drive]').forEach(group => {
+    const sel = card.querySelector(`select.${group.dataset.drive}`);
+    const chips = [...group.querySelectorAll('.chip')];
+    chips.forEach((c, i) => c.addEventListener('click', () => {
+      chips.forEach(o => o.setAttribute('aria-pressed', String(o === c)));
+      sel.selectedIndex = i;
+      sel.dispatchEvent(new Event('input', { bubbles: true }));
+    }));
+  });
+  card.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => {
+    vol[b.dataset.step]();
+    vol.dispatchEvent(new Event('input', { bubbles: true }));
+  }));
+  range?.addEventListener('input', () => { vol.value = String(toVol(+range.value)); price(); });
+  [vol, acct].forEach(el => el.addEventListener('input', price));
   price();
-}));
-[vol, acct].forEach(el => el.addEventListener('input', price));
-price();
+  return { card, vol, out, levels, price };
+});
 
-/* ---------- the head's tier buttons, so each metal can be judged in place ---------- */
+/* ---------- the head's tier buttons, so each metal can be judged in place on every card ---------- */
 const set = document.getElementById('tierset');
 set.insertAdjacentHTML('beforeend', TIERS.map(([t, n]) =>
-  `<button type="button" data-tier="${t}" aria-pressed="${t === 'gold'}">${n}</button>`).join(''));
+  `<button type="button" data-tier="${t}" aria-pressed="${t === PICK}">${n}</button>`).join(''));
 set.addEventListener('click', e => {
   const b = e.target.closest('button[data-tier]');
   if (!b) return;
   set.querySelectorAll('button[data-tier]').forEach(o => o.setAttribute('aria-pressed', String(o === b)));
-  card.querySelector(`.rate-cell[data-tier="${b.dataset.tier}"]`).click();
+  cards.forEach(({ card }) => card.querySelector(`.level[data-tier="${b.dataset.tier}"]`).click());
 });
 
 /* ---------- self-check ----------
-   The figure the sheet shows, the shape of the panel, and the promise that .t4 carries type only —
-   that last one read back out of this page's own stylesheet, so the split survives editing. */
+   Every card: the figure it shows, four levels with one picked, two steps that did not collapse, no
+   native select left on screen, and the longest figure the long form can print still inside the
+   pane. The arms: the answer before both questions, and the level bar they all share. */
 if (new URLSearchParams(location.search).get('check') === '1') {
   const fails = [];
-  const est = (v, f, r) => Math.round(v * 17 * f * r / 100);
-  if (est(50, 1, 20) !== 170) fails.push(`gold estimate ${est(50, 1, 20)} != 170`);
-  if (cells.length !== 4) fails.push(`${cells.length} cells, want 4`);
-  if (card.querySelectorAll('.rate-cell[aria-pressed=true]').length !== 1) fails.push('not exactly one cell picked');
-  if (card.querySelectorAll('.step').length !== 2) fails.push('not two steps');
-  if (card.querySelector('.step-cap i')) fails.push('a step caption still carries its number');
-  if (!out.textContent.startsWith('$170')) fails.push(`estimate reads ${out.textContent.trim()}`);
-  const TYPE = /^(font|line-height|letter-spacing|text-transform|color|--cell-figure)/;
-  const own = [...document.styleSheets].find(s => s.ownerNode && s.ownerNode.id !== 'ship' && !s.href);
-  for (const rule of own.cssRules) {
-    if (!rule.selectorText || !/\.t4\b/.test(rule.selectorText)) continue;
-    for (const prop of rule.style) if (!TYPE.test(prop)) fails.push(`${rule.selectorText} sets ${prop}, which is not type`);
-  }
-  console[fails.length ? 'error' : 'log'](fails.length ? `calc-lab: ${fails.join('; ')}` : 'calc-lab: ok');
+  if (est(50, 1, 10) !== 85) fails.push(`default estimate ${est(50, 1, 10)} != 85`);
+  if (toVol(toPos(50)) !== 50) fails.push(`the dial round-trips 50 lots to ${toVol(toPos(50))}`);
+  cards.forEach(({ card, vol, out, levels, price }, i) => {
+    const name = CASES[i].title;
+    if (levels.length !== 4) fails.push(`${name}: ${levels.length} levels, want 4`);
+    if (levels.filter(o => o.getAttribute('aria-pressed') === 'true').length !== 1) fails.push(`${name}: not exactly one level picked`);
+    if (!out.textContent.startsWith('$85')) fails.push(`${name}: estimate reads ${out.textContent.trim()}`);
+    const steps = [...card.querySelectorAll('.step')];
+    if (steps.length !== 2) fails.push(`${name}: ${steps.length} steps, want 2`);
+    steps.forEach((s, j) => { const h = s.getBoundingClientRect().height; if (h < 60) fails.push(`${name}: step ${j + 1} collapsed to ${Math.round(h)}px`); });
+    if ([...card.querySelectorAll('select')].some(s => s.getClientRects().length)) fails.push(`${name}: a native select is on screen`);
+    if (CASES[i].cls && !(out.compareDocumentPosition(steps[0]) & Node.DOCUMENT_POSITION_FOLLOWING)) fails.push(`${name}: the answer is not first`);
+    if (CASES[i].cls && !steps[1]?.querySelector('.tier-bar')) fails.push(`${name}: not on the shared level bar`);
+    const row = card.querySelector('.cx-row');
+    if (row && new Set([...row.children].map(f => Math.round(f.getBoundingClientRect().top))).size !== 1) fails.push(`${name}: the three fields no longer share one row`);
+    const volRow = card.querySelector('.cv-vol');
+    if (volRow) {
+      const strip = card.querySelector('.fields').getBoundingClientRect();
+      const box = (volRow.querySelector('.numbox') || volRow.querySelector('.well')).getBoundingClientRect();
+      const off = (box.left + box.right) / 2 - (strip.left + strip.right) / 2;
+      if (Math.abs(off) > 1) fails.push(`${name}: the volume sits ${Math.round(off)}px off the strip's centre`);
+      if (box.top < strip.bottom) fails.push(`${name}: the volume is not on a row of its own`);
+    }
+    // $9,999,998 at Diamond: ten characters, the widest figure before the compact form takes over
+    const before = vol.value, picked = levels.find(o => o.getAttribute('aria-pressed') === 'true');
+    levels.at(-1).click(); vol.value = '1960784'; price();
+    const pane = card.querySelector('.panel').getBoundingClientRect();
+    if (!out.textContent.startsWith('$9,999,998')) fails.push(`${name}: widest figure reads ${out.textContent.trim()}`);
+    const fig = out.getBoundingClientRect();
+    if (fig.right > pane.right - 20) fails.push(`${name}: the widest figure runs ${Math.round(fig.right - pane.right + 20)}px past the pane's padding`);
+    picked.click(); vol.value = before; price();
+  });
+  console[fails.length ? 'error' : 'log'](fails.length ? `calc-lab: ${fails.join('; ')}` : `calc-lab: ok, ${cards.length} cards`);
 }
 </script>
 </body>

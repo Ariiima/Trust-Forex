@@ -332,13 +332,14 @@
   });
   addEventListener('pointerdown', e => { if (shut && !e.target.closest('.well.open')) shut(); }, true);
 
-  /* ---------- the volume well gets a stepper: the pickers' chevron, up and down (founder, 2026-09-13) ----------
+  /* ---------- the volume field gets a stepper: the pickers' chevron, up and down (founder, 2026-09-13) ----------
      The number field's native spin buttons are hidden (style.css .well input), so this puts two back in
-     the page's own chevron. stepUp/stepDown keep the field's min, max and step, and the input event they
-     send is the one the calculator below already listens for. The buttons stay out of the tab order: the
-     field itself takes the arrow keys. Without JS the field is typed into, as before. */
+     the page's own chevron, inside the field's box after the input (style.css .numbox, 2026-09-15).
+     stepUp/stepDown keep the field's min, max and step, and the input event they send is the one the
+     calculator below already listens for. The buttons stay out of the tab order: the field itself takes
+     the arrow keys. Without JS the field is typed into, as before. */
   const volField = document.getElementById('volume');
-  if (volField && volField.parentElement.classList.contains('well')) {
+  if (volField && volField.parentElement.classList.contains('numbox')) {
     const stepper = document.createElement('span');
     stepper.className = 'stepper';
     [['up', 'Increase', 'stepUp'], ['down', 'Decrease', 'stepDown']].forEach(([dir, verb, move]) => {
@@ -351,7 +352,6 @@
       b.addEventListener('click', () => { volField[move](); volField.dispatchEvent(new Event('input', { bubbles: true })); });
       stepper.append(b);
     });
-    volField.parentElement.classList.add('stepped');
     volField.after(stepper);
   }
 
@@ -361,9 +361,9 @@
   const acct = document.getElementById('account');
   const out = document.getElementById('estimate');
   const levels = [...document.querySelectorAll('.level')];
-  let rate = 10;
-  // The band holds about seven characters at 44px, and a volume nobody trades used to push the
-  // figure out of it. Three steps keep it in: the volume is capped at the cap the field itself
+  let rate = +(levels.find(b => b.getAttribute('aria-pressed') === 'true')?.dataset.rate || 20);
+  // The figure leads the pane at 56px, and a volume nobody trades used to push it past the pane's
+  // edge. Three steps keep it in: the volume is capped at the cap the field itself
   // declares — and written back, so what the figure is computed from is what the field shows — a
   // figure past seven characters steps down a size, and past $10M it goes compact ($51M), which no
   // volume can outgrow.
@@ -394,7 +394,8 @@
   if (q.get('check') === '1') iconsLoaded.then(() => {
     const fails = [];
     const est = (v, f, r) => Math.round(v * 17 * f * r / 100);
-    if (vol && est(50, 1, 10) !== 85) fails.push(`default estimate ${est(50, 1, 10)} != 85`);
+    if (vol && est(50, 1, 20) !== 170) fails.push(`default (Gold) estimate ${est(50, 1, 20)} != 170`);
+    if (vol && out.textContent.trim() !== `$${est(+vol.value, parseFloat(acct.value), rate)} / month`) fails.push(`shipped estimate "${out.textContent.trim()}" is not the one the pressed level computes`);
     if (vol && est(50, 0.35, 10) !== 30) fails.push(`ECN estimate ${est(50, 0.35, 10)} != 30`);
     if (vol && est(50, 1, 30) !== 255) fails.push(`Diamond estimate ${est(50, 1, 30)} != 255`);
     const over = screens.filter(s => s.scrollHeight > s.clientHeight + 2).map(s => s.id);

@@ -44,7 +44,9 @@ gradients via `data-grad="1…6"` on the section (`cb8/style.css`).
 
 Forms on glass use two shared controls, both in `cb8/style.css` and both built on `.tile`:
 `.well` puts one input in its own frosted pane with its label inside it, and `.rate-cell` is the
-tier chooser that the Referral rate rail and the Cashback calculator now share. Size a rail with
+Referral rate rail's tier chooser. The Cashback calculator left both on 2026-09-15: its fields are
+wells without the pane, the label over a sunk box (`#calculator .numbox` for the volume), and its
+levels are one `.tier-bar` of `.seg` buttons, all under `#calculator` in `cb8/style.css`. Size a rail with
 `--cell-h` and `--cell-figure` on the row rather than restyling the cell. `cb8/main.js` turns any
 `<select>` inside a well into the page's own listbox and hides the select behind it as the value,
 so the OS never draws its list; without JS the select is untouched and still works. The

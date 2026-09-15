@@ -10,6 +10,7 @@
   --text-title: clamp(40px, 5vw, 66px);             /* section heading */
   --text-title-compact: clamp(38px, 4.4vw, 58px);   /* activation heading */
   --text-estimate: 44px;                            /* calculator result */
+  --text-estimate-lead: 56px;                       /* calculator result, leading its pane (2026-09-15) */
   --text-number: 34px;                              /* share figures */
   --text-stat: 30px;                                /* dashboard figures */
   --text-card-title: 24px;                          /* record card title */

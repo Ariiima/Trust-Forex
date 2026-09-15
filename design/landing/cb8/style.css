@@ -6,7 +6,7 @@
    feDisplacementMap (#liquid in index.html) in backdrop-filter, Chromium only; every other
    engine gets the same glass without the bend. The data stays opaque white — the founder's
    "white chart" — so figures never sit on a translucent ground. */
-@import url('base.css?v=f6c548a5');
+@import url('base.css?v=805c8780');
 @import url('consent.css?v=2a43747b');
 
 /* ---------- structure behind the glass: a faint grid in every blue ground ---------- */
@@ -142,7 +142,7 @@ html.reduce .value-panel::after{animation:none}
 
 /* ---------- the effect must be defeatable ---------- */
 @media (prefers-reduced-transparency:reduce){
-  .on-dark .btn-solid,.block .panel::before,.screen-paper .panel::before,.pstep,.glass .panel,.glass .tile,#calculator .tile,.value-panel{backdrop-filter:none;-webkit-backdrop-filter:none}
+  .on-dark .btn-solid,.block .panel::before,.screen-paper .panel::before,.pstep,.glass .panel,.glass .tile,.value-panel{backdrop-filter:none;-webkit-backdrop-filter:none}
   .on-dark .btn-solid{background:#fff;color:var(--navy)}
   .pstep{background:#fff}
   .value-panel{background:var(--blue)}
@@ -209,7 +209,6 @@ html.reduce #calculator .panel::after{animation:none;transition:none}
   box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(var(--rgb-shadow),.1)}
 /* everything in the form that was ink on white is now light on blue; the fields themselves are not.
    The captions' own colours are set with the rest of their type, further down. */
-#calculator .estimate{background:rgba(var(--rgb-abyss),.3)}   /* the wireframe's band, sunk into the blue: white at 16% read as a grey wash (founder, 2026-09-13) */
 #calculator .estimate strong{color:#fff}
 #calculator .estimate strong em{color:rgba(255,255,255,.6)}
 #calculator .broker-rules{color:var(--p-200)}
@@ -268,7 +267,7 @@ html.reduce #m1 .block{animation:none}
 .glass .panel.lit{transition-duration:.15s}
 html.reduce .glass .panel{transform:none;transition:none}
 /* the tiles */
-.glass .tile,#calculator .tile{--tint:rgba(255,255,255,.10);--tint2:rgba(255,255,255,.05);--rim:rgba(255,255,255,.28);
+.glass .tile{--tint:rgba(255,255,255,.10);--tint2:rgba(255,255,255,.05);--rim:rgba(255,255,255,.28);
   position:relative;isolation:isolate;border-radius:16px;color:#fff;border:1px solid var(--rim);
   background:linear-gradient(150deg,var(--tint),var(--tint2));
   backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%);
@@ -320,23 +319,23 @@ html.reduce .glass .panel{transform:none;transition:none}
    the radial minus its own 1px inset, by mask). A browser without view timelines shows the streak
    at rest; no pointer, no touch. */
 @property --lit{syntax:'<number>';inherits:true;initial-value:0}
-.glass .panel::after,.glass .tile::after,.glass .tile::before,#calculator .tile::after,#calculator .tile::before{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none}
-.glass .panel::after,.glass .tile::after,#calculator .tile::after{transition:--lit .45s var(--ease);animation:glass-light linear both;animation-range:entry 0% exit 100%}
+.glass .panel::after,.glass .tile::after,.glass .tile::before{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none}
+.glass .panel::after,.glass .tile::after{transition:--lit .45s var(--ease);animation:glass-light linear both;animation-range:entry 0% exit 100%}
 .glass .panel::after{background:
   radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,var(--lit)),transparent 70%) no-repeat 0 0/auto,
   linear-gradient(115deg,transparent 32%,rgba(255,255,255,.14) 46%,rgba(255,255,255,.04) 52%,transparent 62%) no-repeat 100% 0/220% 100%}
-.glass .tile::after,#calculator .tile::after{animation-range:entry 30% exit 70%;background:
+.glass .tile::after{animation-range:entry 30% exit 70%;background:
   radial-gradient(180px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,calc(var(--lit) * 1.6)),transparent 70%) no-repeat 0 0/auto,
   linear-gradient(115deg,transparent 26%,rgba(255,255,255,var(--streak,.24)) 44%,rgba(255,255,255,.06) 51%,transparent 64%) no-repeat 100% 0/260% 100%}
 @keyframes glass-light{from{background-position:0 0,100% 0}to{background-position:0 0,0% 0}}
 .glass .panel.lit{--lit:.08}
-.glass .tile::before,#calculator .tile::before{inset:-1px;padding:1px;opacity:0;transition:opacity .45s var(--ease);
+.glass .tile::before{inset:-1px;padding:1px;opacity:0;transition:opacity .45s var(--ease);
   background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.55),transparent 70%);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
-.glass .panel.lit .tile::before,#calculator .panel.lit .tile::before{opacity:1}
+.glass .panel.lit .tile::before{opacity:1}
 #m2 .panel::after,#m2 .tile::after,#m2 .rayfield.k i{animation-timeline:--m2}
 #m4 .panel::after,#m4 .tile::after,#m4 .rayfield.k i{animation-timeline:--m4}
-html.reduce .glass .panel::after,html.reduce .glass .tile::after,html.reduce .glass .tile::before,html.reduce #calculator .tile::after,html.reduce #calculator .tile::before,html.reduce .glass .rayfield.k i{animation:none;transition:none}
+html.reduce .glass .panel::after,html.reduce .glass .tile::after,html.reduce .glass .tile::before,html.reduce .glass .rayfield.k i{animation:none;transition:none}
 /* test only — each rate tile on the shelf catches a soft light sweeping left to right as it scrolls
    through, staggered so the four don't catch it at once. A quiet resting glow in the tile's own tier
    colour, not the pulsing brightness this replaced. Drop this if it doesn't earn its keep. */
@@ -406,10 +405,10 @@ html.reduce #m2 .ladder .tile{animation:none}
 /* ---------- 02 · the tiers in their own metals (founder ref 2026-09-07) ----------
    Bronze for Standard, silver, gold, and Diamond in violet — each tile's glass, rim and label carry
    the tier's colour, the figure stays white. Labels uppercase, as in the reference. */
-.glass [data-tier=standard],#calculator [data-tier=standard],.rate-points [data-tier=standard]{--tint:rgba(200,128,88,.4);--tint2:rgba(120,70,48,.36);--rim:rgba(236,176,136,.5);--label:#F1C4A6}
-.glass [data-tier=silver],#calculator [data-tier=silver],.rate-points [data-tier=silver]{--tint:rgba(204,218,238,.3);--tint2:rgba(118,144,184,.26);--rim:rgba(228,238,250,.55);--label:#EDF3FB}
-.glass [data-tier=gold],#calculator [data-tier=gold],.rate-points [data-tier=gold]{--tint:rgba(210,172,86,.4);--tint2:rgba(124,96,40,.36);--rim:rgba(240,208,130,.55);--label:#F3D896}
-.glass [data-tier=diamond],#calculator [data-tier=diamond],.rate-points [data-tier=diamond]{--tint:rgba(138,96,224,.42);--tint2:rgba(76,48,150,.38);--rim:rgba(196,166,250,.55);--label:#DFD0FA}
+.glass [data-tier=standard],.rate-points [data-tier=standard]{--tint:rgba(200,128,88,.4);--tint2:rgba(120,70,48,.36);--rim:rgba(236,176,136,.5);--label:#F1C4A6}
+.glass [data-tier=silver],.rate-points [data-tier=silver]{--tint:rgba(204,218,238,.3);--tint2:rgba(118,144,184,.26);--rim:rgba(228,238,250,.55);--label:#EDF3FB}
+.glass [data-tier=gold],.rate-points [data-tier=gold]{--tint:rgba(210,172,86,.4);--tint2:rgba(124,96,40,.36);--rim:rgba(240,208,130,.55);--label:#F3D896}
+.glass [data-tier=diamond],.rate-points [data-tier=diamond]{--tint:rgba(138,96,224,.42);--tint2:rgba(76,48,150,.38);--rim:rgba(196,166,250,.55);--label:#DFD0FA}
 .glass .rate small{text-transform:uppercase;letter-spacing:.08em;font-size:var(--text-micro);font-weight:var(--weight-body);color:var(--label)}
 /* 01: room for "Partner broker" on one line at base size */
 .glass .p-broker{grid-template-columns:1fr 1.15fr}
@@ -492,8 +491,7 @@ html.snap .mech.white .block::after{animation-name:stack-back-paper}
 
 /* ---------- the calculator reads as a control, not another record (founder, 2026-09-08) ----------
    After four screens of tables the form has to say "touch me": a live dot pulsing in its corner, the
-   four levels in the referral rail's tier metals, the three inputs in their own glass wells, the
-   estimate band and the rules link on the same glass.
+   answer at the head of the pane, and under it three fields and one bar of levels.
    The pill straddles the pane's top edge, so half of it stands on paper: a white translucent ground
    read as nothing there (founder, 2026-09-10). It carries the pane's own blue instead — opaque, its
    own rim — and is legible on either side of the edge. */
@@ -503,24 +501,63 @@ html.snap .mech.white .block::after{animation-name:stack-back-paper}
   font:var(--weight-semi) var(--text-micro)/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:#fff}
 #calculator .live i{width:7px;height:7px;border-radius:50%;background:var(--success);animation:live-pulse 1.8s var(--ease) infinite}
 @keyframes live-pulse{0%{box-shadow:0 0 0 0 rgba(52,199,123,.6)}70%,100%{box-shadow:0 0 0 9px rgba(52,199,123,0)}}
-/* ---------- the panel asks one question at a time (founder, 2026-09-12) ----------
-   It used to put four questions in one grid, at four sizes of bold, 9 to 11px apart: "clamped and
-   bad, text are bold, a lot of things to see at once, and very close to each other". Now it is two
-   steps with a rule between them — how you trade, then what your level is — and the answer on its
-   own plate under both. Each step opens with a small white heading; the numbered discs those
-   headings carried through review are gone, since two headings read top to bottom already say which
-   comes first. Chosen from calc-lab.html, which still holds this panel on its own for review. */
-#calculator .step + .step{margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.16)}
-#calculator .step-cap{margin:0 0 13px}
-#calculator .panel{padding:24px 26px 26px;border-radius:22px}   /* a pane's 22px corner, as 01–04 (2026-09-15; it was 20px) */
-#calculator .fields{gap:14px}
-#calculator .well{padding:12px 16px 13px}
-#calculator .level-row{--cell-h:88px;--cell-figure:var(--text-summary-stat);gap:13px}   /* 9 left the pick's 4px white halo 1px off its neighbour's edge, so the row read as one band */
-/* the plate reads as one line (founder, 2026-09-13: "tighten the estimate box"): caption, figure and unit on
-   one baseline, "/ month" against its figure rather than 10px off it, and 12px less height */
-#calculator .estimate{margin-top:22px;padding:14px 20px 14px 22px;align-items:baseline;border-radius:16px}   /* a tile's corner (it was 13px) */
+/* ---------- the answer first (founder, 2026-09-15) ----------
+   The owner's read of the panel before this: too crowded, and the answer came last, under three glass
+   wells, four metal tiles and its own plate. Now the figure opens the pane, on the pane itself, with
+   one rule under it, and the two questions follow with space between them rather than a second rule.
+   Each question keeps the small white heading it took on 2026-09-12. Chosen from calc-lab.html
+   (rounds three to six), which still holds every arm that was weighed. */
+#calculator .panel{padding:26px 26px 22px;border-radius:22px}   /* a pane's 22px corner, as 01–04 (2026-09-15; it was 20px) */
+#calculator .estimate{flex-direction:column;align-items:flex-start;gap:8px;margin:0 0 22px;padding:0 0 22px;
+  border:0;border-bottom:1px solid rgba(255,255,255,.16);border-radius:0;background:none}
 #calculator .estimate small{margin-bottom:0}
-#calculator .estimate strong em{margin-left:-5px}   /* main.js writes a space before it at the figure's 44px; this takes most of it back */
+#calculator .estimate strong{font-size:var(--text-estimate-lead)}
+#calculator .estimate strong.long{font-size:var(--text-estimate)}   /* main.js sets .long once the figure passes seven characters */
+#calculator .estimate strong em{margin-left:-6px}   /* main.js writes a space before it at the figure's 56px; this takes most of it back */
+#calculator .step + .step{margin-top:22px}
+#calculator .step-cap{margin:0 0 10px}
+/* ---------- the three fields: two lists and a number field in one row (founder, 2026-09-15) ----------
+   Broker and account type are the page's picker, since both lists will grow past what chips could
+   hold; the volume is a number field with its stepper inside the box. One family of field: the label
+   over a sunk box, the value in it, the caret or the stepper at its right edge. A name too long for its
+   box ends in an ellipsis rather than pushing the row. The wells have no glass pane now — the box is
+   the control — and a select with no JS behind it wears the same box. */
+#calculator .fields{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#calculator .well{position:relative;padding:0;border-radius:0}
+#calculator .well:focus-within{outline:0;box-shadow:none}   /* focus lights the box, not the label over it */
+#calculator .well>label{margin:0 0 7px}
+#calculator .well-value,#calculator .well>select,#calculator .numbox{box-sizing:border-box;height:44px;border-radius:12px;background-color:rgba(var(--rgb-abyss),.3);
+  border:1px solid rgba(255,255,255,.16);transition:border-color .2s var(--ease),background-color .2s var(--ease)}
+#calculator .well-value{padding:0 12px 0 14px;font-size:var(--text-panel-title)}
+#calculator .well>select{padding:0 32px 0 14px;background-position:right 12px center;font-size:var(--text-panel-title)}
+#calculator .well-value span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#calculator .well-value:hover,#calculator .well>select:hover,#calculator .numbox:hover{border-color:rgba(255,255,255,.32)}
+#calculator .well-value:focus-visible,#calculator .well>select:focus-visible,#calculator .well.open .well-value,#calculator .numbox:focus-within{outline:0;border-color:rgba(255,255,255,.75);background-color:rgba(var(--rgb-abyss),.42)}
+#calculator .numbox{display:flex;align-items:stretch;overflow:hidden;cursor:text}
+#calculator .numbox input{flex:1 1 auto;width:auto;min-width:0;padding:0 0 0 14px;text-align:left;
+  font:var(--weight-label) var(--text-panel-title)/1 var(--sans);letter-spacing:0;font-variant-numeric:tabular-nums}
+html.reduce #calculator .well-value,html.reduce #calculator .well>select,html.reduce #calculator .numbox{transition:none}
+/* ---------- the four levels as one bar (founder, 2026-09-15) ----------
+   A sunk bar holding the four levels, where only the pick wears its metal: the tints the old rail's pick
+   carried, re-mixed on 2026-09-13 so copper and gold read as metal on this blue rather than as mauve and
+   olive grey. Each stays dark enough for the white figure. */
+#calculator .tier-bar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;border-radius:16px;
+  background:rgba(var(--rgb-abyss),.3);border:1px solid rgba(255,255,255,.14)}
+#calculator .seg{appearance:none;-webkit-appearance:none;margin:0;font:inherit;color:#fff;cursor:pointer;user-select:none;-webkit-user-select:none;
+  display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 6px 11px;border-radius:12px;
+  border:1px solid transparent;background:transparent;transition:background-color .25s var(--ease),border-color .25s var(--ease)}
+#calculator .seg small{font:var(--weight-label) var(--text-small)/1.25 var(--sans);white-space:nowrap;color:rgba(255,255,255,.6)}
+#calculator .seg strong{font:var(--weight-semi) var(--text-figure)/1 var(--sans);letter-spacing:-.03em;color:rgba(255,255,255,.9)}
+#calculator .seg[aria-pressed=false]:hover{background-color:rgba(255,255,255,.07)}
+#calculator .seg[aria-pressed=true]{background:linear-gradient(150deg,var(--tint),var(--tint2));border-color:rgba(255,255,255,.72);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 20px -14px rgba(var(--rgb-shadow),.8)}
+#calculator .seg[aria-pressed=true] small{color:var(--label)}
+#calculator .seg[aria-pressed=true] strong{color:#fff}
+#calculator .seg[data-tier=standard]{--tint:rgba(222,134,67,.8);--tint2:rgba(150,79,29,.8);--label:#FFF1E6}
+#calculator .seg[data-tier=silver]{--tint:rgba(204,218,238,.36);--tint2:rgba(118,144,184,.32);--label:#fff}
+#calculator .seg[data-tier=gold]{--tint:rgba(224,172,69,.84);--tint2:rgba(152,108,24,.84);--label:#FFF6DF}
+#calculator .seg[data-tier=diamond]{--tint:rgba(138,96,224,.5);--tint2:rgba(76,48,150,.46);--label:#fff}
+html.reduce #calculator .seg{transition:none}
 /* The type, and only the type. Nine bold things ran at once, so none of them led: four captions at
    800 uppercase, three values at 700, the level names and both figures. Here the two step captions
    leave the caption tier and become small white headings, everything under them goes sentence case
@@ -532,53 +569,31 @@ html.snap .mech.white .block::after{animation-name:stack-back-paper}
 #calculator .step-cap{font:var(--weight-semi) var(--text-panel-title)/1.2 var(--sans);letter-spacing:-.015em;color:#fff}
 #calculator .well>label{font:var(--weight-body) var(--text-small)/var(--leading-ui) var(--sans);letter-spacing:0;text-transform:none;color:rgba(255,255,255,.58)}
 #calculator .well select,#calculator .well input,#calculator .well-value{font-weight:var(--weight-label)}
-#calculator .rate-cell small{font-weight:var(--weight-label)}
-#calculator .rate-cell strong,#calculator .estimate strong{font-weight:var(--weight-semi)}
+#calculator .estimate strong{font-weight:var(--weight-semi)}
 #calculator .estimate strong em{font-weight:var(--weight-body)}
 #calculator .estimate small{font:var(--weight-body) var(--text-meta)/var(--leading-ui) var(--sans);letter-spacing:0;text-transform:none;color:rgba(255,255,255,.6)}
-/* The rail used to dim the three tiers you did not pick and rim the pick in its own metal (founder,
-   2026-09-10). Reversed 2026-09-12: the Referral rail's selection is the one that ships on both
-   pages — all four metals lit, the pick inside a white rim and its white halo. One control, one
-   look, wherever a tier is chosen. calc-lab.html is where that was compared.
-   The values below are the shared .rate-cell block's own, restated rather than inherited: on this
-   page `#calculator .tile` sets the border and the shadow at id strength, and it would outrank the
-   class the rail is written in. Referral's rail lives under `.glass .tile` and has no such problem. */
-/* Copper and gold at under half alpha mixed with the pane's #0C2E7B into mauve and olive grey (founder,
-   2026-09-13). Their tints are re-mixed for the blue they land on: warmer, less blue in them, and more
-   opaque, so the composite reads as the metal. Each composite stays dark enough for the white figure. */
-#calculator .rate-cell[aria-pressed=false][data-tier=standard]{--tint:rgba(227,125,39,.68);--tint2:rgba(147,70,4,.68);--rim:rgba(236,176,136,.46)}
-#calculator .rate-cell[aria-pressed=false][data-tier=silver]{--tint:rgba(204,218,238,.24);--tint2:rgba(118,144,184,.21);--rim:rgba(228,238,250,.46)}
-#calculator .rate-cell[aria-pressed=false][data-tier=gold]{--tint:rgba(218,157,38,.72);--tint2:rgba(140,90,0,.72);--rim:rgba(240,208,130,.5)}
-#calculator .rate-cell[aria-pressed=false][data-tier=diamond]{--tint:rgba(138,96,224,.32);--tint2:rgba(76,48,150,.29);--rim:rgba(196,166,250,.46)}
-#calculator .rate-cell[aria-pressed=false]{--streak:.32}
-#calculator .rate-cell[aria-pressed=false]:hover{border-color:rgba(255,255,255,.62);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(var(--rgb-shadow),.22),0 18px 32px -20px rgba(var(--rgb-shadow),.8)}
-#calculator .rate-cell[aria-pressed=true]{--streak:.42;border-color:#fff;
-  box-shadow:inset 0 0 0 1px #fff,inset 0 1px 0 rgba(255,255,255,.5),0 0 0 4px rgba(255,255,255,.12),0 18px 34px -18px var(--rim)}
-#calculator .rate-cell[aria-pressed=true][data-tier=standard]{--tint:rgba(222,134,67,.8);--tint2:rgba(150,79,29,.8);--rim:rgba(236,176,136,.5);--label:#FFF1E6}
-#calculator .rate-cell[aria-pressed=true][data-tier=silver]{--tint:rgba(204,218,238,.36);--tint2:rgba(118,144,184,.32);--rim:rgba(228,238,250,.55)}
-#calculator .rate-cell[aria-pressed=true][data-tier=gold]{--tint:rgba(224,172,69,.84);--tint2:rgba(152,108,24,.84);--rim:rgba(240,208,130,.55);--label:#FFF6DF}
-#calculator .rate-cell[aria-pressed=true][data-tier=diamond]{--tint:rgba(138,96,224,.5);--tint2:rgba(76,48,150,.46);--rim:rgba(196,166,250,.55)}
-/* the wells and the cells take their streak from the screen's own timeline, as 02 and 04 do */
-#calculator .tile::after{animation-timeline:--ground}
-#calculator .well:focus-within,#calculator .rate-cell:focus-visible,#calculator .broker-rules:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:2px}
-#calculator .estimate{border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+#calculator .seg:focus-visible,#calculator .broker-rules:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:2px}
 /* the rules link is text, not a chip: the section already has a CTA and this only names the fine
    print, so it sits there and asks for nothing (founder, 2026-09-10) */
-#calculator .broker-rules{display:flex;margin:12px 2px 0 auto;min-height:20px;padding:0;border:0;background:none;
+#calculator .broker-rules{display:flex;margin:16px 2px 0 auto;min-height:20px;padding:0;border:0;background:none;
   color:rgba(255,255,255,.58);transition:color .3s var(--ease)}
 #calculator .broker-rules .ext{width:11px;height:11px}
 #calculator .broker-rules:hover{color:#fff}   /* its arrow levels on hover through base.css's one .ext rule, as every other CTA's does */
 html.reduce #calculator .live i{animation:none}
-/* one stop down on every edge (founder, 2026-09-10: "the shadowing and lighting is a bit harsh").
-   The recipe is the mechanics' — it has to be, they are the same tiles — but on paper, under a
-   frame that is itself lit, every highlight and every drop read twice as loud as they do on blue. */
-#calculator .tile{--streak:.16;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(var(--rgb-shadow),.12),0 10px 22px -18px rgba(var(--rgb-shadow),.4)}
+/* one stop down on every edge (founder, 2026-09-10: "the shadowing and lighting is a bit harsh"): on
+   paper, under a frame that is itself lit, every highlight and every drop read twice as loud as on blue. */
 #calculator .panel{box-shadow:0 22px 46px -34px rgba(var(--rgb-shadow),.5)}
 #calculator .panel::before{box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(var(--rgb-shadow),.06)}
 #calculator .live{box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 8px 18px -14px rgba(var(--rgb-shadow),.6)}
-#calculator .estimate{box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
-#calculator .well:focus-within{box-shadow:inset 0 0 0 1px #fff,inset 0 1px 0 rgba(255,255,255,.4),0 0 0 3px rgba(255,255,255,.1),0 12px 24px -20px rgba(var(--rgb-shadow),.5)}
+/* phones: the fields stack, and the pane's side padding and the answer come down a step, so the bar keeps
+   its four levels across (a 390px phone leaves each about 66px, Standard needs 56) */
+@media (max-width:560px){
+  #calculator .panel{padding:24px 16px 18px}
+  #calculator .fields{grid-template-columns:1fr}
+  #calculator .estimate strong{font-size:var(--text-estimate)}
+  #calculator .estimate strong.long{font-size:var(--text-number)}
+  #calculator .seg{padding:10px 2px 11px}
+}
 
 /* ---------- the glass controls, shared (founder, 2026-09-10: "we'll reuse the thing you'll make") ----------
    Two controls built on the tile above, so any page can put a form on glass.
@@ -610,10 +625,10 @@ html.reduce #calculator .live i{animation:none}
 .well-value .caret{width:12px;height:12px;flex:none;opacity:.7;transition:transform .25s var(--ease)}
 .well.open{z-index:6}
 .well.open .well-value .caret{transform:rotate(180deg)}
-/* the volume well's stepper (main.js): the picker's chevron, once up and once down, stacked on the well's
-   right edge where the pickers keep theirs (founder, 2026-09-13) */
-.well.stepped input{padding-right:30px}
-.stepper{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2px}
+/* the volume's stepper (main.js): the picker's chevron, once up and once down, stacked at the number field's
+   right edge where a number field keeps its spin buttons (founder, 2026-09-13; inside the field's box,
+   #calculator .numbox, since 2026-09-15) */
+.stepper{flex:none;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:0 7px 0 4px}
 .stepper button{display:grid;place-items:center;width:24px;height:18px;padding:0;border:0;border-radius:6px;background:none;
   color:#fff;cursor:pointer;opacity:.72;transition:opacity .2s var(--ease),background-color .2s var(--ease)}
 .stepper button:hover{opacity:1;background:rgba(255,255,255,.12)}
