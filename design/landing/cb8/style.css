@@ -298,6 +298,9 @@ html.reduce .glass .panel{transform:none;transition:none}
 .glass .p-note{color:rgba(255,255,255,.72);letter-spacing:-.01em;font-weight:var(--weight-body);font-size:var(--text-small)}
 .glass .dash-row{font-weight:var(--weight-body);font-size:var(--text-ui);color:#fff;border-top-color:rgba(255,255,255,.18)}
 .glass .dash-row b{color:#fff;font-weight:var(--weight-strong)}
+/* last row's own 15px bottom padding stacked on the pane's 28px read as too much air below
+   Withdrawal; drop it so bottom matches top (founder, 2026-09-15) */
+.glass .dash-row:last-child{padding-bottom:0;min-height:auto}
 /* 04 · the withdrawable figure carries its own tile — the balance card's glass in green, sized to the
    row, so the amount you can take out reads as the one live number in the list (founder, 2026-09-10) */
 #m4 .dash-avail{--tint:rgba(34,170,124,.5);--tint2:rgba(16,112,82,.36);--rim:rgba(150,230,190,.6);--streak:.2;
