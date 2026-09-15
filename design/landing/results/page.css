@@ -265,8 +265,8 @@
 .glass .dark-row+.dark-row{border-top:1px solid rgba(255,255,255,.2)}
 .glass .dark-row strong{font-size:var(--text-row-title);letter-spacing:-.02em}
 .dark-row small{justify-self:start;color:rgba(255,255,255,.7);font-size:var(--text-label)}.dark-row b{min-width:96px;text-align:right;font-size:var(--text-meta)}
-.dark-state{justify-self:end;min-width:98px;height:26px;padding:0 9px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;border:1px solid rgba(255,255,255,.28);border-radius:999px;
-  color:rgba(255,255,255,.7);font-size:var(--text-micro);font-weight:var(--weight-semi);background:rgba(255,255,255,.06)}   /* micro so "Not Reached" stays one line */
+.dark-state{justify-self:center;min-width:100px;height:28px;padding:0 10px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;border:1px solid rgba(255,255,255,.28);border-radius:999px;
+  color:rgba(255,255,255,.7);font-size:var(--text-label);font-weight:var(--weight-semi);background:rgba(255,255,255,.06)}   /* label size, one line, centred with .reached */
 .dark-state::before{content:'';width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35)}
 .dark-state.reached{justify-self:center;min-width:0;color:#fff;border-color:rgba(72,212,138,.7);background:rgba(72,212,138,.14)}
 .dark-state.reached::before{background:var(--success);box-shadow:0 0 0 3px rgba(72,212,138,.25)}
