@@ -24,6 +24,18 @@
 /* the three white screens meet the paper ones between them on paper: the white turns to paper over the
    120px at each paper seam, so no seam draws a line (founder, 2026-09-13). #overview's head is the hero. */
 #overview{background:var(--glow),linear-gradient(180deg,#fff calc(100% - 120px),var(--paper))}
+/* the white block's own corner light (style.css .mech.white .block::before) is sized for a card
+   where the ground shows all around its content. Overview's key-panel fills the block edge to
+   edge, so the only ground left is the strip the heading stands on — and the glow's top-left
+   lobe, at its shared 56% reach, filled that strip and then hit the panel's hard top edge in one
+   cut, reading as a patch dropped on the page rather than light in the card's corner (founder,
+   2026-09-15: "out of place"). Pulled in to fade out before that edge, keeping the same corner,
+   colour and grid the recipe shares with every other white block. */
+#overview .block::before{background:
+  radial-gradient(46% 30% at 10% -4%,rgba(var(--rgb-300),.42),transparent 70%),
+  radial-gradient(40% 52% at 94% 104%,rgba(var(--rgb-200),.5),transparent 70%),
+  repeating-linear-gradient(0deg,rgba(var(--rgb-300),.10) 0 1px,transparent 1px 48px),
+  repeating-linear-gradient(90deg,rgba(var(--rgb-300),.10) 0 1px,transparent 1px 48px)}
 #accounts,#cashback{background:var(--glow),linear-gradient(180deg,var(--paper),#fff 120px,#fff calc(100% - 120px),var(--paper))}
 /* ---------- the side glows: a soft light beside each record's card, left and right in turn ----------
    At their own height the records still stood on flat ground (founder, 2026-09-13: "naked"). Each carries one
