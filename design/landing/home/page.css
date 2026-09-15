@@ -38,7 +38,7 @@ html.reduce .screen-paper .weekly-record{transform:none;transition:none}
 .screen-paper .weekly-record.lit{--lit:.1}
 html.reduce .screen-paper .weekly-record::after{animation:none;transition:none}
 /* the header tile: the chart icon in the site's one well, the week, and its signal count as a pill */
-.weekly-head{min-height:82px;padding:16px 18px;margin-bottom:24px;border-radius:18px;
+.weekly-head{min-height:82px;padding:16px 18px;margin-bottom:24px;border-radius:16px;   /* a tile's corner (2026-09-15; it was 18px) */
   display:grid;grid-template-columns:var(--icon-well) minmax(0,1fr) auto;align-items:center;gap:16px;
   border:1px solid rgba(160,196,255,.2);
   background:linear-gradient(150deg,rgba(255,255,255,.1),rgba(255,255,255,.03));
@@ -47,7 +47,7 @@ html.reduce .screen-paper .weekly-record::after{animation:none;transition:none}
   border:1px solid rgba(160,196,255,.32);border-radius:var(--icon-well-radius);stroke:#fff;
   background:linear-gradient(150deg,rgba(255,255,255,.14),rgba(255,255,255,.04));box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
 .weekly-title{min-width:0}
-.weekly-title strong{display:block;font-size:var(--text-week-period);line-height:1.25;letter-spacing:-.02em;color:#fff}
+.weekly-title strong{display:block;font-size:var(--text-panel-title);line-height:1.25;letter-spacing:-.02em;color:#fff}   /* a panel title, 15px, as on every other card (2026-09-15; it was 17px on desktop) */
 .weekly-title span{display:block;margin-top:4px;font-size:var(--text-ui);color:rgba(255,255,255,.72)}
 .weekly-total{margin:0;display:inline-flex;align-items:center;gap:.3em;height:38px;padding:0 16px;
   border:1px solid rgba(255,255,255,.32);border-radius:999px;background:rgba(255,255,255,.06);box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
@@ -69,7 +69,7 @@ html.reduce .screen-paper .weekly-record::after{animation:none;transition:none}
   box-shadow:inset 0 1px 0 rgba(255,255,255,.45)}
 .weekly-bar b{position:absolute;left:50%;top:-28px;transform:translateX(-50%);font-size:var(--text-panel-title);letter-spacing:-.02em;color:#fff}
 .weekly-bar span{position:absolute;left:50%;top:calc(100% + 12px);transform:translateX(-50%);white-space:nowrap;
-  font:var(--weight-heavy) var(--text-small)/1 var(--sans);color:rgba(255,255,255,.86)}
+  font:var(--weight-strong) var(--text-small)/1 var(--sans);color:rgba(255,255,255,.86)}   /* bold, as the site's labels (it was extra bold) */
 /* The bars grow from the floor once the screen arrives, on the reveal's own curve. Height, not
    scaleY: the figure above a bar is pinned to that bar's top edge, so it has to ride up with it —
    a scale would stretch the digits instead. Four elements, once, off the scroll path. */
@@ -415,7 +415,7 @@ html:not(.js) .step .rv{opacity:1;transform:none}
   box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
 .rate-label{max-width:78px;margin:0;font-size:var(--text-small);line-height:1.3;font-weight:600;color:rgba(255,255,255,.82)}
 .rate-points{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0;padding:0;list-style:none}
-.rate-points li{padding:8px 4px 7px;border:1px solid var(--rim);border-radius:10px;text-align:center;
+.rate-points li{padding:8px 4px 7px;border:1px solid var(--rim);border-radius:var(--icon-well-radius);text-align:center;   /* the site's small-box corner, 12px (it was 10px) */
   background:radial-gradient(120% 100% at 50% -20%,var(--tint),transparent 72%),linear-gradient(150deg,rgba(255,255,255,.08),rgba(255,255,255,.03));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
 .rate-points small{display:block;font-size:var(--text-micro);line-height:1.2;color:rgba(255,255,255,.8)}
@@ -522,13 +522,13 @@ html.reduce .glass .plan-col:has(.plan-pick){transition:none}
   border:1px solid rgba(255,255,255,.45);border-radius:999px;white-space:nowrap}
 .duration{transition:border-color .45s var(--ease)}
 .plan-col:has(.plan-pick:checked) .duration{border-color:var(--label)}
-.price{margin:18px 0 0;font-size:var(--text-plan-price-compact);line-height:1;font-weight:750;letter-spacing:-.05em;color:#fff}
+.price{margin:18px 0 0;font-size:var(--text-plan-price-compact);line-height:1;font-weight:var(--weight-strong);letter-spacing:-.05em;color:#fff}   /* bold, as the site's figures (it was 750) */
 /* The lower half, after the founder's reference (2026-09-13): the monthly figure and the share
    each sit in their own small glass pane, then a rule, then what every plan includes. The panes
    are plain frosted boxes, not .tile — a tile's rim and sweep animate on the scroll, and six of
    them inside three tiles is six more layers on the one screen that already carries a rayfield. */
 .plan-pill{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;
-  border:1px solid var(--pane-rim);border-radius:14px;
+  border:1px solid var(--pane-rim);border-radius:16px;   /* a tile's corner (it was 14px) */
   background:linear-gradient(150deg,var(--pane-hi),var(--pane-lo));
   box-shadow:inset 0 1px 0 var(--pane-rim),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
 /* Tier plates (founder, 2026-09-13: "match the color of the plan more, and prettier"): each pane is
