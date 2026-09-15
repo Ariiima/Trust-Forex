@@ -240,34 +240,35 @@
    The taller the column, the greener it is kept — TP4's body stays teal where TP1's falls to the
    pane's blue, so reach reads as green earned and the short end still settles into the ground. */
 .target-ladder{padding:24px 22px 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}
-.glass .target-step{--head:rgba(72,212,138,.5);--mid:rgba(28,150,140,.34);--deep:rgba(10,64,110,.46);
-  --rim:rgba(142,232,196,.5);--streak:.2;
+.glass .target-step{--head:rgba(80,224,150,.5);--mid:rgba(36,186,140,.34);--deep:rgba(10,92,82,.4);
+  --rim:rgba(158,246,206,.48);--streak:.2;
   height:var(--step);min-height:108px;padding:14px 12px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;border-radius:16px 16px 6px 6px;
-  background:linear-gradient(180deg,var(--head) 0,var(--mid) 88px,var(--deep) 100%);
+  background:linear-gradient(180deg,var(--head) 0,var(--mid) 130px,var(--deep) 100%);
   box-shadow:inset 0 1px 0 rgba(214,255,238,.42),inset 0 -1px 0 rgba(var(--rgb-shadow),.24),0 16px 32px -22px rgba(24,140,112,.85)}
-.glass .target-step:nth-child(1){--head:rgba(72,212,138,.44)}
-.glass .target-step:nth-child(2){--head:rgba(78,218,144,.54);--mid:rgba(32,162,146,.38);--deep:rgba(12,86,116,.46)}
-.glass .target-step:nth-child(3){--head:rgba(84,224,152,.62);--mid:rgba(36,174,150,.44);--deep:rgba(16,110,126,.48);--rim:rgba(158,238,202,.56)}
-.glass .target-step strong{font-size:var(--text-row-title);letter-spacing:-.02em;text-shadow:0 1px 1px rgba(4,32,72,.22)}.glass .target-step span{color:rgba(255,255,255,.7);font-size:var(--text-micro)}
+.glass .target-step:nth-child(1){--head:rgba(80,224,150,.44)}
+.glass .target-step:nth-child(2){--head:rgba(88,232,158,.52);--mid:rgba(40,198,146,.38);--deep:rgba(12,104,90,.42)}
+.glass .target-step:nth-child(3){--head:rgba(96,240,166,.58);--mid:rgba(44,208,152,.42);--deep:rgba(14,116,96,.44);--rim:rgba(176,250,214,.54)}
+.glass .target-step strong{font-size:var(--text-row-title);letter-spacing:-.02em;text-shadow:0 1px 3px rgba(4,32,72,.4)}.glass .target-step span{color:rgba(255,255,255,.7);font-size:var(--text-micro)}
 /* the R:R reads as a caption, so it takes the head's capsule at micro size rather than a line of copy */
 .glass .target-step b{min-height:20px;padding:0 8px;display:inline-flex;align-items:center;white-space:nowrap;
   border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(255,255,255,.08);
   font-size:var(--text-label);font-weight:var(--weight-strong);color:rgba(206,244,226,.86);font-variant-numeric:tabular-nums}   /* 11px, as every other R:R on the page */
-.glass .target-step:last-child{--head:rgba(96,236,168,.72);--mid:rgba(40,186,158,.5);--deep:rgba(18,132,132,.52);--rim:rgba(178,244,208,.66)}
+.glass .target-step:last-child{--head:rgba(112,250,180,.66);--mid:rgba(50,220,160,.46);--deep:rgba(18,132,108,.48);--rim:rgba(198,255,224,.6)}
 .glass .target-step:last-child b{color:rgba(232,255,242,.94)}
 
 /* 02 · the four rows share one tile, split by hairlines (founder, 2026-09-13): four tiles stacked read as
    four cards, where this is one signal's record. The tile still fills the track and sits at the siblings'
    inset, so it meets the card's edges as the ladder and the formulas do. Reached is the pill's green alone. */
-.glass .dark-rows{min-height:0;margin:14px 18px 20px;display:grid;grid-template-rows:repeat(4,1fr)}
-.glass .dark-row{min-height:0;padding:0 14px;display:grid;grid-template-columns:76px 1fr 118px;gap:20px;align-items:center;color:#fff}
+#m2 .panel.data-visual{height:352px}
+.glass .dark-rows{min-height:0;margin:10px 14px 14px;display:grid;grid-template-rows:repeat(4,1fr)}
+.glass .dark-row{min-height:0;padding:0 12px;display:grid;grid-template-columns:70px 1fr 108px;gap:14px;align-items:center;color:#fff}
 .glass .dark-row+.dark-row{border-top:1px solid rgba(255,255,255,.2)}
 .glass .dark-row strong{font-size:var(--text-row-title);letter-spacing:-.02em}
 .dark-row small{justify-self:start;color:rgba(255,255,255,.7);font-size:var(--text-label)}.dark-row b{min-width:96px;text-align:right;font-size:var(--text-meta)}
-.dark-state{justify-self:end;min-width:108px;min-height:30px;padding:0 10px;display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.28);border-radius:999px;
-  color:rgba(255,255,255,.7);font-size:var(--text-small);font-weight:var(--weight-strong);background:rgba(255,255,255,.06)}   /* bold, as the page's other pills */
+.dark-state{justify-self:end;min-width:98px;height:26px;padding:0 9px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;border:1px solid rgba(255,255,255,.28);border-radius:999px;
+  color:rgba(255,255,255,.7);font-size:var(--text-micro);font-weight:var(--weight-semi);background:rgba(255,255,255,.06)}   /* micro so "Not Reached" stays one line */
 .dark-state::before{content:'';width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35)}
-.dark-state.reached{color:#fff;border-color:rgba(72,212,138,.7);background:rgba(72,212,138,.14)}
+.dark-state.reached{justify-self:center;min-width:0;color:#fff;border-color:rgba(72,212,138,.7);background:rgba(72,212,138,.14)}
 .dark-state.reached::before{background:var(--success);box-shadow:0 0 0 3px rgba(72,212,138,.25)}
 
 /* 03 · two rings. The ring fills once, as the card reveals — a state change, not a mount effect.
@@ -278,10 +279,11 @@
    above and below it. Equation drops to a small pinned chip so the case reads as one composed card
    top-to-bottom instead of three centred rows with air between each. */
 @property --sweep{syntax:'<percentage>';inherits:false;initial-value:0%}
-.winrate-body{min-height:0;padding:20px;display:grid;grid-template-columns:minmax(0,1fr)}
+.glass .panel.data-visual.winrate-visual{height:auto;grid-template-rows:70px auto}
+.winrate-body{min-height:0;padding:16px 20px;display:grid;grid-template-columns:minmax(0,1fr)}
 .winrate-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .glass .winrate-case{--tint:rgba(72,212,138,.14);--tint2:rgba(72,212,138,.05);--rim:rgba(150,230,190,.3);--streak:.12;
-  min-width:0;min-height:0;padding:14px 16px 16px;display:flex;flex-direction:column;align-items:center;gap:12px;border-radius:16px}
+  min-width:0;min-height:0;padding:10px 16px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;border-radius:16px}
 .winrate-case-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px}
 /* smaller than any type token carries — the one deliberate literal size on the page, for a chip that
    is an accent next to the ring's number, not a reading. `.glass` prefixed in so this actually beats
@@ -302,7 +304,7 @@
   -webkit-mask:radial-gradient(circle,transparent 62%,#000 63%);mask:radial-gradient(circle,transparent 62%,#000 63%);transition:--sweep 1.3s var(--ease) .55s}
 .screen.in .winrate-ring::before{--sweep:var(--rate)}
 .glass .winrate-ring strong{font-size:38px;line-height:1;letter-spacing:-.04em;color:#fff}
-.winrate-ring span{margin-top:6px;color:rgba(255,255,255,.6);font-size:var(--text-nano);font-weight:var(--weight-strong);letter-spacing:.1em}
+.winrate-ring span{margin-top:4px;color:rgba(255,255,255,.6);font-size:var(--text-nano);font-weight:var(--weight-strong);letter-spacing:.1em}
 .winrate-equation{padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);font-size:var(--text-nano);letter-spacing:.03em}
 
 /* 04 · the timer (founder, 2026-09-12). The card used to hold a ring over three bars — three touched
