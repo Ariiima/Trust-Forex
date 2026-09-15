@@ -282,7 +282,11 @@ html.reduce .glass .panel{transform:none;transition:none}
 .glass .dash-card{min-height:96px;padding:1rem 1.25rem .875rem}
 .glass .dash-card strong{margin:.5rem 0 .25rem}
 .glass .dash-card p{opacity:.84}
-.glass .dash-cards,.glass .ladder{gap:1.125rem}
+.glass .dash-cards{gap:1.125rem}
+/* the ladder's own tiles carry less air than the dash-cards' (founder, 2026-09-15): tighter
+   gap and a shorter min-height on .rate below keep the four tiles from reading over-sized
+   next to their 10/15/20/30% figures. */
+.glass .ladder{gap:.75rem}
 /* 04's cards and rows sit at the pane's own padding, as 02's tiles and 03's do: base.css's white card padded them
    18px more, which the glass pane never took off (2026-09-15) */
 .glass .dash-cards{margin-bottom:1rem;padding:0}
@@ -293,7 +297,7 @@ html.reduce .glass .panel{transform:none;transition:none}
 /* and 02's tiles at the same 28px: base.css's `#m2 .panel{padding:20px}` held them 8px nearer the edge than 01, 03
    and 04. Scoped to the pane that holds the ladder, since other pages reuse #m2 for panes of their own. */
 #m2 .panel:has(> .ladder){padding:1.75rem}
-.glass .rate{padding:1.25rem 1rem 1.125rem}
+.glass .rate{padding:1rem 1rem .875rem;min-height:100px}
 .glass .rate small{margin-bottom:.5rem}
 /* the note under 02's tiles reads at the tiles' own copy size, 12px; a row's label at its value's 14px, since a label
    larger than its figure read the row backwards (2026-09-15; they were 11px and 16px) */
@@ -333,6 +337,23 @@ html.reduce .glass .panel{transform:none;transition:none}
 #m2 .panel::after,#m2 .tile::after,#m2 .rayfield.k i{animation-timeline:--m2}
 #m4 .panel::after,#m4 .tile::after,#m4 .rayfield.k i{animation-timeline:--m4}
 html.reduce .glass .panel::after,html.reduce .glass .tile::after,html.reduce .glass .tile::before,html.reduce #calculator .tile::after,html.reduce #calculator .tile::before,html.reduce .glass .rayfield.k i{animation:none;transition:none}
+/* test only — each rate tile on the shelf catches a soft light sweeping left to right as it scrolls
+   through, staggered so the four don't catch it at once. A quiet resting glow in the tile's own tier
+   colour, not the pulsing brightness this replaced. Drop this if it doesn't earn its keep. */
+#m2 .ladder .tile{
+  background:
+    linear-gradient(100deg,transparent 15%,rgba(255,255,255,.14) 50%,transparent 85%) no-repeat -90% 0/130% 100%,
+    linear-gradient(150deg,var(--tint),var(--tint2));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 -1px 0 rgba(var(--rgb-shadow),.22),0 14px 30px -18px rgba(var(--rgb-shadow),.7),0 0 22px -6px var(--rim);
+  animation:tile-shine linear both;
+  animation-timeline:--m2;
+}
+#m2 .ladder .tile:nth-child(1){animation-range:entry 5% exit 55%}
+#m2 .ladder .tile:nth-child(2){animation-range:entry 15% exit 65%}
+#m2 .ladder .tile:nth-child(3){animation-range:entry 25% exit 75%}
+#m2 .ladder .tile:nth-child(4){animation-range:entry 35% exit 85%}
+@keyframes tile-shine{from{background-position:-90% 0,0 0}to{background-position:190% 0,0 0}}
+html.reduce #m2 .ladder .tile{animation:none}
 /* the ground: two arcs of light sweeping the corners, on top of the section's own halo */
 .glass .rayfield.k i:nth-child(3),.glass .rayfield.k i:nth-child(4){display:block;background:none;filter:blur(5px);border:4px solid transparent;
   border-top-color:rgba(255,255,255,.5);border-left-color:rgba(var(--rgb-300),.3)}
