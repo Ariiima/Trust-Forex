@@ -121,19 +121,30 @@
 .access-eyebrow{display:flex;align-items:center;gap:9px;font:var(--weight-strong) var(--text-panel-title)/1 var(--sans);letter-spacing:-.01em;color:#fff}
 .access-eyebrow .ico{stroke:rgba(255,255,255,.6)}
 
-/* the switch: one sunk track, two pills inside it. The inactive pill carries no tile ground of its own,
-   so the track is the only frame and the white pill is the only lit thing in it. */
-.access-switch{display:inline-grid;grid-auto-flow:column;gap:4px;padding:4px;border-radius:16px;flex:none;
+/* the switch: one sunk track, one white glass knob sliding under whichever label is picked
+   (founder, 2026-09-15: picked the sliding-capsule concept over the old two-pill fill), sized and moved
+   by page.js off each button's own offsetLeft/offsetWidth, so it works stacked (mobile) too without a
+   second code path.
+   Tightened (founder, 2026-09-15, D of four): a 28px track on a 2px rim, labels 10px in, the knob flush
+   to its own label, so the knob's inset and its gap to the other label are both 10px. The knob first ran
+   10px wider than its label, and off-centre, which read loose rather than layered. */
+.access-switch{position:relative;display:inline-grid;grid-auto-flow:column;gap:0;padding:2px;border-radius:12px;flex:none;
   border:1px solid rgba(255,255,255,.1);background:rgba(var(--rgb-abyss),.62);
   box-shadow:inset 0 2px 8px rgba(var(--rgb-shadow),.55),inset 0 -1px 0 rgba(255,255,255,.06)}
-.access-switch .tile{min-height:34px;padding:0 18px;border-radius:12px;font-size:var(--text-small);font-weight:var(--weight-strong);
-  color:rgba(255,255,255,.72);border-color:transparent;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;
-  transition:background-color .3s var(--ease),color .3s var(--ease),box-shadow .3s var(--ease),transform .25s var(--ease)}
-.access-switch .tile::after,.access-switch .tile::before{display:none}   /* no streak, no specular: this is a control */
-.access-switch .tile:hover{color:#fff;background:rgba(255,255,255,.08)}
-.access-switch .tile[aria-pressed=true]{background:#fff;color:var(--navy);transform:translateY(-1px);
+/* The knob moves on a soft spring (page.js, Web Animations), and a navy copy of the two labels (.lit, built
+   by page.js) moves with it, clipped to the knob's own box — so a label turns navy exactly where the knob
+   covers it. Both labels used to cross-fade their colours at once and went grey together mid-slide
+   (founder, 2026-09-15: D's knob of four motion arms). The buttons underneath stay pale throughout. */
+.access-switch .knob{position:absolute;z-index:1;top:0;left:0;width:0;height:28px;border-radius:10px;background:linear-gradient(150deg,#fff,#eef3ff);
   box-shadow:0 1px 0 rgba(255,255,255,.9),0 10px 20px -10px rgba(var(--rgb-shadow),.6)}
-.access-switch .tile[aria-pressed=true]:hover{background:#fff;transform:translateY(-1px)}
+.access-switch .tile{position:relative;z-index:2;min-height:28px;padding:0 10px;border-radius:10px;font-size:var(--text-small);font-weight:var(--weight-strong);
+  color:rgba(255,255,255,.6);border:0;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;
+  transition:color .3s var(--ease)}
+.access-switch .tile::after,.access-switch .tile::before{display:none}   /* no streak, no specular: this is a control */
+.access-switch .tile:hover{color:#fff}
+.access-switch .lit{position:absolute;inset:0;z-index:3;pointer-events:none;clip-path:inset(50%)}
+.access-switch .lit span{position:absolute;display:flex;align-items:center;justify-content:center;white-space:nowrap;
+  font-size:var(--text-small);font-weight:var(--weight-strong);color:var(--navy)}
 .access-switch .tile:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:2px}
 
 /* the request form's Telegram / WhatsApp choice wears the Blog's chips instead of the track (2026-09-14).
@@ -156,28 +167,39 @@
 .contact-toggle input:checked+span::before{background:#fff;transform:scale(1.15)}
 .contact-toggle input:focus-visible+span{outline:2px solid rgba(255,255,255,.85);outline-offset:4px}
 
-/* the path: three tiles, gapped, one colour each, the rule stated once below them in plain text */
+/* the path: three rounded tiles, 10px apart, each framed in its own colour (founder, 2026-09-15: "make each of
+   these separate in a rounded rectangle" — they had been joined edge to edge in one clipped track).
+   Each segment's colour is drawn in to its own corner rather than washing across it, and its label sits at
+   the label weight, not bold (founder, 2026-09-15). */
 .access-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .access-step{--acc:var(--rgb-violet);--acc-solid:var(--violet);
-  position:relative;isolation:isolate;overflow:hidden;min-height:100px;padding:20px 12px 18px;border-radius:15px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;
-  border:1px solid rgba(var(--acc),.42);
-  background:
-    radial-gradient(118% 104% at 8% -16%,rgba(var(--acc),.46),transparent 60%),
-    radial-gradient(104% 124% at 106% 118%,rgba(var(--rgb-abyss),.5),transparent 62%),
-    linear-gradient(150deg,rgba(var(--acc),.26),rgba(var(--rgb-abyss),.34));
-  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.26),inset 0 0 22px -12px rgba(var(--acc),.7),0 12px 26px -18px rgba(var(--rgb-shadow),.7)}
+  position:relative;isolation:isolate;padding:24px 10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;
+  border:1px solid rgba(var(--acc),.42);border-radius:14px;overflow:hidden;
+  background:   /* the dark ground under the tints is the one the joined track used to lay behind all three */
+    radial-gradient(84% 76% at 10% -8%,rgba(var(--acc),.5),transparent 62%),
+    radial-gradient(90% 100% at 104% 112%,rgba(var(--rgb-abyss),.5),transparent 60%),
+    linear-gradient(150deg,rgba(var(--acc),.2),rgba(var(--rgb-abyss),.36)) rgba(var(--rgb-abyss),.35);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 22px -12px rgba(var(--acc),.7)}
 .access-step:nth-child(2){--acc:var(--rgb-gold);--acc-solid:var(--gold)}
 .access-step.done{--acc:var(--rgb-mint);--acc-solid:var(--mint)}
-.access-step i{width:34px;height:34px;flex:none;display:grid;place-items:center;border:1.5px solid rgba(var(--acc),.75);border-radius:50%;
-  background:rgba(var(--acc),.2);box-shadow:0 0 0 4px rgba(var(--acc),.12),inset 0 1px 0 rgba(255,255,255,.3);
-  font:var(--weight-strong) var(--text-small)/1 var(--sans);font-style:normal;font-variant-numeric:tabular-nums;color:var(--acc-solid)}
-.access-step span{display:block;font-size:var(--text-small);line-height:1.35;font-weight:var(--weight-strong);color:#fff}
-/* the rule: the one statement the steps above resolve to, centred under them, not its own card */
-.access-caption{margin:14px 0 0;font-size:var(--text-small);text-align:center;color:rgba(255,255,255,.72)}
-.swap{animation:xf .28s var(--ease)}   /* cb8's estimate cross-fade */
-html.reduce .swap,html.reduce .access-switch .tile:hover{animation:none;transform:none}
+.access-step i{font:var(--weight-strong) var(--text-micro)/1 var(--sans);font-style:normal;letter-spacing:.05em;font-variant-numeric:tabular-nums;color:var(--acc-solid)}
+.access-step span{display:block;margin-top:2px;font-size:var(--text-meta);line-height:1.35;font-weight:var(--weight-strong);color:#fff;white-space:nowrap}
+/* the rule: a pale band flush to the pane's sides and bottom (its 22px padding and 23px inner corner) under a
+   hairline, at 20px — a size under 01's closing line, so the steps above carry more of the panel */
+.access-caption{margin:18px -22px -22px;min-height:60px;padding:0 16px;display:flex;align-items:center;justify-content:center;text-align:center;
+  border-top:1px solid rgba(160,196,255,.3);border-radius:0 0 23px 23px;background:rgba(160,196,255,.1);
+  font:var(--weight-strong) var(--text-figure)/1.3 var(--sans);letter-spacing:-.02em;color:#fff}
+/* the mode's words roll: page.js wraps each label's text in a line of its own, and on a switch the old line
+   rolls up out of the label as the new one rolls up in under it, step by step, the rule line last (founder,
+   2026-09-15: C's text of four motion arms). Each label clips its own lines, so only the words move — the
+   segments' colour and the foot band never blink. */
+.access-roll{display:grid;justify-items:center;overflow:hidden;padding:2px 0;margin:-2px 0}
+.access-roll>span{grid-area:1/1;white-space:nowrap}
+.access-caption .access-roll{display:inline-grid;vertical-align:top}
+.access-step .access-roll{display:grid;margin:-2px 0}   /* over `.access-step span`, which would make it a block */
+.access-step .access-roll>span{margin-top:0}
+html.reduce .access-switch .tile:hover{transform:none}
 
 /* ---------- 03 · the path to action, on the value-row format 09's record and 11's start already
      carry (founder, 2026-09-14: match that format, tightened) ----------
@@ -383,9 +405,9 @@ html.reduce .goal:hover input:not(:checked)+.tile{transform:none}
   .access-head{flex-direction:column;align-items:stretch}
   .access-switch{grid-auto-flow:row;grid-template-columns:1fr}
   .access-steps{grid-template-columns:1fr}
-  /* the three step tiles go one under another and each becomes a row: the numbered pip beside its label */
-  .access-step{min-height:66px;padding:14px 16px;
-    flex-direction:row;justify-content:flex-start;align-items:center;text-align:left;gap:13px}
+  /* the tiles stand up: one under another, each a row with its number beside its label */
+  .access-steps{gap:8px}
+  .access-step{padding:14px 16px;flex-direction:row;justify-content:flex-start;align-items:center;text-align:left;gap:12px}
   .glass .app-campaign{padding:27px 18px 18px}
   /* the action row is only 250px wide here, so the label and its chip both come down a step
      rather than letting "Continue with Your Broker" break across two lines */

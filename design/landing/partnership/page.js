@@ -1,22 +1,97 @@
 /* Broker Partnership — what this page does beyond cb8/main.js (reveal, holds, icons, FAQ, to-top):
    the access-condition switch on 02, the contact toggle on the form, and the request itself. */
 (() => {
-  /* ---------- 02 · the access rule: the wireframe's two modes, swapped with a cross-fade ---------- */
+  /* ---------- 02 · the access rule: the wireframe's two modes, a spring knob and rolling words ---------- */
   const MODES = {
     immediate: { title: 'Unlock when the client joins', steps: ['Client selected', 'Campaign opened', 'Access unlocked'] },
     funded: { title: 'Unlock after funding confirmation', steps: ['Account linked', 'Funding confirmed', 'Access unlocked'] },
   };
-  const swap = (el) => { el.classList.remove('swap'); void el.offsetWidth; el.classList.add('swap'); };
+  const REDUCE = document.documentElement.classList.contains('reduce');
+  const IOS = 'cubic-bezier(.32,.72,0,1)';
+  /* a damped spring (about 1.5% overshoot) sampled into CSS linear(), so Web Animations can run it */
+  const SPRING = (() => {
+    const pts = [], n = 60, zeta = 0.78, w = 13, wd = w * Math.sqrt(1 - zeta * zeta);
+    for (let i = 0; i < n; i++) {
+      const t = i / n;
+      pts.push(+(1 - Math.exp(-zeta * w * t) * (Math.cos(wd * t) + (zeta * w / wd) * Math.sin(wd * t))).toFixed(4));
+    }
+    return `linear(${pts.join(',')},1)`;
+  })();
+
+  const switches = [...document.querySelectorAll('[data-access]')];
+  const knob = document.querySelector('.access-switch .knob');
+  const track = knob.parentElement;
+  const pressed = () => switches.find((b) => b.getAttribute('aria-pressed') === 'true');
+
+  /* the navy copy of the labels, laid over each button's own box and clipped to wherever the knob is */
+  const lit = document.createElement('span');
+  lit.className = 'lit'; lit.setAttribute('aria-hidden', 'true');
+  const litLabels = switches.map((b) => { const s = document.createElement('span'); s.textContent = b.textContent; lit.append(s); return s; });
+  track.append(lit);
+
+  /* the knob takes the pressed button's own box (offsetLeft/offsetTop count the track's padding), so it
+     works stacked (mobile) the same way; the clip is the same box written as insets of the track */
+  const boxOf = (b) => ({ x: b.offsetLeft, y: b.offsetTop, w: b.offsetWidth, h: b.offsetHeight });
+  const knobFrame = (r) => ({ transform: `translate(${r.x}px,${r.y}px)`, width: `${r.w}px`, height: `${r.h}px` });
+  const clipFrame = (r) => ({ clipPath: `inset(${r.y}px ${track.clientWidth - r.x - r.w}px ${track.clientHeight - r.y - r.h}px ${r.x}px round 10px)` });
+  const knobNow = () => {
+    const k = knob.getBoundingClientRect(), t = track.getBoundingClientRect();
+    return { x: k.left - t.left - track.clientLeft, y: k.top - t.top - track.clientTop, w: k.width, h: k.height };
+  };
+  let slides = [];
+  const placeKnob = (to, from) => {
+    slides.forEach((a) => a.cancel()); slides = [];
+    Object.assign(knob.style, knobFrame(to)); Object.assign(lit.style, clipFrame(to));
+    if (!from || REDUCE) return;
+    const opts = { duration: 700, easing: SPRING };
+    slides = [knob.animate([knobFrame(from), knobFrame(to)], opts), lit.animate([clipFrame(from), clipFrame(to)], opts)];
+  };
+  /* a load (and the font landing, and a resize) places everything without animating */
+  const layout = () => {
+    switches.forEach((b, i) => Object.assign(litLabels[i].style, { left: `${b.offsetLeft}px`, top: `${b.offsetTop}px`, width: `${b.offsetWidth}px`, height: `${b.offsetHeight}px` }));
+    placeKnob(boxOf(pressed()));
+  };
+
+  /* each label's text becomes one line in a clipping roll; a switch rolls the old line up and out
+     while the new one rolls up in, 40ms a label, the rule line last */
   const title = document.getElementById('access-title');
   const steps = [...document.querySelectorAll('.access-step')];
-  const switches = [...document.querySelectorAll('[data-access]')];
+  const rolls = [title, ...steps.map((s) => s.querySelector('span'))]
+    .map((el) => {
+      const line = document.createElement('span'); line.textContent = el.textContent;
+      const roll = document.createElement('span'); roll.className = 'access-roll'; roll.append(line);
+      el.textContent = ''; el.append(roll);
+      return roll;
+    });
+  const [titleRoll, ...stepRolls] = rolls;
+  const rollTo = (roll, text, delay) => {
+    [...roll.children].slice(0, -1).forEach((c) => c.remove());
+    const old = roll.lastElementChild;
+    if (old.textContent === text) return;   /* "Access unlocked" is the same in both modes */
+    const line = document.createElement('span'); line.textContent = text;
+    if (REDUCE) { old.replaceWith(line); return; }
+    roll.append(line);
+    const opts = { duration: 520, easing: IOS, delay, fill: 'both' };
+    old.animate([{ transform: 'translateY(0)', opacity: 1 }, { transform: 'translateY(-105%)', opacity: 0 }], opts)
+      .finished.then(() => old.remove(), () => {});
+    line.animate([{ transform: 'translateY(105%)', opacity: 0 }, { transform: 'translateY(0)', opacity: 1 }], opts)
+      .finished.then((a) => a.cancel(), () => {});
+  };
+
   switches.forEach((b) => b.addEventListener('click', () => {
-    if (b.getAttribute('aria-pressed') === 'true') return;
+    if (b === pressed()) return;
+    const from = knobNow();
     switches.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+    placeKnob(boxOf(b), from);
     const m = MODES[b.dataset.access];
-    title.textContent = m.title; swap(title);
-    steps.forEach((s, i) => { s.querySelector('span').textContent = m.steps[i]; swap(s); });
+    stepRolls.forEach((r, i) => rollTo(r, m.steps[i], i * 40));
+    rollTo(titleRoll, m.title, 120);
   }));
+  /* the track, not the window: the phone's stacked buttons widen with the panel after load (the page's
+     hold/plain mode settling), and a window resize never fires for that */
+  layout();
+  document.fonts.ready.then(layout);
+  new ResizeObserver(layout).observe(track);
 
   /* ---------- the form: Telegram or WhatsApp decides what the contact field asks for ---------- */
   const label = document.getElementById('contact-label');
