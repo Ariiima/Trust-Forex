@@ -114,7 +114,7 @@ html.reduce #m2 .block{animation:none}
    the second line in the page's light blue, keeps the close loud and the page one surface. */
 .glass .lifetime-summary{min-height:82px;padding:18px 20px;border-radius:16px;display:flex;align-items:center;justify-content:center;text-align:center;
   --tint:rgba(150,188,255,.34);--tint2:rgba(48,102,214,.26);--rim:rgba(176,208,255,.7);--streak:.32}
-.glass .lifetime-summary strong{display:block;max-width:430px;font-size:var(--text-summary);line-height:1.08;letter-spacing:-.04em;color:#fff}
+.glass .lifetime-summary strong{display:block;max-width:430px;font-size:clamp(18px, 1.6vw, 22px);font-weight:var(--weight-semi);line-height:1.08;letter-spacing:-.04em;color:#fff}
 .glass .lifetime-summary strong span{display:block}   /* both lines plain white (founder, 2026-09-13: "simple and white") */
 
 /* ---------- 7 · the rates: the four tiers in their metals (style.css), the example beneath ---------- */
