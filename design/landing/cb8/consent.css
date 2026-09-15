@@ -1,20 +1,12 @@
-/* Cookie consent (consent.js): the first-visit banner and the preferences dialog.
+/* Cookie consent (consent.js): the preferences dialog, opened from the Cookie Settings tab.
    Paper on every ground and drawn in the page's own tokens, so the Legal Center's black-and-white
-   reset carries it without a selector of its own. The banner sits bottom left, clear of the
-   back-to-top button on the right, and becomes a strip across the foot on a phone. No blur: a
-   frosted card over the moving grounds is paint the home corridor has no frames for (README). */
-.cc-banner{position:fixed;left:24px;bottom:24px;z-index:60;box-sizing:border-box;width:min(420px,calc(100% - 48px));
-  padding:20px 22px;border:1px solid var(--line);border-radius:20px;background:#fff;color:var(--ink);
-  box-shadow:0 24px 48px -24px rgba(0,0,0,.3)}
-.cc-banner button,.cc-dialog button{font-family:inherit;cursor:pointer}
+   reset carries it without a selector of its own. */
+.cc-dialog button{font-family:inherit;cursor:pointer}
 .cc-title{margin:0;font-size:var(--text-body);line-height:1.4;font-weight:var(--weight-strong);color:var(--ink)}
 .cc-text{margin:6px 0 0;font-size:var(--text-ui);line-height:1.55;color:var(--body)}
-.cc-text a{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 /* Reject and Accept share a row at equal widths: neither answer is the easier one to reach */
 .cc-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
 .cc-actions .btn{flex:1 1 0;white-space:nowrap}
-.cc-link{flex-basis:100%;padding:4px 0;border:0;background:none;text-align:left;font-size:var(--text-ui);
-  font-weight:var(--weight-label);color:var(--ink);text-decoration:underline;text-underline-offset:2px}
 
 .cc-dialog{box-sizing:border-box;width:min(560px,calc(100% - 32px));max-height:calc(100dvh - 32px);padding:0;border:0;
   border-radius:24px;background:#fff;color:var(--ink);box-shadow:0 32px 64px -24px rgba(0,0,0,.45);overscroll-behavior:contain}
@@ -41,8 +33,6 @@
 .cc-dialog .cc-actions{margin-top:24px}
 
 @media (max-width:560px){
-  .cc-banner{left:12px;bottom:12px;width:calc(100% - 24px);padding:18px}
   .cc-form{padding:24px 20px}
   .cc-dialog .cc-actions .btn{flex-basis:100%}
 }
-@media print{.cc-banner{display:none}}

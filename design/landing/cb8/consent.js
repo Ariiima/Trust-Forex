@@ -1,13 +1,13 @@
-/* Cookie consent for every landing page: the banner on a first visit, the preferences dialog, and
-   the gate that holds optional scripts back until their category is allowed.
+/* Cookie consent for every landing page: the preferences dialog, and the gate that holds optional
+   scripts back until their category is allowed.
 
-   It is the pattern most sites use, and the one the Cookie Settings document promises (founder,
-   2026-09-13: "see what's common and expected … we should do the same"). Strictly necessary
-   cookies need no consent. Analytics and marketing stay off until the visitor chooses. "Reject all"
-   sits beside "Accept all", one click and the same size. The choice can be changed at any time from
-   the end of the Cookie Settings tab. It is kept in one first-party cookie for six months, and then
-   the banner asks again. It also asks again when VERSION goes up: raise it when a new tool arrives
-   that an earlier choice did not cover.
+   There is no first-visit banner (founder, 2026-09-15: "the user will review it in the cookie
+   settings"). That is lawful only while nothing optional runs without a choice: strictly necessary
+   cookies need no consent, and analytics and marketing stay off until the visitor switches them on
+   from the end of the Cookie Settings tab. "Reject all" sits beside "Accept all", one click and the
+   same size. The choice is kept in one first-party cookie for six months, then lapses back to off.
+   It also lapses when VERSION goes up: raise it when a new tool arrives that an earlier choice did
+   not cover. Before loading a tool that needs consent, bring the banner back (git history).
 
    Adding a tool: list it under its category in CATEGORIES (the dialog shows that list), and load it as
        <script type="text/plain" data-consent="analytics" src="…"></script>
@@ -15,8 +15,8 @@
    A script that has run cannot be taken back, so withdrawing its category reloads the page.
    Today no optional tool is in use: both optional lists are empty and the gate holds nothing.
 
-   The banner and the dialog are built here, not written into each page, so the nine pages and the
-   blog's generated ones cannot drift. Without JS there is no banner, and nothing optional runs. */
+   The dialog is built here, not written into each page, so the nine pages and the blog's generated
+   ones cannot drift. Without JS nothing optional runs. */
 (() => {
   const VERSION = 1;
   const NAME = 'tf_consent';
@@ -31,7 +31,6 @@
       text: 'Measure which ads and partner campaigns bring visitors to TrustForex.', tools: [] },
   ];
   const OPTIONAL = CATEGORIES.filter(c => !c.locked);
-  const POLICY = new URL('../legal/?document=cookies', document.currentScript.src).href;
 
   const read = () => {
     const raw = document.cookie.split('; ').find(c => c.startsWith(NAME + '='));
@@ -51,17 +50,6 @@
     held.replaceWith(live);
     ran.add(held.dataset.consent);
   });
-
-  const banner = document.createElement('section');
-  banner.className = 'cc-banner';
-  banner.setAttribute('aria-label', 'Cookie choices');
-  banner.innerHTML = `<p class="cc-title">Cookies on TrustForex</p>
-<p class="cc-text">Essential cookies keep this site running. With your permission we would also use analytics and marketing cookies. <a href="${POLICY}">Cookie Settings</a></p>
-<div class="cc-actions">
-  <button type="button" class="btn" data-cc="reject">Reject all</button>
-  <button type="button" class="btn" data-cc="accept">Accept all</button>
-  <button type="button" class="cc-link" data-cc="manage">Manage preferences</button>
-</div>`;
 
   const dialog = document.createElement('dialog');
   dialog.className = 'cc-dialog';
@@ -100,7 +88,6 @@ ${CATEGORIES.map(c => `<div class="cc-cat">
     document.cookie = `${NAME}=${encodeURIComponent(p)}; Max-Age=${MAX_AGE}; Path=/; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`;
     if (withdrawn) return location.reload();   // a script that has run cannot be unloaded
     if (dialog.open) dialog.close();
-    banner.remove();
     release();
     status();
     dispatchEvent(new CustomEvent('tf:consent', { detail: choice }));
@@ -114,8 +101,7 @@ ${CATEGORIES.map(c => `<div class="cc-cat">
   addEventListener('click', e => {
     if (e.target.closest('[data-consent-open]')) return open();
     const act = e.target.closest('[data-cc]')?.dataset.cc;
-    if (act === 'manage') open();
-    else if (act === 'close') dialog.close();
+    if (act === 'close') dialog.close();
     else if (act === 'reject' || act === 'accept') save(every(act === 'accept'));
     else if (act === 'save') save(Object.fromEntries(OPTIONAL.map(c => [c.id, dialog.querySelector('#cc-' + c.id).checked])));
   });
@@ -125,7 +111,6 @@ ${CATEGORIES.map(c => `<div class="cc-cat">
   // After parsing, so a held script written below this file's tag is found too.
   const start = () => {
     document.body.append(dialog);
-    if (!choice) document.body.append(banner);
     document.querySelectorAll('[data-consent-open]').forEach(el => el.closest('[hidden]')?.removeAttribute('hidden'));
     release();
     status();

@@ -75,19 +75,20 @@ footer links here. `node _qa/legal.test.mjs` covers the switch, the history, the
 fallback, the hierarchy, and that no computed colour on the page has a hue.
 
 Cookie consent is one script, `cb8/consent.js` (its styles are `cb8/consent.css`, imported by
-`style.css`), loaded by every page here and by every page `blog/build.mjs` writes. It is the
-pattern most sites use (founder, 2026-09-13: "see what's common and expected … we should do the
-same"). A first visit gets a banner, bottom left, with Reject all and Accept all side by side at the
-same size and Manage preferences under them. The dialog lists Strictly necessary (always on),
-Analytics and Marketing (off until switched on), each with its cookies' provider, purpose and
-duration. The Cookie Settings tab ends on the saved choice and a "Change your consent" button. The
-choice is one first-party cookie, `tf_consent`, kept six months; raising `VERSION` in the script
-asks everyone again. No optional tool is in use yet, so both optional lists read "None in use." A
-new tool goes into its category's list and loads as `<script type="text/plain"
-data-consent="analytics">`, which the script releases once that category is allowed; withdrawing a
-category whose script already ran reloads the page. `node _qa/consent.test.mjs` covers the banner,
-both one-click answers, the choice across pages, the dialog, Escape, a stale version, a phone and
-the gate. Fresh browsers in the other `_qa` scripts now see the banner too.
+`style.css`), loaded by every page here and by every page `blog/build.mjs` writes. The first-visit
+banner (bottom left, Reject all / Accept all / Manage preferences, added 2026-09-13) was cut on
+2026-09-15 (founder: "the user will review it in the cookie settings"). No banner is lawful only
+because nothing optional runs without a choice; bring it back from git history before any tool
+that needs consent goes live. The dialog, opened from the Cookie Settings tab's "Change your
+consent" button, lists Strictly necessary (always on), Analytics and Marketing (off until switched
+on), each with its cookies' provider, purpose and duration, and Reject all and Accept all side by
+side at the same size. The tab ends on the saved choice. The choice is one first-party cookie,
+`tf_consent`, kept six months; raising `VERSION` in the script voids every earlier choice. No
+optional tool is in use yet, so both optional lists read "None in use." A new tool goes into its
+category's list and loads as `<script type="text/plain" data-consent="analytics">`, which the
+script releases once that category is allowed; withdrawing a category whose script already ran
+reloads the page. `node _qa/consent.test.mjs` covers no banner, the dialog, both one-click answers,
+the choice across pages, Escape, a stale version, a phone and the gate.
 
 The footer is one markup on every page (`blog/build.mjs` writes its own copy), and `cb8/base.css`
 `.fsig` owns it. It stood on its own navy floor (`--p-abyss`) under the closing screen from
