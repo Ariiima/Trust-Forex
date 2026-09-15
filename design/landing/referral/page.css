@@ -70,15 +70,15 @@ html.reduce #chapter-routes::after{animation:none}
 @keyframes share-light{from{transform:translateX(38.8%)}to{transform:translateX(0)}}
 
 /* ---------- 4 · the routes: two rows and the shared destination, on the pane ---------- */
-.glass .route-panel{width:100%;max-width:440px;min-height:304px;justify-self:end;overflow:hidden;padding:0;display:grid;grid-template-rows:repeat(2,minmax(114px,1fr)) 76px;border-radius:24px}
-.route-row{min-height:114px;padding:16px 18px;display:grid;grid-template-columns:var(--icon-well) minmax(0,1fr);column-gap:14px;align-items:center;border-bottom:1px solid rgba(255,255,255,.18);color:#fff}
+.glass .route-panel{width:100%;max-width:440px;min-height:248px;justify-self:end;overflow:hidden;padding:0;display:grid;grid-template-rows:repeat(2,minmax(92px,1fr)) 64px;border-radius:24px}
+.route-row{min-height:92px;padding:16px 18px;display:grid;grid-template-columns:var(--icon-well) minmax(0,1fr);column-gap:14px;align-items:center;border-bottom:1px solid rgba(255,255,255,.18);color:#fff}
 .route-row>div{min-width:0}
 .glass .route-icon{width:var(--icon-well);height:var(--icon-well);border-radius:var(--icon-well-radius);display:grid;place-items:center;padding:0}
 .route-row h3{margin:0 0 6px;font-size:var(--text-panel-title);line-height:1.2;letter-spacing:-.015em;font-weight:var(--weight-strong);white-space:nowrap}
 .route-row p{margin:0;max-width:360px;color:rgba(255,255,255,.8);font-size:var(--text-meta);line-height:1.4}
 /* the destination closes the two routes the way the summary closes the points: the panel's own glass,
    lifted, over a hairline — one material down the whole pane (founder, 2026-09-12). */
-.shared-destination{min-height:76px;padding:16px 18px;display:grid;place-items:center;text-align:center;color:#fff;
+.shared-destination{min-height:64px;padding:16px 18px;display:grid;place-items:center;text-align:center;color:#fff;
   border-top:1px solid rgba(255,255,255,.3);
   background:linear-gradient(150deg,rgba(var(--rgb-900),.96),var(--blue));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
@@ -91,9 +91,9 @@ html.reduce #chapter-routes::after{animation:none}
 html.reduce #m2 .block{animation:none}
 
 /* ---------- 6 · lasting value: three tiles and the summary on white ---------- */
-.glass .lifetime-story{width:100%;min-height:420px;overflow:hidden;padding:14px;display:grid;grid-template-rows:repeat(3,minmax(92px,auto)) 82px;gap:10px;border-radius:24px}
+.glass .lifetime-story{width:100%;min-height:360px;overflow:hidden;padding:12px;display:grid;grid-template-rows:repeat(3,minmax(78px,auto)) 68px;gap:8px;border-radius:24px}
 /* every tile on the page takes the glass tile's own 16px corner (2026-09-15; these ran 14, 15 and 18) */
-.glass .lifetime-point{min-height:92px;padding:15px 16px;display:grid;grid-template-columns:var(--icon-well) minmax(0,1fr);gap:14px;align-items:center;border-radius:16px}
+.glass .lifetime-point{min-height:78px;padding:12px 16px;display:grid;grid-template-columns:var(--icon-well) minmax(0,1fr);gap:14px;align-items:center;border-radius:16px}
 /* each point carries its icon on a small glass tile and a faint colour of its own: blue for the connection,
    the TP green for rewards arriving, plain for the rule that never expires (founder, 2026-09-09: "can be improved") */
 .glass .lifetime-icon{width:var(--icon-well);height:var(--icon-well);border-radius:var(--icon-well-radius);display:grid;place-items:center;padding:0;--streak:.16}
@@ -112,28 +112,31 @@ html.reduce #m2 .block{animation:none}
    material. A solid white slab here outshone the headline beside it and broke the pane's glass
    (founder, 2026-09-12: "the two white boxes look out of place"); the same tile, tinted up, with
    the second line in the page's light blue, keeps the close loud and the page one surface. */
-.glass .lifetime-summary{min-height:82px;padding:18px 20px;border-radius:16px;display:flex;align-items:center;justify-content:center;text-align:center;
+.glass .lifetime-summary{min-height:68px;padding:14px 20px;border-radius:16px;display:flex;align-items:center;justify-content:center;text-align:center;
   --tint:rgba(150,188,255,.34);--tint2:rgba(48,102,214,.26);--rim:rgba(176,208,255,.7);--streak:.32}
 .glass .lifetime-summary strong{display:block;max-width:430px;font-size:clamp(18px, 1.6vw, 22px);font-weight:var(--weight-semi);line-height:1.08;letter-spacing:-.04em;color:#fff}
 .glass .lifetime-summary strong span{display:block}   /* both lines plain white (founder, 2026-09-13: "simple and white") */
 
 /* ---------- 7 · the rates: the four tiers in their metals (style.css), the example beneath ---------- */
-.glass .rates-panel{width:100%;height:340px;padding:20px;display:flex;flex-direction:column;justify-content:center;border-radius:24px}
+.glass .rates-panel{width:100%;padding:16px 20px;display:flex;flex-direction:column;gap:10px;border-radius:24px}
 /* the rail and its four cells are the shared glass controls (cb8/style.css) — the Cashback
    calculator picks a level with the very same cell, at its own size, tightened here to --cell-h. */
-.glass .rates-panel .rate-cell{--cell-h:100px}
+.glass .rates-panel .rate-cell{--cell-h:86px}
 .example-part b.swap{animation:xf .28s var(--ease)}   /* cb8's estimate cross-fade */
 html.reduce .example-part b.swap{animation:none}
-.rate-example{margin-top:14px;padding:14px 20px;border-radius:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
-.example-flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:10px}
+.rate-example{padding:12px 20px;border-radius:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+.example-flow{display:grid;grid-template-columns:1fr auto 1fr auto .9fr;align-items:center;gap:10px}
 .example-part{min-width:0;text-align:center;color:#fff}
 .example-part small{display:block;font-size:var(--text-small);color:rgba(255,255,255,.7);margin-bottom:4px}
 .example-part b{font-size:var(--text-row-title);letter-spacing:-.02em}
-.example-part.result{padding:13px 12px;border-radius:12px;background:#fff;color:var(--navy)}
+.example-part.result{padding:10px 10px;border-radius:14px;background:linear-gradient(135deg,#1a9e82,#0b6d63);color:#fff;
+  width:100%;
+  border:1px solid rgba(255,255,255,.28);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 16px -4px rgba(6,58,52,.55)}
 .example-part small{white-space:nowrap}   /* all three captions on one line, so the three figures share a baseline */
-.example-part.result small{color:var(--muted)}
+.example-part.result small{color:rgba(255,255,255,.8)}
 .example-arrow{color:rgba(255,255,255,.6)}
-.example-note{max-width:420px;margin:16px auto 0;font-size:var(--text-meta);line-height:1.4;color:rgba(255,255,255,.78);text-align:center}
+.example-note{max-width:420px;margin:12px auto 0;font-size:var(--text-meta);line-height:1.4;color:rgba(255,255,255,.78);text-align:center}
 
 /* ---------- 8 · the App: the overview, one notification, the balance on the blue tile ---------- */
 .glass .app-preview{position:relative;width:100%;height:420px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:44px 90px minmax(0,1fr) 72px;gap:12px;border-radius:24px}
@@ -228,9 +231,9 @@ html.reduce .example-part b.swap{animation:none}
   .route-row{min-height:118px;padding:16px;column-gap:12px}.route-row h3{white-space:normal}
   .shared-destination strong{font-size:30px}
   #start .value-row{padding:16px;column-gap:12px;grid-template-columns:40px minmax(0,1fr)}#start .value-index{width:40px;height:40px}
-  .glass .lifetime-story{grid-template-rows:none}.glass .lifetime-point{min-height:96px;padding:15px;gap:12px}
-  .lifetime-summary{padding:20px 16px}.lifetime-summary strong{font-size:23px}
-  .glass .rates-panel{padding:14px}.glass .rate-cell{min-height:96px}   /* the plans stay 2 across, as Cashback's calculator rail does on a phone */
+  .glass .lifetime-story{grid-template-rows:none}.glass .lifetime-point{min-height:80px;padding:12px;gap:12px}
+  .lifetime-summary{padding:16px}.lifetime-summary strong{font-size:23px}
+  .glass .rates-panel{padding:12px 14px}.glass .rate-cell{min-height:84px}   /* the plans stay 2 across, as Cashback's calculator rail does on a phone */
   .rate-example{padding:17px}.example-flow{grid-template-columns:1fr}.example-arrow{transform:rotate(90deg);justify-self:center}.example-part.result{width:100%}
   /* the card keeps its grid on a phone, rows at their content's height: as a plain block the pill, which comes first in
      the markup, stood over the title (2026-09-15). Beside it the title had 128px and broke in two, so here the title
