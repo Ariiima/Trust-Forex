@@ -456,13 +456,10 @@ html:not(.js) .step .rv{opacity:1;transform:none}
 #plans .block{overflow:clip}
 html:not(.snap) #plans .block{min-height:auto}
 .plans-shell{display:grid}
-.plans-intro{margin-bottom:26px}
+.plans-intro{margin-bottom:64px}  /* the heading stands clear of the cards (founder, 2026-09-16: "push the header a bit higher"; it was 26px) */
 /* the benefits and plans headings are section headings (--text-title, base.css .h2); they had sizes
    of their own, 58 and 62px, under the 66 of every other section heading on the site */
 .plans-intro .h2{max-width:780px;margin:0}
-/* the sentence the two guide tiles used to be: what is the same, and what the term changes.
-   A section paragraph's size, as under every other section heading; it was 14px. */
-.plans-lede{max-width:620px;margin:14px 0 0;font-size:var(--text-copy);line-height:var(--leading-body);color:rgba(255,255,255,.76)}
 /* stretched: the three cards are one size (founder, 2026-09-13). No card stands taller; the
    picked one is the one lit. */
 .plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch}
@@ -470,7 +467,9 @@ html:not(.snap) #plans .block{min-height:auto}
    into a halo behind the badge, and the body falls back to near-neutral so the price still
    reads as the brightest thing in the column. ::before and ::after belong to .glass .tile
    (the rim and the specular sweep) and are left alone. */
-.glass .plan-col{position:relative;min-height:220px;padding:24px 22px 28px;border-radius:22px;
+/* a little smaller (founder, 2026-09-16): the card's room tightens, its type keeps the site's sizes.
+   It was padded 24/22/28 under a 54px badge, a 36px term pill, 40 and 54px plates and an 11px list. */
+.glass .plan-col{position:relative;min-height:220px;padding:20px 20px 22px;border-radius:22px;
   display:flex;flex-direction:column;
   background:radial-gradient(120% 70% at 50% -10%,color-mix(in srgb,var(--label) calc(var(--pick) * 34%),transparent),transparent 66%),
     radial-gradient(112% 62% at 50% -8%,var(--tint),transparent 64%),
@@ -514,7 +513,7 @@ html:not(.snap) #plans .block{min-height:auto}
 .glass .plan-col:has(.plan-pick:active){transform:scale(.98);transition-duration:.45s,.45s,.4s,.12s;transition-timing-function:var(--ease)}
 .glass .plan-col:has(.plan-pick:checked:active){transform:translateY(var(--lift)) scale(.99)}
 html.reduce .glass .plan-col:has(.plan-pick){transition:none}
-.plan-badge{display:block;flex:none;width:54px;height:54px;
+.plan-badge{display:block;flex:none;width:46px;height:46px;
   filter:drop-shadow(0 8px 16px rgba(var(--rgb-shadow),.55))}
 /* the app's own two tags, which this page used to drop entirely */
 .plan-flag{position:absolute;top:-11px;left:22px;display:inline-flex;align-items:center;height:23px;padding:0 10px;
@@ -531,11 +530,11 @@ html.reduce .glass .plan-col:has(.plan-pick){transition:none}
 .plan-head h3{margin:0;font-size:var(--text-card-title);letter-spacing:var(--tracking-card);color:var(--label,#fff)}
 /* Silver's own ink is a white, and a white name reads as no tier at all; the reference draws it ice blue */
 .plan-col[data-tier=silver] .plan-head h3{color:#B9E1FF}
-.duration{margin-left:auto;display:inline-flex;align-items:center;height:36px;padding:0 16px;
-  border:1px solid rgba(255,255,255,.45);border-radius:999px;white-space:nowrap}
-.duration{transition:border-color .45s var(--ease)}
-.plan-col:has(.plan-pick:checked) .duration{border-color:var(--label)}
-.price{margin:18px 0 0;font-size:var(--text-plan-price-compact);line-height:1;font-weight:var(--weight-strong);letter-spacing:-.05em;color:#fff}   /* bold, as the site's figures (it was 750) */
+/* the term as plain words at the far end (founder, 2026-09-16, picked from the pill lab): it was an
+   outlined capsule whose rim took the tier ink on the pick, one more outline beside the plate. Without
+   the rim it drops its side padding, so it ends on the plate's right edge. */
+.duration{margin-left:auto;display:inline-flex;align-items:center;height:32px;white-space:nowrap}
+.price{margin:14px 0 0;font-size:var(--text-plan-price-compact);line-height:1;font-weight:var(--weight-strong);letter-spacing:-.05em;color:#fff}   /* bold, as the site's figures (it was 750) */
 /* The lower half, after the founder's reference (2026-09-13): the monthly figure and the share
    each sit in their own small glass pane, then a rule, then what every plan includes. The panes
    are plain frosted boxes, not .tile, whose rim and specular would be six more layers on the one
@@ -549,7 +548,7 @@ html.reduce .glass .plan-col:has(.plan-pick){transition:none}
    no pin, so each plate follows its own view() and the light crosses it as it passes up the screen.
    Without scroll timelines, or with reduced motion, it rests at 54%, where it sat before. --pane-sheen
    is a light layer a tier can lay between the streak and its metal. */
-.plan-pill{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;
+.plan-pill{display:block;margin-top:12px;padding:0 16px;
   border:1px solid var(--pane-rim);border-radius:16px;   /* a tile's corner (it was 14px) */
   background:linear-gradient(115deg,transparent 43%,rgba(255,255,255,.38) 50%,rgba(255,255,255,.1) 52.7%,transparent 57.7%) 54% 0/260% 100% no-repeat,
     var(--pane-sheen,none),linear-gradient(150deg,var(--pane-hi),var(--pane-lo));
@@ -560,23 +559,20 @@ html.reduce .glass .plan-col:has(.plan-pick){transition:none}
 }
 @keyframes plate-light{from{background-position:100% 0,0 0,0 0}to{background-position:0% 0,0 0,0 0}}
 html.reduce .plan-pill{animation:none}
-/* Tier plates (founder, 2026-09-13: "match the color of the plan more, and prettier"): each pane is
-   its tier's metal at .8, a light shade falling to a deep one, under a rim and a top highlight in the
-   tier's colour. At glass strength the blue showed through, and amber over blue mixes to grey: Gold
-   read khaki. At .8 the blue barely shows, so all three read true and stay one family. The light end
-   is kept a mid tone so the white words on it still read. */
-.plan-col[data-tier=silver]{--pane-hi:rgba(122,144,176,.8);--pane-lo:rgba(52,68,98,.8);--pane-rim:rgba(214,230,250,.7);--pane-mute:.42}
-.plan-col[data-tier=diamond]{--pane-hi:rgba(146,110,236,.8);--pane-lo:rgba(66,38,146,.8);--pane-rim:rgba(196,166,255,.75);--pane-mute:.34}
-/* Gold is a foil of its own (founder, 2026-09-15: "more gold/yellow-ish and some more shine only for
-   this"). It was quieter at .72 (2026-09-13: "tone down gold a little"), but at .72 the blue came back
-   through and it read grey-brown. It is now a yellow at .95 under a cream top sheen, with a bright rim,
-   a cream top edge and a dark bottom edge. The share's figure takes the pale ink the calculator's
-   picked Gold cell uses, since the gold ink sank into the plate. */
-.plan-col[data-tier=gold]{--pane-hi:rgba(214,168,58,.95);--pane-lo:rgba(128,88,16,.95);--pane-rim:rgba(255,226,150,.85);
-  --pane-sheen:linear-gradient(180deg,rgba(255,244,210,.22),transparent 50%);--pane-mute:.24}
-.plan-col[data-tier=gold] .plan-pill{
-  box-shadow:inset 0 1px 0 rgba(255,244,206,.9),inset 0 -1px 0 rgba(70,46,6,.45),0 14px 30px -22px rgba(var(--rgb-shadow),.7)}
-.plan-col[data-tier=gold] .plan-rate b{color:#FFF6DF}
+/* Tier plates (founder, 2026-09-16: "use these colors for the pill", pointing at the site's tier tiles).
+   Each plate takes its card's own tier glass from cb8/style.css ([data-tier]: --tint, --tint2, --rim),
+   the fill the rate tiles wear, so a plan and its rate read as one colour across the page. Before,
+   each tier had a metal of its own at .8, and Gold a yellow foil at .95 under a cream sheen. At the
+   tiles' own strength the plates read flat (founder, same day: "tone up the new colors a bit, they look
+   dead"). The tiles' hues at about half again the alpha barely moved them: amber over this blue still
+   mixed to grey. So each plate keeps its tile's hue but carries more of it, .66 to .72, with the
+   chroma pushed, a rim at .8, and a lighter wash on a plan not picked (.16 to .24, it was .24 to .42),
+   which had been eating most of the colour. */
+.plan-col[data-tier=silver]{--pane-hi:rgba(176,208,248,.52);--pane-lo:rgba(96,138,206,.48);--pane-rim:rgba(222,236,255,.8);--pane-mute:.24}
+.plan-col[data-tier=diamond]{--pane-hi:rgba(162,112,252,.72);--pane-lo:rgba(92,52,194,.68);--pane-rim:rgba(210,182,255,.8);--pane-mute:.2}
+.plan-col[data-tier=gold]{--pane-hi:rgba(238,188,62,.72);--pane-lo:rgba(164,116,18,.7);--pane-rim:rgba(250,218,136,.8);--pane-mute:.16}
+/* the share's figure keeps the pale ink the calculator's picked Gold cell uses */
+.plan-col[data-tier=gold] .plan-rate b,.plan-col[data-tier=gold] .plan-save{color:#FFF6DF}
 /* The plates of a card not picked sink back (founder, 2026-09-15: "mute the unselected plan a bit …
    silver selected and unselected are almost the same thing, diamond unselected should be muted a
    bit"). The card's own .8 dims its words, but on this blue it barely dims a blue-grey plate, and
@@ -591,10 +587,15 @@ html.reduce .plan-pill{animation:none}
   background:rgba(var(--rgb-blue),var(--pane-mute,0));transition:opacity .45s var(--ease)}
 .plan-col:has(.plan-pick:checked) .plan-pill::before{opacity:0}
 html.reduce .plan-pill::before{transition:none}
-.equiv{min-height:40px;margin-top:14px}
-/* what the longer term saves, in the record card's green — the page already reads green as a gain */
-.equiv .plan-save{color:#48D48A}
-.plan-rate{min-height:54px;margin-top:10px}
+/* One plate holds both lines (founder, 2026-09-16: "make the two pills in each plan become one pill"). They
+   were two plates, 12px and 8px apart; now each is a row of the one plate, split by a hairline in the
+   tier's rim. The rows keep the heights the two plates had. */
+.equiv,.plan-rate{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.equiv{min-height:40px}
+/* what the longer term saves, in the share's ink below it (founder, 2026-09-16: "match the color of
+   save $X to the percentage below it"); it was the record card's green */
+.equiv .plan-save{color:var(--label,#fff)}
+.plan-rate{min-height:50px;border-top:1px solid color-mix(in srgb,var(--pane-rim) 45%,transparent)}
 .plan-rate b{font-size:var(--text-card-title);line-height:1;letter-spacing:var(--tracking-stat);color:var(--label,#fff)}
 /* The share is what the pick changes, so it arrives again on every pick (founder, 2026-09-13: "load
    up smoothly from below"; a slide out of a clipped line was tried the same day and cut as not
@@ -607,8 +608,9 @@ html.reduce .plan-pill::before{transition:none}
   animation-delay:calc(.06s + var(--n,0) * 60ms),calc(.06s + var(--n,0) * 60ms)}
 @keyframes share-spring{from{transform:translateY(10px)}}
 @keyframes share-fade{from{opacity:0}}
-.plan-list{list-style:none;display:grid;gap:11px;margin:18px 0 0;padding:16px 4px 0;
-  border-top:1px solid rgba(255,255,255,.22)}
+/* no rule above the list (founder, 2026-09-16, arm 01 of the pill lab): it sat 14px under the plate's
+   own edge, a third line in a row. Its 28px of room stays as the margin. */
+.plan-list{list-style:none;display:grid;gap:9px;margin:28px 0 0;padding:0 4px}
 .plan-list li{display:flex;align-items:center;gap:12px}
 .plan-tick{width:18px;height:18px;flex:none}
 .plan-tick path{fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
@@ -619,7 +621,7 @@ html.reduce .plan-pill::before{transition:none}
    hugs its words at the site's own button padding and eases to each pick's width with them (founder,
    same day: "make the button tighter, and make it resize with plan selection, the pill should have a
    clean size"); it held a 280px floor at 28px padding, and the shorter names floated in it. */
-.plans-shell .plan-cta{justify-self:center;margin-top:24px;
+.plans-shell .plan-cta{justify-self:center;margin-top:60px;   /* founder, 2026-09-16: "push the button a bit lower"; it was 24px */
   position:relative;z-index:2}   /* over the picked card's glow, which reaches 100px below it (its z-index 1) and washed Gold's words grey */
 /* the words' own box, which page.js eases to each pick's width: clipped across only, so longer words
    are uncovered as it opens and the letters' tops and tails are never cut */
@@ -706,7 +708,6 @@ body{font-variant-numeric:normal}
   /* the badge is the card's biggest object, so it is the first thing that gives ground */
   .plan-badge{width:44px;height:44px}
   .plan-head{gap:10px}
-  .duration{height:32px;padding:0 12px}
   .glass .plan-col{padding:22px 18px 24px}
   /* the way in drops under its line, which beside it had about a hundred pixels to run in, and the
      rates' label goes above the four */
