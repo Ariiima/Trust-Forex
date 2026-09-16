@@ -538,7 +538,6 @@ html:not(.snap) .final-inner{min-height:calc(100svh - var(--section-space))}
   transition:--lit .45s var(--ease);animation:glass-light linear both;animation-timeline:--fsig;animation-range:entry 0% exit 100%;background:
   radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,var(--lit)),transparent 70%) no-repeat 0 0/auto,
   linear-gradient(115deg,transparent 32%,rgba(120,170,255,.2) 46%,rgba(120,170,255,.06) 52%,transparent 62%) no-repeat 100% 0/220% 100%}
-.fsig.lit{--lit:.08}
 .fsig::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:inherit;
   box-shadow:inset 0 1px 0 rgba(150,195,255,.6),inset 0 0 0 1px rgba(70,130,255,.25),
     inset 0 18px 40px -20px rgba(60,125,255,.45),inset 0 0 64px rgba(40,110,255,.2)}
