@@ -184,9 +184,9 @@
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;
   border:1px solid rgba(var(--acc),.42);border-radius:14px;overflow:hidden;
   background:   /* the dark ground under the tints is the one the joined track used to lay behind all three */
-    radial-gradient(84% 76% at 10% -8%,rgba(var(--acc),.5),transparent 62%),
-    radial-gradient(90% 100% at 104% 112%,rgba(var(--rgb-abyss),.5),transparent 60%),
-    linear-gradient(150deg,rgba(var(--acc),.2),rgba(var(--rgb-abyss),.36)) rgba(var(--rgb-abyss),.35);
+    radial-gradient(120% 110% at 10% -8%,rgba(var(--acc),.58),transparent 78%),
+    radial-gradient(80% 90% at 104% 112%,rgba(var(--rgb-abyss),.36),transparent 60%),
+    linear-gradient(150deg,rgba(var(--acc),.3),rgba(var(--rgb-abyss),.28)) rgba(var(--rgb-abyss),.3);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 22px -12px rgba(var(--acc),.7)}
 .access-step:nth-child(2){--acc:var(--rgb-gold);--acc-solid:var(--gold)}
 .access-step.done{--acc:var(--rgb-mint);--acc-solid:var(--mint)}
