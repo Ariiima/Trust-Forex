@@ -374,12 +374,86 @@
     if (v > MAX_VOL) { v = MAX_VOL; vol.value = String(MAX_VOL); }
     const n = Math.round(v * 17 * parseFloat(acct.value) * rate / 100);
     const figure = `$${n < 1e7 ? n.toLocaleString('en-US') : compact.format(n)}`;
-    out.innerHTML = `${figure} <em>/ month</em>`;   // cross-fade, never a count-up
     out.classList.toggle('long', figure.length > 7);
-    out.classList.remove('swap'); void out.offsetWidth; out.classList.add('swap');
+    rollFigure(figure);
   };
+  // The figure rolls rather than blinking in (founder, 2026-09-16: "make the number change smoother"), the
+  // access switch's rolling words (partnership/page.js) — never a count-up. The old figure leaves as the
+  // new one arrives, upward when the estimate rises and downward when it falls, and the roll's width eases
+  // between the two so "/ month" glides instead of jumping. A keystroke mid-roll drops the stale line.
+  const IOS = 'cubic-bezier(.32,.72,0,1)';
+  let roll, rollWidth;
+  if (out) {
+    const em = out.querySelector('em'), line = document.createElement('span');
+    line.textContent = out.firstChild.textContent.trim();
+    roll = document.createElement('span'); roll.className = 'est-roll'; roll.append(line);
+    out.replaceChildren(roll, ' ', em);
+  }
+  const rollFigure = figure => {
+    [...roll.children].slice(0, -1).forEach(c => c.remove());
+    const old = roll.lastElementChild;
+    if (old.textContent === figure) return;
+    const line = document.createElement('span'); line.textContent = figure;
+    if (REDUCE) { old.replaceWith(line); return; }
+    const w0 = roll.getBoundingClientRect().width;
+    rollWidth?.cancel();
+    old.setAttribute('aria-hidden', 'true');
+    roll.append(line);
+    const w1 = line.getBoundingClientRect().width;
+    const dir = parseFloat(figure.replace(/[^\d.]/g, '')) < parseFloat(old.textContent.replace(/[^\d.]/g, '')) ? -1 : 1;
+    const opts = { duration: 520, easing: IOS, fill: 'both' };
+    old.animate([{ transform: 'translateY(0)', opacity: 1 }, { transform: `translateY(${-105 * dir}%)`, opacity: 0 }], opts)
+      .finished.then(() => old.remove(), () => {});
+    line.animate([{ transform: `translateY(${105 * dir}%)`, opacity: 0 }, { transform: 'translateY(0)', opacity: 1 }], opts)
+      .finished.then(a => a.cancel(), () => {});
+    const width = roll.animate([{ width: `${w0}px` }, { width: `${w1}px` }], opts);
+    rollWidth = width;
+    width.finished.then(() => { old.remove(); width.cancel(); }, () => {});
+  };
+  // The pick's metal is one knob sliding under the levels, on the access switch's spring (partnership/page.js):
+  // a damped spring, about 1.5% overshoot, sampled into CSS linear() so Web Animations can run it. Its
+  // colour blends between metals in CSS; the knob takes the level's own box, so a phone's narrower bar needs
+  // nothing extra.
+  const bar = levels[0]?.closest('.tier-bar');
+  let knob, slide;
+  if (bar) {
+    knob = document.createElement('span');
+    knob.className = 'tier-knob'; knob.setAttribute('aria-hidden', 'true');
+    bar.prepend(knob); bar.classList.add('knobbed');
+  }
+  const SPRING = (() => {
+    const pts = [], n = 60, zeta = 0.78, w = 13, wd = w * Math.sqrt(1 - zeta * zeta);
+    for (let i = 0; i < n; i++) {
+      const t = i / n;
+      pts.push(+(1 - Math.exp(-zeta * w * t) * (Math.cos(wd * t) + (zeta * w / wd) * Math.sin(wd * t))).toFixed(4));
+    }
+    return `linear(${pts.join(',')},1)`;
+  })();
+  const knobFrame = b => ({ transform: `translate(${b.offsetLeft}px,${b.offsetTop}px)`, width: `${b.offsetWidth}px`, height: `${b.offsetHeight}px` });
+  const placeKnob = (b, animate) => {
+    if (!knob || !b) return;
+    const from = animate && !REDUCE ? (() => {
+      const k = knob.getBoundingClientRect(), t = bar.getBoundingClientRect();
+      return { transform: `translate(${k.left - t.left - bar.clientLeft}px,${k.top - t.top - bar.clientTop}px)`, width: `${k.width}px`, height: `${k.height}px` };
+    })() : null;
+    slide?.cancel();
+    const to = knobFrame(b);
+    Object.assign(knob.style, to);
+    knob.dataset.tier = b.dataset.tier;
+    if (from) slide = knob.animate([from, to], { duration: 700, easing: SPRING });
+  };
+  const pickedLevel = () => levels.find(o => o.getAttribute('aria-pressed') === 'true');
+  if (bar) {
+    // a load, the font landing and the bar resizing place the knob without moving it
+    const layout = () => placeKnob(pickedLevel(), false);
+    knob.style.transition = 'none'; layout(); void knob.offsetWidth; knob.style.transition = '';
+    document.fonts.ready.then(layout);
+    new ResizeObserver(layout).observe(bar);
+  }
   levels.forEach(b => b.addEventListener('click', () => {
+    if (b === pickedLevel()) return;
     levels.forEach(o => o.setAttribute('aria-pressed', String(o === b)));
+    placeKnob(b, true);
     rate = +b.dataset.rate;
     price();
   }));

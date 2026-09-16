@@ -514,6 +514,9 @@ html.snap .mech.white .block::after{animation-name:stack-back-paper}
 #calculator .estimate strong{font-size:var(--text-estimate-lead)}
 #calculator .estimate strong.long{font-size:var(--text-estimate)}   /* main.js sets .long once the figure passes seven characters */
 #calculator .estimate strong em{margin-left:-6px}   /* main.js writes a space before it at the figure's 56px; this takes most of it back */
+/* the figure's roll (main.js): both lines share one cell, clipped to it, a little room above and below for the glyphs */
+#calculator .est-roll{display:inline-grid;justify-items:start;overflow:hidden;padding:.08em 0;margin:-.08em 0;vertical-align:bottom}
+#calculator .est-roll>span{grid-area:1/1;white-space:nowrap}
 #calculator .step + .step{margin-top:22px}
 #calculator .step-cap{margin:0 0 10px}
 /* ---------- the three fields: two lists and a number field in one row (founder, 2026-09-15) ----------
@@ -538,10 +541,10 @@ html.snap .mech.white .block::after{animation-name:stack-back-paper}
   font:var(--weight-label) var(--text-panel-title)/1 var(--sans);letter-spacing:0;font-variant-numeric:tabular-nums}
 html.reduce #calculator .well-value,html.reduce #calculator .well>select,html.reduce #calculator .numbox{transition:none}
 /* ---------- the four levels as one bar (founder, 2026-09-15) ----------
-   A sunk bar holding the four levels, where only the pick wears its metal: the tints the old rail's pick
-   carried, re-mixed on 2026-09-13 so copper and gold read as metal on this blue rather than as mauve and
-   olive grey. Each stays dark enough for the white figure. */
-#calculator .tier-bar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;border-radius:16px;
+   A sunk bar holding the four levels, where only the pick wears its metal: the tiles' own colours from 02
+   (founder, 2026-09-16: "take these colors, use them here") — bronze, silver, gold and violet glass, a rim
+   and label in the tier's colour, the figure white. The three not picked stay plain in the bar. */
+#calculator .tier-bar{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;border-radius:16px;
   background:rgba(var(--rgb-abyss),.3);border:1px solid rgba(255,255,255,.14)}
 #calculator .seg{appearance:none;-webkit-appearance:none;margin:0;font:inherit;color:#fff;cursor:pointer;user-select:none;-webkit-user-select:none;
   display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 6px 11px;border-radius:12px;
@@ -549,14 +552,30 @@ html.reduce #calculator .well-value,html.reduce #calculator .well>select,html.re
 #calculator .seg small{font:var(--weight-label) var(--text-small)/1.25 var(--sans);white-space:nowrap;color:rgba(255,255,255,.6)}
 #calculator .seg strong{font:var(--weight-semi) var(--text-figure)/1 var(--sans);letter-spacing:-.03em;color:rgba(255,255,255,.9)}
 #calculator .seg[aria-pressed=false]:hover{background-color:rgba(255,255,255,.07)}
-#calculator .seg[aria-pressed=true]{background:linear-gradient(150deg,var(--tint),var(--tint2));border-color:rgba(255,255,255,.72);
+#calculator .seg[aria-pressed=true]{background:linear-gradient(150deg,var(--tint),var(--tint2));border-color:var(--rim);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 20px -14px rgba(var(--rgb-shadow),.8)}
 #calculator .seg[aria-pressed=true] small{color:var(--label)}
 #calculator .seg[aria-pressed=true] strong{color:#fff}
-#calculator .seg[data-tier=standard]{--tint:rgba(222,134,67,.8);--tint2:rgba(150,79,29,.8);--label:#FFF1E6}
-#calculator .seg[data-tier=silver]{--tint:rgba(204,218,238,.36);--tint2:rgba(118,144,184,.32);--label:#fff}
-#calculator .seg[data-tier=gold]{--tint:rgba(224,172,69,.84);--tint2:rgba(152,108,24,.84);--label:#FFF6DF}
-#calculator .seg[data-tier=diamond]{--tint:rgba(138,96,224,.5);--tint2:rgba(76,48,150,.46);--label:#fff}
+/* The pick's metal is a knob that slides between levels on the access switch's spring (partnership 02,
+   founder 2026-09-16: "add that to the calculator"). main.js builds it and marks the bar .knobbed, which
+   takes the pick's own fill off; the knob's colours are registered so they blend from one metal to the
+   next as it travels. Without the script the pressed level keeps its fill, as above. */
+@property --k-tint{syntax:'<color>';inherits:false;initial-value:transparent}
+@property --k-tint2{syntax:'<color>';inherits:false;initial-value:transparent}
+@property --k-rim{syntax:'<color>';inherits:false;initial-value:transparent}
+#calculator .tier-knob{position:absolute;z-index:0;top:0;left:0;width:0;height:0;border-radius:12px;pointer-events:none;
+  --k-tint:var(--tint);--k-tint2:var(--tint2);--k-rim:var(--rim);
+  background:linear-gradient(150deg,var(--k-tint),var(--k-tint2));border:1px solid var(--k-rim);box-sizing:border-box;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 20px -14px rgba(var(--rgb-shadow),.8);
+  transition:--k-tint .5s var(--ease),--k-tint2 .5s var(--ease),--k-rim .5s var(--ease)}
+#calculator .tier-bar.knobbed .seg{position:relative;z-index:1}
+#calculator .tier-bar.knobbed .seg[aria-pressed=true]{background:none;border-color:transparent;box-shadow:none}
+#calculator .seg small,#calculator .seg strong{transition:color .3s var(--ease)}
+html.reduce #calculator .tier-knob,html.reduce #calculator .seg small,html.reduce #calculator .seg strong{transition:none}
+#calculator [data-tier=standard]{--tint:rgba(200,128,88,.4);--tint2:rgba(120,70,48,.36);--rim:rgba(236,176,136,.5);--label:#F1C4A6}
+#calculator [data-tier=silver]{--tint:rgba(204,218,238,.3);--tint2:rgba(118,144,184,.26);--rim:rgba(228,238,250,.55);--label:#EDF3FB}
+#calculator [data-tier=gold]{--tint:rgba(210,172,86,.4);--tint2:rgba(124,96,40,.36);--rim:rgba(240,208,130,.55);--label:#F3D896}
+#calculator [data-tier=diamond]{--tint:rgba(138,96,224,.42);--tint2:rgba(76,48,150,.38);--rim:rgba(196,166,250,.55);--label:#DFD0FA}
 html.reduce #calculator .seg{transition:none}
 /* The type, and only the type. Nine bold things ran at once, so none of them led: four captions at
    800 uppercase, three values at 700, the level names and both figures. Here the two step captions
