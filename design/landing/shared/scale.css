@@ -28,8 +28,6 @@
   --text-micro: 10px;                               /* share names, level shares */
   /* roles added 2026-09-09 for the Results, Referral and About pages — their wireframes' sizes, verbatim
      (result.html, referall.html, about us.html, all "final") */
-  --text-display-story: clamp(46px, 5.6vw, 76px);   /* About hero — centred, so it holds two short lines instead of filling the field (founder, 2026-09-12) */
-  --text-lede-story: clamp(16px, 1.5vw, 19px);      /* About hero's lede — a line under the title, not a second title */
   --text-display-close: clamp(54px, 6.6vw, 88px);   /* Results / Referral final statement */
   --text-title-story: clamp(40px, 5vw, 64px);       /* About section heading */
   --text-monogram: clamp(110px, 14vw, 180px);       /* founder monogram */
