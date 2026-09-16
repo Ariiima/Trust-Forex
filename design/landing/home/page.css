@@ -26,7 +26,7 @@
    (::before, ../cb8/style.css), the one the service card below wears; ::after, which is the white
    ground there, is this card's blue pane and its light. The tilt and the specular under the pointer
    are the mechanics panel's (../cb8/main.js sets --tx/--ty/--mx/--my and .lit). */
-.weekly-record{min-height:420px;padding:16px 16px 0;display:grid;grid-template-rows:auto 1fr auto}
+.weekly-record{min-height:396px;padding:16px 16px 0;display:grid;grid-template-rows:auto 1fr auto}
 .screen-paper .weekly-record{border:0;
   transform:perspective(1200px) rotateX(calc(var(--ty,0) * -3deg)) rotateY(calc(var(--tx,0) * 3deg));transition:transform .6s var(--ease)}
 .screen-paper .weekly-record.lit{transition-duration:.15s}
@@ -98,10 +98,16 @@ html.reduce .screen.in .weekly-bar{animation:none}
   .weekly-head{background:rgba(var(--rgb-abyss),.55)}
   .weekly-bar{backdrop-filter:none;-webkit-backdrop-filter:none}
 }
-/* the foot's rule runs the full width of the pane, so it pulls out through the card's side padding */
-.record-foot{margin:16px -16px 0;padding:18px 24px 20px;border-top:1px solid rgba(255,255,255,.14)}
-.record-link{display:inline-flex;align-items:center;gap:8px;
-  font-size:var(--text-ui);font-weight:var(--weight-strong);color:#fff}
+/* no rule above the link (2026-09-16): it sits under the TP labels as Cashback's does under its levels,
+   16px below them (the chart's 36px foot holds the labels and 7px under) and the calculator's 22px from the edge */
+.record-foot{margin:9px 2px 0;padding-bottom:22px;text-align:right}
+/* set as Cashback's "View rules for each broker" (cb8/style.css #calculator .broker-rules): the same
+   quiet text link, size, weight, tint, arrow and hover */
+.record-link{display:inline-flex;align-items:center;min-height:20px;gap:5px;
+  font-size:var(--text-micro);font-weight:var(--weight-label);color:rgba(255,255,255,.58);transition:color .3s var(--ease)}
+.record-link .ext{width:11px;height:11px}
+.record-link:hover{color:#fff}
+.record-link:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:2px}
 
 /* ---------- 3 · the chapters: the site's one chapter size, on the light one too ----------
    --text-chapter, as on Cashback, Results and Referral; the wireframe's 92px ran a size over them.
@@ -723,14 +729,14 @@ body{font-variant-numeric:normal}
   .glass .plan-col{min-height:auto;--lift:0px;--grow:1.015}
 }
 @media (max-width:680px){
-  .weekly-record{min-height:400px;padding:12px 12px 0}
+  .weekly-record{min-height:376px;padding:12px 12px 0}
   .plans-shell .plan-cta{justify-self:stretch}   /* full width under the stacked cards, as the site's buttons on a phone (base.css) */
   /* the pill drops under the week: beside it, the title and the date each broke onto two lines */
   .weekly-head{min-height:78px;padding:14px;grid-template-columns:var(--icon-well) minmax(0,1fr);gap:10px 12px}
   .weekly-icon{grid-row:1/3}
   .weekly-title strong{font-size:var(--text-panel-title)}
   .weekly-total{justify-self:start;height:30px;padding:0 12px}
-  .record-foot{margin-inline:-12px;padding:16px 18px 18px}
+  .record-foot{padding-bottom:18px}   /* the calculator's phone foot */
   .weekly-chart{min-height:255px}
   .weekly-bars{--bars-gap:10px}
   .access-visual .tile{padding:16px;gap:12px}
