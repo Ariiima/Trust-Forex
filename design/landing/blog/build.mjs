@@ -70,7 +70,7 @@ const footer = rel => `<!-- the footer, every page: glass, its lockup+CTA/column
       <div class="fsig-lock">
         <a class="fsig-mark" href="${rel}home/" aria-label="TrustForex home">
           <svg class="brand-word" viewBox="0 0 119 26" aria-hidden="true"><use href="#tf-word"/></svg>
-          <svg class="brand-sub" viewBox="0 0 113 11" aria-hidden="true"><use href="#tf-sub"/></svg>
+          <span class="brand-sub-text" aria-hidden="true">F O R E X</span>
         </a>
         <span class="fsig-rule-v" aria-hidden="true"></span>
         <p class="fsig-say">Built on rules. Measured by results.</p>

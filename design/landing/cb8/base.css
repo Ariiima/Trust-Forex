@@ -552,7 +552,9 @@ html:not(.snap) .final-inner{min-height:calc(100svh - var(--section-space))}
 .fsig-mark{display:inline-flex;flex-direction:column;gap:5px;color:#fff}
 .fsig-mark svg{fill:currentColor}
 .fsig-mark .brand-word{width:132px;height:auto}
-.fsig-mark .brand-sub{width:125px;height:auto}
+/* The lockup's FOREX is set in the site font, not the traced SVG (founder, 2026-09-16): sized to the
+   drawing's cap height and stroke, spread across its 125px and centred under the word. */
+.fsig-mark .brand-sub-text{display:block;align-self:center;width:125px;font:200 16.8px/12.2px var(--sans);text-align:justify;text-align-last:justify;letter-spacing:0}
 .fsig-rule-v{width:1px;align-self:stretch;min-height:34px;background:rgba(255,255,255,.18)}
 .fsig-say{margin:0;font-size:var(--text-body);line-height:1.45;color:rgba(255,255,255,.82)}
 /* The CTA is the site's glass capsule (style.css .on-dark .btn-solid — the closing "Activate
