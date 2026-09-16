@@ -1,6 +1,6 @@
 // The Legal Center's four rules, checked against the local landing server (_qa/serve.py):
-// the document switch and its history, the no-JS fallback, the heading hierarchy, black and
-// white, and the sticky document links on a phone.
+// the document switch and its history, the no-JS fallback, the heading hierarchy,
+// the blue head over the white sheet, and the sticky document links on a phone.
 //   node design/landing/_qa/legal.test.mjs [http://localhost:5311]
 import { chromium } from 'playwright';
 import assert from 'node:assert/strict';
@@ -50,21 +50,31 @@ const head = await pg.evaluate(() => ({
 }));
 assert.deepEqual(head, { h2: 1, extra: 0 }, 'document head still shown: ' + JSON.stringify(head));
 
-// 4 — black and white: no computed colour above the footer has a hue — text, grounds, rims,
-// gradients and shadows, pseudo-elements included. The footer is the house footer, blue glass as on
-// every page (founder, 2026-09-14), so it is left out.
-const hued = await pg.evaluate(() => {
-  const props = ['color', 'backgroundColor', 'borderTopColor', 'borderBottomColor', 'fill', 'stroke', 'backgroundImage', 'boxShadow'];
-  const out = new Set();
-  for (const el of document.querySelectorAll('body *')) if (!el.closest('.footer-only')) for (const pseudo of [null, '::before', '::after']) {
-    const s = getComputedStyle(el, pseudo);
-    for (const k of props) for (const m of s[k].matchAll(/rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)/g)) {
-      if (!(m[1] === m[2] && m[2] === m[3])) { out.add(`${el.localName}.${el.getAttribute('class')}${pseudo || ''} ${k} ${s[k].slice(0, 90)}`); break; }
-    }
-  }
-  return [...out];
+// 4 — the look (founder, 2026-09-16: blue head, paper grid, one white sheet): the band is the site's blue,
+// the sheet is white and rises into the band, and the tab bar is clear on the band and white once stuck,
+// with its text white while clear and navy once filled.
+const look = await pg.evaluate(() => {
+  const top = document.querySelector('.legal-top'), sheet = document.querySelector('.legal-body .legal-wrap');
+  return {
+    band: getComputedStyle(top).backgroundColor,
+    sheet: getComputedStyle(sheet).backgroundColor,
+    rises: Math.round(top.getBoundingClientRect().bottom - sheet.getBoundingClientRect().top) > 0,
+    grid: getComputedStyle(document.querySelector('.legal'), '::before').backgroundImage.includes('repeating-linear-gradient'),
+  };
 });
-assert.deepEqual(hued, [], 'coloured: ' + hued.join(' | '));
+assert.deepEqual(look, { band: 'rgb(12, 46, 123)', sheet: 'rgb(255, 255, 255)', rises: true, grid: true }, 'look: ' + JSON.stringify(look));
+const barAt = async y => { await pg.evaluate(y => scrollTo(0, y), y); await pg.waitForTimeout(250); return pg.evaluate(() => {
+  const bar = document.querySelector('.doc-tabs');
+  return { p: +getComputedStyle(bar).getPropertyValue('--p'), clear: bar.classList.contains('is-clear'),
+    tab: getComputedStyle(bar.querySelector('[aria-current="page"]')).color };
+}); };
+const stickAt = await pg.evaluate(() => document.querySelector('.doc-tabs').getBoundingClientRect().top -
+  parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')));
+assert.deepEqual(await barAt(0), { p: 0, clear: true, tab: 'rgb(255, 255, 255)' }, 'bar at the top');
+const half = await barAt(stickAt + 36);
+assert.ok(half.p > .4 && half.p < .6 && !half.clear, 'bar halfway: ' + JSON.stringify(half));
+assert.deepEqual(await barAt(stickAt + 200), { p: 1, clear: false, tab: 'rgb(9, 34, 92)' }, 'bar filled');
+await pg.evaluate(() => scrollTo(0, 0));
 
 // 5 — nothing numbered survived
 const numbered = await pg.$$eval('.doc h2,.doc h3,.doc h4,.doc-tabs a',
@@ -83,5 +93,9 @@ const bar = await ph.evaluate(() => {
 });
 assert.equal(bar.top, 56, 'tab bar not stuck: ' + JSON.stringify(bar));
 assert.equal(bar.lines, 1, 'tab bar wrapped on a phone: ' + JSON.stringify(bar));
+// the sheet stays inside the screen on a phone
+const edges = await ph.evaluate(() => { const r = document.querySelector('.legal-body .legal-wrap').getBoundingClientRect();
+  return { left: Math.round(r.left), right: Math.round(innerWidth - r.right), scroll: document.documentElement.scrollWidth - innerWidth }; });
+assert.deepEqual(edges, { left: 12, right: 12, scroll: 0 }, 'sheet on a phone: ' + JSON.stringify(edges));
 console.log('all checks pass', JSON.stringify(bar));
 await b.close();

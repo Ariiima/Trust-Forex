@@ -39,6 +39,27 @@
   addEventListener('popstate', () => show(requested(), false));
   show(requested(), false);
 
+  // The tab bar's white fills over the 72px of scroll after it sticks under the nav (page.css, --p), and
+  // its text turns from white to navy at 40%. The stick point is where the bar's own top meets the nav:
+  // the band's foot plus the bar's negative margin, measured, since the band's height follows the title.
+  const bar = document.querySelector('.doc-tabs'), band = document.querySelector('.legal-top');
+  if (bar && band) {
+    let from = 0;
+    const fill = () => {
+      const p = Math.min(1, Math.max(0, (scrollY - from) / 72));
+      bar.style.setProperty('--p', p.toFixed(3));
+      bar.classList.toggle('is-clear', p < .4);
+    };
+    const measure = () => {
+      const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'));
+      from = band.getBoundingClientRect().bottom + scrollY + parseFloat(getComputedStyle(bar).marginTop) - navH;
+      fill();
+    };
+    addEventListener('scroll', fill, { passive: true });
+    addEventListener('resize', measure);
+    measure();
+  }
+
   // The house footer's pointer light, as cb8/main.js gives it on every other page (this page does not
   // load that file): --mx/--my on the pane, the CTA and each social icon, .lit while the pointer is over it.
   const foot = document.querySelector('.fsig');

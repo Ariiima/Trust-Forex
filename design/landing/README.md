@@ -57,24 +57,42 @@ cell's white rim.
 `legal/` is the exception to everything above: four documents (Terms of Service, Risk
 Disclosure, Privacy Policy, Cookie Settings) on one page and one URL space,
 `?document=terms|risk|privacy|cookies`, so an acceptance record can point at a stable address.
-It loads the nav, the footer and the tokens and nothing else — no grounds, no glass, no reveal,
-no `cb8/main.js`, and so no scroll holds. It is also the one page with no colour: black, greys
-and white from the nav to the last line of text (the footer below it is the house footer, blue
-glass, as on every page — founder, 2026-09-14), with the hierarchy every other policy page uses — a 28px
-page title, 24px document title, 18px section headings, 16px subheadings, no numbering (founder,
-2026-09-12: "completely black and white and simple, like every other privacy policy"). Titles are
-medium weight, not bold, and the page lede is gone (same day: "edit the boldness of titles, make
-them simple text and make them smaller"). That replaced a first pass the same day where every heading was body size in body
-ink. The "Legal" eyebrow, each document's lede and its version line are gone too, and the
+It loads the nav, the footer and the tokens and nothing else — no glass panes, no reveal,
+no `cb8/main.js`, and so no scroll holds. The hierarchy is the one every other policy page uses — a
+24px document title, 18px section headings, 16px subheadings, no numbering (founder, 2026-09-12:
+"completely black and white and simple, like every other privacy policy"). Titles are medium weight,
+not bold, and the page lede is gone (same day: "edit the boldness of titles, make them simple text and
+make them smaller"). The "Legal" eyebrow, each document's lede and its version line are gone too, and the
 24px document title is off screen once a tab is open, since the tab already names it (founder,
-2026-09-13); it still shows without JS, in print, and to a screen reader. `page.css` does it by resetting the site's colour tokens at `:root`, so the nav, footer and
-focus ring follow. A row of plain text links, sticky under the nav, switches documents; the open
-one is black and underlined. The text is the wireframe's verbatim, nothing rewritten, less one
-clause: the wireframe's "One Time Acceptance" paragraph is the Mini App's sign-up checkbox, not
-part of a document, so it is not on this page (founder, 2026-09-12). Nothing is hidden in the markup: without `page.js` the page is
-all four documents in order, which is also what prints and what a crawler reads. Every page's
-footer links here. `node _qa/legal.test.mjs` covers the switch, the history, the no-JS
-fallback, the hierarchy, and that no computed colour on the page has a hue.
+2026-09-13); it still shows without JS, in print, and to a screen reader. The text is the wireframe's
+verbatim, nothing rewritten, less one clause: the wireframe's "One Time Acceptance" paragraph is the Mini
+App's sign-up checkbox, not part of a document, so it is not on this page (founder, 2026-09-12).
+
+It was black and white, nav to last line, from 2026-09-12 until 2026-09-16, when the founder asked for it
+to look like the other pages, lightly ("add some blue, some cube pattern, shading and things … nothing
+crazy, go light"). Picked in a lab, round by round:
+
+- Ground, C3 of six: paper and the paper screens' 48px grid from the head to the footer, with no corner
+  glows, and the open document on one white sheet — no rim, one soft blue shade. A head-only field, a
+  whole-page field with glows, and three sheets (with rim and glows, quiet, grid-on-top) lost; the founder
+  asked the first sheet to be "cleaner".
+- Head, H4 of six: the blog post's short blue band (`rayfield k04`) with a centred 48px title in the light
+  run and the tabs white on the blue. A bigger title with the tabs centred, in a pill track or left-aligned
+  on paper were "bad"; two with the tabs on the sheet's first row lost to H4.
+- Seam, T2 of three: the band runs 188px past the title and the sheet rises into it, so the band's foot
+  crosses only the margins. A fade into the grid and an inset rounded block lost.
+- The stuck bar: its white fills over the 72px of scroll after it sticks (`page.js` writes `--p`); the
+  text swaps white to navy once, in a 0.2s fade, at 40% fill, because blended with the fill it was grey on
+  grey-blue halfway. A fill switched on at the stick point popped in ("doesn't show up smoothly"), and a
+  0.35s timed fade still started at one exact pixel. The fill is always painted and only its alpha moves:
+  transitioning a full-bleed shadow's spread from nothing grew it sideways out of the row. Without JS `--p`
+  stays 1, so the bar is a white strip across the band; the tabs still read.
+
+Nothing is hidden in the markup: without `page.js` the page is all four documents in order, which is also
+what prints (in plain ink, no band, no sheet) and what a crawler reads. Every page's footer links here.
+`node _qa/legal.test.mjs` covers the switch, the history, the no-JS fallback, the hierarchy, the band, the
+grid and the sheet rising into it, the bar's fill at the top, halfway and stuck, and the sheet's 12px edges
+on a phone.
 
 Cookie consent is one script, `cb8/consent.js` (its styles are `cb8/consent.css`, imported by
 `style.css`), loaded by every page here and by every page `blog/build.mjs` writes. The first-visit
@@ -105,7 +123,7 @@ tagline, folded into the social row as a fifth square glass icon instead. The li
 4 / 4 / 4: Brokers was dropped because it was Partner brokers twice, then Partner brokers because
 it was Partner broker rules twice (one page); Home came back to The site and Blog moved under
 Company to keep the columns even (founder, 2026-09-13). The blog's floor rises out of paper
-unchanged, and so does Legal's out of white: that page had kept a black floor, and carries the house
+unchanged, and so does Legal's out of its paper: that page had kept a black floor, and carries the house
 footer unmodified since 2026-09-14 (founder: "the exact same thing, nothing modified"), with no gap
 above it. The footer is also pixel-identical on every page since that day ("1-on-1"): the glow, the
 blue base under the tint, its own ink, figures and 1200px column no longer vary with the page, the
@@ -121,7 +139,7 @@ style.css's own "structure behind the glass" recipe, saturate/blur up to 200%/24
 called it back (2026-09-14: drop the grid, keep it the blue it was). So `.fsig` and `.fsig-cta`
 are back to the original thin blue tint (`rgba(shadow,.4)` / `rgba(rgb-900,.55)`,
 `saturate(180%) blur(20px)`), and the blog reading grey where the tint has only paper behind it is
-a known, accepted gap, not solved. Legal's black override lands after all of this and wins.
+a known, accepted gap, not solved.
 
 Every nav and footer link lands at the top of its page (founder, 2026-09-14: "touching a footer or
 header link should bring you to the top of that page, not somewhere random in the middle"). So
