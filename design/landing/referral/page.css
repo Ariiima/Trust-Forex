@@ -77,11 +77,15 @@ html.reduce #chapter-routes::after{animation:none}
 .route-row h3{margin:0 0 6px;font-size:var(--text-panel-title);line-height:1.2;letter-spacing:-.015em;font-weight:var(--weight-strong);white-space:nowrap}
 .route-row p{margin:0;max-width:360px;color:rgba(255,255,255,.8);font-size:var(--text-meta);line-height:1.4}
 /* the destination closes the two routes the way the summary closes the points: the panel's own glass,
-   lifted, over a hairline — one material down the whole pane (founder, 2026-09-12). */
+   lifted, over a hairline (founder, 2026-09-12). Green since 2026-09-16: E2 of three rounds in
+   referral/destination-lab.html, a bright emerald run, picked over teal and a blue-into-green run —
+   then glassed, as solid it sat on the pane rather than in it (E2g): the run let through at 72→58%,
+   the pane's sheen and a lit top edge over it. */
 .shared-destination{min-height:64px;padding:16px 18px;display:grid;place-items:center;text-align:center;color:#fff;
-  border-top:1px solid rgba(255,255,255,.3);
-  background:linear-gradient(150deg,rgba(var(--rgb-900),.96),var(--blue));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+  border-top:1px solid rgba(160,255,210,.45);
+  background:linear-gradient(115deg,rgba(255,255,255,.18),rgba(255,255,255,.04) 45%,transparent 65%),linear-gradient(150deg,rgba(15,107,68,.72),rgba(52,194,122,.58));
+  -webkit-backdrop-filter:blur(12px) saturate(1.3);backdrop-filter:blur(12px) saturate(1.3);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -1px 0 rgba(0,40,30,.25)}
 .shared-destination strong{font-size:var(--text-destination);line-height:1;letter-spacing:-.04em}
 
 /* m1 holds alone after the light chapter; m2 opens the stack after the dark one and dissolves in as cb8's 01 does */
@@ -205,12 +209,32 @@ html.reduce .example-part b.swap{animation:none}
    Tried and dropped (2026-09-13/14): a lime tint, a lime glow, plain lime text, the Active badge's pill, that pill
    with faded edges, a radial fill inside the text's box, mint letters glowing over a blurred green haze ("looks
    ugly"), white words behind a green check ("the icon looks bad"), a caps label over the result, a label/value row,
-   and the words alone in the steps' 15px type with no band, first white, then soft green. */
+   and the words alone in the steps' 15px type with no band, first white, then soft green.
+   Since 2026-09-16 the band is 4's glass emerald (E2g), so the page's two closing bands are one green. */
 .start-result{position:relative;z-index:1;min-height:76px;padding:16px 18px;display:grid;place-items:center;text-align:center;color:#fff;
-  border-top:1px solid rgba(120,230,170,.45);
-  background:linear-gradient(180deg,rgba(88,224,150,.5),rgba(40,170,110,.22));
-  box-shadow:inset 0 1px 0 rgba(170,245,200,.45)}
+  border-top:1px solid rgba(160,255,210,.45);
+  background:linear-gradient(115deg,rgba(255,255,255,.18),rgba(255,255,255,.04) 45%,transparent 65%),linear-gradient(150deg,rgba(15,107,68,.72),rgba(52,194,122,.58));
+  -webkit-backdrop-filter:blur(12px) saturate(1.3);backdrop-filter:blur(12px) saturate(1.3);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -1px 0 rgba(0,40,30,.25)}
 .start-result strong{font-size:calc(var(--text-destination) * .86);line-height:1.05;letter-spacing:-.04em;text-wrap:balance}
+/* one edge, not two, on both closing bands, 4's and 11's (founder, 2026-09-16: "edges don't overlap", then "these
+   edges catch eye … work on layering"). The pane's 1px border sat outside the clip and framed the green in blue; a
+   ring of the band's own then traced a second, mint outline inside the same curve, clipped twice. Now the layers
+   stack once: the pane clips, the rows and the band fill it square, and the rim is one overlay above them all, in
+   white so it reads the same over blue and green. The row above the band drops its divider for the band's line.
+   Then the fill still bled a navy hairline past that rim ("shrink it so the border sits outside it, but no empty
+   space"): the fill now stops 1px in (padding + content-box clip, 23px corner), and the rim is opaque in that 1px —
+   the pane's blue rim over the rows, and the band's own green border over its sides and foot, where the band
+   reaches the edge by -1px margins. Opaque, so nothing of the page shows between fill and rim. */
+.glass .route-panel,#start .value-panel{border:0;padding:1px;background-clip:content-box;   /* 1px: a 2px inset was tried and read worse (2026-09-16) */
+  box-shadow:0 0 34px rgba(96,156,255,.3),inset 0 0 64px rgba(96,156,255,.14),0 30px 60px -28px rgba(var(--rgb-shadow),.8)}
+.glass .route-panel::after,#start .value-panel::after{inset:1px;border-radius:23px}
+.glass .route-panel::before,#start .value-panel::before{content:'';position:absolute;inset:0;z-index:3;border:0;border-radius:inherit;pointer-events:none;
+  background:none;backdrop-filter:none;-webkit-backdrop-filter:none;   /* style.css's .block .panel::before is a frosted, liquid layer: over the rows it blurred them */
+  box-shadow:inset 0 1px 0 #8A9CCB,inset 0 0 0 1px #5A71A8}
+.route-panel .route-row:last-of-type,#start .value-row:last-of-type{border-bottom:0}
+.shared-destination,.start-result{position:relative;z-index:4;margin:0 -1px -1px;border:1px solid #5A9C8F;border-top-color:rgba(160,255,210,.45);
+  border-radius:0 0 24px 24px;background-clip:padding-box;box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
 
 /* ---------- 12 · the final statement, at the Referral wireframe's size ---------- */
 #final .display{font-size:var(--text-display-close);max-width:1000px}
