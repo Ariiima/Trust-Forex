@@ -585,6 +585,10 @@ html:not(.snap) .final-inner{min-height:calc(100svh - var(--section-space))}
 .fsig .social a{width:var(--icon-well);height:var(--icon-well);border-radius:var(--icon-well-radius);border-color:rgba(255,255,255,.2);
   color:rgba(255,255,255,.85);background:rgba(255,255,255,.05)}
 .fsig .social a:hover{background:rgba(255,255,255,.14)}
+/* Telegram carries its name (founder, 2026-09-16, to a reference pill): the same tile, widened to
+   the glyph and the word; the glyph keeps --icon-size. */
+.fsig .social a.social-tg{width:auto;grid-auto-flow:column;gap:10px;padding:0 18px 0 14px;
+  font-size:var(--text-ui);font-weight:var(--weight-label);color:#fff}
 /* the tiles' rim light (style.css .glass .tile::before): the radial minus its own 1px inset, by mask */
 .fsig-cta,.fsig .social a{position:relative}
 .fsig-cta::before,.fsig .social a::before{content:"";position:absolute;inset:-1px;padding:1px;border-radius:inherit;pointer-events:none;
