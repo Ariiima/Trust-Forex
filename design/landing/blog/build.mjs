@@ -85,7 +85,7 @@ const footer = rel => `<!-- the footer, every page: glass, its lockup+CTA/column
     </nav>
     <div class="fsig-rule" aria-hidden="true"></div>
     <div class="fsig-base">
-      <p class="fsig-legal">© 2026 TrustForex. Trading carries risk. Credits follow each partner broker's own terms.</p>
+      <p class="fsig-legal">© 2026 TrustForex. All rights reserved. Trading involves substantial risk. Nothing on this site constitutes personal financial advice.</p>
       <div class="social">
         <a href="#" aria-label="Instagram"><span class="ico ico-social" data-lottie="${rel}cb8/ico/instagram.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r=".9"/></svg></span></a>
         <a href="#" aria-label="X"><span class="ico ico-social" data-lottie="${rel}cb8/ico/x.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></span></a>
