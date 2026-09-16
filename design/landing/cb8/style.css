@@ -495,7 +495,7 @@ html.snap .mech.white .block::after{animation-name:stack-back-paper}
    The pill straddles the pane's top edge, so half of it stands on paper: a white translucent ground
    read as nothing there (founder, 2026-09-10). It carries the pane's own blue instead — opaque, its
    own rim — and is legible on either side of the edge. */
-#calculator .live{position:absolute;top:-13px;right:18px;z-index:1;display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;
+#calculator .live{position:absolute;top:-31px;right:18px;z-index:1;display:inline-flex;align-items:center;gap:8px;box-sizing:border-box;height:34px;padding:0 14px 0 12px;border-radius:999px;
   background:linear-gradient(150deg,rgba(var(--rgb-900),.9),rgba(var(--rgb-abyss),.94)),linear-gradient(var(--blue),var(--blue));
   border:1px solid rgba(160,196,255,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 10px 22px -12px rgba(var(--rgb-shadow),.9);
   font:var(--weight-semi) var(--text-micro)/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:#fff}
@@ -603,6 +603,7 @@ html.reduce #calculator .live i{animation:none}
 #calculator .panel{box-shadow:0 22px 46px -34px rgba(var(--rgb-shadow),.5)}
 #calculator .panel::before{box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(var(--rgb-shadow),.06)}
 #calculator .live{box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 8px 18px -14px rgba(var(--rgb-shadow),.6)}
+@media (max-width:1023px){#calculator .live{top:-27px}}   /* the frame is inset 10px here, not 14 */
 /* phones: the fields stack, and the pane's side padding and the answer come down a step, so the bar keeps
    its four levels across (a 390px phone leaves each about 66px, Standard needs 56) */
 @media (max-width:560px){
