@@ -240,20 +240,19 @@
    The taller the column, the greener it is kept — TP4's body stays teal where TP1's falls to the
    pane's blue, so reach reads as green earned and the short end still settles into the ground. */
 .target-ladder{padding:24px 22px 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}
-.glass .target-step{--head:rgba(80,224,150,.5);--mid:rgba(36,186,140,.34);--deep:rgba(10,92,82,.4);
-  --rim:rgba(158,246,206,.48);--streak:.2;
+/* the Home record's bars' green and glow (founder, 2026-09-16: "add the same life"): the Results chart's --tp3 */
+.glass .target-step{--head:rgba(72,212,138,.76);--mid:rgba(72,212,138,.5);--deep:rgba(72,212,138,.26);--rim:rgba(180,244,210,.5);--streak:.2;
   height:var(--step);min-height:108px;padding:14px 12px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;border-radius:16px 16px 6px 6px;
   background:linear-gradient(180deg,var(--head) 0,var(--mid) 130px,var(--deep) 100%);
-  box-shadow:inset 0 1px 0 rgba(214,255,238,.42),inset 0 -1px 0 rgba(var(--rgb-shadow),.24),0 16px 32px -22px rgba(24,140,112,.85)}
-.glass .target-step:nth-child(1){--head:rgba(80,224,150,.44)}
-.glass .target-step:nth-child(2){--head:rgba(88,232,158,.52);--mid:rgba(40,198,146,.38);--deep:rgba(12,104,90,.42)}
-.glass .target-step:nth-child(3){--head:rgba(96,240,166,.58);--mid:rgba(44,208,152,.42);--deep:rgba(14,116,96,.44);--rim:rgba(176,250,214,.54)}
+  box-shadow:inset 0 1px 0 rgba(214,255,238,.6),inset 0 -1px 0 rgba(var(--rgb-shadow),.24),0 12px 28px -14px rgba(72,212,138,.55)}
+.glass .target-step:nth-child(2){--head:rgba(72,212,138,.82);--mid:rgba(72,212,138,.54);--deep:rgba(72,212,138,.28)}
+.glass .target-step:nth-child(3){--head:rgba(72,212,138,.88);--mid:rgba(72,212,138,.58);--deep:rgba(72,212,138,.3)}
 .glass .target-step strong{font-size:var(--text-row-title);letter-spacing:-.02em;text-shadow:0 1px 3px rgba(4,32,72,.4)}.glass .target-step span{color:rgba(255,255,255,.7);font-size:var(--text-micro)}
 /* the R:R reads as a caption, so it takes the head's capsule at micro size rather than a line of copy */
 .glass .target-step b{min-height:20px;padding:0 8px;display:inline-flex;align-items:center;white-space:nowrap;
   border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(255,255,255,.08);
   font-size:var(--text-label);font-weight:var(--weight-strong);color:rgba(206,244,226,.86);font-variant-numeric:tabular-nums}   /* 11px, as every other R:R on the page */
-.glass .target-step:last-child{--head:rgba(112,250,180,.66);--mid:rgba(50,220,160,.46);--deep:rgba(18,132,108,.48);--rim:rgba(198,255,224,.6)}
+.glass .target-step:last-child{--head:rgba(72,212,138,.94);--mid:rgba(72,212,138,.62);--deep:rgba(72,212,138,.32);--rim:rgba(180,244,210,.58)}
 .glass .target-step:last-child b{color:rgba(232,255,242,.94)}
 
 /* 02 · the four rows share one tile, split by hairlines (founder, 2026-09-13): four tiles stacked read as

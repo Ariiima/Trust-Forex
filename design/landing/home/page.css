@@ -62,18 +62,26 @@ html.reduce .screen-paper .weekly-record::after{animation:none;transition:none}
    against the bar's own top edge, so it travels with --rate and never collides with a gridline.
    The card is the Results panels' 420px tall, as it is their width (founder, 2026-09-15: "a bit smaller
    vertically"); the plot gives up 60px of the 70 (it was 285), the gaps round it the rest. */
-.weekly-chart{position:relative;min-height:225px;padding:14px 10px 36px 48px}
-.weekly-grid{position:absolute;inset:14px 10px 36px 0}
-.weekly-grid div{position:absolute;left:48px;right:0;border-top:1px solid rgba(255,255,255,.14)}
-.weekly-grid span{position:absolute;right:calc(100% + 8px);top:0;transform:translateY(-50%);font-size:var(--text-label);color:rgba(255,255,255,.62)}
-.weekly-bars{--bars-gap:22px;position:relative;height:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:var(--bars-gap);align-items:end;
-  container-type:size}
-/* The bars are windows onto one green field the height of the plot (README, "The record's bars"):
-   bright at the 100% line, deep at the floor, pinned there, so a bar that reaches higher reaches
-   brighter green and a growing bar uncovers the field instead of stretching it. */
-.weekly-bar{height:var(--rate);min-height:2px;border-radius:8px 8px 0 0;position:relative;
-  background:linear-gradient(180deg,#8CEFBE,#5ADB9C 35%,#2DB474 75%,#1E9A62) no-repeat 0 100%/100% 100cqh;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.45)}
+.weekly-chart{position:relative;min-height:225px;padding:14px 10px 36px}   /* no Y-axis figures (founder, 2026-09-16), so the plot sits 10px in on both sides */
+.weekly-grid{position:absolute;inset:14px 10px 36px}
+.weekly-grid div{position:absolute;left:0;right:0;border-top:1px solid rgba(255,255,255,.14)}
+.weekly-bars{--bars-gap:22px;position:relative;height:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:var(--bars-gap);align-items:end}
+/* The bars take the Results page's Signal targets columns (results/page.css .target-step; founder,
+   2026-09-16): green glass with a lit rim and a streak, head bright, foot deep, and the taller the
+   column the greener it is kept. TP1 always reaches highest, so the grading runs the other way to
+   Results: TP1 takes TP4's strongest glass there, TP4 the faintest. */
+.weekly-bar{--head:rgba(72,212,138,.94);--mid:rgba(72,212,138,.62);--deep:rgba(72,212,138,.32);--rim:rgba(180,244,210,.58);   /* the Results chart's green (--tp3 #48D48A), fading as its columns do (founder, 2026-09-16: "dimmer, to match the results tab bars") */
+  height:var(--rate);min-height:2px;border-radius:10px 10px 6px 6px;   /* the tops a step sharper than Results' 16px (founder, 2026-09-16) */
+  position:relative;isolation:isolate;
+  border:1px solid var(--rim);
+  background:linear-gradient(180deg,var(--head) 0,var(--mid) 130px,var(--deep) 100%);
+  backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%);
+  box-shadow:inset 0 1px 0 rgba(214,255,238,.6),inset 0 -1px 0 rgba(var(--rgb-shadow),.24),0 12px 28px -14px rgba(72,212,138,.55)}   /* a lit top edge and a green glow under each bar, as the Results columns cast (founder, 2026-09-16: "add back some life") */
+.weekly-bar::after{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(115deg,transparent 26%,rgba(255,255,255,.16) 44%,rgba(255,255,255,.04) 51%,transparent 64%)}   /* fills about .2 more solid and the streak a little under the Results columns' .2 (founder, 2026-09-16: "a little less glassy") */
+.weekly-bar:nth-child(2){--head:rgba(72,212,138,.88);--mid:rgba(72,212,138,.58);--deep:rgba(72,212,138,.3)}
+.weekly-bar:nth-child(3){--head:rgba(72,212,138,.82);--mid:rgba(72,212,138,.54);--deep:rgba(72,212,138,.28);--rim:rgba(180,244,210,.5)}
+.weekly-bar:nth-child(4){--head:rgba(72,212,138,.76);--mid:rgba(72,212,138,.5);--deep:rgba(72,212,138,.26);--rim:rgba(180,244,210,.5)}
 .weekly-bar b{position:absolute;left:50%;top:-28px;transform:translateX(-50%);font-size:var(--text-panel-title);letter-spacing:-.02em;color:#fff}
 .weekly-bar span{position:absolute;left:50%;top:calc(100% + 12px);transform:translateX(-50%);white-space:nowrap;
   font:var(--weight-strong) var(--text-small)/1 var(--sans);color:rgba(255,255,255,.86)}   /* bold, as the site's labels (it was extra bold) */
@@ -88,6 +96,7 @@ html.reduce .screen.in .weekly-bar{animation:none}
 @media (prefers-reduced-transparency:reduce){
   .screen-paper .weekly-record::after{animation:none;background:linear-gradient(180deg,var(--blue),var(--p-deep))}
   .weekly-head{background:rgba(var(--rgb-abyss),.55)}
+  .weekly-bar{backdrop-filter:none;-webkit-backdrop-filter:none}
 }
 /* the foot's rule runs the full width of the pane, so it pulls out through the card's side padding */
 .record-foot{margin:16px -16px 0;padding:18px 24px 20px;border-top:1px solid rgba(255,255,255,.14)}
@@ -697,8 +706,7 @@ body{font-variant-numeric:normal}
   .weekly-title strong{font-size:var(--text-panel-title)}
   .weekly-total{justify-self:start;height:30px;padding:0 12px}
   .record-foot{margin-inline:-12px;padding:16px 18px 18px}
-  .weekly-chart{min-height:255px;padding-left:38px}
-  .weekly-grid div{left:38px}
+  .weekly-chart{min-height:255px}
   .weekly-bars{--bars-gap:10px}
   .access-visual .tile{padding:16px;gap:12px}
   /* a step word is the short chapter's phone size (base.css .chapter-2 .h2); at 78px "Stay fixed"

@@ -251,6 +251,10 @@ heading now runs four lines, as the record's does. The held Plans screen still f
 
 ### The record's bars
 
+On 2026-09-16 the founder moved the bars onto the Results page's Signal targets columns (green glass
+tiles, lit rim, a streak, the tallest kept greenest), so both pages draw their four targets alike.
+The history below is the single-field design it replaced.
+
 The four bars are windows onto one green light behind the plot, not four green swatches. Each
 paints the slice of a field sized to the whole bars row, so TP1→TP4 is a single light falling
 across the chart and the streak through it is unbroken across the gaps. The light leans with the
