@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Destination lab — "Every route counts" in green</title>
+<!-- A preview sheet only (founder, 2026-09-16: "let's try making this green, create different
+     variants and show them all"). Each frame is the real Referral page at ?lock=off, scrolled to
+     the Routes card, with one style injected on .shared-destination. index.html and page.css are
+     not edited. 00 is the band as it ships. -->
+<style>
+body{margin:0;padding:0 0 80px;background:#070E24;color:#fff;font:400 15px/1.5 Inter,system-ui,sans-serif}
+header{position:sticky;top:0;z-index:5;padding:14px 26px;background:rgba(7,14,36,.92);border-bottom:1px solid rgba(255,255,255,.12)}
+header h1{margin:0;font-size:17px;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(480px,1fr));gap:28px;padding:28px 26px}
+.case b{font-size:13px;letter-spacing:.06em;border:1px solid rgba(255,255,255,.2);border-radius:7px;padding:3px 8px;margin-right:8px}
+.case strong{font-size:15px}
+.case p{margin:4px 0 10px;font-size:13px;color:rgba(255,255,255,.62)}
+.frame{height:400px;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12);position:relative}
+.frame iframe{position:absolute;left:0;top:0;width:1280px;height:840px;border:0;transform:scale(1);transform-origin:top right}
+</style>
+</head>
+<body>
+<header><h1>“Every route counts” — green band, round 3: X1, E2, G2, solid over glass</h1></header>
+<div class="grid" id="grid"></div>
+<script>
+const V=[
+ ['00','As shipped','Navy-to-blue band, the current page.',''],
+ /* round 1's three picks, unchanged */
+ ['G7','Teal (round 1)','#0B5C5A → #14A088 at 150deg.',
+  'background:linear-gradient(150deg,#0B5C5A,#14A088)'],
+ ['G2','Emerald run (round 1)','#0B5E3B → #22A865 at 150deg.',
+  'background:linear-gradient(150deg,#0B5E3B,#22A865);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)'],
+ ['G4','Blue into green (round 1)','Navy → #1FA36A at 110deg.',
+  'background:linear-gradient(110deg,rgba(var(--rgb-900),.96),#1FA36A)'],
+ /* from G7 */
+ ['T1','Deep teal','G7 a step darker at both ends.',
+  'background:linear-gradient(150deg,#073F45,#0E8577)'],
+ ['T2','Teal into mint','G7 with its light end pushed toward mint.',
+  'background:linear-gradient(150deg,#0B5C5A,#2EC495)'],
+ ['T3','Teal, lit edge','G7 with the pane’s white top light and a faint sheen.',
+  'background:linear-gradient(115deg,rgba(255,255,255,.14),transparent 45%),linear-gradient(150deg,#0B5C5A,#14A088);box-shadow:inset 0 1px 0 rgba(255,255,255,.4)'],
+ /* from G2 */
+ ['E1','Deep emerald','G2 darker, closer to the navy’s weight.',
+  'background:linear-gradient(150deg,#073D27,#178A52);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)'],
+ ['E2','Bright emerald','G2 with a lighter, livelier end.',
+  'background:linear-gradient(150deg,#0F6B44,#34C27A);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)'],
+ ['E3','Emerald, flat run','G2 across the band left to right, no lift.',
+  'background:linear-gradient(90deg,#0B5E3B,#22A865)'],
+ /* from G4 */
+ ['B1','Blue into teal','G4 ending on G7’s teal.',
+  'background:linear-gradient(110deg,rgba(var(--rgb-900),.96),#14A088)'],
+ ['B2','Blue into emerald','G4 ending on G2’s emerald.',
+  'background:linear-gradient(110deg,rgba(var(--rgb-900),.96),#22A865)'],
+ ['B3','Blue, green late','G4 with the green held back to the last third.',
+  'background:linear-gradient(110deg,rgba(var(--rgb-900),.96) 0%,var(--blue) 55%,#1FA36A 100%)'],
+ ['B4','Blue, teal, mint','Three stops: navy, teal, mint.',
+  'background:linear-gradient(110deg,rgba(var(--rgb-900),.96),#0E8577 60%,#34C27A)'],
+ /* crossovers */
+ ['X1','Emerald into teal','G2’s dark end, G7’s light end.',
+  'background:linear-gradient(150deg,#0B5E3B,#14A088)'],
+ ['X2','Teal into emerald','G7’s dark end, G2’s light end.',
+  'background:linear-gradient(150deg,#0B5C5A,#22A865)'],
+ /* glass takes on the three: the same stops let through at ~70%, the pane's sheen and top light over them */
+ ['X1g','Emerald into teal, glass','X1 at 72% → 58%, sheen and lit top edge.',
+  'background:linear-gradient(115deg,rgba(255,255,255,.18),rgba(255,255,255,.04) 45%,transparent 65%),linear-gradient(150deg,rgba(11,94,59,.72),rgba(20,160,136,.58));backdrop-filter:blur(12px) saturate(1.3);-webkit-backdrop-filter:blur(12px) saturate(1.3);border-top-color:rgba(160,255,210,.45);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -1px 0 rgba(0,40,30,.25)'],
+ ['E2g','Bright emerald, glass','E2 at 72% → 58%, sheen and lit top edge.',
+  'background:linear-gradient(115deg,rgba(255,255,255,.18),rgba(255,255,255,.04) 45%,transparent 65%),linear-gradient(150deg,rgba(15,107,68,.72),rgba(52,194,122,.58));backdrop-filter:blur(12px) saturate(1.3);-webkit-backdrop-filter:blur(12px) saturate(1.3);border-top-color:rgba(160,255,210,.45);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -1px 0 rgba(0,40,30,.25)'],
+ ['G2g','Emerald run, glass','G2 at 72% → 58%, sheen and lit top edge.',
+  'background:linear-gradient(115deg,rgba(255,255,255,.18),rgba(255,255,255,.04) 45%,transparent 65%),linear-gradient(150deg,rgba(11,94,59,.72),rgba(34,168,101,.58));backdrop-filter:blur(12px) saturate(1.3);-webkit-backdrop-filter:blur(12px) saturate(1.3);border-top-color:rgba(160,255,210,.45);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -1px 0 rgba(0,40,30,.25)'],
+];
+const KEEP=['X1','E2','G2','X1g','E2g','G2g'];   /* round 3: side by side, each glass take under its solid (founder, 2026-09-16) */
+const grid=document.getElementById('grid');
+for(const [id,name,note,band,type] of KEEP.map(k=>V.find(v=>v[0]===k))){
+  const c=document.createElement('section');c.className='case';
+  c.innerHTML=`<b>${id}</b><strong>${name}</strong><p>${note}</p><div class="frame"><iframe src="index.html?lock=off" loading="lazy"></iframe></div>`;
+  grid.append(c);
+  const f=c.querySelector('iframe');
+  f.addEventListener('load',()=>{
+    const d=f.contentDocument,s=d.createElement('style');
+    s.textContent=(band?`.shared-destination{${band}}`:'')+(type?`.shared-destination strong{${type}}`:'')+
+      `.rv,.words,.words *{opacity:1!important;transform:none!important;filter:none!important}`;
+    d.head.append(s);
+    const p=d.querySelector('.route-panel');
+    const tick=()=>{f.contentWindow.scrollTo(0,p.getBoundingClientRect().top+f.contentWindow.scrollY-60);
+      const r=p.getBoundingClientRect();f.style.left=((f.parentNode.clientWidth-r.width)/2-r.left)+'px'};
+    tick();setTimeout(tick,400);setTimeout(tick,1200);
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Plans head lab — the card's top row</title>
+<!-- A preview sheet only (2026-09-16). It loads the live Home stylesheets and the live card markup;
+     each arm is a .armNN block whose overrides live in this file. index.html and page.css are not
+     edited by it. Arm 00 is the page as it stands. Words are the page's own; only their place,
+     size and ink change. Click a card to pick it, as on the page. -->
+<link rel="stylesheet" href="../cb8/grounds.css">
+<link rel="stylesheet" href="../cb8/style.css">
+<link rel="stylesheet" href="page.css">
+<style>
+body{margin:0;background:#0A1440}
+.lab-head{position:sticky;top:0;z-index:30;padding:14px 26px;background:rgba(7,14,36,.92);color:#fff;
+  font:600 16px/1.3 Inter,system-ui,sans-serif;border-bottom:1px solid rgba(255,255,255,.12)}
+.arm .block{border-radius:0;padding:40px var(--content-gutter) 56px}
+.arm-name{position:relative;z-index:2;max-width:1144px;margin:0 auto 34px;color:#fff;font:600 15px/1.4 Inter,system-ui,sans-serif}
+.arm-name b{display:inline-block;min-width:34px;margin-right:10px;padding:3px 8px;border-radius:8px;background:#fff;color:#0A1440;text-align:center}
+.arm-name span{color:rgba(255,255,255,.62);font-weight:500}
+.arm .plans-grid{position:relative;z-index:1;max-width:1144px;margin:0 auto}
+
+/* stacked arms: the name over the term, as one block beside the badge */
+.head-text{display:grid;gap:4px;min-width:0}
+.head-text .duration{margin-left:0;height:auto;line-height:1.2}
+
+/* 01 · the term under the name */
+
+/* 02 · 01 with the badge back at 54px, the height of the two lines */
+.arm02 .plan-badge{width:54px;height:54px}
+
+/* 03 · the badge to the far end: the name, the term, the price and the plate all start on one edge */
+.arm03 .plan-badge,.arm05 .plan-badge{order:2;margin-left:auto}
+
+/* 04 · the current row, the term in its tier's ink */
+.arm04 .duration,.arm05 .duration{color:var(--label);opacity:.8}
+.arm04 .plan-col[data-tier=silver] .duration,.arm05 .plan-col[data-tier=silver] .duration{color:#B9E1FF}
+
+/* 05 · 03 with the term in its tier's ink */
+</style>
+</head>
+<body>
+<div class="lab-head">Plans head lab — the badge, the name and the term</div>
+<div id="arms"></div>
+<script>
+const ARMS = [
+  ['00', 'Current', 'badge, name, term at the far end', false],
+  ['01', 'Term under the name', 'badge beside a two-line block; the far end is left empty', true],
+  ['02', 'Term under the name, 54px badge', 'the badge as tall as the two lines', true],
+  ['03', 'Badge at the far end', 'name over term on the left, on the same edge as the price', true],
+  ['04', 'Term in tier ink', 'current layout, the term takes its tier colour', false],
+  ['05', 'Badge at the far end, term in tier ink', '03 and 04 together', true],
+];
+const tick = '<svg class="plan-tick" viewBox="0 0 20 20" aria-hidden="true"><path d="m4.5 10.5 3.6 3.6L15.5 6.7"/></svg>';
+const list = `<ul class="plan-list"><li>${tick}Pre Entry Alerts</li><li>${tick}Live XAUUSD Signals</li><li>${tick}Scalp Levels</li></ul>`;
+const card = (arm, stack, tier, name, term, price, equiv, second, rate, flag, checked) => {
+  const badge = `<img class="plan-badge" src="../cb8/img/plans/badge-${tier}.png" alt="" width="54" height="54">`;
+  const words = `<h3>${name}</h3><span class="duration">${term}</span>`;
+  return `<div class="tile plan-col" data-tier="${tier}">${flag ? `<span class="plan-flag">${flag}</span>` : ''}
+    <input class="plan-pick" type="radio" name="plan-${arm}" value="${tier}" autocomplete="off"${checked ? ' checked' : ''}>
+    <div class="plan-head">${badge}${stack ? `<div class="head-text">${words}</div>` : words}</div>
+    <div class="price">${price}</div>
+    <div class="plan-pill"><div class="equiv"><span>${equiv}</span>${second}</div><div class="plan-rate"><span>Cashback and Referral</span><b>${rate}</b></div></div>
+    ${list}</div>`;
+};
+document.getElementById('arms').innerHTML = ARMS.map(([n, title, note, stack]) => `
+<section class="screen-blue screen-dark glass on-dark arm arm${n}">
+  <div class="block">
+    <div class="rayfield k k04" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="arm-name"><b>${n}</b>${title} <span>— ${note}</span></div>
+    <div class="plans-grid" role="radiogroup">
+      ${card(n, stack, 'silver', 'Silver', '1 month', '$200', '$200 / month', '<span>Billed monthly</span>', '15%', '', false)}
+      ${card(n, stack, 'gold', 'Gold', '3 months', '$499', '≈ $166 / month', '<span class="plan-save">Save $101</span>', '20%', 'Most popular', true)}
+      ${card(n, stack, 'diamond', 'Diamond', '12 months', '$1,699', '≈ $142 / month', '<span class="plan-save">Save $701</span>', '30%', 'Best value', false)}
+    </div>
+  </div>
+</section>`).join('');
+// self-check: no native select on screen, every arm drew three cards, and no card's words overflow it
+const fails = [];
+if (document.querySelector('select')) fails.push('a native select is on screen');
+document.querySelectorAll('.arm').forEach((a) => {
+  const cols = a.querySelectorAll('.plan-col');
+  if (cols.length !== 3) fails.push(`${a.className} has no three cards`);
+  cols.forEach((c) => { if (c.scrollWidth > c.clientWidth + 1) fails.push(`${a.className} ${c.dataset.tier} overflows`); });
+});
+console.log(fails.length ? `LAB FAIL ${fails.join('; ')}` : `LAB OK ${ARMS.length} arms`);
+</script>
+</body>
+</html>
