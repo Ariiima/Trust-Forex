@@ -415,7 +415,6 @@ html.reduce .mech.fill .block,html.reduce .mech .block::after{animation:none}
 .estimate{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-top:18px;padding:18px 20px;border-radius:13px;background:var(--soft)}
 .estimate small{display:block;flex:1 1 auto;min-width:0;margin-bottom:6px;font:var(--weight-heavy) var(--text-label)/var(--leading-ui) var(--sans);letter-spacing:.075em;text-transform:uppercase;color:var(--muted)}
 .estimate strong{flex:0 0 auto;white-space:nowrap;font-size:var(--text-estimate);line-height:1;font-weight:var(--weight-title);letter-spacing:var(--tracking-estimate);color:var(--navy)}
-.estimate strong.long{font-size:var(--text-number)}   /* main.js sets it once the figure passes 7 characters */
 .estimate strong em{margin-left:10px;font-style:normal;font-size:var(--text-meta);font-weight:var(--weight-strong);letter-spacing:.01em;color:var(--muted)}
 .estimate strong.swap{animation:xf .18s var(--ease)}          /* cross-fade, never a count-up */
 @keyframes xf{from{opacity:0}to{opacity:1}}

@@ -363,26 +363,31 @@
   const levels = [...document.querySelectorAll('.level')];
   let rate = +(levels.find(b => b.getAttribute('aria-pressed') === 'true')?.dataset.rate || 20);
   // The figure leads the pane at 56px, and a volume nobody trades used to push it past the pane's
-  // edge. Three steps keep it in: the volume is capped at the cap the field itself
-  // declares — and written back, so what the figure is computed from is what the field shows — a
-  // figure past seven characters steps down a size, and past $10M it goes compact ($51M), which no
-  // volume can outgrow.
+  // edge. Two steps keep it in at one size (founder, 2026-09-16: "make it so that the number stays in
+  // one size"): the volume is capped at the cap the field itself declares — and written back, so what
+  // the figure is computed from is what the field shows — and from $1M the figure goes compact
+  // ($1.2M, $51M), so it never runs past eight characters.
   const MAX_VOL = +vol?.max || Infinity;
   const compact = new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 });
   const price = () => {
     let v = Math.max(0, parseFloat(vol.value) || 0);
     if (v > MAX_VOL) { v = MAX_VOL; vol.value = String(MAX_VOL); }
     const n = Math.round(v * 17 * parseFloat(acct.value) * rate / 100);
-    const figure = `$${n < 1e7 ? n.toLocaleString('en-US') : compact.format(n)}`;
-    out.classList.toggle('long', figure.length > 7);
+    const figure = `$${n < 1e6 ? n.toLocaleString('en-US') : compact.format(n)}`;
     rollFigure(figure);
   };
   // The figure rolls rather than blinking in (founder, 2026-09-16: "make the number change smoother"), the
   // access switch's rolling words (partnership/page.js) — never a count-up. The old figure leaves as the
   // new one arrives, upward when the estimate rises and downward when it falls, and the roll's width eases
   // between the two so "/ month" glides instead of jumping. A keystroke mid-roll drops the stale line.
+  // A held arrow key repeats every ~30ms, faster than any roll finishes, and each restarted roll used to show
+  // a sliver of motion here and there (founder, 2026-09-16). While the key auto-repeats the figure swaps with
+  // no motion at all, and whatever was still rolling is cut to its end; the first press still rolls.
   const IOS = 'cubic-bezier(.32,.72,0,1)';
-  let roll, rollWidth;
+  let roll, rollWidth, held = false;
+  vol?.addEventListener('keydown', e => { held = e.repeat; });
+  vol?.addEventListener('keyup', () => { held = false; });
+  vol?.addEventListener('blur', () => { held = false; });
   if (out) {
     const em = out.querySelector('em'), line = document.createElement('span');
     line.textContent = out.firstChild.textContent.trim();
@@ -394,7 +399,7 @@
     const old = roll.lastElementChild;
     if (old.textContent === figure) return;
     const line = document.createElement('span'); line.textContent = figure;
-    if (REDUCE) { old.replaceWith(line); return; }
+    if (REDUCE || held) { roll.getAnimations({ subtree: true }).forEach(a => a.cancel()); roll.replaceChildren(line); return; }
     const w0 = roll.getBoundingClientRect().width;
     rollWidth?.cancel();
     old.setAttribute('aria-hidden', 'true');

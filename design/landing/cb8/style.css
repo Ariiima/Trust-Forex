@@ -6,7 +6,7 @@
    feDisplacementMap (#liquid in index.html) in backdrop-filter, Chromium only; every other
    engine gets the same glass without the bend. The data stays opaque white — the founder's
    "white chart" — so figures never sit on a translucent ground. */
-@import url('base.css?v=552eca5c');
+@import url('base.css?v=bae33fb0');
 @import url('consent.css?v=2a43747b');
 
 /* ---------- structure behind the glass: a faint grid in every blue ground ---------- */
@@ -511,8 +511,7 @@ html.snap .mech.white .block::after{animation-name:stack-back-paper}
 #calculator .estimate{flex-direction:column;align-items:flex-start;gap:8px;margin:0 0 22px;padding:0 0 22px;
   border:0;border-bottom:1px solid rgba(255,255,255,.16);border-radius:0;background:none}
 #calculator .estimate small{margin-bottom:0}
-#calculator .estimate strong{font-size:var(--text-estimate-lead)}
-#calculator .estimate strong.long{font-size:var(--text-estimate)}   /* main.js sets .long once the figure passes seven characters */
+#calculator .estimate strong{font-size:var(--text-estimate-lead)}   /* one size at any volume: main.js goes compact from $1M instead */
 #calculator .estimate strong em{margin-left:-6px}   /* main.js writes a space before it at the figure's 56px; this takes most of it back */
 /* the figure's roll (main.js): both lines share one cell, clipped to it, a little room above and below for the glyphs */
 #calculator .est-roll{display:inline-grid;justify-items:start;overflow:hidden;padding:.08em 0;margin:-.08em 0;vertical-align:bottom}
@@ -610,7 +609,6 @@ html.reduce #calculator .live i{animation:none}
   #calculator .panel{padding:24px 16px 18px}
   #calculator .fields{grid-template-columns:1fr}
   #calculator .estimate strong{font-size:var(--text-estimate)}
-  #calculator .estimate strong.long{font-size:var(--text-number)}
   #calculator .seg{padding:10px 2px 11px}
 }
 
