@@ -209,13 +209,17 @@
 html.reduce .access-switch .tile:hover{transform:none}
 
 /* ---------- 03 · the path to action, on the value-row format 09's record and 11's start already
-     carry (founder, 2026-09-14: match that format, tightened) ----------
-   One plain accent circle a row, a hairline between rows, closing on one bold statement lifted onto
-   its own band — the violet/gold/mint badge tiles are gone; this is the same numbered list as every
-   other numbered box on the site, not a one-off. */
+     carry (founder, 2026-09-14: match that format, tightened; 2026-09-16: index tile sized and
+     squared off to match 11's start tile exactly — same 44px box, 13px radius, --text-label number) ----------
+   A rounded-rect number tile a row, a hairline between rows, closing on one bold statement lifted
+   onto its own band — the violet/gold/mint badge tiles are gone; this is the same numbered list as
+   every other numbered box on the site, not a one-off. */
 .glass .panel.action-path{padding:0;display:flex;flex-direction:column}
-.action-path .value-row{padding:16px 18px;grid-template-columns:32px minmax(0,1fr);gap:14px;border-bottom-color:rgba(255,255,255,.16)}
-.action-path .value-index{width:32px;height:32px;font-size:var(--text-nano)}
+.action-path .value-row{padding:16px 18px;grid-template-columns:44px minmax(0,1fr);gap:14px;border-bottom-color:rgba(255,255,255,.16)}
+.action-path .value-index{width:44px;height:44px;border-radius:13px;font-size:var(--text-label);color:#fff;
+  border-color:rgba(160,196,255,.42);
+  background:linear-gradient(115deg,rgba(255,255,255,.2),rgba(255,255,255,.04) 50%,transparent 70%),linear-gradient(150deg,rgba(var(--rgb-900),.34),rgba(var(--rgb-abyss),.34));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 -1px 0 rgba(var(--rgb-shadow),.22),0 14px 30px -18px rgba(var(--rgb-shadow),.7)}
 .action-path .value-copy strong{font-size:var(--text-panel-title);font-weight:var(--weight-strong);line-height:1.3;letter-spacing:-.01em}
 /* the band: closes the rows the way 11's shared-destination closes the routes — flush to the panel's
    own edge and corners, a hairline above it, no separate tile or lift of its own */
@@ -405,6 +409,7 @@ html.reduce .goal:hover input:not(:checked)+.tile{transform:none}
   /* sizes: base.css's phone roles, as Cashback and Results take them (hero 48, chapter and card title 42, card copy 16).
      The chapter role floors at base's 42px; base sets the compact chapter to 54px, which this page does not use. */
   .chapter .h2,.chapter-2 .h2{font-size:var(--text-chapter)}
+  .action-path .value-row{padding:16px;column-gap:12px;grid-template-columns:40px minmax(0,1fr)}.action-path .value-index{width:40px;height:40px}
   #hero .display br{display:none}   /* the forced break stranded "value" and "have" on lines of their own */
   .glass .how-point{padding:14px;grid-template-columns:var(--icon-well) minmax(0,1fr);gap:12px;align-items:start}
   .glass .how-point .point-icon{margin-top:-1px}   /* the row is tall here, so the icon holds the title's line rather than floating at its middle */
