@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Benefits panel — polish lab</title>
+<!-- A preview sheet only (founder, 2026-09-16: "create all and show them side by side"). It loads the
+     real Home stylesheets; each arm's overrides are scoped to its stage class (.p1–.p5), so
+     index.html and page.css are not edited. 00 is the live panel. -->
+<link rel="preload" href="../shared/fonts/Inter-VF.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../cb8/style.css">
+<link rel="stylesheet" href="page.css">
+<style>
+body{background:#070E24;color:#fff;font:400 15px/1.5 var(--sans);margin:0;padding:0 0 80px}
+.lab-head{position:sticky;top:0;z-index:30;padding:14px 26px;background:rgba(7,14,36,.92);border-bottom:1px solid rgba(255,255,255,.12)}
+.lab-head h1{font-size:17px;font-weight:600;margin:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(560px,1fr));gap:26px;padding:26px}
+.case-head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin:0 0 10px}
+.case-head b{font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,.2);border-radius:7px;padding:2px 7px;background:rgba(255,255,255,.06)}
+.case-head strong{font-size:15px;font-weight:600}
+.case-head span{flex-basis:100%;font-size:13px;line-height:1.5;color:rgba(255,255,255,.62);min-height:3em}
+.stage{position:relative;isolation:isolate;padding:34px;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.12)}
+.stage .benefit-feed{width:var(--live-w,490px);margin:0 auto}   /* the live column's width at a 1280 window */
+
+/* 01 · corners share one centre: 16px row, 6px inset, 10px tiles */
+.p1 .rate-strip{padding:6px 6px 6px 18px}
+.p1 .rate-points li{border-radius:10px}
+/* 02 · even line lengths */
+.p2 .tile-copy span{text-wrap:balance}
+/* 03 · the rates row belongs to both benefits */
+.p3 .rate-strip{border-color:rgba(255,255,255,.2)}
+/* 04 · the way in */
+.p4 .benefit-link{min-height:36px;padding:9px 15px;gap:7px;transition:background-color .3s var(--ease),border-color .3s var(--ease),transform .3s var(--ease),box-shadow .3s var(--ease)}
+.p4 .benefit-link:hover{transform:translateY(-1px);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 8px 18px -10px rgba(var(--acc),.55)}
+.p4 .benefit-link:active{transform:translateY(0);background:rgba(var(--acc),.4)}
+/* 05 · the pointer's light on each tile, the Referral glass's */
+.p5 .benefit-feed .tile,.p5 .rate-strip{position:relative;isolation:isolate}
+.p5 .benefit-feed .tile::after,.p5 .rate-strip::after,.p5 .benefit-feed .tile::before,.p5 .rate-strip::before{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .45s var(--ease)}
+.p5 .benefit-feed .tile::after,.p5 .rate-strip::after{background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.1),transparent 70%)}
+.p5 .benefit-feed .tile::before,.p5 .rate-strip::before{inset:-1px;padding:1px;
+  background:radial-gradient(200px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.6),transparent 70%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
+.p5 .benefit-feed.lit .tile::after,.p5 .benefit-feed.lit .rate-strip::after,.p5 .benefit-feed.lit .tile::before,.p5 .benefit-feed.lit .rate-strip::before{opacity:1}
+</style>
+</head>
+<body>
+<svg id="liquid-svg" width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="liquid" x="-4%" y="-8%" width="108%" height="116%" color-interpolation-filters="sRGB">
+  <feTurbulence type="fractalNoise" baseFrequency="0.006 0.010" numOctaves="2" seed="7" result="n"><animate attributeName="baseFrequency" dur="24s" values="0.006 0.010;0.010 0.006;0.006 0.010" repeatCount="indefinite"/></feTurbulence>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="18" xChannelSelector="R" yChannelSelector="G"/>
+</filter>
+<header class="lab-head"><h1>Benefits panel: polish options, side by side</h1></header>
+<main class="grid">
+<section class="case">
+  <div class="case-head"><b>00</b><strong>Current</strong><span>What is on the page now.</span></div>
+  <div class="stage screen-paper ">    <div class="panel benefit-feed">
+      <div class="benefit-rows">
+        <article class="tile" data-benefit="cashback">
+          <span class="ico tile-icon" data-lottie="../cb8/ico/dollar-receive.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h14.5A1.5 1.5 0 0 1 20 9v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18V6a1.5 1.5 0 0 1 1.5-1.5H17"/><path d="M15 11h5v5h-5a2.5 2.5 0 0 1 0-5Z"/></svg></span>
+          <div class="tile-copy"><h3>Cashback</h3><span>Receive a share of eligible broker revenue generated by your own trading activity.</span></div>
+          <a class="benefit-link" href="../cb8/" aria-label="How it works, Cashback">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+        <article class="tile" data-benefit="referral">
+          <span class="ico tile-icon" data-lottie="../cb8/ico/add-user.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 19c.5-3.2 2.2-5 5-5s4.5 1.8 5 5M14 15c.8-.7 1.8-1 3-1 2.3 0 3.7 1.4 4 4"/></svg></span>
+          <div class="tile-copy"><h3>Referral</h3><span>Receive a share of eligible revenue when users you introduce buy plans or receive Cashback.</span></div>
+          <a class="benefit-link" href="../referral/" aria-label="How it works, Referral">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+      </div>
+      <div class="rate-strip">
+        <p class="rate-label" id="rate-label">Your share by plan</p>
+        <ul class="rate-points" aria-labelledby="rate-label">
+          <li data-tier="standard"><small>Standard</small><b>10%</b></li>
+          <li data-tier="silver"><small>Silver</small><b>15%</b></li>
+          <li data-tier="gold"><small>Gold</small><b>20%</b></li>
+          <li data-tier="diamond"><small>Diamond</small><b>30%</b></li>
+        </ul>
+      </div>
+    </div></div>
+</section>
+<section class="case">
+  <div class="case-head"><b>01</b><strong>Corners line up</strong><span>The rates row sits 6px in from its 16px edge, and the four tiles take 10px corners, so both curves share one centre (they were 8px in, 12px corners).</span></div>
+  <div class="stage screen-paper p1">    <div class="panel benefit-feed">
+      <div class="benefit-rows">
+        <article class="tile" data-benefit="cashback">
+          <span class="ico tile-icon" data-lottie="../cb8/ico/dollar-receive.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h14.5A1.5 1.5 0 0 1 20 9v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18V6a1.5 1.5 0 0 1 1.5-1.5H17"/><path d="M15 11h5v5h-5a2.5 2.5 0 0 1 0-5Z"/></svg></span>
+          <div class="tile-copy"><h3>Cashback</h3><span>Receive a share of eligible broker revenue generated by your own trading activity.</span></div>
+          <a class="benefit-link" href="../cb8/" aria-label="How it works, Cashback">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+        <article class="tile" data-benefit="referral">
+          <span class="ico tile-icon" data-lottie="../cb8/ico/add-user.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 19c.5-3.2 2.2-5 5-5s4.5 1.8 5 5M14 15c.8-.7 1.8-1 3-1 2.3 0 3.7 1.4 4 4"/></svg></span>
+          <div class="tile-copy"><h3>Referral</h3><span>Receive a share of eligible revenue when users you introduce buy plans or receive Cashback.</span></div>
+          <a class="benefit-link" href="../referral/" aria-label="How it works, Referral">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+      </div>
+      <div class="rate-strip">
+        <p class="rate-label" id="rate-label">Your share by plan</p>
+        <ul class="rate-points" aria-labelledby="rate-label">
+          <li data-tier="standard"><small>Standard</small><b>10%</b></li>
+          <li data-tier="silver"><small>Silver</small><b>15%</b></li>
+          <li data-tier="gold"><small>Gold</small><b>20%</b></li>
+          <li data-tier="diamond"><small>Diamond</small><b>30%</b></li>
+        </ul>
+      </div>
+    </div></div>
+</section>
+<section class="case">
+  <div class="case-head"><b>02</b><strong>Balanced lines</strong><span>The descriptions break into lines of even length (text-wrap: balance). The words do not change.</span></div>
+  <div class="stage screen-paper p2">    <div class="panel benefit-feed">
+      <div class="benefit-rows">
+        <article class="tile" data-benefit="cashback">
+          <span class="ico tile-icon" data-lottie="../cb8/ico/dollar-receive.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h14.5A1.5 1.5 0 0 1 20 9v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18V6a1.5 1.5 0 0 1 1.5-1.5H17"/><path d="M15 11h5v5h-5a2.5 2.5 0 0 1 0-5Z"/></svg></span>
+          <div class="tile-copy"><h3>Cashback</h3><span>Receive a share of eligible broker revenue generated by your own trading activity.</span></div>
+          <a class="benefit-link" href="../cb8/" aria-label="How it works, Cashback">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+        <article class="tile" data-benefit="referral">
+          <span class="ico tile-icon" data-lottie="../cb8/ico/add-user.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 19c.5-3.2 2.2-5 5-5s4.5 1.8 5 5M14 15c.8-.7 1.8-1 3-1 2.3 0 3.7 1.4 4 4"/></svg></span>
+          <div class="tile-copy"><h3>Referral</h3><span>Receive a share of eligible revenue when users you introduce buy plans or receive Cashback.</span></div>
+          <a class="benefit-link" href="../referral/" aria-label="How it works, Referral">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+      </div>
+      <div class="rate-strip">
+        <p class="rate-label" id="rate-label">Your share by plan</p>
+        <ul class="rate-points" aria-labelledby="rate-label">
+          <li data-tier="standard"><small>Standard</small><b>10%</b></li>
+          <li data-tier="silver"><small>Silver</small><b>15%</b></li>
+          <li data-tier="gold"><small>Gold</small><b>20%</b></li>
+          <li data-tier="diamond"><small>Diamond</small><b>30%</b></li>
+        </ul>
+      </div>
+    </div></div>
+</section>
+<section class="case">
+  <div class="case-head"><b>03</b><strong>Neutral rates border</strong><span>The rates row takes a white rim instead of Referral's sky blue, since both benefits pay those shares.</span></div>
+  <div class="stage screen-paper p3">    <div class="panel benefit-feed">
+      <div class="benefit-rows">
+        <article class="tile" data-benefit="cashback">
+          <span class="ico tile-icon" data-lottie="../cb8/ico/dollar-receive.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h14.5A1.5 1.5 0 0 1 20 9v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18V6a1.5 1.5 0 0 1 1.5-1.5H17"/><path d="M15 11h5v5h-5a2.5 2.5 0 0 1 0-5Z"/></svg></span>
+          <div class="tile-copy"><h3>Cashback</h3><span>Receive a share of eligible broker revenue generated by your own trading activity.</span></div>
+          <a class="benefit-link" href="../cb8/" aria-label="How it works, Cashback">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+        <article class="tile" data-benefit="referral">
+          <span class="ico tile-icon" data-lottie="../cb8/ico/add-user.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 19c.5-3.2 2.2-5 5-5s4.5 1.8 5 5M14 15c.8-.7 1.8-1 3-1 2.3 0 3.7 1.4 4 4"/></svg></span>
+          <div class="tile-copy"><h3>Referral</h3><span>Receive a share of eligible revenue when users you introduce buy plans or receive Cashback.</span></div>
+          <a class="benefit-link" href="../referral/" aria-label="How it works, Referral">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+      </div>
+      <div class="rate-strip">
+        <p class="rate-label" id="rate-label">Your share by plan</p>
+        <ul class="rate-points" aria-labelledby="rate-label">
+          <li data-tier="standard"><small>Standard</small><b>10%</b></li>
+          <li data-tier="silver"><small>Silver</small><b>15%</b></li>
+          <li data-tier="gold"><small>Gold</small><b>20%</b></li>
+          <li data-tier="diamond"><small>Diamond</small><b>30%</b></li>
+        </ul>
+      </div>
+    </div></div>
+</section>
+<section class="case">
+  <div class="case-head"><b>04</b><strong>Buttons</strong><span>"How it works" is 36px tall (was 32), a touch wider, with a firmer hover and a pressed state. The arrow still levels on hover.</span></div>
+  <div class="stage screen-paper p4">    <div class="panel benefit-feed">
+      <div class="benefit-rows">
+        <article class="tile" data-benefit="cashback">
+          <span class="ico tile-icon" data-lottie="../cb8/ico/dollar-receive.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h14.5A1.5 1.5 0 0 1 20 9v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18V6a1.5 1.5 0 0 1 1.5-1.5H17"/><path d="M15 11h5v5h-5a2.5 2.5 0 0 1 0-5Z"/></svg></span>
+          <div class="tile-copy"><h3>Cashback</h3><span>Receive a share of eligible broker revenue generated by your own trading activity.</span></div>
+          <a class="benefit-link" href="../cb8/" aria-label="How it works, Cashback">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+        <article class="tile" data-benefit="referral">
+          <span class="ico tile-icon" data-lottie="../cb8/ico/add-user.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 19c.5-3.2 2.2-5 5-5s4.5 1.8 5 5M14 15c.8-.7 1.8-1 3-1 2.3 0 3.7 1.4 4 4"/></svg></span>
+          <div class="tile-copy"><h3>Referral</h3><span>Receive a share of eligible revenue when users you introduce buy plans or receive Cashback.</span></div>
+          <a class="benefit-link" href="../referral/" aria-label="How it works, Referral">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+      </div>
+      <div class="rate-strip">
+        <p class="rate-label" id="rate-label">Your share by plan</p>
+        <ul class="rate-points" aria-labelledby="rate-label">
+          <li data-tier="standard"><small>Standard</small><b>10%</b></li>
+          <li data-tier="silver"><small>Silver</small><b>15%</b></li>
+          <li data-tier="gold"><small>Gold</small><b>20%</b></li>
+          <li data-tier="diamond"><small>Diamond</small><b>30%</b></li>
+        </ul>
+      </div>
+    </div></div>
+</section>
+<section class="case">
+  <div class="case-head"><b>05</b><strong>Pointer light</strong><span>A soft light follows the pointer across each tile and brightens its rim, as the Referral page's glass does. Move the mouse over it.</span></div>
+  <div class="stage screen-paper p5">    <div class="panel benefit-feed">
+      <div class="benefit-rows">
+        <article class="tile" data-benefit="cashback">
+          <span class="ico tile-icon" data-lottie="../cb8/ico/dollar-receive.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h14.5A1.5 1.5 0 0 1 20 9v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18V6a1.5 1.5 0 0 1 1.5-1.5H17"/><path d="M15 11h5v5h-5a2.5 2.5 0 0 1 0-5Z"/></svg></span>
+          <div class="tile-copy"><h3>Cashback</h3><span>Receive a share of eligible broker revenue generated by your own trading activity.</span></div>
+          <a class="benefit-link" href="../cb8/" aria-label="How it works, Cashback">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+        <article class="tile" data-benefit="referral">
+          <span class="ico tile-icon" data-lottie="../cb8/ico/add-user.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 19c.5-3.2 2.2-5 5-5s4.5 1.8 5 5M14 15c.8-.7 1.8-1 3-1 2.3 0 3.7 1.4 4 4"/></svg></span>
+          <div class="tile-copy"><h3>Referral</h3><span>Receive a share of eligible revenue when users you introduce buy plans or receive Cashback.</span></div>
+          <a class="benefit-link" href="../referral/" aria-label="How it works, Referral">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+      </div>
+      <div class="rate-strip">
+        <p class="rate-label" id="rate-label">Your share by plan</p>
+        <ul class="rate-points" aria-labelledby="rate-label">
+          <li data-tier="standard"><small>Standard</small><b>10%</b></li>
+          <li data-tier="silver"><small>Silver</small><b>15%</b></li>
+          <li data-tier="gold"><small>Gold</small><b>20%</b></li>
+          <li data-tier="diamond"><small>Diamond</small><b>30%</b></li>
+        </ul>
+      </div>
+    </div></div>
+</section>
+<section class="case">
+  <div class="case-head"><b>06</b><strong>01 to 04 together</strong><span>My recommendation.</span></div>
+  <div class="stage screen-paper p1 p2 p3 p4">    <div class="panel benefit-feed">
+      <div class="benefit-rows">
+        <article class="tile" data-benefit="cashback">
+          <span class="ico tile-icon" data-lottie="../cb8/ico/dollar-receive.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h14.5A1.5 1.5 0 0 1 20 9v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18V6a1.5 1.5 0 0 1 1.5-1.5H17"/><path d="M15 11h5v5h-5a2.5 2.5 0 0 1 0-5Z"/></svg></span>
+          <div class="tile-copy"><h3>Cashback</h3><span>Receive a share of eligible broker revenue generated by your own trading activity.</span></div>
+          <a class="benefit-link" href="../cb8/" aria-label="How it works, Cashback">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+        <article class="tile" data-benefit="referral">
+          <span class="ico tile-icon" data-lottie="../cb8/ico/add-user.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 19c.5-3.2 2.2-5 5-5s4.5 1.8 5 5M14 15c.8-.7 1.8-1 3-1 2.3 0 3.7 1.4 4 4"/></svg></span>
+          <div class="tile-copy"><h3>Referral</h3><span>Receive a share of eligible revenue when users you introduce buy plans or receive Cashback.</span></div>
+          <a class="benefit-link" href="../referral/" aria-label="How it works, Referral">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+      </div>
+      <div class="rate-strip">
+        <p class="rate-label" id="rate-label">Your share by plan</p>
+        <ul class="rate-points" aria-labelledby="rate-label">
+          <li data-tier="standard"><small>Standard</small><b>10%</b></li>
+          <li data-tier="silver"><small>Silver</small><b>15%</b></li>
+          <li data-tier="gold"><small>Gold</small><b>20%</b></li>
+          <li data-tier="diamond"><small>Diamond</small><b>30%</b></li>
+        </ul>
+      </div>
+    </div></div>
+</section>
+<section class="case">
+  <div class="case-head"><b>07</b><strong>All five</strong><span></span></div>
+  <div class="stage screen-paper p1 p2 p3 p4 p5">    <div class="panel benefit-feed">
+      <div class="benefit-rows">
+        <article class="tile" data-benefit="cashback">
+          <span class="ico tile-icon" data-lottie="../cb8/ico/dollar-receive.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h14.5A1.5 1.5 0 0 1 20 9v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18V6a1.5 1.5 0 0 1 1.5-1.5H17"/><path d="M15 11h5v5h-5a2.5 2.5 0 0 1 0-5Z"/></svg></span>
+          <div class="tile-copy"><h3>Cashback</h3><span>Receive a share of eligible broker revenue generated by your own trading activity.</span></div>
+          <a class="benefit-link" href="../cb8/" aria-label="How it works, Cashback">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+        <article class="tile" data-benefit="referral">
+          <span class="ico tile-icon" data-lottie="../cb8/ico/add-user.json" aria-hidden="true"><svg class="fb" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 19c.5-3.2 2.2-5 5-5s4.5 1.8 5 5M14 15c.8-.7 1.8-1 3-1 2.3 0 3.7 1.4 4 4"/></svg></span>
+          <div class="tile-copy"><h3>Referral</h3><span>Receive a share of eligible revenue when users you introduce buy plans or receive Cashback.</span></div>
+          <a class="benefit-link" href="../referral/" aria-label="How it works, Referral">How it works <svg class="ext" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 3.5 12.5 8 8 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </article>
+      </div>
+      <div class="rate-strip">
+        <p class="rate-label" id="rate-label">Your share by plan</p>
+        <ul class="rate-points" aria-labelledby="rate-label">
+          <li data-tier="standard"><small>Standard</small><b>10%</b></li>
+          <li data-tier="silver"><small>Silver</small><b>15%</b></li>
+          <li data-tier="gold"><small>Gold</small><b>20%</b></li>
+          <li data-tier="diamond"><small>Diamond</small><b>30%</b></li>
+        </ul>
+      </div>
+    </div></div>
+</section>
+</main>
+<script src="../cb8/ico/lottie_light.min.js"></script>
+<script>
+// the live page's icon player (cb8/main.js), without the rest of that script: rest on the last frame, play on hover
+document.querySelectorAll('.ico[data-lottie]').forEach(el => {
+  const anim = lottie.loadAnimation({ container: el, renderer: 'svg', loop: false, autoplay: false, path: el.dataset.lottie });
+  const rest = () => anim.goToAndStop(anim.totalFrames - 1, true);
+  anim.addEventListener('DOMLoaded', rest); anim.addEventListener('complete', rest);
+  el.closest('.tile').addEventListener('pointerenter', () => anim.isLoaded && anim.goToAndPlay(0, true));
+});
+</script>
+<script>
+document.querySelectorAll('.p5 .benefit-feed').forEach(pane => {
+  const lit = [...pane.querySelectorAll('.tile, .rate-strip')];
+  pane.addEventListener('pointermove', e => lit.forEach(el => {
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', `${e.clientX - r.left}px`); el.style.setProperty('--my', `${e.clientY - r.top}px`);
+  }));
+  pane.addEventListener('pointerenter', () => pane.classList.add('lit'));
+  pane.addEventListener('pointerleave', () => pane.classList.remove('lit'));
+});
+</script>
+</body>
+</html>
