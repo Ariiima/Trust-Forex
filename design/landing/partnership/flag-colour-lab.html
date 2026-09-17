@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Partnership form — what a missed field looks like, four arms</title>
+<link rel="preload" href="../shared/fonts/Inter-VF.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../cb8/grounds.css">
+<link rel="stylesheet" href="../cb8/style.css">
+<link rel="stylesheet" href="page.css">
+<style>
+  body{padding:40px 24px 90px}
+  .arms{max-width:760px;margin:0 auto;display:grid;gap:30px}
+  .arm h2{font:var(--weight-semi) var(--text-panel-title)/1.3 var(--sans);color:#fff;margin:0 0 4px}
+  .arm p{font:var(--weight-body) var(--text-small)/1.5 var(--sans);color:rgba(255,255,255,.72);margin:0 0 14px}
+  .glass .panel{margin:0}
+  .well-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+  /* A · sand — the gold tier's own metal, what the page ships now */
+  #arm-a{--flag-rim:rgba(240,208,130,.72);--flag-lit:rgba(246,222,158,.95);--flag-wash:rgba(182,142,58,.2);
+    --flag-ink:#F6E2B3;--flag-tag:rgba(240,208,130,.17);--flag-tag-rim:rgba(240,208,130,.5);--flag-ring:240,208,130}
+  /* B · clay — the standard tier's bronze, warmer than sand, still not a red */
+  #arm-b{--flag-rim:rgba(236,176,136,.72);--flag-lit:rgba(244,198,166,.95);--flag-wash:rgba(168,98,62,.22);
+    --flag-ink:#F3CBAE;--flag-tag:rgba(236,176,136,.18);--flag-tag-rim:rgba(236,176,136,.5);--flag-ring:236,176,136}
+  /* C · muted rose — the old red, desaturated and pulled back */
+  #arm-c{--flag-rim:rgba(236,172,168,.7);--flag-lit:rgba(246,200,196,.95);--flag-wash:rgba(150,68,64,.2);
+    --flag-ink:#F2CFCB;--flag-tag:rgba(236,150,144,.16);--flag-tag-rim:rgba(236,172,168,.48);--flag-ring:236,150,144}
+  /* D · quiet — no colour of its own: the well simply lights the way focus lights it */
+  #arm-d{--flag-rim:rgba(255,255,255,.8);--flag-lit:#fff;--flag-wash:rgba(var(--rgb-abyss),.5);
+    --flag-ink:rgba(255,255,255,.88);--flag-tag:rgba(255,255,255,.14);--flag-tag-rim:rgba(255,255,255,.4);--flag-ring:255,255,255}
+</style>
+</head>
+<body class="glass">
+<div class="arms">
+
+  <div class="arm"><h2>A · sand</h2><p>The gold tier's own metal — what the page ships now.</p>
+    <div class="panel form-card" id="arm-a"></div></div>
+  <div class="arm"><h2>B · clay</h2><p>The standard tier's bronze: warmer than sand, still not a red.</p>
+    <div class="panel form-card" id="arm-b"></div></div>
+  <div class="arm"><h2>C · muted rose</h2><p>The red you had, desaturated and pulled back.</p>
+    <div class="panel form-card" id="arm-c"></div></div>
+  <div class="arm"><h2>D · quiet</h2><p>No colour of its own: the well lights the way focus lights it, and only the tag speaks.</p>
+    <div class="panel form-card" id="arm-d"></div></div>
+
+</div>
+
+<script>
+  const CARD = `
+    <div class="well-grid">
+      <div class="tile well invalid"><label>Full name</label><span class="field-line"><input value="" placeholder=""></span>
+        <span class="field-note"><span><span class="tag">Please fill this in</span></span></span></div>
+      <div class="tile well"><label>Job title</label><span class="field-line"><input value="Head of Partnerships"></span></div>
+    </div>
+    <div class="form-error" style="position:relative">
+      <span class="err-mark"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.3 4.3 2.5 17.7A2 2 0 0 0 4.2 20.7h15.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0Z"/><path d="M12 9.6v4.2"/><path d="M12 17.1h.01"/></svg></span></span>
+      <span class="err-text">The request could not be sent. Please try again, or contact us on Telegram.</span>
+    </div>`;
+  document.querySelectorAll('.form-card').forEach((card) => { card.innerHTML = CARD; });
+  /* the ring plays on click, so each arm can be seen flagging */
+  document.querySelectorAll('.form-card').forEach((card) => card.addEventListener('click', () => {
+    const well = card.querySelector('.well.invalid');
+    well.classList.remove('flagging'); void well.offsetWidth; well.classList.add('flagging');
+  }));
+</script>
+</body>
+</html>

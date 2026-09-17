@@ -158,21 +158,54 @@
    The Sort control's dark glass pill (tried the same day) went muddy against this page's own blue —
    two dark blues stacked read as a hole, not a pick. Chosen now takes the goal tiles' own move instead
    (founder, 2026-09-14): a lit tint plus a white rim, one accent each — Telegram's blue, WhatsApp's green. */
-.contact-toggle{--rgb-tg:100,181,246;--rgb-wa:110,224,158;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.contact-toggle label{--acc:var(--rgb-tg);position:relative;cursor:pointer}
+.contact-toggle{--rgb-tg:100,181,246;--rgb-wa:110,224,158;position:relative;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.contact-toggle label{--acc:var(--rgb-tg);position:relative;z-index:1;display:block;cursor:pointer}
 .contact-toggle label:nth-child(2){--acc:var(--rgb-wa)}
 .contact-toggle input{position:absolute;opacity:0;pointer-events:none}
-.contact-toggle span{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;border-radius:999px;border:1px solid rgba(255,255,255,.4);
-  background:rgba(255,255,255,.14);color:#fff;font-size:var(--text-panel-title);font-weight:var(--weight-strong);
-  transition:background-color .25s var(--ease),border-color .25s var(--ease),box-shadow .25s var(--ease),transform .25s var(--ease)}
-.contact-toggle span::before{content:'';width:8px;height:8px;flex:none;border-radius:50%;background:rgba(255,255,255,.3);
-  transition:background-color .25s var(--ease),transform .25s var(--ease)}
-.contact-toggle label:hover span{border-color:rgba(255,255,255,.62);background:rgba(255,255,255,.2)}
-.contact-toggle input:checked+span{border-color:#fff;transform:translateY(-1px);
+.contact-toggle label span{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;border-radius:999px;border:1px solid rgba(255,255,255,.22);
+  background:rgba(255,255,255,.07);color:rgba(255,255,255,.66);font-size:var(--text-panel-title);font-weight:var(--weight-strong);
+  transition:background-color .5s var(--ease),border-color .5s var(--ease),box-shadow .5s var(--ease),transform .5s var(--ease),color .5s var(--ease)}
+.contact-toggle label span::before{content:'';width:8px;height:8px;flex:none;border-radius:50%;background:rgba(255,255,255,.2);
+  transition:background-color .5s var(--ease),transform .5s var(--ease)}
+.contact-toggle label:hover span{border-color:rgba(255,255,255,.42);background:rgba(255,255,255,.13);color:rgba(255,255,255,.88)}
+.contact-toggle input:checked+span{border-color:#fff;color:#fff;transform:translateY(-1px);
   background:linear-gradient(150deg,rgba(var(--acc),.72),rgba(var(--acc),.34));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 10px 22px -12px rgba(var(--acc),.65)}
 .contact-toggle input:checked+span::before{background:#fff;transform:scale(1.15)}
 .contact-toggle input:focus-visible+span{outline:2px solid rgba(255,255,255,.85);outline-offset:4px}
+/* The pick's fill is one knob sliding between the two methods, on the access switch's spring and the
+   calculator's knob (cb8/style.css, founder 2026-09-17: "we have a motion in button change of calculator
+   in cashback, can you implement it here as well?"). page.js builds it and marks the toggle .knobbed,
+   which takes the checked pill's own fill off; the knob's colours are registered, so Telegram's blue
+   blends into WhatsApp's mint as it travels. Without the script the checked pill keeps its fill, above. */
+@property --c-tint{syntax:'<color>';inherits:false;initial-value:transparent}
+@property --c-tint2{syntax:'<color>';inherits:false;initial-value:transparent}
+@property --c-rim{syntax:'<color>';inherits:false;initial-value:transparent}
+@property --c-glow{syntax:'<color>';inherits:false;initial-value:transparent}
+.contact-knob{position:absolute;z-index:0;top:0;left:0;width:0;height:0;border-radius:999px;pointer-events:none;box-sizing:border-box;
+  --c-tint:rgba(100,181,246,.72);--c-tint2:rgba(100,181,246,.34);--c-rim:#fff;--c-glow:rgba(100,181,246,.65);
+  background:linear-gradient(150deg,var(--c-tint),var(--c-tint2));border:1px solid var(--c-rim);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 10px 22px -12px var(--c-glow);
+  transition:--c-tint .5s var(--ease),--c-tint2 .5s var(--ease),--c-rim .5s var(--ease),--c-glow .5s var(--ease)}
+/* each method's metal is written out in full — no var() hop, no --acc: a registered property whose value
+   is reached through another variable did not blend, and WhatsApp's mint never landed. page.js sets the
+   same four on the knob itself, so the colour does not depend on this attribute matching either. */
+.contact-knob[data-method=telegram]{--c-tint:rgba(100,181,246,.72);--c-tint2:rgba(100,181,246,.34);--c-glow:rgba(100,181,246,.65)}
+.contact-knob[data-method=whatsapp]{--c-tint:rgba(110,224,158,.78);--c-tint2:rgba(110,224,158,.36);--c-glow:rgba(110,224,158,.6)}
+.contact-toggle.knobbed input:checked+span{background:none;border-color:transparent;box-shadow:none;transform:none}
+html.reduce .contact-knob{transition:none}
+/* the field's label rolls its words the way 02's rule line does, so the method's name never cuts;
+   the placeholder under it dips through the swap (founder, 2026-09-17: "make text change smooth as well") */
+#contact-label{display:block}
+#contact-label .tf-roll{justify-items:start}
+/* the field's ghost prompt: the native ::placeholder cannot roll, so page.js lays this line over the
+   input and paints the real one transparent. It sits in the input's own box at the input's own type,
+   and goes the moment the field holds anything. */
+.field-line{position:relative;display:block}
+#contact-input.ghosted::placeholder{color:transparent}
+.field-ghost{position:absolute;inset:0;display:flex;align-items:center;pointer-events:none;
+  font:var(--weight-body) var(--text-copy)/1.4 var(--sans);letter-spacing:-.015em;color:rgba(255,255,255,.5)}
+.field-line.filled .field-ghost{display:none}
 
 /* the path: three rounded tiles, 10px apart, each framed in its own colour (founder, 2026-09-15: "make each of
    these separate in a rounded rectangle" — they had been joined edge to edge in one clipped track).
@@ -344,7 +377,41 @@ html.reduce .live i{animation:none}
 .form-card .well :is(input,textarea){display:block;width:100%;margin:0;padding:0;border:0;border-radius:0;outline:0;background:transparent;box-shadow:none;
   color:#fff;caret-color:#fff;color-scheme:dark;font:var(--weight-label) var(--text-copy)/1.4 var(--sans);letter-spacing:-.015em}
 .form-card .well textarea{min-height:84px;resize:vertical}
-.form-card .well :is(input,textarea)::placeholder{color:rgba(255,255,255,.5)}
+.form-card .well :is(input,textarea)::placeholder{color:rgba(255,255,255,.5);font-weight:var(--weight-body)}
+/* What a field says when it is not filled in. The browser's own bubble is a grey box with a red dot
+   that belongs to no page, so the form turns it off and answers in the page's own material: the
+   well takes a warm rim over a warm wash, a ring swells out of it once — the home CTA's flash, in
+   this palette — and the line opens under the field on a row that grows from nothing, the way the
+   FAQ answers open. It closes again on the next keystroke, never on blur, so nothing scolds a
+   visitor mid-typing (founder, 2026-09-18). */
+/* the flag's colour is the page's own sand, not a browser red: a missed field is a thing to finish,
+   not a failure, and red on this blue shouts (founder, 2026-09-18: "the red is a little annoying").
+   One set of tokens carries it, so the whole state recolours from here. */
+.form-card{--flag-rim:rgba(240,208,130,.72);--flag-lit:rgba(246,222,158,.95);--flag-wash:rgba(182,142,58,.2);
+  --flag-ink:#F6E2B3;--flag-tag:rgba(240,208,130,.17);--flag-tag-rim:rgba(240,208,130,.5);--flag-ring:240,208,130}
+.form-card .well.invalid{--rim:var(--flag-rim);--tint:var(--flag-wash);--tint2:rgba(var(--rgb-abyss),.6)}
+.form-card .well.invalid:focus-within{--rim:var(--flag-lit)}
+/* the card's own hover rule outranks the flag, so a pointer crossing a flagged well used to wash the
+   sand back out (founder, 2026-09-18: "mouse hover removes the color"). Hover lifts the flag instead. */
+.glass .form-card .well.invalid:hover{--rim:var(--flag-lit);--tint:var(--flag-wash)}
+.form-card .well.invalid>label{color:var(--flag-ink)}
+.form-card .well.flagging{animation:well-flag .9s var(--ease)}
+@keyframes well-flag{
+  0%{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 0 0 rgba(var(--flag-ring),.3)}
+  30%{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 0 4px rgba(var(--flag-ring),.2)}
+  100%{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 0 11px rgba(var(--flag-ring),0)}}
+.field-note{display:grid;grid-template-rows:0fr;margin-top:0;opacity:0;
+  transition:grid-template-rows .34s var(--ease),opacity .34s var(--ease),margin-top .34s var(--ease)}
+.field-note>span{overflow:hidden;min-height:0}
+/* the line is a tag, not a sentence under the field: short, warm, and carrying its own rim so it
+   reads at a glance against the well it sits in (founder, 2026-09-18) */
+.field-note .tag{display:inline-flex;align-items:center;padding:3px 10px 4px;border-radius:999px;
+  border:1px solid var(--flag-tag-rim);background:var(--flag-tag);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2);
+  font:var(--weight-label) var(--text-label)/1.35 var(--sans);letter-spacing:.01em;color:var(--flag-ink)}
+.well.invalid .field-note{grid-template-rows:1fr;opacity:1;margin-top:8px}
+html.reduce .form-card .well.flagging{animation:none}
+html.reduce .field-note{transition:none}
 .form-card .well input:-webkit-autofill{-webkit-text-fill-color:#fff;transition:background-color 100000s 0s}   /* the browser's autofill slab never lands on the glass */
 .fset+.well{margin-top:12px}
 /* the goals: a tile each. Picked, a goal takes a lit blue and a soft white
@@ -388,9 +455,21 @@ html.reduce .live i{animation:none}
     linear-gradient(150deg,rgba(var(--rgb-600),.76),rgba(var(--rgb-800),.54));background-origin:border-box;border-color:rgba(200,220,255,.8)}
 .form-card .btn-solid:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
 .form-card .btn-solid[disabled]{opacity:.6;pointer-events:none}
-/* the error: the page's red is for white paper, so on glass it is a tinted plate with light text */
-.form-error{margin:18px 0 0;padding:11px 14px;border:1px solid rgba(255,138,128,.5);border-radius:12px;background:rgba(255,110,100,.14);
-  font-size:var(--text-meta);line-height:1.45;color:#FFD6D0}
+/* the error: the page's red is for white paper, so on glass it is a tinted plate with light text —
+   and it carries a mark of its own, the site's 24px glyph in its 40px well, the warm twin of the
+   plate the success state wears */
+.form-error[hidden]{display:none}   /* .form-error sets display, which would outrank the browser's own [hidden] rule */
+.form-error{margin:18px 0 0;padding:12px 14px;display:flex;align-items:center;gap:13px;
+  border:1px solid var(--flag-tag-rim);border-radius:14px;
+  background:linear-gradient(150deg,var(--flag-wash),rgba(var(--rgb-abyss),.38));
+  backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 18px 34px -20px rgba(var(--flag-ring),.4);
+  font-size:var(--text-meta);line-height:1.45;color:var(--flag-ink)}
+.err-mark{--accent:var(--flag-ink);width:var(--icon-well);height:var(--icon-well);flex:none;display:grid;place-items:center;
+  border-radius:var(--icon-well-radius);border:1px solid var(--flag-tag-rim);
+  background:linear-gradient(150deg,rgba(var(--flag-ring),.26),rgba(var(--rgb-abyss),.4));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.err-text{min-width:0}
 .form-success{display:none;min-height:420px;place-items:center;text-align:center}
 .form-card.sent>form{display:none}
 .form-card.sent .form-success{display:grid}
@@ -398,7 +477,7 @@ html.reduce .live i{animation:none}
   background:linear-gradient(150deg,rgba(72,212,138,.3),rgba(16,92,70,.3));box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 0 7px rgba(72,212,138,.12)}
 .form-success h3{margin:0 0 9px;font-size:var(--text-received);line-height:1.2;letter-spacing:-.04em;font-weight:var(--weight-strong);color:#fff}
 .form-success p{max-width:390px;margin:0 auto;font-size:var(--text-ui);color:rgba(255,255,255,.78)}
-html.reduce .goal .tile,html.reduce .goal i,html.reduce .goal i svg,html.reduce .contact-toggle span{transition:none}
+html.reduce .goal .tile,html.reduce .goal i,html.reduce .goal i svg,html.reduce .contact-toggle label span{transition:none}
 html.reduce .goal:hover input:not(:checked)+.tile{transform:none}
 
 /* ---------- laptops and phones ---------- */
