@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Referral rail — the pick's motion, three arms</title>
+<link rel="preload" href="../shared/fonts/Inter-VF.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../cb8/grounds.css">
+<link rel="stylesheet" href="../cb8/style.css">
+<link rel="stylesheet" href="page.css">
+<style>
+  body{padding:40px 24px 80px}
+  .arms{max-width:1080px;margin:0 auto;display:grid;gap:34px}
+  .arm{border-radius:22px}
+  .arm h2{font:var(--weight-semi) var(--text-panel-title)/1.3 var(--sans);color:#fff;margin:0 0 6px}
+  .arm p{font:var(--weight-body) var(--text-small)/1.5 var(--sans);color:rgba(255,255,255,.72);margin:0 0 16px;max-width:70ch}
+  .glass .panel{margin:0}
+
+  /* ARM A — the rim rides, the metal deepens in place as the box lands.
+     The tints are their own registered properties so they can blend at all: a plain --tint swap jumps,
+     and a registered property read through var() does not blend either, so every value is written out. */
+  @property --cell-tint{syntax:'<color>';inherits:false;initial-value:transparent}
+  @property --cell-tint2{syntax:'<color>';inherits:false;initial-value:transparent}
+  #arm-a .rail-knob{z-index:2;background:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+  #arm-a .rate-cell{background:linear-gradient(150deg,var(--cell-tint),var(--cell-tint2));
+    transition:--cell-tint .5s var(--ease) .3s,--cell-tint2 .5s var(--ease) .3s,border-color .3s var(--ease),box-shadow .3s var(--ease),transform .3s var(--ease)}
+  #arm-a.knobbed .rate-cell[aria-pressed=true]{box-shadow:none;border-color:transparent;
+    backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%)}
+  #arm-a .rate-cell[data-tier=standard]{--cell-tint:rgba(226,150,96,.46);--cell-tint2:rgba(150,84,50,.42)}
+  #arm-a .rate-cell[data-tier=silver]{--cell-tint:rgba(204,218,238,.24);--cell-tint2:rgba(118,144,184,.21)}
+  #arm-a .rate-cell[data-tier=gold]{--cell-tint:rgba(238,196,102,.46);--cell-tint2:rgba(170,124,40,.46)}
+  #arm-a .rate-cell[data-tier=diamond]{--cell-tint:rgba(138,96,224,.32);--cell-tint2:rgba(76,48,150,.29)}
+  #arm-a .rate-cell[aria-pressed=true][data-tier=standard]{--cell-tint:rgba(226,150,96,.62);--cell-tint2:rgba(150,84,50,.6)}
+  #arm-a .rate-cell[aria-pressed=true][data-tier=silver]{--cell-tint:rgba(204,218,238,.36);--cell-tint2:rgba(118,144,184,.32)}
+  #arm-a .rate-cell[aria-pressed=true][data-tier=gold]{--cell-tint:rgba(238,196,102,.66);--cell-tint2:rgba(170,124,40,.66)}
+  #arm-a .rate-cell[aria-pressed=true][data-tier=diamond]{--cell-tint:rgba(138,96,224,.5);--cell-tint2:rgba(76,48,150,.46)}
+
+  /* ARM B — today's knob, but the tile it is heading for keeps its own metal until the box arrives */
+  #arm-b.sliding .rate-cell[aria-pressed=true]{background:linear-gradient(150deg,var(--tint),var(--tint2));
+    backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%)}
+  #arm-b.sliding .rate-cell[aria-pressed=true][data-tier=standard]{--tint:rgba(226,150,96,.46);--tint2:rgba(150,84,50,.42)}
+  #arm-b.sliding .rate-cell[aria-pressed=true][data-tier=silver]{--tint:rgba(204,218,238,.24);--tint2:rgba(118,144,184,.21)}
+  #arm-b.sliding .rate-cell[aria-pressed=true][data-tier=gold]{--tint:rgba(238,196,102,.46);--tint2:rgba(170,124,40,.46)}
+  #arm-b.sliding .rate-cell[aria-pressed=true][data-tier=diamond]{--tint:rgba(138,96,224,.32);--tint2:rgba(76,48,150,.29)}
+
+  /* ARM C — today's knob, as it ships now */
+</style>
+</head>
+<body class="glass">
+<div class="arms">
+
+  <div class="arm">
+    <h2>A · the rim travels, the metal deepens in place</h2>
+    <p>Every tile keeps its own metal at all times. Only the white rim and its halo ride the rail; the picked tile's tint deepens on a transition delayed to land with the box, and the one you left lightens the same way. Nothing passes behind a tile, so no tile is tinted by a colour that is only travelling through.</p>
+    <div class="panel"><div class="rate-rail" id="arm-a"></div></div>
+  </div>
+
+  <div class="arm">
+    <h2>B · the metal travels, the tile waits for it</h2>
+    <p>Today's knob, with one change: the tile you are moving to keeps its own lit metal until the box actually arrives, instead of going bare the moment you click. The knob still passes under the tiles between the two, so those tiles take a little of its colour on the way through.</p>
+    <div class="panel"><div class="rate-rail" id="arm-b"></div></div>
+  </div>
+
+  <div class="arm">
+    <h2>C · what ships now</h2>
+    <p>The picked tile hands its whole face to the knob at once, so it stands bare while the box crosses the rail.</p>
+    <div class="panel"><div class="rate-rail" id="arm-c"></div></div>
+  </div>
+
+</div>
+
+<script src="../shared/knob.js"></script>
+<script>
+  const TIERS = [
+    ['standard', 'No paid plan', '10%'],
+    ['silver', 'Silver', '15%'],
+    ['gold', 'Gold', '20%'],
+    ['diamond', 'Diamond', '30%'],
+  ];
+  const METAL = {
+    standard: { '--k-tint': 'rgba(226,150,96,.62)', '--k-tint2': 'rgba(150,84,50,.6)', '--k-rim': 'rgba(236,176,136,.5)' },
+    silver: { '--k-tint': 'rgba(204,218,238,.36)', '--k-tint2': 'rgba(118,144,184,.32)', '--k-rim': 'rgba(228,238,250,.55)' },
+    gold: { '--k-tint': 'rgba(238,196,102,.66)', '--k-tint2': 'rgba(170,124,40,.66)', '--k-rim': 'rgba(240,208,130,.55)' },
+    diamond: { '--k-tint': 'rgba(138,96,224,.5)', '--k-tint2': 'rgba(76,48,150,.46)', '--k-rim': 'rgba(196,166,250,.55)' },
+  };
+  document.querySelectorAll('.rate-rail').forEach((rail) => {
+    rail.innerHTML = TIERS.map(([tier, name, rate], i) =>
+      `<button class="tile rate-cell" type="button" data-tier="${tier}" aria-pressed="${i === 3}"><small>${name}</small><strong>${rate}</strong></button>`).join('');
+    const cells = [...rail.querySelectorAll('.rate-cell')];
+    const knob = window.tfKnob(rail, cells, { className: 'rail-knob', ink: (el) => METAL[el.dataset.tier] });
+    cells.forEach((b) => b.addEventListener('click', () => {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      cells.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+      if (rail.id === 'arm-b') {                       // the tile waits for the box
+        rail.classList.add('sliding');
+        clearTimeout(rail._t);
+        rail._t = setTimeout(() => rail.classList.remove('sliding'), 760);
+      }
+      knob.move(b, true);
+    }));
+  });
+</script>
+</body>
+</html>
