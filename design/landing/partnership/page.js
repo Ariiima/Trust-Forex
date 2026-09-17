@@ -232,14 +232,22 @@
   /* only the field being travelled to swells its ring. Five ring animations at once are five
      box-shadow spreads over five backdrop-filtered wells, and the page cannot repaint that and
      scroll at the same time (founder, 2026-09-18: "the scroll isn't smooth at all"). */
-  const markField = (field, ring) => {
+  const markField = (field) => {
     const note = noteFor(field);
     const well = field.closest('.well');
     note.querySelector('.tag').textContent = says(field);
     well.classList.add('invalid');
-    if (ring) { well.classList.remove('flagging'); void well.offsetWidth; well.classList.add('flagging'); }
     field.setAttribute('aria-invalid', 'true');
     field.setAttribute('aria-describedby', note.id);
+  };
+  /* and it swells on arrival, not on departure: the ring is a .9s box-shadow spread — a paint on
+     every frame of it — and it used to start the moment Send was pressed, so its last half second
+     ran underneath the travel. The ring says "here it is", which is a thing to say once the field
+     is on screen anyway (founder, 2026-09-18: "the scroll is slow and laggy"). */
+  const ringField = (field) => {
+    const well = field.closest('.well');
+    if (!well || REDUCE) return;
+    well.classList.remove('flagging'); void well.offsetWidth; well.classList.add('flagging');
   };
   /* The plate stays for one thing only: a request the API would not take. A missed field says so at
      the field itself — a second notice above the button repeated it, and opening it pushed the whole
@@ -272,16 +280,23 @@
      moving the ground under it — and its duration grows with the distance, which on a page of
      backdrop-filtered glass is where the stutter came from. This glides on one target measured once,
      over a fixed beat, after the tags have finished opening (founder, 2026-09-18). */
+  /* the walk stops short of <body> and <html>: the page itself scrolls through the window, and the
+     root element answers this test too — auto overflow, a scrollHeight taller than its box. Taken
+     for the scroller it reports its own height for the viewport and a rect top of minus the scroll
+     position, which puts the target thousands of pixels past the end and the travel went the wrong
+     way, to the foot of the page (founder, 2026-09-18). */
   const scrollerOf = (el) => {
-    for (let p = el.parentElement; p; p = p.parentElement) {
+    for (let p = el.parentElement; p && p !== document.body && p !== document.documentElement; p = p.parentElement) {
       const oy = getComputedStyle(p).overflowY;
       if ((oy === 'auto' || oy === 'scroll') && p.scrollHeight > p.clientHeight + 1) return p;
     }
     return window;
   };
   const EASE = (t) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);   // the page's own in-out cubic
+  const BEAT = 440;
+  const root = document.documentElement;
   let glide;
-  const travelTo = (el) => {
+  const travelTo = (el, done = () => {}) => {
     const sc = scrollerOf(el);
     const box = el.getBoundingClientRect();
     const view = sc === window ? innerHeight : sc.getBoundingClientRect().height;
@@ -291,14 +306,20 @@
     const max = sc === window ? document.documentElement.scrollHeight - innerHeight : sc.scrollHeight - sc.clientHeight;
     const to = Math.min(want, Math.max(0, max));
     const gap = to - top;
-    if (Math.abs(gap) < 40) return;                       // already where it can be read
-    if (REDUCE) { sc.scrollTo(0, to); return; }
+    if (Math.abs(gap) < 40) { done(); return; }            // already where it can be read
+    if (REDUCE) { sc.scrollTo(0, to); done(); return; }
     cancelAnimationFrame(glide);
+    /* .gliding holds the closing screen's glass still for the length of the travel (page.css) —
+       the pane's streak and its thirteen tiles' streaks ride the ground timeline, so every
+       scrolled pixel repainted fourteen gradients behind fourteen backdrop blurs. */
+    root.classList.add('gliding');
     const t0 = performance.now();
     const step = (now) => {
-      const k = Math.min(1, (now - t0) / 520);
+      const k = Math.min(1, (now - t0) / BEAT);
       sc.scrollTo(0, top + gap * EASE(k));
-      if (k < 1) glide = requestAnimationFrame(step);
+      if (k < 1) { glide = requestAnimationFrame(step); return; }
+      root.classList.remove('gliding');
+      done();
     };
     glide = requestAnimationFrame(step);
   };
@@ -308,16 +329,19 @@
     const box = well.getBoundingClientRect();
     const sc = scrollerOf(well);
     const view = sc === window ? innerHeight : sc.getBoundingClientRect().height;
-    if (box.top >= 8 && box.bottom <= view - 8) return;   // the field is on screen: nothing needs to move
-    /* the form's screen may be held — pinned at the top for the length of its hold — and a held
-       screen's box does not move with the page, so centring it by its own rect lands nowhere near.
-       main.js knows where each screen begins, so the page's own travel takes it there; the glide
-       below is for a page without that script. */
+    if (box.top >= 8 && box.bottom <= view - 8) { ringField(field); return; }   // on screen: nothing needs to move
+    /* A held screen — pinned at the top for the length of its hold — does not move with the page,
+       so centring it by its own rect lands nowhere near, and main.js's own travel has to take it.
+       That branch used to take every screen, and the request form is not on a held one: it sent the
+       travel through the browser's smooth scroll, whose duration grows with the distance, to the top
+       of the whole closing screen rather than to the field that was missed (founder, 2026-09-18:
+       "the scroll is slow and laggy"). Only a screen actually in a .hold box goes that way now. */
     const screen = well.closest('.screen');
-    const list = screen ? [...document.querySelectorAll('.screen')] : [];
-    const i = screen ? list.indexOf(screen) : -1;
+    const held = !!well.closest('.hold') && root.classList.contains('snap');
+    const i = screen ? [...document.querySelectorAll('.screen')].indexOf(screen) : -1;
     setTimeout(() => {                                    // let the tags finish opening first
-      if (window.__go && i >= 0) window.__go(i); else travelTo(well);
+      if (held && window.__go && i >= 0) { window.__go(i); setTimeout(() => ringField(field), BEAT); }
+      else travelTo(well, () => ringField(field));
     }, 380);
   };
   checked.forEach((field) => field.addEventListener('input', () => {
@@ -329,7 +353,7 @@
     e.preventDefault();
     const bad = checked.filter((field) => !field.checkValidity());
     checked.filter((field) => field.checkValidity()).forEach(clearField);
-    if (bad.length) { bad.forEach((f) => markField(f, f === bad[0])); reveal(bad[0]); return; }
+    if (bad.length) { bad.forEach(markField); reveal(bad[0]); return; }
     hideError();
     const fd = new FormData(form);
     const body = Object.fromEntries(fd);

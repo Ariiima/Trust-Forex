@@ -355,6 +355,18 @@ html.reduce .live i{animation:none}
    the pointer moves the field being typed into. */
 .glass .panel.form-card{max-width:none;padding:24px 26px 26px;border-radius:24px;transform:none}
 #final .glass .panel::after,#final .glass .tile::after{animation-timeline:--ground}   /* the streaks travel with the screen, as the calculator's do */
+/* and they stand still while the page travels to a missed field (page.js adds .gliding for the
+   length of it). Every one of those streaks is a background-position on the ground timeline, which
+   the browser cannot hand to the compositor: fourteen gradients repainting on every scrolled pixel,
+   each behind a backdrop blur that has to be taken again with it. Paused holds the light exactly
+   where it stands, so half a second of travel shows nothing — it only stops costing a repaint.
+   Measured over the travel, interleaved four times each (_qa/perf-request.mjs, ARMS=1): 18fps
+   running, 33 paused (founder, 2026-09-18: "the scroll is slow and laggy"). */
+html.gliding #final .glass .panel::after,
+html.gliding #final .glass .tile::after{animation-play-state:paused}
+/* The blurs themselves are not the cost and stay lit: dropping the pane's, the tiles', the nav's,
+   the back-to-top's or the footer's for the length of the travel measured no better than leaving
+   them on. It is the repaint behind them that they have to answer. */
 .form-card .step+.step{margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.16)}
 .form-card .step-cap{display:block;width:100%;margin:0 0 13px;padding:0;font:var(--weight-semi) var(--text-panel-title)/1.2 var(--sans);letter-spacing:-.015em;color:#fff}   /* the calculator's step heading */
 .fset{min-width:0;margin:0;padding:0;border:0}
