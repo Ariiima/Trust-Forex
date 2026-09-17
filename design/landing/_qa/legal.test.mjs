@@ -73,7 +73,8 @@ const stickAt = await pg.evaluate(() => document.querySelector('.doc-tabs').getB
 assert.deepEqual(await barAt(0), { p: 0, clear: true, tab: 'rgb(255, 255, 255)' }, 'bar at the top');
 const half = await barAt(stickAt + 36);
 assert.ok(half.p > .4 && half.p < .6 && !half.clear, 'bar halfway: ' + JSON.stringify(half));
-assert.deepEqual(await barAt(stickAt + 200), { p: 1, clear: false, tab: 'rgb(9, 34, 92)' }, 'bar filled');
+// --navy, which the tabs swap to over the fill. It is --p-900 since 2026-09-17; it was #09225C.
+assert.deepEqual(await barAt(stickAt + 200), { p: 1, clear: false, tab: 'rgb(20, 76, 205)' }, 'bar filled');
 await pg.evaluate(() => scrollTo(0, 0));
 
 // 5 — nothing numbered survived

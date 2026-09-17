@@ -27,7 +27,12 @@
   /* ---- Roles ------------------------------------------------------------------- */
   --paper:#F4F5F8;--soft:#EEF1F6;--ink:#12141A;--body:#454D5C;--muted:#646E7E;
   --line:#DFE2EA;--line-strong:#C3C9D6;
-  --navy:var(--p-deep);--navy-2:var(--p-pressed);
+  /* The ink, the borders and the solid fills are the app's blue now (founder, 2026-09-17:
+     "change all of them to the new blue we have"). --navy keeps its name because it is a
+     role — the darkest thing type and a filled control are allowed to be — and every page
+     already asks for it by that name; only what it resolves to moved, from the carried-down
+     #09225C to --p-900. The grounds and the gradient feet still use --p-deep directly. */
+  --navy:var(--p-900);--navy-2:var(--p-pressed);
   --accent:var(--p-900);--accent-deep:var(--p-950);--accent-soft:var(--p-50);
   --navy-line:rgba(255,255,255,.14);--navy-soft:rgba(255,255,255,.06);--navy-muted:#B8C9F0;
   /* ---- State colours, from the brand palette (founder, 2026-09-05): each with its pale
