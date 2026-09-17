@@ -317,15 +317,25 @@
 
   document.querySelectorAll('[data-result-view]').forEach(button => button.addEventListener('click', () => {
     resultView = button.dataset.resultView; document.querySelectorAll('[data-result-view]').forEach(item => item.setAttribute('aria-pressed', String(item === button))); document.querySelectorAll('[data-mode-panel]').forEach(panel => panel.hidden = panel.dataset.modePanel !== resultView); closeTooltip(); closeScalpTooltip();
-    if (resultView === 'scalp') drawScalp(); else draw();   // the hidden panel had no width to lay out against
+    if (resultView === 'scalp') { scalpKnob?.layout(); drawScalp(); } else { timeKnob?.layout(); draw(); }   // the hidden panel had no width to lay out against
   }));
+  /* every bar's pick is one white knob that slides, not a fill that blinks (shared/knob.js, founder 2026-09-18) */
+  const knobFor = (sel) => {
+    const track = document.querySelector(sel);
+    const items = track ? [...track.querySelectorAll('button')] : [];
+    return window.tfKnob?.(track, items, { className: 'sel-knob', spring: 'tight', duration: 780 }) || null;   // the referral rail's beat
+  };
+  const targetKnob = knobFor('.selector.target');
+  const timeKnob = knobFor('#signal-results-panel .selector.time');
+  const scalpKnob = knobFor('#scalp-results-panel .selector.time');
+
   document.querySelectorAll('[data-scalp-timeframe]').forEach(button => button.addEventListener('click', () => {
-    scalpTimeframe = button.dataset.scalpTimeframe; document.querySelectorAll('[data-scalp-timeframe]').forEach(item => item.setAttribute('aria-pressed', String(item === button))); drawScalp();
+    scalpTimeframe = button.dataset.scalpTimeframe; document.querySelectorAll('[data-scalp-timeframe]').forEach(item => item.setAttribute('aria-pressed', String(item === button))); scalpKnob?.move(button, true); drawScalp();
   }));
   document.querySelectorAll('[data-target]').forEach(button => button.addEventListener('click', () => { if (compareMode) return;   /* the bar is a legend now — pointer-events stops the mouse, this stops the keyboard */
-    target = button.dataset.target; document.querySelectorAll('[data-target]').forEach(item => item.setAttribute('aria-pressed', String(item === button))); draw(); }));
-  document.querySelectorAll('[data-timeframe]').forEach(button => button.addEventListener('click', () => { timeframe = button.dataset.timeframe; document.querySelectorAll('[data-timeframe]').forEach(item => item.setAttribute('aria-pressed', String(item === button))); draw(); }));
-  compareToggle.addEventListener('change', () => { compareMode = compareToggle.checked; explorer.classList.toggle('compare-mode', compareMode); targetSelector.classList.toggle('is-disabled', compareMode); targetSelector.setAttribute('aria-disabled', String(compareMode)); targetSelector.setAttribute('aria-label', compareMode ? 'Compared targets legend' : 'Target selector'); draw(); });
+    target = button.dataset.target; document.querySelectorAll('[data-target]').forEach(item => item.setAttribute('aria-pressed', String(item === button))); targetKnob?.move(button, true); draw(); }));
+  document.querySelectorAll('[data-timeframe]').forEach(button => button.addEventListener('click', () => { timeframe = button.dataset.timeframe; document.querySelectorAll('[data-timeframe]').forEach(item => item.setAttribute('aria-pressed', String(item === button))); timeKnob?.move(button, true); draw(); }));
+  compareToggle.addEventListener('change', () => { compareMode = compareToggle.checked; if (!compareMode) targetKnob?.layout();   /* the bar was hidden while compare ran: place the knob before it fades back in */ explorer.classList.toggle('compare-mode', compareMode); targetSelector.classList.toggle('is-disabled', compareMode); targetSelector.setAttribute('aria-disabled', String(compareMode)); targetSelector.setAttribute('aria-label', compareMode ? 'Compared targets legend' : 'Target selector'); draw(); });
   window.addEventListener('resize', () => { draw(); drawScalp(); });
   draw(); drawScalp();
 
