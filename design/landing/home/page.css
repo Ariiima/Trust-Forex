@@ -128,8 +128,25 @@ html.reduce .screen.in .weekly-bar{animation:none}
    sentence sits; steps 2 and 4 mirror it and take a deeper wash, so the corridor alternates as
    the wireframe's does without becoming four different rooms.
    The title and the sentence both sit on the centre line. */
-.protocol-run{position:relative;background:var(--blue);color:#fff;--grad:var(--grad-light)}
-.step{position:relative;z-index:1;text-align:center;overflow:hidden}
+.protocol-run{position:relative;background:#fff;color:#fff;--grad:var(--grad-light)}
+/* Each step is an inset blue block on the white page, the way the Cashback mechanics sit in their
+   frame (founder, 2026-09-17: "the white ring around the blue background"): the blue is the step's
+   own ground and a clip-path cuts the frame out of it — 20px off the edges and the bottom, the nav's
+   height plus the same off the top — with the mechanics' 32px corners. The padding matches the clip,
+   so the centred type sits in the middle of the block, not of the screen. The clip is a clip-path,
+   not border-radius and overflow, for base.css's reason: a rounded overflow clip over composited
+   children needs a mask redrawn every frame. */
+.step{position:relative;z-index:1;text-align:center;overflow:hidden;--step-frame:var(--frame-inset);
+  background:var(--blue);
+  padding:calc(var(--nav-h) + var(--step-frame)) 0 var(--step-frame);
+  clip-path:inset(calc(var(--nav-h) + var(--step-frame)) var(--step-frame) var(--step-frame) round 32px)}
+html:not(.snap) .step{padding:calc(var(--nav-h) + var(--step-frame)) 0 var(--step-frame)}
+/* .screen-blue is what puts the white page under the blocks and turns the nav and the rail light
+   here, as it does on Cashback. Its paper field belongs to the page, not to a block, and the clip
+   would trap it inside the blue — so the steps drop it; steps 2 and 4 keep the pseudo for their
+   deeper wash. */
+.step::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background:none;
+  -webkit-mask-image:none;mask-image:none}
 #step-2 .rayfield.k,#step-4 .rayfield.k{transform:scaleX(-1)}
 #step-2::before,#step-4::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background:rgba(var(--rgb-abyss),.34)}
 .step>.wrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:28px}
@@ -191,28 +208,25 @@ html.reduce .step .rayfield.k i:nth-child(4){animation:none}
    Each step pins at the top for the site's hold, and the next one rises over it from below. It
    arrives at 92% and grows to full size across its own entry, so the pinned step shows at its sides
    while it comes, and the pinned step dims under a black veil as it is covered. This is base.css's
-   stack as the mechanics run it — the .stack/.hold markup, stack-in, stack-back and cover — changed in
-   one respect: the mechanics scale an inset block inside a white frame, and these four are full-bleed,
-   so the screen itself is what scales. Its own rayfield is its opaque ground, so the incoming step
-   hides the pinned one without a background of its own. Step 1 does not scale: it follows the chapter
+   stack as the mechanics run it — the .stack/.hold markup, stack-in, stack-back and cover: each step
+   is an inset block in a white frame too, and the screen is what scales, frame and all. Its own blue
+   and its rayfield are its opaque ground, so the incoming step hides the pinned one without a
+   background of its own. Step 1 does not scale: it follows the chapter
    up the page as an ordinary scroll, and there is no step under it to show at its sides.
    A step the next one has fully covered turns invisible for the last 1% of that entry, as a covered
    mechanics card does, so no more than two of these full-screen halo fields composite at once.
-   The incoming step rises with the mechanics card's 32px corners (founder, 2026-09-13: "round up
-   the edges as well"), and squares them off over the last 15% of its entry, as it fills the screen —
-   a full-bleed step that kept its corners at rest would notch the four corners of the viewport.
-   The corners are a clip-path, not border-radius and overflow, for base.css's reason: a rounded
-   overflow clip over composited children needs a mask redrawn every frame.
+   The incoming step keeps the mechanics card's 32px corners and its white frame at rest as well
+   (founder, 2026-09-17), so the block scaling in and the block already pinned read as two cards in
+   one frame — the pinned one shows at the sides through the incoming one's gutter.
    Hold modes only (html.snap): mobile, touch and reduced motion scroll the four plainly. */
 #deck{timeline-scope:--s2,--s3,--s4}
 #step-2{view-timeline-name:--s2}#step-3{view-timeline-name:--s3}#step-4{view-timeline-name:--s4}
 .step::after{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;background:#000;opacity:0}
 html.snap .protocol-run .step{will-change:transform}
 html.snap #step-1{animation:cover step-end both;animation-timeline:--s2;animation-range:entry 99% entry 100%}
-html.snap #step-2{animation:stack-in linear both,step-round linear both,cover step-end both;animation-timeline:--s2,--s2,--s3;animation-range:entry,entry,entry 99% entry 100%}
-html.snap #step-3{animation:stack-in linear both,step-round linear both,cover step-end both;animation-timeline:--s3,--s3,--s4;animation-range:entry,entry,entry 99% entry 100%}
-html.snap #step-4{animation:stack-in linear both,step-round linear both;animation-timeline:--s4,--s4;animation-range:entry,entry}
-@keyframes step-round{0%,85%{clip-path:inset(0 round 32px)}100%{clip-path:inset(0 round 0px)}}
+html.snap #step-2{animation:stack-in linear both,cover step-end both;animation-timeline:--s2,--s3;animation-range:entry,entry 99% entry 100%}
+html.snap #step-3{animation:stack-in linear both,cover step-end both;animation-timeline:--s3,--s4;animation-range:entry,entry 99% entry 100%}
+html.snap #step-4{animation:stack-in linear both;animation-timeline:--s4;animation-range:entry}
 html.snap #step-1::after{animation:stack-back linear both;animation-timeline:--s2;animation-range:entry}
 html.snap #step-2::after{animation:stack-back linear both;animation-timeline:--s3;animation-range:entry}
 html.snap #step-3::after{animation:stack-back linear both;animation-timeline:--s4;animation-range:entry}
@@ -768,6 +782,8 @@ body{font-variant-numeric:normal}
      broke onto two lines on a 390px phone, and the sentence is the mechanics paragraph's phone size */
   .step-title{font-size:54px}
   .step-copy{font-size:var(--text-body);max-width:340px}
+  /* the frame narrows on a phone, as the Cashback blocks' does (base.css, .screen-blue.fill .wrap) */
+  .step{--step-frame:12px;clip-path:inset(calc(var(--nav-h) + 12px) 12px 12px round 24px)}
   /* the badge is the card's biggest object, so it is the first thing that gives ground */
   .plan-badge{width:44px;height:44px}
   .plan-head{gap:10px}
