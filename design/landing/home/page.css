@@ -557,10 +557,16 @@ html.reduce .glass .plan-col:has(.plan-pick){transition:none}
 .plan-badge{display:block;flex:none;width:46px;height:46px;
   filter:drop-shadow(0 8px 16px rgba(var(--rgb-shadow),.55))}
 /* the app's own two tags, which this page used to drop entirely */
-.plan-flag{position:absolute;top:-11px;left:22px;display:inline-flex;align-items:center;height:23px;padding:0 10px;
-  border-radius:999px;font-size:var(--text-micro);font-weight:700;letter-spacing:.075em;text-transform:uppercase;
-  white-space:nowrap;background:var(--label);color:var(--blue)}
-/* badge, name, and the term as an outlined pill at the far end — the reference's one line */
+/* it rode the card's top edge, half outside the rim; the founder moved it inside (2026-09-17), so it
+   sits at the far end of the head line, where the term used to be. Nothing now breaks the card's outline.
+   Inside the card it had gone quiet, so it carries a little more of everything (founder, same day, arm 02
+   of plans-flag-lab.html, a step down from the arm's size): 25px tall on an 11px face at 800, and a ring
+   of the tier's own ink round it with a short shadow under, which reads on the card without a haze. */
+.plan-flag{margin-left:auto;display:inline-flex;align-items:center;height:25px;padding:0 12px;
+  border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.085em;text-transform:uppercase;
+  white-space:nowrap;background:var(--label);color:var(--blue);
+  box-shadow:0 0 0 2.5px color-mix(in srgb,var(--label) 20%,transparent),0 6px 14px -8px rgba(0,0,0,.8)}
+/* badge, name, and the plan's tag at the far end — the reference's one line */
 /* One text style for everything in a card that is not a figure (founder, 2026-09-13: "same color,
    same weight, same size", then "smaller and more unified"). The term, the monthly line, the saving,
    the share's label and the list used to run 14 to 16px at four weights in four whites; they now all
@@ -574,8 +580,14 @@ html.reduce .glass .plan-col:has(.plan-pick){transition:none}
 /* the term as plain words at the far end (founder, 2026-09-16, picked from the pill lab): it was an
    outlined capsule whose rim took the tier ink on the pick, one more outline beside the plate. Without
    the rim it drops its side padding, so it ends on the plate's right edge. */
-.duration{margin-left:auto;display:inline-flex;align-items:center;height:32px;white-space:nowrap}
-.price{margin:14px 0 0;font-size:var(--text-plan-price-compact);line-height:1;font-weight:var(--weight-strong);letter-spacing:-.05em;color:#fff}   /* bold, as the site's figures (it was 750) */
+/* the term reads off the price now (founder, 2026-09-17), the way the app writes its cashback
+   figure: the amount, then the period in the card's one small size, sitting on the price's baseline.
+   It was plain words at the far end of the head line, which the flag has taken. */
+.price-line{display:flex;align-items:baseline;gap:8px;margin:14px 0 0;min-height:32px}
+.price{font-size:var(--text-plan-price-compact);line-height:1;font-weight:var(--weight-strong);letter-spacing:-.05em;color:#fff}   /* bold, as the site's figures (it was 750) */
+/* quieter than the rest of the card's words (founder, 2026-09-17): beside a 52px figure it read as
+   a second headline. The one size stays; only its ink drops, from the card's .82 white to .55. */
+.price-term{white-space:nowrap;color:rgba(255,255,255,.55)}
 /* The lower half, after the founder's reference (2026-09-13): the monthly figure and the share
    each sit in their own small glass pane, then a rule, then what every plan includes. The panes
    are plain frosted boxes, not .tile, whose rim and specular would be six more layers on the one
