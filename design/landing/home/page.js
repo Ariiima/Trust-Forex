@@ -143,6 +143,35 @@
   document.querySelectorAll('.plan-pick').forEach((r) => r.addEventListener('change', syncPlan));
   syncPlan();
 
+  /* ---------- the header steps aside for the plans ----------
+     page.css holds the motion; this only decides when the strip is away. Two thresholds read off
+     the hold box, which is the plans screen plus the 30vh it pins for (base.css .hold):
+     away once the hold's top edge is 8px from the viewport top — the screen is arriving and about
+     to pin — and back once its bottom edge has risen past the middle of the viewport, which is
+     halfway through the screen's exit. The gap between the two is the whole pinned stretch, so the
+     strip cannot flicker in the middle of it.
+     It was scrubbed off a view() timeline until 2026-09-17; the founder wanted one fixed animation
+     rather than a strip whose speed is the wheel's, so the class toggles and CSS times both moves.
+     Read in a rAF off the scroll — one getBoundingClientRect per frame that actually scrolled — and
+     re-read on resize, since the middle of the viewport moves. Hold mode only: cb8/main.js drops
+     html.snap on a phone, on a coarse pointer and under reduced motion, and the class comes off
+     with it so the strip is never left hidden. */
+  const plansHold = document.querySelector('.plans-hold');
+  if (plansHold) {
+    const root = document.documentElement;
+    let queued = false;
+    const gate = () => {
+      queued = false;
+      if (!root.classList.contains('snap')) { root.classList.remove('nav-gone'); return; }
+      const box = plansHold.getBoundingClientRect();
+      root.classList.toggle('nav-gone', box.top <= 8 && box.bottom > innerHeight / 2);
+    };
+    const queue = () => { if (!queued) { queued = true; requestAnimationFrame(gate); } };
+    addEventListener('scroll', queue, { passive: true });
+    addEventListener('resize', queue);
+    gate();
+  }
+
   /* ---------- self-check ---------- */
   if (new URLSearchParams(location.search).get('check') !== '1') return;
   const fails = [];

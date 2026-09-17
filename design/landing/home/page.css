@@ -499,7 +499,8 @@ html:not(.snap) #plans .block{min-height:auto}
 .plans-intro{margin-bottom:64px}  /* the heading stands clear of the cards (founder, 2026-09-16: "push the header a bit higher"; it was 26px) */
 /* the benefits and plans headings are section headings (--text-title, base.css .h2); they had sizes
    of their own, 58 and 62px, under the 66 of every other section heading on the site */
-.plans-intro .h2{max-width:780px;margin:0}
+.plans-intro{text-align:center}  /* the heading is centred over the three cards (founder, 2026-09-17) */
+.plans-intro .h2{max-width:780px;margin:0 auto}
 /* stretched: the three cards are one size (founder, 2026-09-13). No card stands taller; the
    picked one is the one lit. */
 .plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch}
@@ -683,28 +684,39 @@ html.reduce .plan-pill::before{transition:none}
     0 0 0 9px color-mix(in srgb,var(--label) 0%,transparent),0 0 36px -6px color-mix(in srgb,var(--label) 0%,transparent)}}
 html.reduce .glass .plan-col:has(.plan-pick:checked) .plan-rate b i,html.reduce .plan-cta.swap{animation:none}
 /* The header gives the plans its room (founder, 2026-09-13: "only when seeing plans, the header
-   scrolls away for more space"). The strip rises up and out over 56px of the screen's arrival that
-   end 8px short of the top, so it leaves just ahead of the screen's top edge instead of riding it
-   (founder, 2026-09-13: "a bit earlier, like 8px"); the strip comes back down over
-   the last 56px of the screen's exit and is whole again as the questions reach the top. The block
-   takes the strip's height: its top padding drops the nav's 56px while the nav is away. Tied to
-   the scroll, no script. Hold mode only, where the cards fill one screen; on a phone the strip stays
-   over the stacked cards. Both halves sit in the one @supports, so a browser without scroll-driven
-   animations (Firefox) keeps the strip and the block keeps its room under it. A keyboard reader who
-   tabs into the hidden strip gets it back. Two animations on one transform: the return fills
-   forwards only, so before its range the push's held -100% is what shows. */
-@supports (animation-timeline:view()){
-  body{timeline-scope:--plans}
-  /* named on the hold box, not the pinned screen, whose flow position keeps moving through the hold
-     (base.css .hold); --ground stays for anything that reads a hold's ground */
-  .plans-hold{view-timeline-name:--ground,--plans}
-  html.snap #plans .block{padding-top:var(--block-space)}
-  html.snap .nav{animation:nav-away linear both,nav-back linear forwards;animation-timeline:--plans,--plans;
-    animation-range:entry calc(100% - var(--nav-h) - 8px) entry calc(100% - 8px),exit calc(100% - var(--nav-h)) exit 100%}
-  html.snap .nav:focus-within{animation:none}
-}
-@keyframes nav-away{from{transform:none}to{transform:translateY(-100%)}}
-@keyframes nav-back{from{transform:translateY(-100%)}to{transform:none}}
+   scrolls away for more space"). The strip leaves once the plans screen is 8px short of the top
+   (founder, 2026-09-13: "a bit earlier, like 8px") and comes back halfway through the screen's
+   exit, well before the questions reach the top (founder, 2026-09-17: "make it show at 50 scroll
+   instead of it waiting for you to scroll fully").
+
+   It is a transition, not a scroll-driven animation: each move takes the same time whether the
+   reader creeps or flings the wheel (founder, 2026-09-17: "make it hide and show as an animation,
+   regardless of the scroll speed"). page.js owns the two thresholds and only toggles html.nav-gone;
+   the timing lives here.
+
+   One property moves: the slide. An earlier pass faded the strip out as it travelled, which over a
+   moving frosted bar reads as a smear rather than a header leaving (founder, 2026-09-17: "not
+   smooth and clean enough"). The two directions get their own curve and duration, which is what
+   makes it read as one deliberate move rather than a toggle: away accelerates out of rest and is
+   short; back is longer and lands on the site's own --ease, the same decelerating curve every other
+   arrival on the page uses. The leave's timing sits in the .nav-gone rule and the return's in the
+   base rule, so each direction transitions on the curve of the state it is heading for.
+
+   Both rules restate base.css's background and border transition. `transition` is a shorthand: a
+   bare transform entry here would drop the strip's .4s paper-to-dark cross-fade, and the plans
+   screen is dark, so the strip would change colour in one frame exactly as it began to move.
+
+   The block takes the strip's height: its top padding drops the nav's 56px while the nav is away.
+   Hold mode only, where the cards fill one screen; on a phone the strip stays over the stacked
+   cards. Both rules want html.js: with no script nothing toggles the class, so the strip stays and
+   the block keeps its room under it. A keyboard reader who tabs into the hidden strip gets it back
+   — :focus-within wins on specificity, and takes the return's curve. */
+html.js.snap #plans .block{padding-top:var(--block-space)}
+html.snap .nav{will-change:transform;
+  transition:background-color .4s var(--ease),border-color .4s var(--ease),transform .58s var(--ease)}
+html.snap.nav-gone .nav{transform:translate3d(0,-100%,0);
+  transition:background-color .4s var(--ease),border-color .4s var(--ease),transform .4s cubic-bezier(.55,.06,.68,.19)}
+html.snap.nav-gone .nav:focus-within{transform:none;transition:background-color .4s var(--ease),border-color .4s var(--ease),transform .58s var(--ease)}
 
 /* ---------- 12–13 · the questions and the close ---------- */
 .faq-wrap{max-width:880px}

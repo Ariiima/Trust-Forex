@@ -1,7 +1,9 @@
 // Home: the header leaves while the plans are on view, and only then (home/page.css, "The header
-// gives the plans its room"). Hold mode pushes the strip off with the plans screen's top edge, pins
-// the screen for its 30vh hold and brings the strip back over the screen's exit; phones and reduced
-// motion keep the strip throughout.
+// gives the plans its room"). Hold mode takes the strip off once the plans screen is 8px from the
+// top, keeps it off through the 30vh hold, and brings it back once the hold box's foot passes the
+// middle of the viewport; phones and reduced motion keep the strip throughout. Since 2026-09-17 the
+// two moves are a fixed transition, not a scrub, so the strip is only ever all the way out or all
+// the way in once it has settled — the test reads it settled, never mid-move.
 //   node design/landing/_qa/nav-plans.test.mjs [http://127.0.0.1:5311]
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
@@ -22,7 +24,7 @@ const at = async (p, t) => {
     const box = document.getElementById('plans').closest('.hold') || document.getElementById('plans');
     scrollTo({ top: box.getBoundingClientRect().top + scrollY - t, behavior: 'instant' });
   }, t);
-  await p.waitForTimeout(120);
+  await p.waitForTimeout(700);   // longer than the strip's .46s move, so every read is a settled one
   return p.evaluate(() => {
     const plans = document.getElementById('plans').getBoundingClientRect();
     const box = (document.getElementById('plans').closest('.hold') || document.getElementById('plans')).getBoundingClientRect();
@@ -49,9 +51,9 @@ try {
         assert.equal(top.snap, true, 'not in hold mode');
         near(top.nav, 0, 'strip before the plans');
         near((await at(p, 200)).nav, 0, 'strip with the plans 200px below the top');
-        // the strip leaves over the 56px that end 8px short of the top
+        // the strip holds until the screen is 8px from the top, then goes all the way out
         near((await at(p, 64)).nav, 0, 'strip as the plans edge comes 8px past its foot');
-        near((await at(p, 36)).nav, -28, 'strip halfway pushed');
+        near((await at(p, 12)).nav, 0, 'strip 12px before the plans reach the top');
         near((await at(p, 8)).nav, -56, 'strip gone 8px before the plans reach the top');
         const full = await at(p, 0);
         near(full.nav, -56, 'strip with the plans at the top');
@@ -68,13 +70,16 @@ try {
         const after = await at(p, -hold - 100);
         near(after.plans, -100, 'plans released after the hold');
         near(after.nav, -56, 'strip just after the release');
-        near((await at(p, 28 - full.box)).nav, -28, 'strip halfway back');
+        // back once the box's foot rises past the middle of the viewport: box top at h/2 - box height
+        const backAt = h / 2 - full.box;
+        near((await at(p, backAt + 30)).nav, -56, 'strip 30px before the halfway mark');
+        near((await at(p, backAt - 30)).nav, 0, 'strip back 30px past the halfway mark');
         near((await at(p, -full.box)).nav, 0, 'strip as the plans leave');
         near((await at(p, -full.box - 300)).nav, 0, 'strip past the plans');
         // a keyboard reader who tabs into the hidden strip gets it back
         await at(p, 0);
         await p.focus('#nav .pill');
-        await p.waitForTimeout(80);
+        await p.waitForTimeout(700);
         near(await p.evaluate(() => Math.round(document.getElementById('nav').getBoundingClientRect().top)), 0, 'strip with focus inside it');
         assert.ok(logs.some(l => l.startsWith('CHECK OK')), `no CHECK OK in: ${logs.join(' | ')}`);
         assert.ok(!logs.some(l => /CHECK FAIL|pageerror/.test(l)), logs.join(' | '));
