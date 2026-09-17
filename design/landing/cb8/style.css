@@ -677,26 +677,58 @@ html.reduce .well-value .caret,html.reduce .picker li{transition:none}
    simply carries more of that metal, inside a white rim, and the light crossing the row runs
    brighter over all four so the rail reads as glass, not as a printed table. */
 .rate-rail{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+/* The tints are the cell's own registered properties, not the shared --tint: a plain custom-property
+   swap lands in one frame, so the metal used to change before the pick's box had gone anywhere. They
+   blend on a delay tuned to the knob's travel — .22s late, .38s long, landing at 600ms against the
+   rim's 780 — so a tile deepens as the rim arrives and the one you left lightens as it goes
+   (founder, 2026-09-18: "look how diamond looks before the box arrives").
+   Every value is written out: a registered property read through another variable does not blend. */
+@property --cell-tint{syntax:'<color>';inherits:false;initial-value:transparent}
+@property --cell-tint2{syntax:'<color>';inherits:false;initial-value:transparent}
 .rate-cell{--streak:.32;
   appearance:none;-webkit-appearance:none;margin:0;font:inherit;cursor:pointer;user-select:none;-webkit-user-select:none;
   min-height:var(--cell-h,124px);padding:19px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:14px;text-align:center;border-radius:16px;
-  transition:background .3s var(--ease),border-color .3s var(--ease),box-shadow .3s var(--ease),transform .3s var(--ease)}
+  background:linear-gradient(150deg,var(--cell-tint),var(--cell-tint2));
+  transition:--cell-tint .38s var(--ease) .22s,--cell-tint2 .38s var(--ease) .22s,
+    border-color .3s var(--ease),box-shadow .3s var(--ease),transform .3s var(--ease)}
+.rate-cell[data-tier=standard]{--cell-tint:rgba(226,150,96,.46);--cell-tint2:rgba(150,84,50,.42)}
+.rate-cell[data-tier=silver]{--cell-tint:rgba(204,218,238,.24);--cell-tint2:rgba(118,144,184,.21)}
+.rate-cell[data-tier=gold]{--cell-tint:rgba(238,196,102,.46);--cell-tint2:rgba(170,124,40,.46)}
+.rate-cell[data-tier=diamond]{--cell-tint:rgba(138,96,224,.32);--cell-tint2:rgba(76,48,150,.29)}
 .rate-cell small{font-size:var(--text-small);line-height:1.25;white-space:nowrap;color:var(--label,rgba(255,255,255,.85))}
 .rate-cell strong{font-size:var(--cell-figure,var(--text-ring));line-height:1;letter-spacing:-.045em;color:#fff}
-.rate-cell[aria-pressed=false][data-tier=standard]{--tint:rgba(226,150,96,.46);--tint2:rgba(150,84,50,.42);--rim:rgba(236,176,136,.3)}
-.rate-cell[aria-pressed=false][data-tier=silver]{--tint:rgba(204,218,238,.24);--tint2:rgba(118,144,184,.21);--rim:rgba(228,238,250,.3)}
-.rate-cell[aria-pressed=false][data-tier=gold]{--tint:rgba(238,196,102,.46);--tint2:rgba(170,124,40,.46);--rim:rgba(240,208,130,.32)}
-.rate-cell[aria-pressed=false][data-tier=diamond]{--tint:rgba(138,96,224,.32);--tint2:rgba(76,48,150,.29);--rim:rgba(196,166,250,.3)}
+.rate-cell[aria-pressed=false][data-tier=standard]{--rim:rgba(236,176,136,.3)}
+.rate-cell[aria-pressed=false][data-tier=silver]{--rim:rgba(228,238,250,.3)}
+.rate-cell[aria-pressed=false][data-tier=gold]{--rim:rgba(240,208,130,.32)}
+.rate-cell[aria-pressed=false][data-tier=diamond]{--rim:rgba(196,166,250,.3)}
 .rate-cell[aria-pressed=false]:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.62);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(var(--rgb-shadow),.22),0 18px 32px -20px rgba(var(--rgb-shadow),.8)}
 .rate-cell[aria-pressed=true]{--streak:.42;border-color:#fff;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 0 2px rgba(255,255,255,.1),0 18px 34px -18px var(--rim)}
-.rate-cell[aria-pressed=true][data-tier=standard]{--tint:rgba(226,150,96,.62);--tint2:rgba(150,84,50,.6);--label:#FFF1E6}
-.rate-cell[aria-pressed=true][data-tier=silver]{--tint:rgba(204,218,238,.36);--tint2:rgba(118,144,184,.32)}
-.rate-cell[aria-pressed=true][data-tier=gold]{--tint:rgba(238,196,102,.66);--tint2:rgba(170,124,40,.66);--label:#FFF6DF}
-.rate-cell[aria-pressed=true][data-tier=diamond]{--tint:rgba(138,96,224,.5);--tint2:rgba(76,48,150,.46)}
+.rate-cell[aria-pressed=true][data-tier=standard]{--cell-tint:rgba(226,150,96,.62);--cell-tint2:rgba(150,84,50,.6);--label:#FFF1E6}
+.rate-cell[aria-pressed=true][data-tier=silver]{--cell-tint:rgba(204,218,238,.36);--cell-tint2:rgba(118,144,184,.32)}
+.rate-cell[aria-pressed=true][data-tier=gold]{--cell-tint:rgba(238,196,102,.66);--cell-tint2:rgba(170,124,40,.66);--label:#FFF6DF}
+.rate-cell[aria-pressed=true][data-tier=diamond]{--cell-tint:rgba(138,96,224,.5);--cell-tint2:rgba(76,48,150,.46)}
 .rate-cell:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
+/* The pick's white rim is one knob that travels the rail, on the calculator's spring (shared/knob.js,
+   founder 2026-09-18). Only the rim and its halo ride, over the tiles: a filled knob has to pass
+   under them to leave their labels alone, and behind glass it tinted every tile it crossed while the
+   tile it was heading for stood bare. So the metal never travels — each tile deepens or lightens its
+   own, timed to the box (see the cells' transition above). Without the script the picked tile keeps
+   the rim itself. */
+.rate-rail{position:relative}
+.rail-knob{position:absolute;z-index:2;top:0;left:0;width:0;height:0;border-radius:16px;pointer-events:none;box-sizing:border-box;
+  --k-rim:rgba(240,208,130,.55);
+  border:1px solid #fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 0 2px rgba(255,255,255,.1),0 18px 34px -18px var(--k-rim);
+  transition:--k-rim .4s var(--ease)}
+.rate-rail.knobbed .rate-cell[aria-pressed=true]{border-color:transparent;box-shadow:none}
+html.reduce .rail-knob{transition:none}
+/* the figure's roll (shared/roll.js): both lines share one cell, clipped to it, a little room above
+   and below for the glyphs — the calculator's est-roll, for any figure on any page */
+.tf-roll{display:inline-grid;justify-items:start;overflow:hidden;padding:.08em 0;margin:-.08em 0;vertical-align:bottom}
+.tf-roll>span{grid-area:1/1;white-space:nowrap}
 html.reduce .rate-cell,html.reduce .well{transition:none}
 html.reduce .rate-cell[aria-pressed=false]:hover{transform:none}
 @media (prefers-reduced-transparency:reduce){
